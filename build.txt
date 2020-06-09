@@ -1,0 +1,4 @@
+Currently, only a Visual Studio 2019 solution is offered, in vs_build
+
+The solution expects to find an Ogre Next 2.2 installation under ext/Ogre (can be a symbolic link)
+The Ogre installation should have a folder "build" with "lib", "bin", and "include" (OgreBuildSetting.h) folders with the appropriate dependencies for using Ogre Next
