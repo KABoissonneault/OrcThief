@@ -9,5 +9,8 @@
     <ClInclude Include="..\..\lib\Core\include\Core\compiler.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Core\include\Core\size_t.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
