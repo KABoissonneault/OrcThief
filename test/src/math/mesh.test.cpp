@@ -45,6 +45,21 @@ TEST_CASE("mesh::make_cube", "[math]")
 
 		REQUIRE(current_edge.next == face.first_edge);
 	}
+
+	auto const vertices = cube.get_vertices();
+	REQUIRE(vertices.size() == 8);
+
+	for (size_t i = 0; i < vertices.size(); ++i)
+	{
+		auto const vertex_id = static_cast<ot::math::mesh::vertex_id>(i);
+		auto const half_edges = cube.get_vertex_half_edges(vertex_id);
+
+		REQUIRE(std::distance(half_edges.begin(), half_edges.end()) == 3);
+		for (ot::math::mesh::half_edge const& he : half_edges)
+		{
+			REQUIRE(cube.get_half_edge(he.twin).vertex == vertex_id);
+		}
+	}
 }
 
 TEST_CASE("mesh::split_edge", "[math­]")
@@ -53,9 +68,9 @@ TEST_CASE("mesh::split_edge", "[math­]")
 	auto const top_face_edges = cube.get_face_half_edges(ot::math::mesh::face_id(0));
 	
 	// Find the edge pointing at the {1, 1, 1} vertex
-	auto const found_edge =std::find_if(top_face_edges.begin(), top_face_edges.end(), [&cube](ot::math::mesh::half_edge const& h)
+	auto const found_edge = std::find_if(top_face_edges.begin(), top_face_edges.end(), [&cube](ot::math::mesh::half_edge const& h)
 	{
-		return almost_equal(cube.get_vertex(h.vertex), { 1, 1, 1 });
+		return almost_equal(cube.get_vertex(h.vertex).position, { 1, 1, 1 });
 	});
 
 	REQUIRE(found_edge != top_face_edges.end());

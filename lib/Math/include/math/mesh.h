@@ -9,17 +9,25 @@
 
 namespace ot::math
 {
+	// A mesh representing a three-dimensional manifold formed of faces, vertices, and pairs of half-edges between each vertex
+	// 
 	class mesh
 	{
 	public:
-		using vertex = point3d;
 		enum class vertex_id : size_t { empty = size_t(-1) };
 		enum class half_edge_id : size_t { empty = size_t(-1) };
 		enum class face_id : size_t { empty = size_t(-1) };
 
-		// A half-edge forms a pair with another half-edge to represent a full edge between two vertices in a mesh. Both half-edges are parallel and are conceptually
+		// A point in 3d space. A vertex belongs to many faces, and has many "ingoing" and "outgoing" half-edges
+		struct vertex
+		{
+			point3d position;
+			half_edge_id first_edge;
+		};
+
+		// A half-edge forms a pair with another half-edge to represent a full edge between two vertices in the mesh. Both half-edges are parallel and are conceptually
 		// connected between the two same vertices, but are part of two different faces.
-		// Each half-edge has a reference to a single vertex, its other half-edge (pair), its adjacent face, and the next half-edge along the face
+		// Each half-edge has a reference to a vertex, its other half-edge (twin), its adjacent face, and the next half-edge along the same face
 		// Reference: https://www.flipcode.com/archives/The_Half-Edge_Data_Structure.shtml
 		struct half_edge
 		{
@@ -29,9 +37,10 @@ namespace ot::math
 			half_edge_id next; // the next half-edge along the face
 		};
 
+		// A section of a plane, surrounded by at least 3 vertices. 
 		struct face
 		{
-			half_edge_id first_edge;
+			half_edge_id first_edge; // arbitrary half-edge along the face
 		};
 
 		// Accessors
@@ -57,10 +66,10 @@ namespace ot::math
 		// The new half-edge will have the current twin as its twin, and the current half-edge will have the new twin as its twin
 		// 
 		//   Before:                                  After:
-		//     Current Edge                             Current Edge     New Edge
-		//   A --------------------------------> B    A ---------------->----------------> B
-		//   A <-------------------------------- B    A <---------------<----------------- B
-		//     Current Twin                             New Twin         Current Twin
+		//     Current Edge                             Current Edge  New Vertex     New Edge
+		//   A --------------------------------> B    A ----------------> C ----------------> B
+		//   A <-------------------------------- B    A <---------------- C <---------------- B
+		//     Current Twin                             New Twin                 Current Twin
 		half_edge& split_edge(half_edge_id edge_id, point3d point);
 		half_edge& split_edge(half_edge& edge_id, point3d point);
 
@@ -70,29 +79,35 @@ namespace ot::math
 		// The mesh will have as many faces as the number of input planes, and the faces will preserve the same order as the plane with the same normal
 		[[nodiscard]] static mesh make_from_planes(std::span<const plane> planes);
 
-		class face_half_edges
+	private:
+		template<typename ValueType, typename Mesh, template<typename Iterator> typename Iteration >
+		class half_edge_range
 		{
-			mesh* m = nullptr;
+			Mesh* m = nullptr;
 			half_edge_id first = half_edge_id::empty;
 
 		public:
-			face_half_edges() = default;
-			face_half_edges(mesh* m, half_edge_id first)
+			using value_type = ValueType;
+
+			half_edge_range() = default;
+			half_edge_range(Mesh* m, half_edge_id first)
 				: m(m)
 				, first(first)
 			{
 
 			}
 
-			class iterator
+			class iterator : public Iteration<iterator>
 			{
-				mesh* m = nullptr;
+				Mesh* m = nullptr;
 				half_edge_id first = half_edge_id::empty;
 				half_edge_id current = half_edge_id::empty;
 
+				friend Iteration<iterator>;
+
 			public:
 				iterator() = default;
-				iterator(mesh* m, half_edge_id first, half_edge_id current)
+				iterator(Mesh* m, half_edge_id first, half_edge_id current)
 					: m(m)
 					, first(first)
 					, current(current)
@@ -100,9 +115,9 @@ namespace ot::math
 
 				}
 
-				using value_type = half_edge;
-				using reference = half_edge&;
-				using pointer = half_edge*;
+				using value_type = ValueType;
+				using reference = value_type&;
+				using pointer = value_type*;
 				using difference_type = size_t;
 				using iterator_category = std::forward_iterator_tag;
 
@@ -113,18 +128,6 @@ namespace ot::math
 				pointer operator->() const
 				{
 					return &m->get_half_edge(current);
-				}
-				iterator& operator++()
-				{
-					if ((*this)->next == first)
-					{
-						current = half_edge_id::empty;
-					}
-					else
-					{
-						current = (*this)->next;
-					}
-					return *this;
 				}
 				bool operator==(iterator other) const noexcept
 				{
@@ -142,10 +145,73 @@ namespace ot::math
 			iterator end() const { return { m, first, half_edge_id::empty }; }
 		};
 
-		// Ranges
-		[[nodiscard]] face_half_edges get_face_half_edges(face_id face)
+		template<typename Iterator>
+		struct face_half_edges_iteration
 		{
-			return { this, get_face(face).first_edge };
+			using derived = Iterator;
+			auto operator++() -> derived&
+			{
+				auto& self = static_cast<derived&>(*this);
+
+				auto const next = self->next;
+				if (next == self.first)
+				{
+					self.current = half_edge_id::empty;
+				} else
+				{
+					self.current = next;
+				}
+
+				return self;
+			}
+		};
+
+		template<typename Iterator>
+		struct vertex_half_edges_iteration
+		{
+			using derived = Iterator;
+			auto operator++() -> derived&
+			{
+				auto& self = static_cast<derived&>(*this);
+
+				auto const next = self.m->get_half_edge(self->twin).next;
+				if (next == self.first)
+				{
+					self.current = half_edge_id::empty;
+				} else
+				{
+					self.current = next;
+				}
+
+				return self;
+			}
+		};
+
+	public:
+		// Ranges
+
+		// Returns a range of the half-edges around the given face
+		[[nodiscard]] auto get_face_half_edges(face_id face) noexcept
+		{
+			return half_edge_range<half_edge, mesh, face_half_edges_iteration>{ this, get_face(face).first_edge };
+		}
+
+		// Returns a range of the half-edges around the given face
+		[[nodiscard]] auto get_face_half_edges(face_id face) const noexcept
+		{
+			return half_edge_range<half_edge const, mesh const, face_half_edges_iteration>{ this, get_face(face).first_edge };
+		}
+
+		// Returns a range of the half-edges around the given vertex
+		[[nodiscard]] auto get_vertex_half_edges(vertex_id vertex) noexcept
+		{
+			return half_edge_range<half_edge, mesh, vertex_half_edges_iteration>{ this, get_vertex(vertex).first_edge };
+		}
+
+		// Returns a range of the half-edges around the given vertex
+		[[nodiscard]] auto get_vertex_half_edges(vertex_id vertex) const noexcept
+		{
+			return half_edge_range<half_edge const, mesh const, vertex_half_edges_iteration>{ this, get_vertex(vertex).first_edge };
 		}
 
 	private:

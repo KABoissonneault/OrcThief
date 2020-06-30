@@ -35,7 +35,9 @@ namespace ot::math
 		auto& new_twin = half_edges.emplace_back();
 
 		auto const new_vertex_id = vertex_id(vertices.size());
-		vertices.push_back(point);
+		vertex& new_vertex = vertices.emplace_back();
+		new_vertex.position = point;
+		new_vertex.first_edge = new_edge_id;
 
 		new_edge.face = edge.face;
 		new_edge.vertex = edge.vertex;
@@ -118,11 +120,13 @@ namespace ot::math
 						}
 
 						{
-							auto const vertex = mesh::vertex_id(vertices.size());
-							vertices.push_back(*intersection_result);
+							auto const vertex_id = mesh::vertex_id(vertices.size());
+							mesh::vertex& vertex = vertices.emplace_back();
+							vertex.position = *intersection_result;
+							vertex.first_edge = mesh::half_edge_id::empty;
 
 							point_intersection intersection;
-							intersection.vertex = vertex;
+							intersection.vertex = vertex_id;
 							intersection.planes = std::move(intersecting_planes);
 
 							// find edge intersections with existing point intersections
@@ -163,6 +167,20 @@ namespace ot::math
 								he1.vertex = previous_intersection.vertex;
 								he2.twin = he1_id;
 								he2.vertex = intersection.vertex;
+
+								// Resolve the "first edges" of the vertices if needed
+								{
+									if (vertex.first_edge == mesh::half_edge_id::empty)
+									{
+										vertex.first_edge = he1_id;
+									}
+
+									mesh::vertex& previous_vertex = vertices[static_cast<size_t>(previous_intersection.vertex)];
+									if (previous_vertex.first_edge == mesh::half_edge_id::empty)
+									{
+										previous_vertex.first_edge = he2_id;
+									}
+								}
 
 								edge_intersection& ei1 = previous_intersection.edges.emplace_back();
 								ei1.edge = he1_id;
