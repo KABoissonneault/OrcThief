@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{198acbb3-600f-44e4-8ae8-872597830fbc}</ProjectGuid>
-    <RootNamespace>Ogre</RootNamespace>
+    <ProjectGuid>{808fa609-f742-469c-bc5d-895d9e45cbee}</ProjectGuid>
+    <RootNamespace>Graphics</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -65,12 +65,16 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="Ogre.props" />
+    <Import Project="graphics.props" />
+    <Import Project="..\Ogre\Ogre.props" />
+    <Import Project="..\SDL2\SDL2.props" />
     <Import Project="..\Core\Core.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="Ogre.props" />
+    <Import Project="graphics.props" />
+    <Import Project="..\Ogre\Ogre.props" />
+    <Import Project="..\SDL2\SDL2.props" />
     <Import Project="..\Core\Core.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -145,20 +149,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\CompositorManager2.h" />
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\CompositorWorkspace.h" />
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\ConfigOptionMap.h" />
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\detail\common.h" />
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\MemoryAllocatorConfig.h" />
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Prerequisites.h" />
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\RenderSystem.h" />
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Root.h" />
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Window.h" />
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\WindowEventUtilities.h" />
+    <ClInclude Include="..\..\lib\Graphics\include\graphics\module.h" />
+    <ClInclude Include="..\..\lib\Graphics\include\graphics\window.h" />
+    <ClInclude Include="..\..\lib\Graphics\include\graphics\window_type.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\lib\Ogre\src\RenderSystem.cpp" />
-    <ClCompile Include="..\..\lib\Ogre\src\Root.cpp" />
+    <ClCompile Include="..\..\lib\Graphics\src\module.cpp" />
+    <ClCompile Include="..\..\lib\Graphics\src\window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

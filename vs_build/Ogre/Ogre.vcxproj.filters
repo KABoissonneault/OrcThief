@@ -10,6 +10,9 @@
     <Filter Include="include\Compositor">
       <UniqueIdentifier>{73cb68f1-0c76-49bb-8247-e03a3510b0a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{ce5bb308-6c81-4445-91bb-375c2abeea7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Root.h">
@@ -27,5 +30,28 @@
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\WindowEventUtilities.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\MemoryAllocatorConfig.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\CompositorWorkspace.h">
+      <Filter>include\Compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\RenderSystem.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\ConfigOptionMap.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Prerequisites.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\lib\Ogre\src\RenderSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Ogre\src\Root.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
