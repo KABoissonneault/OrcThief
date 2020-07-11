@@ -38,3 +38,4 @@
 
 # Dependencies
 ext/Ogre
+/ext/SDL2
