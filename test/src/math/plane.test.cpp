@@ -1,5 +1,4 @@
 #include <math/plane.h>
-#include <math/float.h>
 
 #include <catch2/catch.hpp>
 
@@ -7,14 +6,14 @@ TEST_CASE("plane::distance_to identity", "[math]")
 {
 	ot::math::plane p{ {1, 0, 0}, 1 };
 	ot::math::point3d v{ 1, 0, 0 };
-	REQUIRE(ot::math::almost_equal(p.distance_to(v), 0.));
+	REQUIRE(ot::float_eq(p.distance_to(v), 0.));
 }
 
 TEST_CASE("plane::distance_to simple", "[math]")
 {
 	ot::math::plane p{ {1, 0, 0}, 0 };
 	ot::math::point3d v{ 1, 0, 0 };
-	REQUIRE(ot::math::almost_equal(p.distance_to(v), 1.));
+	REQUIRE(ot::float_eq(p.distance_to(v), 1.));
 }
 
 TEST_CASE("find_intersection origin", "[math]")
@@ -23,7 +22,7 @@ TEST_CASE("find_intersection origin", "[math]")
 	auto const maybe_intersection = ot::math::find_intersection(plane1, plane2, plane3);
 
 	REQUIRE(maybe_intersection);
-	REQUIRE(almost_equal(*maybe_intersection, {0, 0, 0}));
+	REQUIRE(float_eq(*maybe_intersection, {0, 0, 0}));
 }
 
 TEST_CASE("find_intersection axis", "[math]")
@@ -32,7 +31,7 @@ TEST_CASE("find_intersection axis", "[math]")
 	auto const maybe_intersection = ot::math::find_intersection(plane1, plane2, plane3);
 
 	REQUIRE(maybe_intersection);
-	REQUIRE(almost_equal(*maybe_intersection, { 1, 0, 0 }));
+	REQUIRE(float_eq(*maybe_intersection, { 1, 0, 0 }));
 }
 
 TEST_CASE("find_intersection corner", "[math]")
@@ -41,5 +40,5 @@ TEST_CASE("find_intersection corner", "[math]")
 	auto const maybe_intersection = ot::math::find_intersection(plane1, plane2, plane3);
 
 	REQUIRE(maybe_intersection);
-	REQUIRE(almost_equal(*maybe_intersection, { 1, 1, 1 }));
+	REQUIRE(float_eq(*maybe_intersection, { 1, 1, 1 }));
 }

@@ -18,9 +18,6 @@
     <ClInclude Include="..\..\lib\Math\include\math\plane.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\lib\Math\include\math\float.h">
-      <Filter>include</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\Math\src\mesh.cpp">

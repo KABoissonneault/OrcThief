@@ -70,7 +70,7 @@ TEST_CASE("mesh::split_edge", "[math­]")
 	// Find the edge pointing at the {1, 1, 1} vertex
 	auto const found_edge = std::find_if(top_face_edges.begin(), top_face_edges.end(), [&cube](ot::math::mesh::half_edge const& h)
 	{
-		return almost_equal(cube.get_vertex(h.vertex).position, { 1, 1, 1 });
+		return float_eq(cube.get_vertex(h.vertex).position, { 1, 1, 1 });
 	});
 
 	REQUIRE(found_edge != top_face_edges.end());

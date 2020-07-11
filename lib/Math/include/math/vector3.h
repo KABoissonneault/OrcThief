@@ -1,6 +1,6 @@
 #pragma once
 
-#include "math/float.h"
+#include "core/float.h"
 
 namespace ot::math
 {
@@ -67,23 +67,23 @@ namespace ot::math
 	using vector3f = vector3<float>;
 	using vector3d = vector3<double>;
 
-	[[nodiscard]] inline bool almost_equal(point3f lhs, point3f rhs) noexcept
+	[[nodiscard]] inline bool float_eq(point3f lhs, point3f rhs) noexcept
 	{
-		return almost_equal(lhs.x, rhs.x) && almost_equal(lhs.y, rhs.y) && almost_equal(lhs.z, rhs.z);
+		return ot::float_eq(lhs.x, rhs.x) && ot::float_eq(lhs.y, rhs.y) && ot::float_eq(lhs.z, rhs.z);
 	}
 
-	[[nodiscard]] inline bool almost_equal(vector3f lhs, vector3f rhs) noexcept
+	[[nodiscard]] inline bool float_eq(vector3f lhs, vector3f rhs) noexcept
 	{
-		return almost_equal(lhs.x, rhs.x) && almost_equal(lhs.y, rhs.y) && almost_equal(lhs.z, rhs.z);
+		return ot::float_eq(lhs.x, rhs.x) && ot::float_eq(lhs.y, rhs.y) && ot::float_eq(lhs.z, rhs.z);
 	}
 
-	[[nodiscard]] inline bool almost_equal(point3d lhs, point3d rhs) noexcept
+	[[nodiscard]] inline bool float_eq(point3d lhs, point3d rhs) noexcept
 	{
-		return almost_equal(lhs.x, rhs.x) && almost_equal(lhs.y, rhs.y) && almost_equal(lhs.z, rhs.z);
+		return ot::float_eq(lhs.x, rhs.x) && ot::float_eq(lhs.y, rhs.y) && ot::float_eq(lhs.z, rhs.z);
 	}
 
-	[[nodiscard]] inline bool almost_equal(vector3d lhs, vector3d rhs) noexcept
+	[[nodiscard]] inline bool float_eq(vector3d lhs, vector3d rhs) noexcept
 	{
-		return almost_equal(lhs.x, rhs.x) && almost_equal(lhs.y, rhs.y) && almost_equal(lhs.z, rhs.z);
+		return ot::float_eq(lhs.x, rhs.x) && ot::float_eq(lhs.y, rhs.y) && ot::float_eq(lhs.z, rhs.z);
 	}
 }
