@@ -18,12 +18,18 @@
     <ClInclude Include="..\..\lib\Graphics\include\graphics\module.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Graphics\src\shadowed_text.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\Graphics\src\window.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\lib\Graphics\src\module.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Graphics\src\shadowed_text.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
