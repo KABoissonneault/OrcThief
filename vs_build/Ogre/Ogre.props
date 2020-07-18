@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\ext\Ogre\OgreMain\include;$(SolutionDir)..\ext\Ogre\build\include;$(SolutionDir)..\lib\Ogre\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\ext\Ogre\OgreMain\include;$(ProjectDir)..\..\ext\Ogre\build\include;$(ProjectDir)..\..\ext\Ogre\Components\Hlms\Unlit\include;$(ProjectDir)..\..\ext\Ogre\Components\Hlms\Common\include;$(ProjectDir)..\..\ext\Ogre\Components\Hlms\Pbs\include;$(ProjectDir)..\..\ext\Ogre\Components\Overlay\include;$(ProjectDir)..\..\lib\Ogre\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)..\ext\Ogre\build\lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

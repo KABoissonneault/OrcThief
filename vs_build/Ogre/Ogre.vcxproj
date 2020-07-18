@@ -145,18 +145,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\ArchiveManager.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\ArchiveType.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Camera.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\Components\Hlms\Pbs.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\Components\Hlms\Unlit.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\Container.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\Manager.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\PanelElement.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\System.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\TextAreaElement.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\CompositorManager2.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\CompositorWorkspace.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\ConfigFile.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ConfigOptionMap.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\detail\common.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\HlmsManager.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Item.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\MemoryAllocatorConfig.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Prerequisites.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\RenderSystem.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\ResourceGroupManager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Root.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Window.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\WindowEventUtilities.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\lib\Ogre\src\ArchiveType.cpp" />
+    <ClCompile Include="..\..\lib\Ogre\src\Components\Overlay\PanelElement.cpp" />
+    <ClCompile Include="..\..\lib\Ogre\src\Components\Overlay\TextAreaElement.cpp" />
     <ClCompile Include="..\..\lib\Ogre\src\RenderSystem.cpp" />
     <ClCompile Include="..\..\lib\Ogre\src\Root.cpp" />
   </ItemGroup>

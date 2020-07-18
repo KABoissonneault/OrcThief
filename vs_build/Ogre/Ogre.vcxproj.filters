@@ -13,6 +13,21 @@
     <Filter Include="src">
       <UniqueIdentifier>{ce5bb308-6c81-4445-91bb-375c2abeea7c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Components">
+      <UniqueIdentifier>{eed8dab7-8d3c-46bd-954d-f8b8628acec4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Components\Hlms">
+      <UniqueIdentifier>{d850c800-57e9-4588-a13e-2b73e370ff32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Components\Overlay">
+      <UniqueIdentifier>{0fe34d33-f8a5-4b3d-9a5c-dbd68b93d902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Components">
+      <UniqueIdentifier>{bbc9acf3-e94e-4739-8f6f-8c9fef64fa27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Components\Overlay">
+      <UniqueIdentifier>{4a146066-1df8-4345-9edd-d100321fceaf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Root.h">
@@ -45,6 +60,51 @@
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Prerequisites.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Item.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\ConfigFile.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\ResourceGroupManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\Components\Hlms\Unlit.h">
+      <Filter>include\Components\Hlms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\ArchiveType.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\ArchiveManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\HlmsManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\Components\Hlms\Pbs.h">
+      <Filter>include\Components\Hlms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Camera.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay.h">
+      <Filter>include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\Manager.h">
+      <Filter>include\Components\Overlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\Container.h">
+      <Filter>include\Components\Overlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\TextAreaElement.h">
+      <Filter>include\Components\Overlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\PanelElement.h">
+      <Filter>include\Components\Overlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\System.h">
+      <Filter>include\Components\Overlay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\Ogre\src\RenderSystem.cpp">
@@ -52,6 +112,15 @@
     </ClCompile>
     <ClCompile Include="..\..\lib\Ogre\src\Root.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Ogre\src\ArchiveType.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Ogre\src\Components\Overlay\PanelElement.cpp">
+      <Filter>src\Components\Overlay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Ogre\src\Components\Overlay\TextAreaElement.cpp">
+      <Filter>src\Components\Overlay</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
