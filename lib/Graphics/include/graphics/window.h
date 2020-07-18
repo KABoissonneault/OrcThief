@@ -53,5 +53,11 @@ namespace ot::graphics
 		{
 			render_window->setFocused(false);
 		}
+
+		void cleanup()
+		{
+			physical_window.reset();
+			render_window = nullptr;
+		}
 	};
 }

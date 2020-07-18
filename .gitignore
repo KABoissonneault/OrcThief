@@ -39,3 +39,8 @@
 # Dependencies
 ext/Ogre
 /ext/SDL2
+/vs_build/x64/Debug/
+/vs_build/x64/Release/
+/res/
+*.FileListAbsolute.txt
+*.CopyComplete

@@ -1,28 +1,159 @@
 #include "Ogre/Root.h"
-#include "Ogre/Window.h"
-#include "Ogre/WindowEventUtilities.h"
-#include "Ogre/Compositor/CompositorManager2.h"
-#include "Ogre/Compositor/CompositorWorkspace.h"
-#include "Ogre/RenderSystem.h"
+#include "Ogre/ConfigFile.h"
+#include "Ogre/ResourceGroupManager.h"
+#include "Ogre/Components/Hlms/Unlit.h"
+#include "Ogre/Components/Hlms/Pbs.h"
+#include "Ogre/ArchiveType.h"
+#include "Ogre/ArchiveManager.h"
+#include "Ogre/HlmsManager.h"
 
 #include "graphics/window.h"
 #include "graphics/window_type.h"
 #include "graphics/module.h"
 
+#include "math/unit/time.h"
+
 #include <SDL.h>
 
-#include <memory>
+#include <filesystem>
 
-int get_number_threads()
+namespace
 {
-	return 4; // TODO
-}
+	size_t get_number_threads()
+	{
+		return Ogre::PlatformInformation::getNumLogicalCores();
+	}
 
-char const* const k_window_title = "OrcThief";
+	void load_hlms(std::filesystem::path const& resource_folder)
+	{
+		Ogre::String main_folder;
+		Ogre::StringVector library_folders;
+		{
+			Ogre::HlmsUnlit::getDefaultPaths(main_folder, library_folders);
+
+			auto const main_path = resource_folder / main_folder;
+			Ogre::Archive* const main_archive = Ogre::ArchiveManager::getSingleton().load(main_path.string(), ot::ogre::archive_type::filesystem, true /*read-only*/);
+
+			Ogre::ArchiveVec library_archives(library_folders.size());
+			std::transform(library_folders.begin(), library_folders.end(), library_archives.begin(), [&resource_folder](auto const& library_folder)
+			{
+				auto const library_path = resource_folder / library_folder;
+				return Ogre::ArchiveManager::getSingleton().load(library_path.string(), ot::ogre::archive_type::filesystem, true /*read-only*/);
+			});
+
+			// Takes ownership of main_archive, but copies library_archives
+			Ogre::Root::getSingleton().getHlmsManager()->registerHlms(OGRE_NEW Ogre::HlmsUnlit(main_archive, &library_archives));
+		}
+
+		{
+			Ogre::HlmsPbs::getDefaultPaths(main_folder, library_folders);
+
+			auto const main_path = resource_folder / main_folder;
+			Ogre::Archive* const main_archive = Ogre::ArchiveManager::getSingleton().load(main_path.string(), ot::ogre::archive_type::filesystem, true /*read-only*/);
+
+			Ogre::ArchiveVec library_archives(library_folders.size());
+			std::transform(library_folders.begin(), library_folders.end(), library_archives.begin(), [&resource_folder](auto const& library_folder)
+				{
+					auto const library_path = resource_folder / library_folder;
+					return Ogre::ArchiveManager::getSingleton().load(library_path.string(), ot::ogre::archive_type::filesystem, true /*read-only*/);
+				});
+
+			// Takes ownership of main_archive, but copies library_archives
+			Ogre::Root::getSingleton().getHlmsManager()->registerHlms(OGRE_NEW Ogre::HlmsPbs(main_archive, &library_archives));
+		}
+	}
+
+	void push_window_event(SDL_Event const& e, std::vector<ot::graphics::window_event>& window_events)
+	{
+		using ot::graphics::window_event;
+		using ot::graphics::window_id;
+		switch (e.type)
+		{
+		case SDL_WINDOWEVENT:
+			switch (e.window.event)
+			{
+			case SDL_WINDOWEVENT_MOVED:
+				window_events.push_back({ window_id(e.window.windowID), window_event::moved{e.window.data1, e.window.data2} });
+				break;
+			case SDL_WINDOWEVENT_RESIZED:
+				window_events.push_back({ window_id(e.window.windowID), window_event::resized{e.window.data1, e.window.data2} });
+				break;
+			case SDL_WINDOWEVENT_FOCUS_GAINED:
+				window_events.push_back({ window_id(e.window.windowID), window_event::focus_gained{} });
+				break;
+			case SDL_WINDOWEVENT_FOCUS_LOST:
+				window_events.push_back({ window_id(e.window.windowID), window_event::focus_lost{} });
+				break;
+			}
+			break;
+		}
+	}
+
+	void handle_window_events(ot::graphics::module& g)
+	{
+		SDL_Event events[4]; // I'm not sure if I should expect more than 4 window events per frame
+		while (int const count = SDL_PeepEvents(events, 4, SDL_GETEVENT, SDL_WINDOWEVENT, SDL_WINDOWEVENT))
+		{
+			using ot::graphics::window_event;
+			using ot::graphics::window_id;
+			std::vector<window_event> window_events;
+			window_events.reserve(count);
+			for (size_t i = 0; i < count; ++i)
+			{
+				push_window_event(events[i], window_events);
+			}
+
+			g.on_window_events(window_events);
+		}
+	}
+
+	char const* const k_window_title = "OrcThief";
+}
 
 extern "C" int main(int argc, char** argv)
 {
 	Ogre::Root root;
+
+	if (!std::filesystem::exists("config.cfg"))
+	{
+		std::printf("Program needs 'config.cfg' to run. Ensure a proper config file is in the current working directory\n");
+		return -1;
+	}
+
+	// Handle program config
+	Ogre::ConfigFile program_config;
+	program_config.load("config.cfg");
+
+	Ogre::String const resource_folder = program_config.getSetting("ResourceRoot", "Core");
+	if (resource_folder.empty())
+	{
+		std::printf("'ResourceRoot' under [Core] not found in 'config.cfg'. Ensure a proper config file is in the current working directory\n");
+		return -1;
+	}
+
+	auto load_it = program_config.getSettingsIterator("AlwaysLoad");
+	auto const resource_folder_path = std::filesystem::path(resource_folder);
+	for (auto const& kv : load_it)
+	{
+		auto const type_name = kv.first;
+		if (type_name != ot::ogre::archive_type::filesystem && type_name != ot::ogre::archive_type::zip && type_name != ot::ogre::archive_type::embedded_zip)
+		{
+			std::printf("Warning: AlwaysLoad resource of type '%s' is not supported\n", type_name.c_str());
+			continue;
+		}
+
+		auto const resource_path = kv.second;
+		auto const full_path = resource_folder_path / resource_path;
+		
+		if (!std::filesystem::exists(full_path))
+		{
+			std::printf("Warning: AlwaysLoad resource '%s' was requested but could not be found", full_path.string().c_str());
+			continue;
+		}
+		Ogre::ResourceGroupManager::getSingleton().addResourceLocation(full_path.string(), type_name);
+	}
+
+	// Handle RenderSystem config
 	if (!root.restoreConfig())
 	{
 		if (!root.showConfigDialog()) // If false, the user pressed Cancel
@@ -46,50 +177,48 @@ extern "C" int main(int argc, char** argv)
 	ot::graphics::module g;
 	g.initialize(k_window_title, get_number_threads() - 1);
 
+	load_hlms(resource_folder_path);
+	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups(true);
+
+	g.setup_scene();
+
+	using namespace ot::math::literals;
+	auto last = std::chrono::steady_clock::now();
+	auto leftover = 0._s;
+	auto const frame_time = 0.02_s;
+
 	bool quit = false;
 	while (!quit) {
 		// Events
 		SDL_PumpEvents();
-
-		using ot::graphics::window_event;
-		using ot::graphics::window_id;
-		SDL_Event e;
-		std::vector<window_event> window_events;
-		while (SDL_PollEvent(&e))
+		
+		if (SDL_HasEvent(SDL_QUIT))
 		{
-			switch (e.type)
-			{
-			case SDL_WINDOWEVENT:
-				switch (e.window.event)
-				{
-				case SDL_WINDOWEVENT_MOVED:
-					window_events.push_back({ window_id(e.window.windowID), window_event::moved{e.window.data1, e.window.data2} });
-					break;
-				case SDL_WINDOWEVENT_RESIZED:
-					window_events.push_back({ window_id(e.window.windowID), window_event::resized{e.window.data1, e.window.data2} });
-					break;
-				case SDL_WINDOWEVENT_FOCUS_GAINED:
-					window_events.push_back({ window_id(e.window.windowID), window_event::focus_gained{} });
-					break;
-				case SDL_WINDOWEVENT_FOCUS_LOST:
-					window_events.push_back({ window_id(e.window.windowID), window_event::focus_lost{} });
-					break;
-				}
-				break;
-			case SDL_QUIT:
-				quit = true;
-				break;
-			}
+			quit = true;
+			break;
 		}
 
-		if (quit)
-			break;
+		handle_window_events(g);
 
-		g.on_window_events(window_events);
+		{
+			SDL_Event e;
+			while (SDL_PollEvent(&e)); // clear the other events
+		}
+
+		// Update
+		while (leftover > frame_time)
+		{
+			g.update(frame_time);
+			leftover -= frame_time;
+		}
 
 		// Rendering
 		if (!g.render())
 			break;		
+
+		auto const current = std::chrono::steady_clock::now();
+		leftover += (current - last);
+		last = current;
 	}
 
 	SDL_Quit();
