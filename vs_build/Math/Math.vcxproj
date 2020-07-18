@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\lib\Math\include\Math\mesh.h" />
     <ClInclude Include="..\..\lib\Math\include\math\plane.h" />
+    <ClInclude Include="..\..\lib\Math\include\math\unit\time.h" />
     <ClInclude Include="..\..\lib\Math\include\Math\vector3.h" />
   </ItemGroup>
   <ItemGroup>
