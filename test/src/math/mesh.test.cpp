@@ -52,8 +52,12 @@ TEST_CASE("mesh::make_cube", "[math]")
 	for (size_t i = 0; i < vertices.size(); ++i)
 	{
 		auto const vertex_id = static_cast<ot::math::mesh::vertex_id>(i);
-		auto const half_edges = cube.get_vertex_half_edges(vertex_id);
+		auto const& vertex = cube.get_vertex(vertex_id);
 
+		REQUIRE(is_normalized(vertex.normal));
+
+		auto const half_edges = cube.get_vertex_half_edges(vertex_id);
+		
 		REQUIRE(std::distance(half_edges.begin(), half_edges.end()) == 3);
 		for (ot::math::mesh::half_edge const& he : half_edges)
 		{

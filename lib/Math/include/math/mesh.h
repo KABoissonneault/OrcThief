@@ -22,6 +22,7 @@ namespace ot::math
 		struct vertex
 		{
 			point3d position;
+			vector3d normal;
 			half_edge_id first_edge;
 		};
 

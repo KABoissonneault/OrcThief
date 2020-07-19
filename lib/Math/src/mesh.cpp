@@ -1,5 +1,7 @@
 #include "math/mesh.h"
 
+#include <numeric>
+
 namespace ot::math
 {
 	namespace
@@ -67,6 +69,11 @@ namespace ot::math
 
 	namespace
 	{
+		vector3d get_average_normal(std::span<plane const> planes)
+		{
+			return normalized(std::accumulate(planes.begin(), planes.end(), vector3d{}, [](vector3d value, plane plane) { return value + plane.normal; }));
+		}
+
 		std::vector<point_intersection> find_intersections(std::span<const plane> planes, std::vector<mesh::vertex>& vertices, std::vector<mesh::half_edge>& half_edges)
 		{
 			if (planes.size() < 3)
@@ -94,10 +101,8 @@ namespace ot::math
 							continue;
 						}
 
-						std::vector<mesh::face_id> intersecting_planes;
-						intersecting_planes.push_back(mesh::face_id(i));
-						intersecting_planes.push_back(mesh::face_id(j));
-						intersecting_planes.push_back(mesh::face_id(k));
+						std::vector<mesh::face_id> intersecting_planes{ mesh::face_id(i), mesh::face_id(j), mesh::face_id(k) };
+						std::vector<plane> plane_values{ plane1, plane2, plane3 };
 
 						// check for extra planes
 						for (size_t l = 0; l < planes.size(); ++l)
@@ -113,6 +118,7 @@ namespace ot::math
 									goto skip_intersection; // we've already found this intersection
 
 								intersecting_planes.push_back(mesh::face_id(l));
+								plane_values.push_back(plane4);
 							} else if (result == plane_side_result::outside)
 							{
 								goto skip_intersection; // intersection outside the mesh
@@ -123,6 +129,7 @@ namespace ot::math
 							auto const vertex_id = mesh::vertex_id(vertices.size());
 							mesh::vertex& vertex = vertices.emplace_back();
 							vertex.position = *intersection_result;
+							vertex.normal = get_average_normal(plane_values);
 							vertex.first_edge = mesh::half_edge_id::empty;
 
 							point_intersection intersection;
@@ -209,6 +216,7 @@ namespace ot::math
 
 			return intersections;
 		}
+
 		void resolve_edge_directions(std::span<const plane> planes, std::span<point_intersection const> intersections, std::span<mesh::half_edge> half_edges, std::span<mesh::face> faces)
 		{
 			// For each vertex, check which half-edges are "ingoing" (ie: pointing at the vertex) or "outgoing" (ie: has its origin at the vertex)
@@ -216,7 +224,7 @@ namespace ot::math
 			{
 				auto const& edges = intersection.edges;
 				auto const vertex_id = intersection.vertex;
-				// vertex& vertex = m.get_vertex(vertex_id); // TODO: Bounds
+				// mesh::vertex& vertex = vertices[static_cast<size_t>(vertex_id)]; // TODO: Bounds
 
 				for (size_t i = 0; i < edges.size() - 1; ++i)
 				{
