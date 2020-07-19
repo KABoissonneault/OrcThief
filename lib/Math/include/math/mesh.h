@@ -2,6 +2,7 @@
 
 #include "math/vector3.h"
 #include "math/plane.h"
+#include "math/AABB.h"
 #include "core/size_t.h"
 
 #include <vector>
@@ -215,9 +216,12 @@ namespace ot::math
 			return half_edge_range<half_edge const, mesh const, vertex_half_edges_iteration>{ this, get_vertex(vertex).first_edge };
 		}
 
+		[[nodiscard]] aabb get_bounds() const noexcept { return bounds; }
+
 	private:
 		std::vector<vertex> vertices;
 		std::vector<half_edge> half_edges;
 		std::vector<face> faces;
+		aabb bounds{};
 	};
 }

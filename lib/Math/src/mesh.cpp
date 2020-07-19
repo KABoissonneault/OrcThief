@@ -224,7 +224,6 @@ namespace ot::math
 			{
 				auto const& edges = intersection.edges;
 				auto const vertex_id = intersection.vertex;
-				// mesh::vertex& vertex = vertices[static_cast<size_t>(vertex_id)]; // TODO: Bounds
 
 				for (size_t i = 0; i < edges.size() - 1; ++i)
 				{
@@ -282,6 +281,14 @@ namespace ot::math
 				}
 			}
 		}
+
+		void update_bounds(aabb& bounds, std::span<mesh::vertex const> vertices)
+		{
+			for (mesh::vertex const& vertex : vertices)
+			{
+				bounds.merge(vertex.position);
+			}
+		}
 	}
 
 	mesh mesh::make_from_planes(std::span<const plane> planes)
@@ -291,6 +298,7 @@ namespace ot::math
 
 		std::vector<point_intersection> const intersections = find_intersections(planes, m.vertices, m.half_edges);
 		resolve_edge_directions(planes, intersections, m.half_edges, m.faces);
+		update_bounds(m.bounds, m.vertices);
 
 		return m;
 	}

@@ -64,6 +64,11 @@ TEST_CASE("mesh::make_cube", "[math]")
 			REQUIRE(cube.get_half_edge(he.twin).vertex == vertex_id);
 		}
 	}
+
+	auto const bounds = cube.get_bounds();
+	REQUIRE(float_eq(bounds.max(), ot::math::point3d{ 1., 1., 1. }));
+	REQUIRE(float_eq(bounds.min(), ot::math::point3d{ 0., 0., 0. }));
+
 }
 
 TEST_CASE("mesh::split_edge", "[math­]")
