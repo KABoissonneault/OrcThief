@@ -2,6 +2,9 @@
 
 #include "core/float.h"
 
+#include <numeric>
+#include <algorithm>
+
 namespace ot::math
 {
 	template<typename T>
@@ -26,12 +29,6 @@ namespace ot::math
 			return static_cast<T>(std::sqrt(x * x + y * y + z * z));
 		}
 	};
-
-	template<typename T>
-	[[nodiscard]] constexpr inline vector3<T> operator-(point3<T> lhs, point3<T> rhs) noexcept
-	{
-		return { lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z };
-	}
 
 	template<typename T>
 	[[nodiscard]] constexpr inline point3<T> operator+(point3<T> lhs, vector3<T> rhs) noexcept
@@ -61,6 +58,27 @@ namespace ot::math
 		lhs.y += rhs.y;
 		lhs.z += rhs.z;
 		return lhs;
+	}
+
+	template<typename T>
+	[[nodiscard]] constexpr inline point3<T> operator-(point3<T> lhs, vector3<T> rhs) noexcept
+	{
+		return { lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z };
+	}
+
+	template<typename T>
+	[[nodiscard]] constexpr inline point3<T>& operator-=(point3<T>& lhs, vector3<T> rhs) noexcept
+	{
+		lhs.x -= rhs.x;
+		lhs.y -= rhs.y;
+		lhs.z -= rhs.z;
+		return lhs;
+	}
+
+	template<typename T>
+	[[nodiscard]] constexpr inline vector3<T> operator-(point3<T> lhs, point3<T> rhs) noexcept
+	{
+		return { lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z };
 	}
 
 	template<typename T>
@@ -108,6 +126,24 @@ namespace ot::math
 	[[nodiscard]] constexpr inline T dot_product(vector3<T> lhs, vector3<T> rhs) noexcept
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
+	}
+
+	template<typename T>
+	[[nodiscard]] constexpr inline point3<T> component_min(point3<T> lhs, point3<T> rhs) noexcept
+	{
+		return { std::min(lhs.x, rhs.x), std::min(lhs.y, rhs.y), std::min(lhs.z, rhs.z) };
+	}
+
+	template<typename T>
+	[[nodiscard]] constexpr inline point3<T> component_max(point3<T> lhs, point3<T> rhs) noexcept
+	{
+		return { std::max(lhs.x, rhs.x), std::max(lhs.y, rhs.y), std::max(lhs.z, rhs.z) };
+	}
+
+	template<typename T>
+	[[nodiscard]] constexpr inline point3<T> midpoint(point3<T> lhs, point3<T> rhs) noexcept
+	{
+		return { std::midpoint(lhs.x, rhs.x), std::midpoint(lhs.y, rhs.y), std::midpoint(lhs.z, rhs.z) };
 	}
 
 	using point3i = point3<int>;
