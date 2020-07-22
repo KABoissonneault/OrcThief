@@ -21,6 +21,9 @@
     <ClInclude Include="..\..\lib\Graphics\src\shadowed_text.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Graphics\src\static_mesh.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\Graphics\src\window.cpp">
@@ -30,6 +33,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\lib\Graphics\src\shadowed_text.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Graphics\src\static_mesh.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
