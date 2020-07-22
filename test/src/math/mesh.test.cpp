@@ -21,9 +21,11 @@ TEST_CASE("mesh::make_cube", "[math]")
 	// For all faces, test its edges
 	for (size_t i = 0; i < faces.size(); ++i)
 	{
-		ot::math::mesh::face const face = faces[i];
+		ot::math::mesh::face const& face = faces[i];
 
 		ot::math::mesh::vertex_id visited_vertices[4];
+
+		REQUIRE(cube.get_face_vertex_count(face) == 4);
 
 		// Test that each face has 4 edges
 		ot::math::mesh::half_edge_id current_id = face.first_edge;
