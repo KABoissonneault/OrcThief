@@ -28,6 +28,9 @@
     <Filter Include="src\Components\Overlay">
       <UniqueIdentifier>{4a146066-1df8-4345-9edd-d100321fceaf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Vao">
+      <UniqueIdentifier>{b06888a3-8ebe-4e62-b6be-2c8b3fab377f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Root.h">
@@ -104,6 +107,18 @@
     </ClInclude>
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\System.h">
       <Filter>include\Components\Overlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\MeshManager2.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\Vao\Manager.h">
+      <Filter>include\Vao</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\Mesh2.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\SubMesh2.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

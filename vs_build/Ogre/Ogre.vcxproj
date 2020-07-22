@@ -164,10 +164,14 @@
     <ClInclude Include="..\..\lib\Ogre\include\ogre\HlmsManager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Item.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\MemoryAllocatorConfig.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\Mesh2.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\MeshManager2.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Prerequisites.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\RenderSystem.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ResourceGroupManager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Root.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\SubMesh2.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\Vao\Manager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Window.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\WindowEventUtilities.h" />
   </ItemGroup>
