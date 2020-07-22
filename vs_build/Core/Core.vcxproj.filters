@@ -4,6 +4,9 @@
     <Filter Include="include">
       <UniqueIdentifier>{f8c77cfd-0949-43d5-a7e1-1285493884b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\iterator">
+      <UniqueIdentifier>{420e9fe4-6b37-4841-a5ee-92cad71143d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Core\include\Core\compiler.h">
@@ -14,6 +17,9 @@
     </ClInclude>
     <ClInclude Include="..\..\lib\Core\include\core\float.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Core\include\core\iterator\arrow_proxy.h">
+      <Filter>include\iterator</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
