@@ -42,8 +42,8 @@ namespace ot::graphics
 			auto vertex_it = reinterpret_cast<render_vertex*>(geometry_buffer.get());
 			for (size_t i = 0; i < vertex_count; ++i)
 			{
-				auto const& vertex = mesh.get_vertex(math::mesh::vertex_id(i));
-				new(vertex_it + i) render_vertex{ to_ogre_vector(vertex.position), to_ogre_vector(vertex.normal) };
+				math::vertex::id const vertex{ i };
+				new(vertex_it + i) render_vertex{ to_ogre_vector(get_position(mesh, vertex)), to_ogre_vector(get_normal(mesh, vertex)) };
 			}
 			return geometry_buffer;
 		}
@@ -72,7 +72,7 @@ namespace ot::graphics
 			size_t index_count = 0;
 			for (auto const& face : mesh.get_faces())
 			{
-				auto const triangle_count = mesh.get_face_vertex_count(face) - 2;
+				auto const triangle_count = get_vertex_count(mesh, face) - 2;
 				index_count += triangle_count * 3;
 			}
 			return index_count;
@@ -87,7 +87,7 @@ namespace ot::graphics
 			
 			for (auto const& face : mesh.get_faces())
 			{
-				auto const vertices = mesh.get_face_vertex_ids(face);
+				auto const vertices = get_vertices(mesh, face);
 				auto vertex_it = vertices.begin();
 				auto const vertex_sent = vertices.end();
 

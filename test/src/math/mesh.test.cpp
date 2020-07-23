@@ -19,75 +19,84 @@ TEST_CASE("mesh::make_cube", "[math]")
 	REQUIRE(faces.size() == 6);
 
 	// For all faces, test its edges
-	for (size_t i = 0; i < faces.size(); ++i)
+	for (ot::math::face::id const face : faces)
 	{
-		ot::math::mesh::face const& face = faces[i];
+		ot::math::vertex::id visited_vertices[4];
 
-		ot::math::mesh::vertex_id visited_vertices[4];
-
-		REQUIRE(cube.get_face_vertex_count(face) == 4);
+		REQUIRE(get_vertex_count(cube, face) == 4);
 
 		// Test that each face has 4 edges
-		ot::math::mesh::half_edge_id current_id = face.first_edge;
-		ot::math::mesh::half_edge current_edge = cube.get_half_edge(face.first_edge);
-		ot::math::mesh::half_edge twin = cube.get_half_edge(current_edge.twin);
-		visited_vertices[0] = current_edge.vertex;
-		REQUIRE(current_edge.face == static_cast<ot::math::mesh::face_id>(i));
+		auto const half_edges = get_half_edges(cube, face);
+		auto edge_it = half_edges.begin();
+		ot::math::half_edge::id current_edge = *edge_it;
+		visited_vertices[0] = get_target_vertex(cube, current_edge);
+		REQUIRE(get_face(cube, current_edge) == face);
+		ot::math::half_edge::id twin = get_twin(cube, current_edge);
+		REQUIRE(get_twin(cube, twin) == current_edge);
 
 		for (size_t j = 1; j < 4; ++j)
 		{
-			current_id = current_edge.next;
-			current_edge = cube.get_half_edge(current_id);
-			visited_vertices[j] = current_edge.vertex;
-			REQUIRE(current_edge.face == static_cast<ot::math::mesh::face_id>(i));
-			twin = cube.get_half_edge(current_edge.twin);
-			REQUIRE(twin.twin == current_id);
-			REQUIRE(std::find(visited_vertices, visited_vertices + j, current_edge.vertex) == visited_vertices + j);
+			++edge_it;
+			current_edge = *edge_it;
+			auto const target_vertex = get_target_vertex(cube, current_edge);
+			REQUIRE(std::find(visited_vertices, visited_vertices + j, target_vertex) == visited_vertices + j);
+			visited_vertices[j] = target_vertex;
+			REQUIRE(get_face(cube, current_edge) == face);
+			twin = get_twin(cube, current_edge);
+			REQUIRE(get_twin(cube, twin) == current_edge);
 		}
-
-		REQUIRE(current_edge.next == face.first_edge);
 	}
 
 	auto const vertices = cube.get_vertices();
 	REQUIRE(vertices.size() == 8);
 
-	for (size_t i = 0; i < vertices.size(); ++i)
+	for (ot::math::vertex::id vertex : vertices)
 	{
-		auto const vertex_id = static_cast<ot::math::mesh::vertex_id>(i);
-		auto const& vertex = cube.get_vertex(vertex_id);
+		REQUIRE(is_normalized(get_normal(cube, vertex)));
 
-		REQUIRE(is_normalized(vertex.normal));
-
-		auto const half_edges = cube.get_vertex_half_edges(vertex_id);
+		auto const half_edges = get_half_edges(cube, vertex);
 		
-		REQUIRE(std::distance(half_edges.begin(), half_edges.end()) == 3);
-		for (ot::math::mesh::half_edge const& he : half_edges)
+		REQUIRE(std::distance(half_edges.begin(), half_edges.end()) == 3); // three edges around each vertex
+		for (ot::math::half_edge::id const he : half_edges)
 		{
-			REQUIRE(cube.get_half_edge(he.twin).vertex == vertex_id);
+			REQUIRE(get_source_vertex(cube, he) == vertex);
+			REQUIRE(get_target_vertex(cube, get_twin(cube, he)) == vertex);
 		}
 	}
 
 	auto const bounds = cube.get_bounds();
 	REQUIRE(float_eq(bounds.max(), ot::math::point3d{ 1., 1., 1. }));
 	REQUIRE(float_eq(bounds.min(), ot::math::point3d{ 0., 0., 0. }));
-
 }
 
 TEST_CASE("mesh::split_edge", "[math­]")
 {
 	ot::math::mesh cube = ot::math::mesh::make_from_planes(cube_planes);
-	auto const top_face_edges = cube.get_face_half_edges(ot::math::mesh::face_id(0));
+	auto const top_face_edges = get_half_edges(cube, cube.get_faces()[0]);
 	
 	// Find the edge pointing at the {1, 1, 1} vertex
-	auto const found_edge = std::find_if(top_face_edges.begin(), top_face_edges.end(), [&cube](ot::math::mesh::half_edge const& h)
+	auto const found_edge = std::find_if(top_face_edges.begin(), top_face_edges.end(), [&cube](ot::math::half_edge::id const h)
 	{
-		return float_eq(cube.get_vertex(h.vertex).position, { 1, 1, 1 });
+		return float_eq(get_position(cube, get_target_vertex(cube, h)), { 1, 1, 1 });
 	});
 
 	REQUIRE(found_edge != top_face_edges.end());
-	
-	cube.split_edge(*found_edge, { 1, 0.5, 1 });
+	auto const current_edge = *found_edge;
+	auto const current_twin = get_twin(cube, current_edge);
+	auto const current_target = get_target_vertex(cube, current_edge);
+	auto const current_source = get_source_vertex(cube, current_edge);
 
-	auto const new_face_edges = cube.get_face_half_edges(ot::math::mesh::face_id(0));
+	auto const new_edge = split_at(cube, current_edge, { 1, 0.5, 1 });
+	auto const new_twin = get_twin(cube, current_edge);
+
+	REQUIRE(get_source_vertex(cube, current_edge) == current_source);
+	REQUIRE(get_twin(cube, new_edge) == current_twin);
+	REQUIRE(get_target_vertex(cube, new_edge) == current_target);
+	REQUIRE(get_twin(cube, new_twin) == current_edge);
+	REQUIRE(get_target_vertex(cube, new_twin) == current_source);
+	REQUIRE(get_twin(cube, current_twin) == new_edge);
+	REQUIRE(get_source_vertex(cube, current_twin) == current_target);
+
+	auto const new_face_edges = get_half_edges(cube, cube.get_faces()[0]);
 	REQUIRE(std::distance(new_face_edges.begin(), new_face_edges.end()) == 5);
 }
