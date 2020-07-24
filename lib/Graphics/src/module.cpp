@@ -8,17 +8,88 @@
 #include "Ogre/Components/Overlay/Manager.h"
 #include "Ogre/Components/Overlay/TextAreaElement.h"
 #include "Ogre/Components/Overlay/System.h"
+#include "Ogre/Mesh2.h"
+#include "Ogre/SubMesh2.h"
 
 #include "math/vector3.h"
+#include "math/mesh.h"
 
 #include "shadowed_text.h"
+#include "static_mesh.h"
 
 #include <optional>
+#include <new>
 
 const Ogre::ColourValue k_background_color(.8f, 0.4f, 0.4f);
 
 namespace ot::graphics
 {
+	namespace
+	{
+		math::plane const cube_planes[6] = {
+			{{0, 0, 1}, 0.5},
+			{{1, 0, 0}, 0.5},
+			{{0, 1, 0}, 0.5},
+			{{-1, 0, 0}, 0.5},
+			{{0, -1, 0}, 0.5},
+			{{0, 0, -1}, 0.5},
+		};
+
+		Ogre::MeshPtr make_cube_mesh(ogre::string const& name)
+		{
+			return make_static_mesh(name, math::mesh::make_from_planes(cube_planes));
+		}
+
+		auto const sqrt_half = 0.70710678118654752440084436210485;
+		math::plane const octagon_planes[] = {
+			{{0, 1, 0}, 0.5},
+			{{0, -1, 0}, 0.5},
+			{{1, 0, 0}, 0.5},
+			{{-1, 0, 0}, 0.5},
+			{{0, 0, 1}, 0.5},
+			{{0, 0, -1}, 0.5},
+			{{sqrt_half, 0, sqrt_half}, 0.5},
+			{{sqrt_half, 0, -sqrt_half}, 0.5},
+			{{-sqrt_half, 0, sqrt_half}, 0.5},
+			{{-sqrt_half, 0, -sqrt_half}, 0.5},
+		};
+
+		Ogre::MeshPtr make_octagon_prism(ogre::string const& name)
+		{
+			return make_static_mesh(name, math::mesh::make_from_planes(octagon_planes));
+		}
+
+		math::plane const pyramid_planes[] = {
+			{{0, -1, 0}, 0.5},
+			{{sqrt_half, sqrt_half, 0}, 0.5},
+			{{-sqrt_half, sqrt_half, 0}, 0.5},
+			{{0, sqrt_half, sqrt_half}, 0.5},
+			{{0, sqrt_half, -sqrt_half}, 0.5},
+		};
+
+		Ogre::MeshPtr make_pyramid(ogre::string const& name)
+		{
+			return make_static_mesh(name, math::mesh::make_from_planes(pyramid_planes));
+		}
+
+		struct MeshNode
+		{
+			Ogre::SceneNode* node;
+			Ogre::MeshPtr mesh;
+		};
+
+		MeshNode make_mesh_node(Ogre::SceneManager* scene_manager, Ogre::MeshPtr mesh, Ogre::Vector3 const& position)
+		{
+			Ogre::SceneNode* const root_node = scene_manager->getRootSceneNode(Ogre::SCENE_DYNAMIC);
+			Ogre::Item* const item = scene_manager->createItem(mesh, Ogre::SCENE_DYNAMIC);
+
+			Ogre::SceneNode* const node = root_node->createChildSceneNode(Ogre::SCENE_DYNAMIC, position);
+			node->attachObject(item);
+
+			return { node, std::move(mesh) };
+		}
+	}
+
 	struct module::impl
 	{
 		Ogre::SceneManager* scene_manager;
@@ -26,7 +97,7 @@ namespace ot::graphics
 		Ogre::CompositorWorkspace* main_workspace;
 		ot::graphics::window main_window;
 
-		Ogre::SceneNode* cube_node;
+		std::vector<MeshNode> scene_nodes;
 
 		std::unique_ptr<Ogre::v1::OverlaySystem> overlay_system;
 		Ogre::v1::Overlay* debug_overlay;
@@ -43,7 +114,13 @@ namespace ot::graphics
 
 			main_window = ot::graphics::window::create(window_title);
 			scene_manager = root.createSceneManager(Ogre::ST_GENERIC, number_threads);
+			
 			main_camera = scene_manager->createCamera("Main Camera");
+			main_camera->setPosition(Ogre::Vector3(0, 2.5, -7.5));
+			main_camera->lookAt(Ogre::Vector3(0, 0, 0));
+			main_camera->setNearClipDistance(0.2f);
+			main_camera->setFarClipDistance(1000.0f);
+			main_camera->setAutoAspectRatio(true);
 
 			Ogre::CompositorManager2* const compositor_manager = root.getCompositorManager2();
 			compositor_manager->createBasicWorkspaceDef("Test Workspace", k_background_color);
@@ -52,6 +129,9 @@ namespace ot::graphics
 			overlay_system = std::make_unique<Ogre::v1::OverlaySystem>();
 			scene_manager->addRenderQueueListener(overlay_system.get());
 			scene_manager->getRenderQueue()->setSortRenderQueue(Ogre::v1::OverlayManager::getSingleton().mDefaultRenderQueueId, Ogre::RenderQueue::StableSort);
+
+			scene_manager->setShadowDirectionalLightExtrusionDistance(500.0f);
+			scene_manager->setShadowFarDistance(500.0f);
 		}
 
 		void cleanup()
@@ -100,6 +180,11 @@ namespace ot::graphics
 			s += "Camera Pos: {" + Ogre::StringConverter::toString(main_camera->getPosition()) + "}\n";
 			s += "Camera Rot: {" + Ogre::StringConverter::toString(main_camera->getDirection()) + "}\n";
 			debug_text->set_text(s);
+
+			for (auto & mesh_node : scene_nodes)
+			{
+				mesh_node.node->rotate(Ogre::Vector3(0.f, 1.f, 0.f), Ogre::Radian(dt.count()));
+			}
 		}
 
 		bool render()
@@ -112,21 +197,24 @@ namespace ot::graphics
 
 		void setup_scene()
 		{
-			Ogre::SceneNode* dynamic_root = scene_manager->getRootSceneNode(Ogre::SCENE_DYNAMIC);
-			cube_node = dynamic_root->createChildSceneNode(Ogre::SCENE_DYNAMIC);
-			cube_node->setPosition(Ogre::Vector3(-5.0f, 0.f, 0.f));
+			Ogre::SceneNode* root_node = scene_manager->getRootSceneNode(Ogre::SCENE_DYNAMIC);
 
-			Ogre::Item* cube = scene_manager->createItem("Cube_d.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_DYNAMIC);
-			cube_node->attachObject(cube);
+			///  Meshes
+			scene_nodes = { 
+				make_mesh_node(scene_manager, make_cube_mesh("CustomCube"), Ogre::Vector3(-2.5f, 0.f, 0.f)),
+				make_mesh_node(scene_manager, make_octagon_prism("CustomOctagon"), Ogre::Vector3(0.f, 0.f, 0.f)),
+				make_mesh_node(scene_manager, make_pyramid("CustomPyramid"), Ogre::Vector3(2.5f, 0.f, 0.f)),
+			};
 
-			// Position it at 500 in Z direction
-			main_camera->setPosition(Ogre::Vector3(0, 5, 15));
-			// Look back along -Z
-			main_camera->lookAt(Ogre::Vector3(0, 0, 0));
-			main_camera->setNearClipDistance(0.2f);
-			main_camera->setFarClipDistance(1000.0f);
-			main_camera->setAutoAspectRatio(true);
+			/// Lights
+			Ogre::Light* light = scene_manager->createLight();
+			Ogre::SceneNode* light_node = root_node->createChildSceneNode(Ogre::SCENE_DYNAMIC, Ogre::Vector3(10.f, 10.f, -10.f));
+			light_node->attachObject(light);
+			light->setPowerScale(Ogre::Math::PI);
+			light->setType(Ogre::Light::LT_DIRECTIONAL);
+			light->setDirection(Ogre::Vector3(-1.f, -1.f, 1.f).normalisedCopy());
 
+			/// Overlay
 			auto & manager = Ogre::v1::OverlayManager::getSingleton();
 
 			ogre::string const debug_name("debug_overlay");

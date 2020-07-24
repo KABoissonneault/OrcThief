@@ -26,6 +26,9 @@ namespace
 
 	void load_hlms(std::filesystem::path const& resource_folder)
 	{
+		auto & root = Ogre::Root::getSingleton();
+		Ogre::HlmsManager* const hlms_manager = root.getHlmsManager();
+
 		Ogre::String main_folder;
 		Ogre::StringVector library_folders;
 		{
@@ -42,7 +45,7 @@ namespace
 			});
 
 			// Takes ownership of main_archive, but copies library_archives
-			Ogre::Root::getSingleton().getHlmsManager()->registerHlms(OGRE_NEW Ogre::HlmsUnlit(main_archive, &library_archives));
+			hlms_manager->registerHlms(OGRE_NEW Ogre::HlmsUnlit(main_archive, &library_archives));
 		}
 
 		{
@@ -59,8 +62,10 @@ namespace
 				});
 
 			// Takes ownership of main_archive, but copies library_archives
-			Ogre::Root::getSingleton().getHlmsManager()->registerHlms(OGRE_NEW Ogre::HlmsPbs(main_archive, &library_archives));
+			hlms_manager->registerHlms(OGRE_NEW Ogre::HlmsPbs(main_archive, &library_archives));
 		}
+
+		static_cast<Ogre::HlmsPbs*>(hlms_manager->getHlms(Ogre::HLMS_PBS))->loadLtcMatrix();
 	}
 
 	void push_window_event(SDL_Event const& e, std::vector<ot::graphics::window_event>& window_events)
@@ -183,9 +188,9 @@ extern "C" int main(int argc, char** argv)
 	g.setup_scene();
 
 	using namespace ot::math::literals;
-	auto last = std::chrono::steady_clock::now();
-	auto leftover = 0._s;
+	auto last_frame = std::chrono::steady_clock::now();
 	auto const frame_time = 0.02_s;
+	auto frame_accumulator = frame_time;
 
 	bool quit = false;
 	while (!quit) {
@@ -206,19 +211,19 @@ extern "C" int main(int argc, char** argv)
 		}
 
 		// Update
-		while (leftover > frame_time)
+		while (frame_accumulator >= frame_time)
 		{
 			g.update(frame_time);
-			leftover -= frame_time;
+			frame_accumulator -= frame_time;
 		}
 
 		// Rendering
 		if (!g.render())
 			break;		
 
-		auto const current = std::chrono::steady_clock::now();
-		leftover += (current - last);
-		last = current;
+		auto const current_frame = std::chrono::steady_clock::now();
+		frame_accumulator += std::min(1._s, std::chrono::duration_cast<ot::math::seconds>(current_frame - last_frame));
+		last_frame = current_frame;
 	}
 
 	SDL_Quit();
