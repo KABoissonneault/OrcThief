@@ -59,8 +59,39 @@ Where "x64" is for 64-bits Windows binaries. Debug contains non-optimized binari
 
 Adding PDB files too can't hurt.
 
-## Configuring the project
+## Project
+
+Now, time to build the project itself. The repository layout consists of the following layout:
+- /ext, which contains the external dependencies
+- /lib, which contains the local submodules of the project
+- /res, which contains the non-code assets (ie: resources) of the project
+- /src, which contains the code of the main executable module of the project
+- /test, which contains the unit test executable module
+- /vs_build, which contains the provided Visual Studio 2019 generator
+
+For folders containing other code modules (/ext, /lib, /test, etc...), this general layout can be found recursively:
+- /ext, again containing the external dependencies of the module
+- /include, for the public headers of the module
+- /src, for the private headers and source of the module
+- /vs_build, which contains a provided Visual Studio 2019 generator
+
+To get started building the project itself, open /vs_build/OrcThief.sln on your favorite Windows distribution. Select your desired Configuration. Build the OrcThief project.
+
+Voilà.
+
+# Running the project
+
+Find the output directory of the executable (ex: /vs_build/x64/Debug). If you ran the steps in the Building section, you should see OrcThief.exe. Now, there's a few requirements before actually running the executable.
+
+## Runtime Dependencies
+
+Time to find those DLLs. TODO
+
+## Configuration
+
 TODO
 
-## Running the project
+## Required resources
+
 TODO
+
