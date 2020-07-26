@@ -8,4 +8,5 @@
 namespace ot::graphics
 {
 	Ogre::MeshPtr make_static_mesh(ogre::string const& name, math::mesh const& mesh);
+	Ogre::MeshPtr make_wireframe_mesh(ogre::string const& name, math::mesh const& mesh);
 }
