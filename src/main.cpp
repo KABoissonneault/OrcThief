@@ -6,19 +6,132 @@
 #include "Ogre/ArchiveType.h"
 #include "Ogre/ArchiveManager.h"
 #include "Ogre/HlmsManager.h"
+#include "Ogre/ConfigOptionMap.h"
+#include "Ogre/RenderSystem.h"
 
-#include "graphics/window.h"
 #include "graphics/window_type.h"
 #include "graphics/module.h"
 
 #include "math/unit/time.h"
 
 #include <SDL.h>
+#include <SDL_syswm.h>
+#include "SDL2/window.h"
+#include "SDL2/macro.h"
 
 #include <filesystem>
 
 namespace
 {
+	std::filesystem::path resource_folder_path;
+
+	[[nodiscard]] bool load_program_config()
+	{
+		if (!std::filesystem::exists("config.cfg"))
+		{
+			std::printf("Program needs 'config.cfg' to run. Ensure a proper config file is in the current working directory\n");
+			return false;
+		}
+
+		// Handle program config
+		Ogre::ConfigFile program_config;
+		program_config.load("config.cfg");
+
+		Ogre::String const resource_folder = program_config.getSetting("ResourceRoot", "Core");
+		if (resource_folder.empty())
+		{
+			std::printf("'ResourceRoot' under [Core] not found in 'config.cfg'. Ensure a proper config file is in the current working directory\n");
+			return false;
+		}
+
+		auto load_it = program_config.getSettingsIterator("AlwaysLoad");
+		resource_folder_path = std::filesystem::path(resource_folder);
+		for (auto const& kv : load_it)
+		{
+			auto const type_name = kv.first;
+			if (type_name != ot::ogre::archive_type::filesystem && type_name != ot::ogre::archive_type::zip && type_name != ot::ogre::archive_type::embedded_zip)
+			{
+				std::printf("Warning: AlwaysLoad resource of type '%s' is not supported\n", type_name.c_str());
+				continue;
+			}
+
+			auto const resource_path = kv.second;
+			auto const full_path = resource_folder_path / resource_path;
+
+			if (!std::filesystem::exists(full_path))
+			{
+				std::printf("Warning: AlwaysLoad resource '%s' was requested but could not be found", full_path.string().c_str());
+				continue;
+			}
+			Ogre::ResourceGroupManager::getSingleton().addResourceLocation(full_path.string(), type_name);
+		}
+
+		return true;
+	}
+
+	char const* const k_window_title = "OrcThief";
+
+	bool get_fullscreen(ot::ogre::config_option_map const& config)
+	{
+		bool fullscreen;
+		return ot::ogre::render_system::get_fullscreen(config, fullscreen) ? fullscreen : false;
+	}
+
+	std::pair<int, int> get_resolution(ot::ogre::config_option_map const& config)
+	{
+		int width, height;
+		return ot::ogre::render_system::get_resolution(config, width, height) ? std::make_pair(width, height) : std::make_pair(1280, 768);
+	}
+
+	ot::sdl::unique_window create_window()
+	{
+		auto const& config = Ogre::Root::getSingleton().getRenderSystem()->getConfigOptions();
+
+		bool const fullscreen = get_fullscreen(config);
+		auto const [width, height] = get_resolution(config);
+
+		SDL_Window* physical_window;
+		if (fullscreen)
+		{
+			physical_window = SDL_CreateWindow(k_window_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_RESIZABLE);
+		} else
+		{
+			physical_window = SDL_CreateWindow(k_window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+		}
+
+		return ot::sdl::unique_window{ physical_window };
+	}
+
+	std::string get_native_handle_string(SDL_Window& window)
+	{
+		SDL_SysWMinfo wm_info;
+		SDL_VERSION(&wm_info.version);
+		OT_SDL_ENSURE(SDL_GetWindowWMInfo(&window, &wm_info));
+		switch (wm_info.subsystem)
+		{
+#if defined(SDL_VIDEO_DRIVER_WINDOWS)
+		case SDL_SYSWM_WINDOWS: return std::to_string(reinterpret_cast<uintptr_t>(wm_info.info.win.window));
+#endif
+		default: OT_SDL_FAILURE("SDL_Window subsystem not implemented");
+		}
+	}
+
+	bool is_fullscren(SDL_Window& window)
+	{
+		return (SDL_GetWindowFlags(&window) & SDL_WINDOW_FULLSCREEN) != 0;
+	}
+
+	ot::graphics::window_parameters make_window_parameters(SDL_Window& physical_window)
+	{
+		ot::graphics::window_parameters params;
+		params.window_handle = get_native_handle_string(physical_window);
+		params.event_id = ot::graphics::window_id{ SDL_GetWindowID(&physical_window) };
+		params.window_title = SDL_GetWindowTitle(&physical_window);
+		params.fullscreen = is_fullscren(physical_window);
+		SDL_GetWindowSize(&physical_window, &params.width, &params.height);
+		return params;
+	}
+
 	size_t get_number_threads()
 	{
 		return Ogre::PlatformInformation::getNumLogicalCores();
@@ -64,8 +177,6 @@ namespace
 			// Takes ownership of main_archive, but copies library_archives
 			hlms_manager->registerHlms(OGRE_NEW Ogre::HlmsPbs(main_archive, &library_archives));
 		}
-
-		static_cast<Ogre::HlmsPbs*>(hlms_manager->getHlms(Ogre::HLMS_PBS))->loadLtcMatrix();
 	}
 
 	void push_window_event(SDL_Event const& e, std::vector<ot::graphics::window_event>& window_events)
@@ -112,50 +223,30 @@ namespace
 		}
 	}
 
-	char const* const k_window_title = "OrcThief";
+	void initialize_graphics(ot::graphics::module& g, SDL_Window& window)
+	{
+		auto const window_params = make_window_parameters(window);
+		g.initialize(window_params, get_number_threads() - 1);
+	}
+
+	class key_input
+	{
+
+	};
 }
 
 extern "C" int main(int argc, char** argv)
 {
-	Ogre::Root root;
+	auto const plugin_path = "Ogre/plugins" OGRE_BUILD_SUFFIX ".cfg";
+	auto const config_path = "Ogre/ogre.cfg";
+	auto const log_path = "Ogre/ogre.log";
 
-	if (!std::filesystem::exists("config.cfg"))
+	Ogre::Root root(plugin_path, config_path, log_path);
+
+	// Handle config.cfg
+	if (!load_program_config())
 	{
-		std::printf("Program needs 'config.cfg' to run. Ensure a proper config file is in the current working directory\n");
 		return -1;
-	}
-
-	// Handle program config
-	Ogre::ConfigFile program_config;
-	program_config.load("config.cfg");
-
-	Ogre::String const resource_folder = program_config.getSetting("ResourceRoot", "Core");
-	if (resource_folder.empty())
-	{
-		std::printf("'ResourceRoot' under [Core] not found in 'config.cfg'. Ensure a proper config file is in the current working directory\n");
-		return -1;
-	}
-
-	auto load_it = program_config.getSettingsIterator("AlwaysLoad");
-	auto const resource_folder_path = std::filesystem::path(resource_folder);
-	for (auto const& kv : load_it)
-	{
-		auto const type_name = kv.first;
-		if (type_name != ot::ogre::archive_type::filesystem && type_name != ot::ogre::archive_type::zip && type_name != ot::ogre::archive_type::embedded_zip)
-		{
-			std::printf("Warning: AlwaysLoad resource of type '%s' is not supported\n", type_name.c_str());
-			continue;
-		}
-
-		auto const resource_path = kv.second;
-		auto const full_path = resource_folder_path / resource_path;
-		
-		if (!std::filesystem::exists(full_path))
-		{
-			std::printf("Warning: AlwaysLoad resource '%s' was requested but could not be found", full_path.string().c_str());
-			continue;
-		}
-		Ogre::ResourceGroupManager::getSingleton().addResourceLocation(full_path.string(), type_name);
 	}
 
 	// Handle RenderSystem config
@@ -179,8 +270,9 @@ extern "C" int main(int argc, char** argv)
 
 	root.initialise(false /*create window*/);
 
+	auto const window = create_window();
 	ot::graphics::module g;
-	g.initialize(k_window_title, get_number_threads() - 1);
+	initialize_graphics(g, *window);
 
 	load_hlms(resource_folder_path);
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups(true);
@@ -207,7 +299,7 @@ extern "C" int main(int argc, char** argv)
 
 		{
 			SDL_Event e;
-			while (SDL_PollEvent(&e)); // clear the other events
+			while (SDL_PollEvent(&e));
 		}
 
 		// Update

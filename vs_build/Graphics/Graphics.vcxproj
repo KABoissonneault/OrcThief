@@ -67,7 +67,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="graphics.props" />
     <Import Project="..\Ogre\Ogre.props" />
-    <Import Project="..\SDL2\SDL2.props" />
     <Import Project="..\Core\Core.props" />
     <Import Project="..\Math\Math.props" />
   </ImportGroup>
@@ -75,7 +74,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="graphics.props" />
     <Import Project="..\Ogre\Ogre.props" />
-    <Import Project="..\SDL2\SDL2.props" />
     <Import Project="..\Core\Core.props" />
     <Import Project="..\Math\Math.props" />
   </ImportGroup>
@@ -152,7 +150,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Graphics\include\graphics\module.h" />
-    <ClInclude Include="..\..\lib\Graphics\include\graphics\window.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\window_type.h" />
     <ClInclude Include="..\..\lib\Graphics\src\shadowed_text.h" />
     <ClInclude Include="..\..\lib\Graphics\src\static_mesh.h" />
@@ -161,7 +158,6 @@
     <ClCompile Include="..\..\lib\Graphics\src\module.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\shadowed_text.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\static_mesh.cpp" />
-    <ClCompile Include="..\..\lib\Graphics\src\window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

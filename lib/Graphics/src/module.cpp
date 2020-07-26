@@ -10,6 +10,9 @@
 #include "Ogre/Components/Overlay/System.h"
 #include "Ogre/Mesh2.h"
 #include "Ogre/SubMesh2.h"
+#include "Ogre/ConfigOptionMap.h"
+#include "Ogre/RenderSystem.h"
+#include "Ogre/Window.h"
 
 #include "math/vector3.h"
 #include "math/mesh.h"
@@ -34,12 +37,7 @@ namespace ot::graphics
 			{{0, -1, 0}, 0.5},
 			{{0, 0, -1}, 0.5},
 		};
-
-		Ogre::MeshPtr make_cube_mesh(ogre::string const& name)
-		{
-			return make_static_mesh(name, math::mesh::make_from_planes(cube_planes));
-		}
-
+		
 		auto const sqrt_half = 0.70710678118654752440084436210485;
 		math::plane const octagon_planes[] = {
 			{{0, 1, 0}, 0.5},
@@ -54,11 +52,6 @@ namespace ot::graphics
 			{{-sqrt_half, 0, -sqrt_half}, 0.5},
 		};
 
-		Ogre::MeshPtr make_octagon_prism(ogre::string const& name)
-		{
-			return make_static_mesh(name, math::mesh::make_from_planes(octagon_planes));
-		}
-
 		math::plane const pyramid_planes[] = {
 			{{0, -1, 0}, 0.5},
 			{{sqrt_half, sqrt_half, 0}, 0.5},
@@ -67,26 +60,23 @@ namespace ot::graphics
 			{{0, sqrt_half, -sqrt_half}, 0.5},
 		};
 
-		Ogre::MeshPtr make_pyramid(ogre::string const& name)
-		{
-			return make_static_mesh(name, math::mesh::make_from_planes(pyramid_planes));
-		}
-
 		struct MeshNode
 		{
+			math::mesh mesh;
+			Ogre::MeshPtr render_mesh;
 			Ogre::SceneNode* node;
-			Ogre::MeshPtr mesh;
 		};
 
-		MeshNode make_mesh_node(Ogre::SceneManager* scene_manager, Ogre::MeshPtr mesh, Ogre::Vector3 const& position)
+		bool get_vsync(ot::ogre::config_option_map const& config)
 		{
-			Ogre::SceneNode* const root_node = scene_manager->getRootSceneNode(Ogre::SCENE_DYNAMIC);
-			Ogre::Item* const item = scene_manager->createItem(mesh, Ogre::SCENE_DYNAMIC);
+			bool vsync;
+			return ot::ogre::render_system::get_vsync(config, vsync) ? vsync : false;
+		}
 
-			Ogre::SceneNode* const node = root_node->createChildSceneNode(Ogre::SCENE_DYNAMIC, position);
-			node->attachObject(item);
-
-			return { node, std::move(mesh) };
+		bool get_hardware_gamma_conversion(ot::ogre::config_option_map const& config)
+		{
+			bool gamma;
+			return ot::ogre::render_system::get_hardware_gamma_conversion(config, gamma) ? gamma : false;
 		}
 	}
 
@@ -95,9 +85,12 @@ namespace ot::graphics
 		Ogre::SceneManager* scene_manager;
 		Ogre::Camera* main_camera;
 		Ogre::CompositorWorkspace* main_workspace;
-		ot::graphics::window main_window;
+		Ogre::Window* render_window;
+		window_id render_window_id;
 
 		std::vector<MeshNode> scene_nodes;
+
+		Ogre::MeshPtr selection_mesh;
 
 		std::unique_ptr<Ogre::v1::OverlaySystem> overlay_system;
 		Ogre::v1::Overlay* debug_overlay;
@@ -108,13 +101,21 @@ namespace ot::graphics
 			cleanup();
 		}
 
-		void initialize(char const* window_title, size_t number_threads)
+		void initialize(window_parameters window_params, size_t number_threads)
 		{
 			auto& root = Ogre::Root::getSingleton();
+			auto const& config = root.getRenderSystem()->getConfigOptions();
 
-			main_window = ot::graphics::window::create(window_title);
+			auto const misc_params = ot::ogre::render_window_misc_params{}
+				.set_external_window_handle(window_params.window_handle)
+				.set_hardware_gamma_conversion(get_hardware_gamma_conversion(config))
+				.set_vsync(get_vsync(config))
+				.params;
+			render_window = root.createRenderWindow(window_params.window_handle, window_params.width, window_params.height, window_params.fullscreen, &misc_params);
+			render_window_id = window_params.event_id;
+
 			scene_manager = root.createSceneManager(Ogre::ST_GENERIC, number_threads);
-			
+
 			main_camera = scene_manager->createCamera("Main Camera");
 			main_camera->setPosition(Ogre::Vector3(0, 2.5, -7.5));
 			main_camera->lookAt(Ogre::Vector3(0, 0, 0));
@@ -124,7 +125,7 @@ namespace ot::graphics
 
 			Ogre::CompositorManager2* const compositor_manager = root.getCompositorManager2();
 			compositor_manager->createBasicWorkspaceDef("Test Workspace", k_background_color);
-			main_workspace = compositor_manager->addWorkspace(scene_manager, main_window.get_render_texture(), main_camera, "Test Workspace", true /*enabled*/);
+			main_workspace = compositor_manager->addWorkspace(scene_manager, render_window->getTexture(), main_camera, "Test Workspace", true /*enabled*/);
 
 			overlay_system = std::make_unique<Ogre::v1::OverlaySystem>();
 			scene_manager->addRenderQueueListener(overlay_system.get());
@@ -136,26 +137,31 @@ namespace ot::graphics
 
 		void cleanup()
 		{
+			for (auto const& scene_node : scene_nodes)
+			{
+				scene_node.node->removeAndDestroyAllChildren();
+			}
+
 			if (scene_manager != nullptr)
 			{
 				if (overlay_system != nullptr)
 				{
 					scene_manager->removeRenderQueueListener(overlay_system.get());
 				}
+				Ogre::Root::getSingleton().destroySceneManager(scene_manager);
 			}
 
 			overlay_system.reset();
 			main_workspace = nullptr;
-			main_camera = nullptr;
+			main_camera = nullptr;			
 			scene_manager = nullptr;
-			main_window.cleanup();
 		}
 
 		void on_window_events(std::span<window_event const> events)
 		{
 			for (ot::graphics::window_event const& event : events)
 			{
-				if (event.id != main_window.get_window_id())
+				if (event.id != render_window_id)
 				{
 					continue;
 				}
@@ -163,13 +169,13 @@ namespace ot::graphics
 				std::visit([this](auto e)
 				{
 					if constexpr (std::is_same_v<decltype(e), window_event::moved>)
-						main_window.on_moved(e.new_x, e.new_y);
+						render_window->windowMovedOrResized();
 					else if constexpr (std::is_same_v<decltype(e), window_event::resized>)
-						main_window.on_resized(e.new_width, e.new_height);
+						render_window->windowMovedOrResized();
 					else if constexpr (std::is_same_v<decltype(e), window_event::focus_gained>)
-						main_window.on_focus_gained();
+						render_window->setFocused(true);
 					else if constexpr (std::is_same_v<decltype(e), window_event::focus_lost>)
-						main_window.on_focus_lost();
+						render_window->setFocused(false);
 				}, event.data);
 			}
 		}
@@ -189,7 +195,7 @@ namespace ot::graphics
 
 		bool render()
 		{
-			if (main_window.is_visible())
+			if (render_window->isVisible())
 				return Ogre::Root::getSingleton().renderOneFrame();
 
 			return true;
@@ -199,12 +205,18 @@ namespace ot::graphics
 		{
 			Ogre::SceneNode* root_node = scene_manager->getRootSceneNode(Ogre::SCENE_DYNAMIC);
 
+			auto const cube_mesh = math::mesh::make_from_planes(cube_planes);
+
 			///  Meshes
 			scene_nodes = { 
-				make_mesh_node(scene_manager, make_cube_mesh("CustomCube"), Ogre::Vector3(-2.5f, 0.f, 0.f)),
-				make_mesh_node(scene_manager, make_octagon_prism("CustomOctagon"), Ogre::Vector3(0.f, 0.f, 0.f)),
-				make_mesh_node(scene_manager, make_pyramid("CustomPyramid"), Ogre::Vector3(2.5f, 0.f, 0.f)),
+				make_mesh_node(cube_planes, "CustomCube", Ogre::Vector3(-2.5f, 0.f, 0.f)),
+				make_mesh_node(octagon_planes, "CustomOctagon", Ogre::Vector3(0.f, 0.f, 0.f)),
+				make_mesh_node(pyramid_planes, "CustomPyramid", Ogre::Vector3(2.5f, 0.f, 0.f)),
 			};
+
+			selection_mesh = make_wireframe_mesh("SelectionWire", cube_mesh);
+			auto const child_node = scene_nodes[0].node->createChildSceneNode();
+			child_node->attachObject(scene_manager->createItem(selection_mesh));
 
 			/// Lights
 			Ogre::Light* light = scene_manager->createLight();
@@ -226,6 +238,20 @@ namespace ot::graphics
 
 			debug_overlay->show();
 		}
+
+		MeshNode make_mesh_node(std::span<math::plane const> planes, ogre::string const& name, Ogre::Vector3 const& position)
+		{
+			auto mesh = math::mesh::make_from_planes(planes);
+			auto render_mesh = make_static_mesh(name, mesh);
+
+			Ogre::SceneNode* const root_node = scene_manager->getRootSceneNode(Ogre::SCENE_DYNAMIC);
+			Ogre::Item* const item = scene_manager->createItem(render_mesh, Ogre::SCENE_DYNAMIC);
+
+			Ogre::SceneNode* const node = root_node->createChildSceneNode(Ogre::SCENE_DYNAMIC, position);
+			node->attachObject(item);
+
+			return { std::move(mesh), std::move(render_mesh), node };
+		}
 	};
 
 	module::module()
@@ -236,9 +262,9 @@ namespace ot::graphics
 
 	module::~module() = default;
 
-	void module::initialize(char const* window_title, size_t number_threads)
+	void module::initialize(window_parameters const& window_params, size_t number_threads)
 	{
-		pimpl->initialize(window_title, number_threads);
+		pimpl->initialize(window_params, number_threads);
 	}
 
 	void module::on_window_events(std::span<window_event const> events)

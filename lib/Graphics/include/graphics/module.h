@@ -1,15 +1,25 @@
 #pragma once
 
 #include "Ogre/Root.h"
-#include "graphics/window.h"
+#include "graphics/window_type.h"
 #include "math/unit/time.h"
 
 #include <span>
-#include <chrono>
 #include <memory>
+#include <string>
 
 namespace ot::graphics
 {
+	struct window_parameters
+	{
+		std::string window_handle; // string representation of the native window handle
+		window_id event_id; // id of the window, for use when window_event's are provided later
+		std::string window_title;
+		bool fullscreen;
+		int width;
+		int height;
+	};
+
 	class module
 	{
 		struct impl;
@@ -23,7 +33,7 @@ namespace ot::graphics
 		module& operator=(module&&) noexcept = default;
 		~module();
 
-		void initialize(char const* window_title, size_t number_threads);
+		void initialize(window_parameters const& window_params, size_t number_threads);
 
 		void on_window_events(std::span<window_event const> events);
 		
