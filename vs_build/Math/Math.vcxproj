@@ -145,14 +145,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\lib\Math\include\math\AABB.h" />
-    <ClInclude Include="..\..\lib\Math\include\Math\mesh.h" />
+    <ClInclude Include="..\..\lib\Math\include\math\aabb.h" />
     <ClInclude Include="..\..\lib\Math\include\math\plane.h" />
     <ClInclude Include="..\..\lib\Math\include\math\unit\time.h" />
     <ClInclude Include="..\..\lib\Math\include\Math\vector3.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\lib\Math\src\mesh.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\ext\Catch2\include;$(SolutionDir)..\..\lib\Math\include;$(SolutionDir)..\..\lib\Core\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\ext\Catch2\include;$(SolutionDir)..\..\lib\Math\include;$(SolutionDir)..\..\lib\Core\include;$(SolutionDir)..\..\lib\Graphics\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -132,7 +132,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\ext\Catch2\include;$(SolutionDir)..\..\lib\Math\include;$(SolutionDir)..\..\lib\Core\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\ext\Catch2\include;$(SolutionDir)..\..\lib\Math\include;$(SolutionDir)..\..\lib\Core\include;$(SolutionDir)..\..\lib\Graphics\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -145,10 +145,13 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\core\float.test.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
-    <ClCompile Include="..\..\src\math\mesh.test.cpp" />
+    <ClCompile Include="..\..\src\math\mesh_definition.test.cpp" />
     <ClCompile Include="..\..\src\math\plane.test.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\vs_build\Graphics\Graphics.vcxproj">
+      <Project>{808fa609-f742-469c-bc5d-895d9e45cbee}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\vs_build\Math\Math.vcxproj">
       <Project>{66b5eaca-d273-47fe-9fd2-843251be43e2}</Project>
     </ProjectReference>

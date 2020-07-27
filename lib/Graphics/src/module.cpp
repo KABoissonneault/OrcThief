@@ -1,5 +1,7 @@
 #include "graphics/module.h"
 
+#include "graphics/mesh_definition.h"
+
 #include "Ogre/Compositor/CompositorManager2.h"
 #include "Ogre/Item.h"
 #include "Ogre/Camera.h"
@@ -15,7 +17,6 @@
 #include "Ogre/Window.h"
 
 #include "math/vector3.h"
-#include "math/mesh.h"
 
 #include "shadowed_text.h"
 #include "static_mesh.h"
@@ -62,7 +63,7 @@ namespace ot::graphics
 
 		struct MeshNode
 		{
-			math::mesh mesh;
+			mesh_definition mesh;
 			Ogre::MeshPtr render_mesh;
 			Ogre::SceneNode* node;
 		};
@@ -205,7 +206,7 @@ namespace ot::graphics
 		{
 			Ogre::SceneNode* root_node = scene_manager->getRootSceneNode(Ogre::SCENE_DYNAMIC);
 
-			auto const cube_mesh = math::mesh::make_from_planes(cube_planes);
+			auto const cube_mesh = mesh_definition::make_from_planes(cube_planes);
 
 			///  Meshes
 			scene_nodes = { 
@@ -241,7 +242,7 @@ namespace ot::graphics
 
 		MeshNode make_mesh_node(std::span<math::plane const> planes, ogre::string const& name, Ogre::Vector3 const& position)
 		{
-			auto mesh = math::mesh::make_from_planes(planes);
+			auto mesh = mesh_definition::make_from_planes(planes);
 			auto render_mesh = make_static_mesh(name, mesh);
 
 			Ogre::SceneNode* const root_node = scene_manager->getRootSceneNode(Ogre::SCENE_DYNAMIC);

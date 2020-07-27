@@ -19,19 +19,22 @@
     <Filter Include="Source Files\core">
       <UniqueIdentifier>{b04a101f-53e5-4630-a64c-701c90139aaa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\graphics">
+      <UniqueIdentifier>{338136ea-9933-412d-8c3d-32abe72b5621}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\math\mesh.test.cpp">
-      <Filter>Source Files\math</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\math\plane.test.cpp">
       <Filter>Source Files\math</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\core\float.test.cpp">
       <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\mesh_definition.test.cpp">
+      <Filter>Source Files\graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

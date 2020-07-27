@@ -149,12 +149,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\lib\Graphics\include\graphics\mesh_definition.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\module.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\window_type.h" />
     <ClInclude Include="..\..\lib\Graphics\src\shadowed_text.h" />
     <ClInclude Include="..\..\lib\Graphics\src\static_mesh.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\lib\Graphics\src\mesh_definition.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\module.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\shadowed_text.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\static_mesh.cpp" />

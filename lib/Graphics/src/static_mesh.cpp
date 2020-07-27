@@ -88,7 +88,7 @@ namespace ot::graphics
 			return index_buffer;
 		}
 
-		[[nodiscard]] std::pair<size_t, size_t> get_triangle_vertex_index_count(math::mesh const& mesh)
+		[[nodiscard]] std::pair<size_t, size_t> get_triangle_vertex_index_count(mesh_definition const& mesh)
 		{
 			size_t vertex_count = 0;
 			size_t index_count = 0;
@@ -103,7 +103,7 @@ namespace ot::graphics
 			return { vertex_count, index_count };
 		}
 
-		[[nodiscard]] std::pair<size_t, size_t> get_wireframe_vertex_index_count(math::mesh const& mesh)
+		[[nodiscard]] std::pair<size_t, size_t> get_wireframe_vertex_index_count(mesh_definition const& mesh)
 		{
 			size_t vertex_count = 0;
 			size_t index_count = 0;
@@ -126,7 +126,7 @@ namespace ot::graphics
 
 		// Builds a fan-shaped triangle list
 		// Triangle fans are not support on Direct3D 11, and we need something that works for the whole mesh anyway
-		[[nodiscard]] auto make_triangle_data(math::mesh const& mesh) -> vertex_array_data
+		[[nodiscard]] auto make_triangle_data(mesh_definition const& mesh) -> vertex_array_data
 		{
 			auto const [vertex_count, index_count] = get_triangle_vertex_index_count(mesh);
 
@@ -171,7 +171,7 @@ namespace ot::graphics
 			};
 		}
 
-		[[nodiscard]] auto make_wireframe_data(math::mesh const& mesh) -> vertex_array_data
+		[[nodiscard]] auto make_wireframe_data(mesh_definition const& mesh) -> vertex_array_data
 		{
 			auto const [vertex_count, index_count] = get_wireframe_vertex_index_count(mesh);
 
@@ -211,7 +211,7 @@ namespace ot::graphics
 			};
 		}
 
-		[[nodiscard]] Ogre::VertexArrayObject* make_render_vao(math::mesh const& mesh)
+		[[nodiscard]] Ogre::VertexArrayObject* make_render_vao(mesh_definition const& mesh)
 		{
 			auto& root = Ogre::Root::getSingleton();
 			auto const render_system = root.getRenderSystem();
@@ -225,7 +225,7 @@ namespace ot::graphics
 			return vao_manager->createVertexArrayObject(vertex_buffers, index_buffer, Ogre::OT_TRIANGLE_LIST);
 		}
 
-		[[nodiscard]] Ogre::VertexArrayObject* make_wireframe_vao(math::mesh const& mesh)
+		[[nodiscard]] Ogre::VertexArrayObject* make_wireframe_vao(mesh_definition const& mesh)
 		{
 			auto& root = Ogre::Root::getSingleton();
 			auto const render_system = root.getRenderSystem();
@@ -248,7 +248,7 @@ namespace ot::graphics
 		}
 	}
 
-	Ogre::MeshPtr make_static_mesh(ogre::string const& name, math::mesh const& mesh)
+	Ogre::MeshPtr make_static_mesh(ogre::string const& name, mesh_definition const& mesh)
 	{
 		Ogre::MeshPtr const render_mesh = Ogre::MeshManager::getSingleton().createManual(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 
@@ -262,7 +262,7 @@ namespace ot::graphics
 		return render_mesh;
 	}
 
-	Ogre::MeshPtr make_wireframe_mesh(ogre::string const& name, math::mesh const& mesh)
+	Ogre::MeshPtr make_wireframe_mesh(ogre::string const& name, mesh_definition const& mesh)
 	{
 		Ogre::MeshPtr const wireframe_mesh = Ogre::MeshManager::getSingleton().createManual(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 		

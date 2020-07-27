@@ -1,19 +1,19 @@
-#include "math/mesh.h"
+#include "graphics/mesh_definition.h"
 
 #include <numeric>
 
-namespace ot::math
+namespace ot::graphics
 {	
 	namespace half_edge
 	{
-		auto split_at(mesh & m, id edge_id, point3d point) -> id
+		auto split_at(mesh_definition & m, id edge_id, math::point3d point) -> id
 		{
 			m.half_edges.reserve(m.half_edges.capacity() + 2);
 
-			mesh::half_edge_data& edge = m.get_half_edge(edge_id);
+			mesh_definition::half_edge_data& edge = m.get_half_edge(edge_id);
 
 			auto const twin_id = edge.twin;
-			mesh::half_edge_data& twin = m.get_half_edge(twin_id);
+			mesh_definition::half_edge_data& twin = m.get_half_edge(twin_id);
 
 			auto const new_edge_id = id(m.half_edges.size());
 			auto& new_edge = m.half_edges.emplace_back();
@@ -22,7 +22,7 @@ namespace ot::math
 			auto& new_twin = m.half_edges.emplace_back();
 
 			auto const new_vertex_id = vertex::id(m.vertices.size());
-			mesh::vertex_data& new_vertex = m.vertices.emplace_back();
+			mesh_definition::vertex_data& new_vertex = m.vertices.emplace_back();
 			new_vertex.position = point;
 			new_vertex.first_edge = new_edge_id;
 
@@ -50,9 +50,9 @@ namespace ot::math
 
 	namespace
 	{
-		vector3d get_average_normal(std::span<plane const> planes)
+		math::vector3d get_average_normal(std::span<math::plane const> planes)
 		{
-			return normalized(std::accumulate(planes.begin(), planes.end(), vector3d{}, [](vector3d value, plane plane) { return value + plane.normal; }));
+			return normalized(std::accumulate(planes.begin(), planes.end(), math::vector3d{}, [](math::vector3d value, math::plane plane) { return value + plane.normal; }));
 		}
 
 		struct edge_intersection
@@ -62,14 +62,14 @@ namespace ot::math
 		};
 	}
 
-	struct mesh::point_intersection
+	struct mesh_definition::point_intersection
 	{
 		std::vector<edge_intersection> edges;
 		std::vector<face::id> planes;
 		vertex::id vertex;
 	};
 
-	auto mesh::find_intersections(std::span<const plane> planes, std::vector<mesh::vertex_data>& vertices, std::vector<mesh::half_edge_data>& half_edges) -> std::vector<point_intersection>
+	auto mesh_definition::find_intersections(std::span<const math::plane> planes, std::vector<mesh_definition::vertex_data>& vertices, std::vector<mesh_definition::half_edge_data>& half_edges) -> std::vector<point_intersection>
 	{
 		if (planes.size() < 3)
 		{
@@ -82,13 +82,13 @@ namespace ot::math
 		// Find the point intersections where 3 or more planes intersect
 		for (size_t i = 0; i < planes.size() - 2; ++i)
 		{
-			plane const plane1 = planes[i];
+			math::plane const plane1 = planes[i];
 			for (size_t j = i + 1; j < planes.size() - 1; ++j)
 			{
-				plane const plane2 = planes[j];
+				math::plane const plane2 = planes[j];
 				for (size_t k = j + 1; k < planes.size(); ++k)
 				{
-					plane const plane3 = planes[k];
+					math::plane const plane3 = planes[k];
 
 					auto const intersection_result = find_intersection(plane1, plane2, plane3);
 					if (!intersection_result)
@@ -97,24 +97,24 @@ namespace ot::math
 					}
 
 					std::vector<face::id> intersecting_planes{ face::id(i), face::id(j), face::id(k) };
-					std::vector<plane> plane_values{ plane1, plane2, plane3 };
+					std::vector<math::plane> plane_values{ plane1, plane2, plane3 };
 
 					// check for extra planes
 					for (size_t l = 0; l < planes.size(); ++l)
 					{
 						if (l == i || l == j || l == k) continue;
 
-						plane const plane4 = planes[l];
+						math::plane const plane4 = planes[l];
 
-						plane_side_result const result = get_plane_side(plane4, *intersection_result);
-						if (result == plane_side_result::on_plane)
+						math::plane_side_result const result = get_plane_side(plane4, *intersection_result);
+						if (result == math::plane_side_result::on_plane)
 						{
 							if (l < k)
 								goto skip_intersection; // we've already found this intersection
 
 							intersecting_planes.push_back(face::id(l));
 							plane_values.push_back(plane4);
-						} else if (result == plane_side_result::outside)
+						} else if (result == math::plane_side_result::outside)
 						{
 							goto skip_intersection; // intersection outside the mesh
 						}
@@ -122,7 +122,7 @@ namespace ot::math
 
 					{
 						auto const vertex_id = vertex::id(vertices.size());
-						mesh::vertex_data& vertex = vertices.emplace_back();
+						mesh_definition::vertex_data& vertex = vertices.emplace_back();
 						vertex.position = *intersection_result;
 						vertex.normal = get_average_normal(plane_values);
 						vertex.first_edge = half_edge::id::none;
@@ -177,7 +177,7 @@ namespace ot::math
 									vertex.first_edge = he1_id;
 								}
 
-								mesh::vertex_data& previous_vertex = vertices[static_cast<size_t>(previous_intersection.vertex)];
+								mesh_definition::vertex_data& previous_vertex = vertices[static_cast<size_t>(previous_intersection.vertex)];
 								if (previous_vertex.first_edge == half_edge::id::none)
 								{
 									previous_vertex.first_edge = he2_id;
@@ -205,14 +205,14 @@ namespace ot::math
 		}
 
 		intersections.erase(std::remove_if(intersections.begin(), intersections.end(), [](point_intersection const& p)
-			{
-				return p.edges.size() <= 2;
-			}), intersections.end());
+		{
+			return p.edges.size() <= 2;
+		}), intersections.end());
 
 		return intersections;
 	}
 
-	void mesh::resolve_edge_directions(std::span<const plane> planes, std::span<point_intersection const> intersections, std::span<mesh::half_edge_data> half_edges, std::span<mesh::face_data> faces)
+	void mesh_definition::resolve_edge_directions(std::span<const math::plane> planes, std::span<point_intersection const> intersections, std::span<mesh_definition::half_edge_data> half_edges, std::span<mesh_definition::face_data> faces)
 	{
 		// For each vertex, check which half-edges are "ingoing" (ie: pointing at the vertex) or "outgoing" (ie: has its origin at the vertex)
 		for (point_intersection const& intersection : intersections)
@@ -250,17 +250,17 @@ namespace ot::math
 					face::id const shared_plane_id = edge1.planes[plane_index1];
 					face::id const other_plane1 = edge1.planes[1 - plane_index1];
 					face::id const other_plane2 = edge2.planes[1 - plane_index2];
-					plane const shared_plane = planes[static_cast<size_t>(shared_plane_id)];
-					plane const edge1_plane = planes[static_cast<size_t>(other_plane1)];
-					plane const edge2_plane = planes[static_cast<size_t>(other_plane2)];
+					math::plane const shared_plane = planes[static_cast<size_t>(shared_plane_id)];
+					math::plane const edge1_plane = planes[static_cast<size_t>(other_plane1)];
+					math::plane const edge2_plane = planes[static_cast<size_t>(other_plane2)];
 
-					vector3d const direction = cross_product(shared_plane.normal, edge1_plane.normal);
+					math::vector3d const direction = cross_product(shared_plane.normal, edge1_plane.normal);
 
 					// Determine which edge is "ingoing" and which one is "outgoing"
 					auto const [ingoing, outgoing, outgoing_id] = [&]
 					{
-						mesh::half_edge_data& he1 = half_edges[static_cast<size_t>(edge1.edge)];
-						mesh::half_edge_data& he2 = half_edges[static_cast<size_t>(edge2.edge)];
+						mesh_definition::half_edge_data& he1 = half_edges[static_cast<size_t>(edge1.edge)];
+						mesh_definition::half_edge_data& he2 = half_edges[static_cast<size_t>(edge2.edge)];
 						if (dot_product(direction, edge2_plane.normal) < 0)
 							return std::make_tuple(&he2, &half_edges[static_cast<size_t>(he1.twin)], he1.twin);
 						else
@@ -277,17 +277,17 @@ namespace ot::math
 		}
 	}
 
-	void mesh::update_bounds(aabb& bounds, std::span<mesh::vertex_data const> vertices)
+	void mesh_definition::update_bounds(math::aabb& bounds, std::span<mesh_definition::vertex_data const> vertices)
 	{
-		for (mesh::vertex_data const& vertex : vertices)
+		for (mesh_definition::vertex_data const& vertex : vertices)
 		{
 			bounds.merge(vertex.position);
 		}
 	}
 
-	mesh mesh::make_from_planes(std::span<const plane> planes)
+	mesh_definition mesh_definition::make_from_planes(std::span<const math::plane> planes)
 	{
-		mesh m;		
+		mesh_definition m;		
 		m.faces.resize(planes.size());
 
 		std::vector<point_intersection> const intersections = find_intersections(planes, m.vertices, m.half_edges);
