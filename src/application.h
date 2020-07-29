@@ -13,6 +13,8 @@ namespace ot
 	{
 		sdl::unique_window main_window;
 		graphics::module graphics;
+		graphics::module::unique_scene main_scene;
+
 	public:
 		bool initialize();
 		void setup_default_scene();

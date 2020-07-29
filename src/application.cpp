@@ -84,7 +84,7 @@ namespace ot
 		void initialize_graphics(ot::graphics::module& g, SDL_Window& window)
 		{
 			auto const window_params = make_window_parameters(window);
-			g.initialize(window_params, get_number_threads() - 1);
+			g.initialize(window_params);
 		}
 
 		void push_window_event(SDL_Event const& e, std::vector<ot::graphics::window_event>& window_events)
@@ -137,12 +137,14 @@ namespace ot
 		main_window = create_window();
 		initialize_graphics(graphics, *main_window);
 
+		main_scene = graphics.create_scene(get_number_threads() - 1);
+
 		return true;
 	}
 
 	void application::setup_default_scene()
 	{
-		graphics.setup_scene();
+		
 	}
 
 	void application::run()

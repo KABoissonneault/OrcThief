@@ -10,6 +10,8 @@
 
 namespace ot::graphics
 {
+	class scene;
+
 	struct window_parameters
 	{
 		std::string window_handle; // string representation of the native window handle
@@ -25,6 +27,11 @@ namespace ot::graphics
 		struct impl;
 		std::unique_ptr<impl> pimpl;
 
+		struct scene_deleter
+		{
+			void operator()(scene* p) const noexcept;
+		};
+
 	public:
 		module();
 		module(module const&) = delete;
@@ -33,14 +40,15 @@ namespace ot::graphics
 		module& operator=(module&&) noexcept = default;
 		~module();
 
-		void initialize(window_parameters const& window_params, size_t number_threads);
+		void initialize(window_parameters const& window_params);
 
+		using unique_scene = std::unique_ptr<scene, scene_deleter>;
+		[[nodiscard]] unique_scene create_scene(size_t number_threads);
+		
 		void on_window_events(std::span<window_event const> events);
 		
 		void update(math::seconds dt);
-		bool render();
-
-		// temporary
-		void setup_scene();
+		// Returns false if rendering has failed and graphics cannot continue
+		[[nodiscard]] bool render();
 	};
 }

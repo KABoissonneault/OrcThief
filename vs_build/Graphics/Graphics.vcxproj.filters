@@ -24,6 +24,12 @@
     <ClInclude Include="..\..\lib\Graphics\include\graphics\mesh_definition.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Graphics\src\module.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Graphics\src\scene.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\Graphics\src\module.cpp">
@@ -36,6 +42,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\lib\Graphics\src\mesh_definition.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Graphics\src\scene.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
