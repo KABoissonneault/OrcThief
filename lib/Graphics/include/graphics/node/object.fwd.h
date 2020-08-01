@@ -13,11 +13,13 @@ namespace ot::graphics::node
 	{
 		std::byte storage[sizeof(void*)];
 
-		friend void init_object(object&, Ogre::SceneNode*);
-		friend Ogre::SceneNode& get_scene_node(object&);
+		friend void init_object(object&, Ogre::SceneNode*) noexcept;
+		friend Ogre::SceneNode& get_scene_node(object&) noexcept;
+
+		void destroy_node() noexcept;
 
 	public:
-		object() = default;
+		object() noexcept;
 		object(object const&) = delete;
 		object(object&&) noexcept;
 		object& operator=(object const&) = delete;

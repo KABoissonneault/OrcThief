@@ -49,6 +49,8 @@ namespace ot::graphics
 
 	scene_impl::~scene_impl()
 	{
+		scene_root = {};
+
 		if (scene_manager != nullptr)
 		{
 			if (overlay_system != nullptr)

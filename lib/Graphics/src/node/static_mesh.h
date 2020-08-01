@@ -6,6 +6,6 @@
 
 namespace ot::graphics::node
 {
-	void init_static_mesh(static_mesh& smesh, Ogre::SceneNode* snode, Ogre::MeshPtr mptr);
-	Ogre::MeshPtr& get_mesh_ptr(static_mesh& smesh);
+	void init_static_mesh(static_mesh& smesh, Ogre::SceneNode* snode, Ogre::MeshPtr mptr) noexcept;
+	Ogre::MeshPtr& get_mesh_ptr(static_mesh& smesh) noexcept;
 }

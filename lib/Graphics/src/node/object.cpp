@@ -1,32 +1,70 @@
 #include "object.h"
 
 #include "Ogre/SceneNode.h"
+#include "Ogre/SceneManager.h"
 
 namespace ot::graphics::node
 {
-	void init_object(object& n, Ogre::SceneNode* snode)
+	void init_object(object& n, Ogre::SceneNode* snode) noexcept
 	{
 		static_assert(sizeof(object::storage) == sizeof(Ogre::SceneNode*));
 		memcpy(&n.storage, &snode, sizeof(Ogre::SceneNode*));
 	}
 
+	object::object() noexcept
+	{
+		init_object(*this, nullptr);
+	}
+
 	object::object(object&& other) noexcept
 	{
 		init_object(*this, &get_scene_node(other));
+		init_object(other, nullptr);
 	}
 
 	object& object::operator=(object&& other) noexcept
 	{
-		init_object(*this, &get_scene_node(other));
+		if (this != &other)
+		{
+			destroy_node();
+			init_object(*this, &get_scene_node(other));
+			init_object(other, nullptr);
+		}
 		return *this;
 	}
 
 	object::~object()
 	{
-
+		destroy_node();
 	}
 
-	Ogre::SceneNode& get_scene_node(object& n)
+	void object::destroy_node() noexcept
+	{
+		Ogre::SceneNode* snode;
+		memcpy(&snode, &storage, sizeof(Ogre::SceneNode*));
+
+		if (snode != nullptr && snode->getParent() != nullptr) // don't destroy root node
+		{
+			Ogre::SceneManager* const creator_scene = snode->getCreator();
+			if (creator_scene != nullptr)
+			{
+				std::vector<Ogre::MovableObject*> attached_objects;
+				for (Ogre::MovableObject* attached_object : snode->getAttachedObjectIterator())
+				{
+					attached_objects.push_back(attached_object);
+				}
+
+				for (Ogre::MovableObject* attached_object : attached_objects)
+				{
+					creator_scene->destroyMovableObject(attached_object);
+				}
+
+				creator_scene->destroySceneNode(snode);
+			}
+		}
+	}
+
+	Ogre::SceneNode& get_scene_node(object& n) noexcept
 	{
 		Ogre::SceneNode* snode;
 		memcpy(&snode, &n.storage, sizeof(Ogre::SceneNode*));
