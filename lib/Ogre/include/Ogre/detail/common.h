@@ -6,6 +6,7 @@
 #  define OT_DETAIL_OGRE_EXTERNAL_INCLUDE_BEGIN \
      __pragma(warning(push)) \
      __pragma(warning(disable:4100)) /* unreferenced formal parameter */ \
+     __pragma(warning(disable:4127)) /* conditional expression is constant */ \
      __pragma(warning(disable:4244)) /* conversion from 'double' to 'Ogre::Real', possible loss of data */ \
      __pragma(warning(disable:4251)) /* standard type needs to have dll-interface to be used */ \
      __pragma(warning(disable:4324)) /* structure was padded due to alignment specifier */ \
