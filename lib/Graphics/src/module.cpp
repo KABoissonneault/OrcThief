@@ -3,8 +3,6 @@
 #include "module.h"
 #include "scene.h"
 
-#include "graphics/mesh_definition.h"
-
 #include "Ogre/RenderSystem.h"
 #include "Ogre/Compositor/CompositorManager2.h"
 #include "Ogre/Window.h"
@@ -17,44 +15,6 @@ namespace ot::graphics
 {
 	namespace
 	{
-		math::plane const cube_planes[6] = {
-			{{0, 0, 1}, 0.5},
-			{{1, 0, 0}, 0.5},
-			{{0, 1, 0}, 0.5},
-			{{-1, 0, 0}, 0.5},
-			{{0, -1, 0}, 0.5},
-			{{0, 0, -1}, 0.5},
-		};
-		
-		auto const sqrt_half = 0.70710678118654752440084436210485;
-		math::plane const octagon_planes[] = {
-			{{0, 1, 0}, 0.5},
-			{{0, -1, 0}, 0.5},
-			{{1, 0, 0}, 0.5},
-			{{-1, 0, 0}, 0.5},
-			{{0, 0, 1}, 0.5},
-			{{0, 0, -1}, 0.5},
-			{{sqrt_half, 0, sqrt_half}, 0.5},
-			{{sqrt_half, 0, -sqrt_half}, 0.5},
-			{{-sqrt_half, 0, sqrt_half}, 0.5},
-			{{-sqrt_half, 0, -sqrt_half}, 0.5},
-		};
-
-		math::plane const pyramid_planes[] = {
-			{{0, -1, 0}, 0.5},
-			{{sqrt_half, sqrt_half, 0}, 0.5},
-			{{-sqrt_half, sqrt_half, 0}, 0.5},
-			{{0, sqrt_half, sqrt_half}, 0.5},
-			{{0, sqrt_half, -sqrt_half}, 0.5},
-		};
-
-		struct MeshNode
-		{
-			mesh_definition mesh;
-			Ogre::MeshPtr render_mesh;
-			Ogre::SceneNode* node;
-		};
-
 		bool get_vsync(ot::ogre::config_option_map const& config)
 		{
 			bool vsync;
@@ -85,14 +45,11 @@ namespace ot::graphics
 		compositor_manager->createBasicWorkspaceDef(k_workspace_def, k_background_color);
 	}
 
-	auto module::impl::create_scene(size_t num_threads) -> unique_scene
+	auto module::impl::create_scene(size_t num_threads) -> scene
 	{
-		return unique_scene{ new scene(num_threads, render_window->getTexture(), k_workspace_def) };
-	}
-
-	void module::scene_deleter::operator()(scene* p) const noexcept
-	{
-		delete p;
+		scene s;
+		init_scene(s, uptr<scene_impl, fwd_delete<scene_impl>>{ new scene_impl(num_threads, render_window->getTexture(), k_workspace_def) });
+		return s;
 	}
 
 	void module::impl::on_window_events(std::span<window_event const> events)
@@ -144,7 +101,7 @@ namespace ot::graphics
 		pimpl->initialize(window_params);
 	}
 
-	auto module::create_scene(size_t number_threads) -> unique_scene
+	auto module::create_scene(size_t number_threads) -> scene
 	{
 		return pimpl->create_scene(number_threads);
 	}

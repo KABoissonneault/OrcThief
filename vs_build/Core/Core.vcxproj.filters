@@ -21,5 +21,11 @@
     <ClInclude Include="..\..\lib\Core\include\core\iterator\arrow_proxy.h">
       <Filter>include\iterator</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Core\include\core\uptr.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Core\include\core\fwd_delete.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -149,20 +149,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\lib\graphics\include\graphics\camera.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\mesh_definition.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\module.h" />
+    <ClInclude Include="..\..\lib\graphics\include\graphics\node\light.fwd.h" />
+    <ClInclude Include="..\..\lib\graphics\include\graphics\node\light.h" />
+    <ClInclude Include="..\..\lib\Graphics\include\graphics\node\object.fwd.h" />
+    <ClInclude Include="..\..\lib\Graphics\include\graphics\node\object.h" />
+    <ClInclude Include="..\..\lib\graphics\include\graphics\node\static_mesh.fwd.h" />
+    <ClInclude Include="..\..\lib\graphics\include\graphics\node\static_mesh.h" />
+    <ClInclude Include="..\..\lib\graphics\include\graphics\scene.fwd.h" />
+    <ClInclude Include="..\..\lib\graphics\include\graphics\scene.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\window_type.h" />
+    <ClInclude Include="..\..\lib\Graphics\src\camera.h" />
     <ClInclude Include="..\..\lib\Graphics\src\module.h" />
+    <ClInclude Include="..\..\lib\Graphics\src\node\light.h" />
+    <ClInclude Include="..\..\lib\Graphics\src\node\object.h" />
+    <ClInclude Include="..\..\lib\Graphics\src\node\static_mesh.h" />
     <ClInclude Include="..\..\lib\Graphics\src\scene.h" />
     <ClInclude Include="..\..\lib\Graphics\src\shadowed_text.h" />
-    <ClInclude Include="..\..\lib\Graphics\src\static_mesh.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\lib\Graphics\src\camera.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\mesh_definition.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\module.cpp" />
+    <ClCompile Include="..\..\lib\graphics\src\node\light.cpp" />
+    <ClCompile Include="..\..\lib\Graphics\src\node\object.cpp" />
+    <ClCompile Include="..\..\lib\Graphics\src\node\static_mesh.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\scene.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\shadowed_text.cpp" />
-    <ClCompile Include="..\..\lib\Graphics\src\static_mesh.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

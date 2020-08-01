@@ -7,6 +7,12 @@
     <Filter Include="src">
       <UniqueIdentifier>{8fe394e2-f46a-49ab-8455-fd07458dd1bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\node">
+      <UniqueIdentifier>{32c4a126-8bd5-4554-b7ab-3401ccf274c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\node">
+      <UniqueIdentifier>{57896196-5bfb-410f-8703-77280e0f68ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Graphics\include\graphics\window_type.h">
@@ -18,9 +24,6 @@
     <ClInclude Include="..\..\lib\Graphics\src\shadowed_text.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\lib\Graphics\src\static_mesh.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\lib\Graphics\include\graphics\mesh_definition.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -28,6 +31,45 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\lib\Graphics\src\scene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\graphics\include\graphics\scene.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\graphics\include\graphics\node\static_mesh.fwd.h">
+      <Filter>include\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\graphics\include\graphics\scene.fwd.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Graphics\src\node\static_mesh.h">
+      <Filter>src\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\graphics\include\graphics\node\static_mesh.h">
+      <Filter>include\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\graphics\include\graphics\camera.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\graphics\include\graphics\node\light.h">
+      <Filter>include\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\graphics\include\graphics\node\light.fwd.h">
+      <Filter>include\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Graphics\src\node\light.h">
+      <Filter>src\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Graphics\include\graphics\node\object.fwd.h">
+      <Filter>include\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Graphics\include\graphics\node\object.h">
+      <Filter>include\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Graphics\src\node\object.h">
+      <Filter>src\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Graphics\src\camera.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,13 +80,22 @@
     <ClCompile Include="..\..\lib\Graphics\src\shadowed_text.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lib\Graphics\src\static_mesh.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\lib\Graphics\src\mesh_definition.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\lib\Graphics\src\scene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Graphics\src\node\static_mesh.cpp">
+      <Filter>src\node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\graphics\src\node\light.cpp">
+      <Filter>src\node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Graphics\src\node\object.cpp">
+      <Filter>src\node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Graphics\src\camera.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

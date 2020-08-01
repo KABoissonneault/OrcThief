@@ -1,5 +1,10 @@
 #include "scene.h"
 
+#include "node/static_mesh.h"
+#include "node/light.h"
+
+#include "core/fwd_delete.h"
+
 #include "Ogre/Root.h"
 
 #include "Ogre/Camera.h"
@@ -8,21 +13,30 @@
 
 namespace ot::graphics
 {
-	scene::scene(size_t number_threads, Ogre::TextureGpu* render_texture, ogre::string const& workspace_def)
+	void init_scene(scene& s, uptr<scene_impl, fwd_delete<scene_impl>> p)
+	{
+		s.pimpl = std::move(p);
+	}
+
+	scene_impl& get_impl(scene& s)
+	{
+		return *s.pimpl;
+	}
+
+	scene_impl::scene_impl(size_t number_threads, Ogre::TextureGpu* render_texture, ogre::string const& workspace_def)
 	{
 		auto& root = Ogre::Root::getSingleton();
 
 		scene_manager = root.createSceneManager(Ogre::ST_GENERIC, number_threads);
 
 		main_camera = scene_manager->createCamera("Main Camera");
-		main_camera->setPosition(Ogre::Vector3(0, 2.5, -7.5));
-		main_camera->lookAt(Ogre::Vector3(0, 0, 0));
-		main_camera->setNearClipDistance(0.2f);
-		main_camera->setFarClipDistance(1000.0f);
-		main_camera->setAutoAspectRatio(true);
+		auto const camera = main_camera.get();
+		camera->setNearClipDistance(0.2f);
+		camera->setFarClipDistance(1000.0f);
+		camera->setAutoAspectRatio(true);
 
 		Ogre::CompositorManager2* const compositor_manager = root.getCompositorManager2();
-		main_workspace = compositor_manager->addWorkspace(scene_manager, render_texture, main_camera, workspace_def, true /*enabled*/);
+		main_workspace = compositor_manager->addWorkspace(scene_manager, render_texture, main_camera.get(), workspace_def, true /*enabled*/);
 
 		overlay_system = std::make_unique<Ogre::v1::OverlaySystem>();
 		scene_manager->addRenderQueueListener(overlay_system.get());
@@ -32,7 +46,7 @@ namespace ot::graphics
 		scene_manager->setShadowFarDistance(500.0f);
 	}
 
-	scene::~scene()
+	scene_impl::~scene_impl()
 	{
 		if (scene_manager != nullptr)
 		{
@@ -49,7 +63,7 @@ namespace ot::graphics
 		scene_manager = nullptr;
 	}
 
-	void scene::update(math::seconds dt)
+	void scene_impl::update(math::seconds dt)
 	{
 		/*
 		Ogre::String s;
@@ -102,19 +116,29 @@ namespace ot::graphics
 
 		debug_overlay->show();
 	}
-
-	MeshNode make_mesh_node(std::span<math::plane const> planes, ogre::string const& name, Ogre::Vector3 const& position)
-	{
-		auto mesh = mesh_definition::make_from_planes(planes);
-		auto render_mesh = make_static_mesh(name, mesh);
-
-		Ogre::SceneNode* const root_node = scene_manager->getRootSceneNode(Ogre::SCENE_DYNAMIC);
-		Ogre::Item* const item = scene_manager->createItem(render_mesh, Ogre::SCENE_DYNAMIC);
-
-		Ogre::SceneNode* const node = root_node->createChildSceneNode(Ogre::SCENE_DYNAMIC, position);
-		node->attachObject(item);
-
-		return { std::move(mesh), std::move(render_mesh), node };
-	}
 	*/
+
+	node::static_mesh make_static_mesh_node(scene& s, std::string const& name, mesh_definition const& mesh)
+	{
+		return node::make_static_mesh(get_impl(s).get_scene_manager(), name, mesh);
+	}
+
+	node::directional_light make_directional_light(scene& s)
+	{
+		auto& scene_manager = get_impl(s).get_scene_manager();
+		Ogre::Light* light_object = scene_manager.createLight();
+		light_object->setPowerScale(Ogre::Math::PI); // TODO: why
+		light_object->setType(Ogre::Light::LT_DIRECTIONAL);
+		Ogre::SceneNode* light_node = scene_manager.getRootSceneNode(Ogre::SCENE_DYNAMIC)->createChildSceneNode(Ogre::SCENE_DYNAMIC);
+		light_node->attachObject(light_object);		
+
+		return node::make_directional_light(light_node);
+	}
+
+	camera& get_camera(scene& s)
+	{
+		return get_impl(s).get_camera();
+	}
 }
+
+template struct ot::fwd_delete<ot::graphics::scene_impl>;

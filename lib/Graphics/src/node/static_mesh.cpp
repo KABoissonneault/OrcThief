@@ -1,12 +1,15 @@
 #include "static_mesh.h"
 
+#include "core/fwd_delete.h"
+
 #include "Ogre/Root.h"
 #include "Ogre/MemoryAllocatorConfig.h"
 #include "Ogre/MeshManager2.h"
 #include "Ogre/SubMesh2.h"
 #include "Ogre/Vao/Manager.h"
+#include "Ogre/Item.h"
 
-namespace ot::graphics
+namespace ot::graphics::node
 {
 	namespace
 	{
@@ -248,9 +251,62 @@ namespace ot::graphics
 		}
 	}
 
-	Ogre::MeshPtr make_static_mesh(ogre::string const& name, mesh_definition const& mesh)
+	void init_static_mesh_impl(static_mesh& smesh, void* snode_data, void* mesh_ptr)
 	{
-		Ogre::MeshPtr const render_mesh = Ogre::MeshManager::getSingleton().createManual(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+		auto const snode = static_cast<Ogre::SceneNode*>(snode_data);
+		auto& mesh = *static_cast<Ogre::MeshPtr*>(mesh_ptr);
+
+		init_object(smesh, snode);
+
+		static_assert(offsetof(static_mesh, storage_mesh) == sizeof(object) && alignof(static_mesh) == alignof(Ogre::MeshPtr));
+		static_assert(sizeof(static_mesh::storage_mesh) == sizeof(Ogre::MeshPtr));
+
+		new(smesh.storage_mesh) Ogre::MeshPtr(std::move(mesh));
+	}
+
+	void init_static_mesh(static_mesh& smesh, Ogre::SceneNode* snode, Ogre::MeshPtr mptr)
+	{
+		init_static_mesh_impl(smesh, snode, &mptr);
+	}
+
+	void* get_mesh_ptr_impl(static_mesh& smesh)
+	{
+		return &smesh.storage_mesh;
+	}
+
+	Ogre::MeshPtr& get_mesh_ptr(static_mesh& smesh)
+	{
+		return *static_cast<Ogre::MeshPtr*>(get_mesh_ptr_impl(smesh));
+	}
+
+	Ogre::MeshPtr&& get_mesh_ptr(static_mesh&& smesh)
+	{
+		return std::move(*static_cast<Ogre::MeshPtr*>(get_mesh_ptr_impl(smesh)));
+	}
+
+	static_mesh::static_mesh(static_mesh&& other) noexcept
+	{
+		init_static_mesh(*this, &get_scene_node(other), get_mesh_ptr(std::move(other)));
+	}
+
+	static_mesh& static_mesh::operator=(static_mesh&& other) noexcept
+	{
+		if (this != &other)
+		{
+			get_mesh_ptr(*this).~SharedPtr();
+			init_static_mesh(*this, &get_scene_node(other), get_mesh_ptr(std::move(other)));
+		}
+		return *this;
+	}
+
+	static_mesh::~static_mesh()
+	{
+		get_mesh_ptr(*this).~SharedPtr();
+	}
+
+	static_mesh make_static_mesh(Ogre::SceneManager& scene_manager, ogre::string const& name, mesh_definition const& mesh)
+	{
+		Ogre::MeshPtr render_mesh = Ogre::MeshManager::getSingleton().createManual(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 
 		Ogre::SubMesh* render_submesh = render_mesh->createSubMesh();
 		auto const vao = make_render_vao(mesh);
@@ -259,12 +315,19 @@ namespace ot::graphics
 
 		set_mesh_bounds(*render_mesh, mesh.get_bounds());
 
-		return render_mesh;
+		Ogre::SceneNode* const root_node = scene_manager.getRootSceneNode(Ogre::SCENE_DYNAMIC);
+		Ogre::Item* const item = scene_manager.createItem(render_mesh, Ogre::SCENE_DYNAMIC);
+		Ogre::SceneNode* const mesh_node = root_node->createChildSceneNode(Ogre::SCENE_DYNAMIC);
+		mesh_node->attachObject(item);
+
+		static_mesh m;
+		init_static_mesh(m, mesh_node, std::move(render_mesh));
+		return m;
 	}
 
-	Ogre::MeshPtr make_wireframe_mesh(ogre::string const& name, mesh_definition const& mesh)
+	static_mesh make_wireframe_mesh(Ogre::SceneManager& scene_manager, ogre::string const& name, mesh_definition const& mesh)
 	{
-		Ogre::MeshPtr const wireframe_mesh = Ogre::MeshManager::getSingleton().createManual(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+		Ogre::MeshPtr wireframe_mesh = Ogre::MeshManager::getSingleton().createManual(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 		
 		Ogre::SubMesh* wireframe_submesh = wireframe_mesh->createSubMesh();
 		auto const vao = make_wireframe_vao(mesh);
@@ -272,6 +335,13 @@ namespace ot::graphics
 
 		set_mesh_bounds(*wireframe_mesh, mesh.get_bounds());
 
-		return wireframe_mesh;
+		Ogre::SceneNode* const root_node = scene_manager.getRootSceneNode(Ogre::SCENE_DYNAMIC);
+		Ogre::Item* const item = scene_manager.createItem(wireframe_mesh, Ogre::SCENE_DYNAMIC);
+		Ogre::SceneNode* const mesh_node = root_node->createChildSceneNode(Ogre::SCENE_DYNAMIC);
+		mesh_node->attachObject(item);
+
+		static_mesh m;
+		init_static_mesh(m, mesh_node, std::move(wireframe_mesh));
+		return m;
 	}
 }

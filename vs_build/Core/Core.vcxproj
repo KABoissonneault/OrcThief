@@ -143,8 +143,10 @@
   <ItemGroup>
     <ClInclude Include="..\..\lib\Core\include\Core\compiler.h" />
     <ClInclude Include="..\..\lib\Core\include\core\float.h" />
+    <ClInclude Include="..\..\lib\Core\include\core\fwd_delete.h" />
     <ClInclude Include="..\..\lib\Core\include\core\iterator\arrow_proxy.h" />
     <ClInclude Include="..\..\lib\Core\include\Core\size_t.h" />
+    <ClInclude Include="..\..\lib\Core\include\core\uptr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

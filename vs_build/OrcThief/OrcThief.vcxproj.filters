@@ -15,7 +15,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\application.h\application.h">
+    <ClInclude Include="..\..\src\application.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
