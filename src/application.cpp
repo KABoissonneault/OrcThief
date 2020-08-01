@@ -180,8 +180,8 @@ namespace ot
 	 
 	void application::setup_default_scene()
 	{
-		brushes.emplace_back(make_brush(cube_planes, "Cube", { 0.0, 0.0, 0.0 }));
-		brushes.emplace_back(make_brush(octagon_planes, "Octagon", { 2.5, 0.0, 0.0 }));
+		brushes.emplace_back(make_brush(cube_planes, "Cube", { 2.5, 0.0, 0.0 }));
+		brushes.emplace_back(make_brush(octagon_planes, "Octagon", { 0, 0.0, 0.0 }));
 		brushes.emplace_back(make_brush(pyramid_planes, "Pyramid", { -2.5, 0.0, 0.0 }));
 
 		auto& camera = get_camera(main_scene);
@@ -191,8 +191,6 @@ namespace ot
 		light = graphics::node::create_directional_light(main_scene, get_root_node(main_scene));
 		set_position(light, { 10.0, 10.0, -10.0 });
 		set_direction(light, normalized(math::vector3d{ -1.0, -1.0, 1.0 }));
-
-		select(brushes[0]);
 	}
 
 	brush application::make_brush(std::span<math::plane const> planes, std::string const& name, math::vector3d position)
@@ -225,7 +223,29 @@ namespace ot
 
 			{
 				SDL_Event e;
-				while (SDL_PollEvent(&e));
+				while (SDL_PollEvent(&e))
+				{
+					switch (e.type)
+					{
+					case SDL_KEYUP:
+					{
+						SDL_KeyboardEvent const& key = e.key;
+						SDL_Keysym const& keysym = key.keysym;
+						if (keysym.scancode == SDL_SCANCODE_TAB)
+						{
+							if (keysym.mod & KMOD_LSHIFT)
+							{
+								select_previous();
+							}
+							else
+							{
+								select_next();
+							}
+						}
+						break;
+					}
+					}
+				}
 			}
 
 			// Update
@@ -254,9 +274,48 @@ namespace ot
 			rotate_around(brush.node, math::vector3d{ 0.0, 1.0, 0.0 }, dt.count());
 		}
 	}
-	
-	void application::select(brush& brush)
+
+	void application::select_next()
 	{
-		selected_brush = graphics::node::create_static_wireframe_mesh(main_scene, brush.node, "SelectedBrush", brush.mesh_def);
+		auto const next_selection = selected_brush + 1;
+		if (next_selection == brushes.size())
+		{
+			unselect();
+		}
+		else
+		{
+			select(next_selection);
+		}
+	}
+
+	void application::select_previous()
+	{
+		if (selected_brush == -1)
+		{
+			select(brushes.size() - 1);
+		} 
+		else if(selected_brush == 0)
+		{
+			unselect();
+		}
+		else
+		{
+			select(selected_brush - 1);
+		}
+	}
+	
+	void application::select(size_t brush_idx)
+	{
+		selection_node = {};
+
+		brush& brush = brushes[brush_idx];
+		selection_node = graphics::node::create_static_wireframe_mesh(main_scene, brush.node, "SelectedBrush", brush.mesh_def);
+		selected_brush = static_cast<int>(brush_idx);
+	}
+
+	void application::unselect()
+	{
+		selection_node = {};
+		selected_brush = -1;
 	}
 }
