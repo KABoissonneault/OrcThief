@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
-  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="UserMacros">
+    <OgreLibExtension Condition="'$(Configuration)' == 'Debug'">_d</OgreLibExtension>
+	<OgreLibExtension Condition="'$(Configuration)' != 'Debug'"></OgreLibExtension>
+  </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
@@ -11,5 +14,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)..\ext\Ogre\build\lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <BuildMacro Include="OgreLibExtension">
+      <Value>$(OgreLibExtension)</Value>
+    </BuildMacro>
+  </ItemGroup>
 </Project>
