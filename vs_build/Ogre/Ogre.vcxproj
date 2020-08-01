@@ -170,6 +170,7 @@
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\RenderSystem.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ResourceGroupManager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Root.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\SceneManager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\SceneNode.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\SubMesh2.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Vao\Manager.h" />
