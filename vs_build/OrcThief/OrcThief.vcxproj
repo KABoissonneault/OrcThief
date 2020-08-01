@@ -134,6 +134,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;OgreMain_d.lib;OgreHlmsUnlit_d.lib;OgreHlmsPbs_d.lib;OgreOverlay_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).dll OgreMain$(OgreLibExtension).pdb RenderSystem_Direct3D11$(OgreLibExtension).dll RenderSystem_Direct3D11$(OgreLibExtension).pdb RenderSystem_GL3Plus$(OgreLibExtension).dll RenderSystem_GL3Plus$(OgreLibExtension).pdb RenderSystem_NULL$(OgreLibExtension).dll RenderSystem_NULL$(OgreLibExtension).pdb OgreOverlay$(OgreLibExtension).dll OgreOverlay$(OgreLibExtension).pdb OgreHlmsPbs$(OgreLibExtension).dll OgreHlmsPbs$(OgreLibExtension).pdb OgreHlmsUnlit$(OgreLibExtension).dll OgreHlmsUnlit$(OgreLibExtension).pdb
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\SDL2\bin\$(Platform)\$(Configuration) SDL2.dll SDL2.pdb</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying project dependencies</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -153,6 +160,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;OgreMain.lib;OgreHlmsUnlit.lib;OgreHlmsPbs.lib;OgreOverlay.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).dll OgreMain$(OgreLibExtension).pdb RenderSystem_Direct3D11$(OgreLibExtension).dll RenderSystem_Direct3D11$(OgreLibExtension).pdb RenderSystem_GL3Plus$(OgreLibExtension).dll RenderSystem_GL3Plus$(OgreLibExtension).pdb RenderSystem_NULL$(OgreLibExtension).dll RenderSystem_NULL$(OgreLibExtension).pdb OgreOverlay$(OgreLibExtension).dll OgreOverlay$(OgreLibExtension).pdb OgreHlmsPbs$(OgreLibExtension).dll OgreHlmsPbs$(OgreLibExtension).pdb OgreHlmsUnlit$(OgreLibExtension).dll OgreHlmsUnlit$(OgreLibExtension).pdb
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\SDL2\bin\$(Platform)\$(Configuration) SDL2.dll SDL2.pdb</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying project dependencies</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\application.cpp" />
