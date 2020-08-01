@@ -27,9 +27,12 @@ namespace ot
 		graphics::scene main_scene;
 
 		std::vector<brush> brushes;
+		ot::graphics::node::static_mesh selected_brush;
+
 		ot::graphics::node::directional_light light;
 
 		void update(math::seconds dt);
+		void select(brush& brush);
 
 	public:
 		bool initialize();

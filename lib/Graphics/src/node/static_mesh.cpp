@@ -1,12 +1,14 @@
 #include "static_mesh.h"
 
-#include "core/fwd_delete.h"
+#include "scene.h"
+#include "object.h"
+#include "graphics/mesh_definition.h"
 
 #include "Ogre/Root.h"
 #include "Ogre/MemoryAllocatorConfig.h"
+#include "Ogre/Vao/Manager.h"
 #include "Ogre/MeshManager2.h"
 #include "Ogre/SubMesh2.h"
-#include "Ogre/Vao/Manager.h"
 #include "Ogre/Item.h"
 
 namespace ot::graphics::node
@@ -304,8 +306,10 @@ namespace ot::graphics::node
 		get_mesh_ptr(*this).~SharedPtr();
 	}
 
-	static_mesh make_static_mesh(Ogre::SceneManager& scene_manager, ogre::string const& name, mesh_definition const& mesh)
+	static_mesh create_static_mesh(scene& s, object& parent, std::string const& name, mesh_definition const& mesh)
 	{
+		Ogre::SceneManager& scene_manager = get_impl(s).get_scene_manager();
+
 		Ogre::MeshPtr render_mesh = Ogre::MeshManager::getSingleton().createManual(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 
 		Ogre::SubMesh* render_submesh = render_mesh->createSubMesh();
@@ -325,19 +329,20 @@ namespace ot::graphics::node
 		return m;
 	}
 
-	static_mesh make_wireframe_mesh(Ogre::SceneManager& scene_manager, ogre::string const& name, mesh_definition const& mesh)
+	static_mesh create_static_wireframe_mesh(scene& s, object& parent, std::string const& name, mesh_definition const& mesh)
 	{
+		Ogre::SceneManager& scene_manager = get_impl(s).get_scene_manager();
+
 		Ogre::MeshPtr wireframe_mesh = Ogre::MeshManager::getSingleton().createManual(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-		
+
 		Ogre::SubMesh* wireframe_submesh = wireframe_mesh->createSubMesh();
 		auto const vao = make_wireframe_vao(mesh);
 		wireframe_submesh->mVao[Ogre::VpNormal].push_back(vao);
 
 		set_mesh_bounds(*wireframe_mesh, mesh.get_bounds());
 
-		Ogre::SceneNode* const root_node = scene_manager.getRootSceneNode(Ogre::SCENE_DYNAMIC);
 		Ogre::Item* const item = scene_manager.createItem(wireframe_mesh, Ogre::SCENE_DYNAMIC);
-		Ogre::SceneNode* const mesh_node = root_node->createChildSceneNode(Ogre::SCENE_DYNAMIC);
+		Ogre::SceneNode* const mesh_node = get_scene_node(parent).createChildSceneNode(Ogre::SCENE_DYNAMIC);
 		mesh_node->attachObject(item);
 
 		static_mesh m;

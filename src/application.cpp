@@ -188,15 +188,17 @@ namespace ot
 		set_position(camera, { 0.0, 2.5, -7.5 });
 		look_at(camera, { 0.0, 0.0, 0.0 });
 
-		light = make_directional_light(main_scene);
+		light = graphics::node::create_directional_light(main_scene, get_root_node(main_scene));
 		set_position(light, { 10.0, 10.0, -10.0 });
 		set_direction(light, normalized(math::vector3d{ -1.0, -1.0, 1.0 }));
+
+		select(brushes[0]);
 	}
 
 	brush application::make_brush(std::span<math::plane const> planes, std::string const& name, math::vector3d position)
 	{
 		auto mesh = graphics::mesh_definition::make_from_planes(planes);
-		auto node = make_static_mesh_node(main_scene, name, mesh);
+		auto node = graphics::node::create_static_mesh(main_scene, get_root_node(main_scene), name, mesh);
 		set_position(node, position);
 		return { std::move(mesh), std::move(node) };
 	}
@@ -251,5 +253,10 @@ namespace ot
 		{
 			rotate_around(brush.node, math::vector3d{ 0.0, 1.0, 0.0 }, dt.count());
 		}
+	}
+	
+	void application::select(brush& brush)
+	{
+		selected_brush = graphics::node::create_static_wireframe_mesh(main_scene, brush.node, "SelectedBrush", brush.mesh_def);
 	}
 }

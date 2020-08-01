@@ -50,4 +50,9 @@ namespace ot::graphics::node
 			Ogre::Radian(static_cast<Ogre::Real>(rad))
 		);
 	}
+
+	void attach_child(object& n, object& child)
+	{
+		get_scene_node(n).addChild(&get_scene_node(child));
+	}
 }
