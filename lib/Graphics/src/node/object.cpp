@@ -13,7 +13,7 @@ namespace ot::graphics::node
 			memcpy(&n.storage, &snode, sizeof(void*));
 		}
 
-		void* get_scene_node_impl(object& n) noexcept
+		void* get_scene_node_impl(object const& n) noexcept
 		{
 			void* snode;
 			memcpy(&snode, &n.storage, sizeof(Ogre::SceneNode*));
@@ -29,6 +29,11 @@ namespace ot::graphics::node
 	Ogre::SceneNode& get_scene_node(object& n) noexcept
 	{
 		return *static_cast<Ogre::SceneNode*>(detail::get_scene_node_impl(n));
+	}
+
+	Ogre::SceneNode const& get_scene_node(object const& n) noexcept
+	{
+		return *static_cast<Ogre::SceneNode const*>(detail::get_scene_node_impl(n));
 	}
 
 	object::object() noexcept
@@ -82,6 +87,11 @@ namespace ot::graphics::node
 				creator_scene->destroySceneNode(snode);
 			}
 		}
+	}
+
+	object_id object::get_object_id() const noexcept
+	{
+		return object_id(get_scene_node(*this).getId());
 	}
 
 	void object::set_position(math::vector3d p)

@@ -9,7 +9,7 @@ namespace ot::graphics::node
 	namespace detail
 	{
 		void init_object_impl(object&, void*) noexcept;
-		void* get_scene_node_impl(object&) noexcept;
+		void* get_scene_node_impl(object const&) noexcept;
 	}
 
 	class object
@@ -17,7 +17,7 @@ namespace ot::graphics::node
 		std::byte storage[sizeof(void*)];
 
 		friend void detail::init_object_impl(object&, void*) noexcept;
-		friend void* detail::get_scene_node_impl(object&) noexcept;
+		friend void* detail::get_scene_node_impl(object const&) noexcept;
 
 		void destroy_node() noexcept;
 
@@ -28,6 +28,9 @@ namespace ot::graphics::node
 		object& operator=(object const&) = delete;
 		object& operator=(object&&) noexcept;
 		~object();
+
+		// Id of the underlying object represented by the scene node
+		object_id get_object_id() const noexcept;
 
 		void set_position(math::vector3d position);
 		void set_direction(math::vector3d direction);
