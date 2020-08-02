@@ -1,6 +1,7 @@
 #pragma once
 
 #include "graphics/scene.h"
+#include "graphics/node/object.h"
 #include "camera.h"
 
 #include "Ogre/Prerequisites.h"

@@ -5,10 +5,30 @@
 
 namespace ot::graphics::node
 {
+	namespace detail
+	{
+		void init_object_impl(object& n, void* snode) noexcept
+		{
+			static_assert(sizeof(object::storage) == sizeof(void*));
+			memcpy(&n.storage, &snode, sizeof(void*));
+		}
+
+		void* get_scene_node_impl(object& n) noexcept
+		{
+			void* snode;
+			memcpy(&snode, &n.storage, sizeof(Ogre::SceneNode*));
+			return snode;
+		}
+	}
+
 	void init_object(object& n, Ogre::SceneNode* snode) noexcept
 	{
-		static_assert(sizeof(object::storage) == sizeof(Ogre::SceneNode*));
-		memcpy(&n.storage, &snode, sizeof(Ogre::SceneNode*));
+		detail::init_object_impl(n, snode);
+	}
+
+	Ogre::SceneNode& get_scene_node(object& n) noexcept
+	{
+		return *static_cast<Ogre::SceneNode*>(detail::get_scene_node_impl(n));
 	}
 
 	object::object() noexcept
@@ -64,33 +84,26 @@ namespace ot::graphics::node
 		}
 	}
 
-	Ogre::SceneNode& get_scene_node(object& n) noexcept
+	void object::set_position(math::vector3d p)
 	{
-		Ogre::SceneNode* snode;
-		memcpy(&snode, &n.storage, sizeof(Ogre::SceneNode*));
-		return *snode;
+		get_scene_node(*this).setPosition(static_cast<Ogre::Real>(p.x), static_cast<Ogre::Real>(p.y), static_cast<Ogre::Real>(p.z));
 	}
 
-	void set_position(object& n, math::vector3d p)
+	void object::set_direction(math::vector3d direction)
 	{
-		get_scene_node(n).setPosition(static_cast<Ogre::Real>(p.x), static_cast<Ogre::Real>(p.y), static_cast<Ogre::Real>(p.z));
+		get_scene_node(*this).setDirection(static_cast<Ogre::Real>(direction.x), static_cast<Ogre::Real>(direction.y), static_cast<Ogre::Real>(direction.z));
 	}
 
-	void set_direction(object& n, math::vector3d direction)
+	void object::rotate_around(math::vector3d axis, double rad)
 	{
-		get_scene_node(n).setDirection(static_cast<Ogre::Real>(direction.x), static_cast<Ogre::Real>(direction.y), static_cast<Ogre::Real>(direction.z));
-	}
-
-	void rotate_around(object& n, math::vector3d axis, double rad)
-	{
-		get_scene_node(n).rotate(
+		get_scene_node(*this).rotate(
 			Ogre::Vector3(static_cast<Ogre::Real>(axis.x), static_cast<Ogre::Real>(axis.y), static_cast<Ogre::Real>(axis.z)),
 			Ogre::Radian(static_cast<Ogre::Real>(rad))
 		);
 	}
 
-	void attach_child(object& n, object& child)
+	void object::attach_child(object& child)
 	{
-		get_scene_node(n).addChild(&get_scene_node(child));
+		get_scene_node(*this).addChild(&get_scene_node(child));
 	}
 }

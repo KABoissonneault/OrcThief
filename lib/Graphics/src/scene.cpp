@@ -68,17 +68,41 @@ namespace ot::graphics
 
 	void scene_impl::update(math::seconds dt)
 	{
+		scene_manager->updateSceneGraph();
 
+		Ogre::Ray const ray = main_camera->getCameraToViewportRay(0.5f, 0.5f);
+		Ogre::RaySceneQuery* const sceneQuery = scene_manager->createRayQuery(ray, Ogre::SceneManager::QUERY_ENTITY_DEFAULT_MASK);
+		sceneQuery->setSortByDistance(true, 1);
+		
+		Ogre::RaySceneQueryResult& result = sceneQuery->execute();
+		if (result.size() == 0)
+			return;
+
+		if (result.size() == 1)
+		{
+
+		}
+
+		for (Ogre::RaySceneQueryResultEntry const& entry : result)
+		{
+			Ogre::MovableObject* const object = entry.movable;
+			Ogre::IdType const id = object->getId();
+		}
 	}
 
-	camera& get_camera(scene& s)
+	camera& scene::get_camera() noexcept
 	{
-		return get_impl(s).get_camera();
+		return get_impl(*this).get_camera();
 	}
 
-	node::object& get_root_node(scene& s)
+	node::object& scene::get_root_node() noexcept
 	{
-		return get_impl(s).get_root_node();
+		return get_impl(*this).get_root_node();
+	}
+
+	void scene::update(math::seconds dt)
+	{
+		get_impl(*this).update(dt);
 	}
 }
 

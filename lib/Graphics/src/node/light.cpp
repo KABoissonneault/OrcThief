@@ -1,14 +1,15 @@
 #include "light.h"
 
-#include "scene.h"
+#include "object.h"
 
 #include "Ogre/SceneManager.h"
+#include "Ogre/SceneNode.h"
 
 namespace ot::graphics::node
 {
-	directional_light create_directional_light(scene& s, object& parent)
+	directional_light create_directional_light(object& parent)
 	{
-		Ogre::SceneManager& scene_manager = get_impl(s).get_scene_manager();
+		Ogre::SceneManager& scene_manager = *get_scene_node(parent).getCreator();
 		Ogre::Light* light_object = scene_manager.createLight();
 		light_object->setPowerScale(Ogre::Math::PI); // Apparently, "PBS" makes light weaker by a factor of PI when HDR is not used
 		light_object->setType(Ogre::Light::LT_DIRECTIONAL);

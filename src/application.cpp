@@ -184,20 +184,20 @@ namespace ot
 		brushes.emplace_back(make_brush(octagon_planes, "Octagon", { 0, 0.0, 0.0 }));
 		brushes.emplace_back(make_brush(pyramid_planes, "Pyramid", { -2.5, 0.0, 0.0 }));
 
-		auto& camera = get_camera(main_scene);
+		auto& camera = main_scene.get_camera();
 		set_position(camera, { 0.0, 2.5, -7.5 });
 		look_at(camera, { 0.0, 0.0, 0.0 });
 
-		light = graphics::node::create_directional_light(main_scene, get_root_node(main_scene));
-		set_position(light, { 10.0, 10.0, -10.0 });
-		set_direction(light, normalized(math::vector3d{ -1.0, -1.0, 1.0 }));
+		light = graphics::node::create_directional_light(main_scene.get_root_node());
+		light.set_position({ 10.0, 10.0, -10.0 });
+		light.set_direction(normalized(math::vector3d{ -1.0, -1.0, 1.0 }));
 	}
 
 	brush application::make_brush(std::span<math::plane const> planes, std::string const& name, math::vector3d position)
 	{
 		auto mesh = graphics::mesh_definition::make_from_planes(planes);
-		auto node = graphics::node::create_static_mesh(main_scene, get_root_node(main_scene), name, mesh);
-		set_position(node, position);
+		auto node = graphics::node::create_static_mesh(main_scene.get_root_node(), name, mesh);
+		node.set_position(position);
 		return { std::move(mesh), std::move(node) };
 	}
 
@@ -268,10 +268,11 @@ namespace ot
 	void application::update(math::seconds dt)
 	{
 		graphics.update(dt);
+		main_scene.update(dt);
 
 		for (auto& brush : brushes)
 		{
-			rotate_around(brush.node, math::vector3d{ 0.0, 1.0, 0.0 }, dt.count());
+			brush.node.rotate_around(math::vector3d{ 0.0, 1.0, 0.0 }, dt.count());
 		}
 	}
 
@@ -309,7 +310,7 @@ namespace ot
 		selection_node = {};
 
 		brush& brush = brushes[brush_idx];
-		selection_node = graphics::node::create_static_wireframe_mesh(main_scene, brush.node, "SelectedBrush", brush.mesh_def);
+		selection_node = graphics::node::create_static_wireframe_mesh(brush.node, "SelectedBrush", brush.mesh_def);
 		selected_brush = static_cast<int>(brush_idx);
 	}
 

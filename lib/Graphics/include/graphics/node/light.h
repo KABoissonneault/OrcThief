@@ -1,13 +1,13 @@
 #pragma once
 
-#include "graphics/scene.fwd.h"
 #include "graphics/node/light.fwd.h"
 #include "graphics/node/object.h"
 
-namespace ot::graphics
+namespace ot::graphics::node
 {
-	namespace node
-	{
-		[[nodiscard]] directional_light create_directional_light(scene& scene, object& parent);
-	}
+	class directional_light : public object 
+	{ 
+	};
+
+	[[nodiscard]] directional_light create_directional_light(object& parent);
 }

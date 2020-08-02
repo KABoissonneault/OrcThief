@@ -13,33 +13,38 @@
 
 namespace ot::graphics::node
 {
-	void init_static_mesh_impl(static_mesh& smesh, void* snode_data, void* mesh_ptr) noexcept
+	namespace detail
 	{
-		auto const snode = static_cast<Ogre::SceneNode*>(snode_data);
-		auto& mesh = *static_cast<Ogre::MeshPtr*>(mesh_ptr);
+		void init_static_mesh_impl(static_mesh& smesh, void* snode_data, void* mesh_ptr) noexcept
+		{
+			auto const snode = static_cast<Ogre::SceneNode*>(snode_data);
+			auto& mesh = *static_cast<Ogre::MeshPtr*>(mesh_ptr);
 
-		init_object(smesh, snode);
-		get_mesh_ptr(smesh) = std::move(mesh);
+			init_object(smesh, snode);
+			get_mesh_ptr(smesh) = std::move(mesh);
+		}
+
+		void* get_mesh_ptr_impl(static_mesh& smesh) noexcept
+		{
+			return &smesh.storage_mesh;
+		}
 	}
 
 	void init_static_mesh(static_mesh& smesh, Ogre::SceneNode* snode, Ogre::MeshPtr mptr) noexcept
 	{
-		init_static_mesh_impl(smesh, snode, &mptr);
+		detail::init_static_mesh_impl(smesh, snode, &mptr);
 	}
 
-	void* get_mesh_ptr_impl(static_mesh& smesh) noexcept
-	{
-		return &smesh.storage_mesh;
-	}
+	
 
 	Ogre::MeshPtr& get_mesh_ptr(static_mesh& smesh) noexcept
 	{
-		return *static_cast<Ogre::MeshPtr*>(get_mesh_ptr_impl(smesh));
+		return *static_cast<Ogre::MeshPtr*>(detail::get_mesh_ptr_impl(smesh));
 	}
 
 	Ogre::MeshPtr&& get_mesh_ptr(static_mesh&& smesh) noexcept
 	{
-		return std::move(*static_cast<Ogre::MeshPtr*>(get_mesh_ptr_impl(smesh)));
+		return std::move(*static_cast<Ogre::MeshPtr*>(detail::get_mesh_ptr_impl(smesh)));
 	}
 
 	static_mesh::static_mesh() noexcept
@@ -323,9 +328,9 @@ namespace ot::graphics::node
 		}
 	}
 
-	static_mesh create_static_mesh(scene& s, object& parent, std::string const& name, mesh_definition const& mesh)
+	static_mesh create_static_mesh(object& parent, std::string const& name, mesh_definition const& mesh)
 	{
-		Ogre::SceneManager& scene_manager = get_impl(s).get_scene_manager();
+		Ogre::SceneManager& scene_manager = *get_scene_node(parent).getCreator();
 		auto& mesh_manager = Ogre::MeshManager::getSingleton();
 
 		Ogre::MeshPtr render_mesh = mesh_manager.createManual(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -347,9 +352,9 @@ namespace ot::graphics::node
 		return m;
 	}
 
-	static_mesh create_static_wireframe_mesh(scene& s, object& parent, std::string const& name, mesh_definition const& mesh)
+	static_mesh create_static_wireframe_mesh(object& parent, std::string const& name, mesh_definition const& mesh)
 	{
-		Ogre::SceneManager& scene_manager = get_impl(s).get_scene_manager();
+		Ogre::SceneManager& scene_manager = *get_scene_node(parent).getCreator();
 		auto& mesh_manager = Ogre::MeshManager::getSingleton();
 
 		Ogre::MeshPtr wireframe_mesh = mesh_manager.createManual(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);

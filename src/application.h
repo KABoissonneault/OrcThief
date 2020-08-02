@@ -7,8 +7,9 @@
 
 #include "graphics/module.h"
 #include "graphics/mesh_definition.h"
-#include "graphics/node/static_mesh.fwd.h"
-#include "graphics/node/light.fwd.h"
+#include "graphics/node/static_mesh.h"
+#include "graphics/node/light.h"
+#include "graphics/scene.h"
 
 #include <span>
 
