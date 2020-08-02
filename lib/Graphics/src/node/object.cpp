@@ -89,9 +89,23 @@ namespace ot::graphics::node
 		}
 	}
 
-	object_id object::get_object_id() const noexcept
+	node_id object::get_node_id() const noexcept
 	{
-		return object_id(get_scene_node(*this).getId());
+		Ogre::SceneNode const& scene_node = get_scene_node(*this);
+		return node_id(scene_node.getId());
+	}
+
+	bool object::contains(object_id id) const noexcept
+	{
+		Ogre::SceneNode const& scene_node = get_scene_node(*this);
+		Ogre::SceneNode::ConstObjectIterator attached_objects = scene_node.getAttachedObjectIterator();
+		for (Ogre::MovableObject const* const sub_object : attached_objects)
+		{
+			if (sub_object->getId() == static_cast<Ogre::IdType>(id))
+				return true;
+		}
+
+		return false;
 	}
 
 	void object::set_position(math::vector3d p)

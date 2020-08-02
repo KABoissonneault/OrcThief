@@ -29,8 +29,11 @@ namespace ot::graphics::node
 		object& operator=(object&&) noexcept;
 		~object();
 
-		// Id of the underlying object represented by the scene node
-		object_id get_object_id() const noexcept;
+		// Id of the node itself
+		node_id get_node_id() const noexcept;
+
+		// Returns true if the node contains a sub-object with the given id
+		bool contains(object_id id) const noexcept;
 
 		void set_position(math::vector3d position);
 		void set_direction(math::vector3d direction);
