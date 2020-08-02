@@ -1,5 +1,7 @@
 #include "application.h"
 
+#include "selection/base_context.h"
+
 #include "graphics/scene.h"
 #include "graphics/camera.h"
 #include "graphics/node/static_mesh.h"
@@ -175,14 +177,17 @@ namespace ot
 
 		main_scene = graphics.create_scene(get_number_threads() - 1);
 
+		auto const& render_window = graphics.get_window(graphics::window_id{ SDL_GetWindowID(main_window.get()) });
+		selection_context.reset(new selection::base_context(current_map, main_scene, render_window));
+
 		return true;
 	}
 	 
 	void application::setup_default_scene()
 	{
-		brushes.emplace_back(make_brush(cube_planes, "Cube", { 2.5, 0.0, 0.0 }));
-		brushes.emplace_back(make_brush(octagon_planes, "Octagon", { 0, 0.0, 0.0 }));
-		brushes.emplace_back(make_brush(pyramid_planes, "Pyramid", { -2.5, 0.0, 0.0 }));
+		current_map.add_brush(make_brush(cube_planes, "Cube", { 2.5, 0.0, 0.0 }));
+		current_map.add_brush(make_brush(octagon_planes, "Octagon", { 0, 0.0, 0.0 }));
+		current_map.add_brush(make_brush(pyramid_planes, "Pyramid", { -2.5, 0.0, 0.0 }));
 
 		auto& camera = main_scene.get_camera();
 		set_position(camera, { 0.0, 2.5, -7.5 });
@@ -228,22 +233,30 @@ namespace ot
 					switch (e.type)
 					{
 					case SDL_KEYUP:
-					{
-						SDL_KeyboardEvent const& key = e.key;
-						SDL_Keysym const& keysym = key.keysym;
-						if (keysym.scancode == SDL_SCANCODE_TAB)
+					case SDL_KEYDOWN:
+						if (selection_context != nullptr && selection_context->handle_keyboard_event(e.key))
 						{
-							if (keysym.mod & KMOD_LSHIFT)
-							{
-								select_previous();
-							}
-							else
-							{
-								select_next();
-							}
+							continue;
 						}
+
 						break;
-					}
+
+					case SDL_MOUSEBUTTONUP:
+					case SDL_MOUSEBUTTONDOWN:
+						if (selection_context != nullptr && selection_context->handle_mouse_button_event(e.button))
+						{
+							continue;
+						}
+
+						break;
+
+					case SDL_MOUSEMOTION:
+						if (selection_context != nullptr && selection_context->handle_mouse_motion_event(e.motion))
+						{
+							continue;
+						}
+
+						break;
 					}
 				}
 			}
@@ -270,53 +283,9 @@ namespace ot
 		graphics.update(dt);
 		main_scene.update(dt);
 
-		for (auto& brush : brushes)
+		for (auto& brush : current_map.get_brushes())
 		{
 			brush.node.rotate_around(math::vector3d{ 0.0, 1.0, 0.0 }, dt.count());
 		}
-	}
-
-	void application::select_next()
-	{
-		auto const next_selection = selected_brush + 1;
-		if (next_selection == brushes.size())
-		{
-			unselect();
-		}
-		else
-		{
-			select(next_selection);
-		}
-	}
-
-	void application::select_previous()
-	{
-		if (selected_brush == -1)
-		{
-			select(brushes.size() - 1);
-		} 
-		else if(selected_brush == 0)
-		{
-			unselect();
-		}
-		else
-		{
-			select(selected_brush - 1);
-		}
-	}
-	
-	void application::select(size_t brush_idx)
-	{
-		selection_node = {};
-
-		brush& brush = brushes[brush_idx];
-		selection_node = graphics::node::create_static_wireframe_mesh(brush.node, "SelectedBrush", brush.mesh_def);
-		selected_brush = static_cast<int>(brush_idx);
-	}
-
-	void application::unselect()
-	{
-		selection_node = {};
-		selected_brush = -1;
 	}
 }

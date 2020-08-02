@@ -1,0 +1,62 @@
+#include "selection/base_context.h"
+
+#include "selection/brush_context.h"
+
+#include "graphics/camera.h"
+
+namespace ot::selection
+{
+	bool base_context::handle_keyboard_event(SDL_KeyboardEvent const& key)
+	{
+		// Handle Escape first
+		if (key.keysym.scancode == SDL_SCANCODE_ESCAPE && key.state == SDL_RELEASED)
+		{
+			next_context.reset();
+			return true;
+		}
+
+		return next_context != nullptr && next_context->handle_keyboard_event(key);
+	}
+
+	bool base_context::handle_mouse_button_event(SDL_MouseButtonEvent const& mouse)
+	{
+		if (next_context != nullptr && next_context->handle_mouse_button_event(mouse))
+		{
+			return true;
+		}
+
+		// Left-click for selection
+		if (mouse.button == 1 && mouse.state == SDL_RELEASED)
+		{
+			int const width = get_width(*main_window);
+			int const height = get_height(*main_window);
+
+			double const viewport_x = static_cast<double>(mouse.x) / width;
+			double const viewport_y = static_cast<double>(mouse.y) / height;
+
+			auto const result = current_scene->raycast_from_camera(viewport_x, viewport_y);
+			if (!result)
+				return true;
+
+			graphics::node::object_id const hit_object = *result;
+			std::span<brush const> const brushes = current_map->get_brushes();
+			auto const found_brush = std::find_if(brushes.begin(), brushes.end(), [hit_object](brush const& b) 
+			{ 
+				return b.node.contains(hit_object); 
+			});
+			assert(found_brush != brushes.end() && "Hit a non-existing brush");
+
+			size_t const hit_brush_idx = std::distance(brushes.begin(), found_brush);
+			next_context.reset(new brush_context(*current_map, *current_scene, *main_window, hit_brush_idx));
+
+			return true;
+		}
+
+		return false;
+	}
+
+	bool base_context::handle_mouse_motion_event(SDL_MouseMotionEvent const& mouse)
+	{
+		return next_context != nullptr && next_context->handle_mouse_motion_event(mouse);
+	}
+}
