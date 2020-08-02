@@ -23,7 +23,7 @@ namespace ot::graphics
 
 	class module
 	{
-		struct impl;
+		class impl;
 		std::unique_ptr<impl> pimpl;
 
 	public:
@@ -43,5 +43,7 @@ namespace ot::graphics
 		void update(math::seconds dt);
 		// Returns false if rendering has failed and graphics cannot continue
 		[[nodiscard]] bool render();
+
+		[[nodiscard]] window const& get_window(window_id id) const noexcept;
 	};
 }

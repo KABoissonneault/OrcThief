@@ -6,6 +6,8 @@ namespace ot::graphics
 {
 	enum class window_id : uint32_t {};
 
+	class window;
+
 	struct window_event
 	{
 		struct moved

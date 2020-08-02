@@ -162,6 +162,7 @@
     <ClInclude Include="..\..\lib\graphics\include\graphics\node\static_mesh.h" />
     <ClInclude Include="..\..\lib\graphics\include\graphics\scene.fwd.h" />
     <ClInclude Include="..\..\lib\graphics\include\graphics\scene.h" />
+    <ClInclude Include="..\..\lib\graphics\include\graphics\window.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\window_type.h" />
     <ClInclude Include="..\..\lib\Graphics\src\camera.h" />
     <ClInclude Include="..\..\lib\Graphics\src\module.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="..\..\lib\Graphics\src\node\static_mesh.h" />
     <ClInclude Include="..\..\lib\Graphics\src\scene.h" />
     <ClInclude Include="..\..\lib\Graphics\src\shadowed_text.h" />
+    <ClInclude Include="..\..\lib\graphics\src\window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\Graphics\src\camera.cpp" />
@@ -180,6 +182,7 @@
     <ClCompile Include="..\..\lib\Graphics\src\node\static_mesh.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\scene.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\shadowed_text.cpp" />
+    <ClCompile Include="..\..\lib\graphics\src\window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

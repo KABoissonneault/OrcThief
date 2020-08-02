@@ -38,8 +38,10 @@ namespace ot::graphics
 			.set_hardware_gamma_conversion(get_hardware_gamma_conversion(config))
 			.set_vsync(get_vsync(config))
 			.params;
-		render_window = root.createRenderWindow(window_params.window_handle, window_params.width, window_params.height, window_params.fullscreen, &misc_params);
-		render_window_id = window_params.event_id;
+		auto const render_window = root.createRenderWindow(window_params.window_handle, window_params.width, window_params.height, window_params.fullscreen, &misc_params);
+		auto const window_id = window_params.event_id;
+
+		main_window = { render_window, window_id };
 
 		Ogre::CompositorManager2* const compositor_manager = root.getCompositorManager2();
 		compositor_manager->createBasicWorkspaceDef(k_workspace_def, k_background_color);
@@ -48,7 +50,7 @@ namespace ot::graphics
 	auto module::impl::create_scene(size_t num_threads) -> scene
 	{
 		scene s;
-		init_scene(s, uptr<scene_impl, fwd_delete<scene_impl>>{ new scene_impl(num_threads, render_window->getTexture(), k_workspace_def) });
+		init_scene(s, uptr<scene_impl, fwd_delete<scene_impl>>{ new scene_impl(num_threads, main_window.get_window().getTexture(), k_workspace_def) });
 		return s;
 	}
 
@@ -56,7 +58,7 @@ namespace ot::graphics
 	{
 		for (ot::graphics::window_event const& event : events)
 		{
-			if (event.id != render_window_id)
+			if (event.id != main_window.get_id())
 			{
 				continue;
 			}
@@ -64,13 +66,13 @@ namespace ot::graphics
 			std::visit([this](auto e)
 			{
 				if constexpr (std::is_same_v<decltype(e), window_event::moved>)
-					render_window->windowMovedOrResized();
+					main_window.get_window().windowMovedOrResized();
 				else if constexpr (std::is_same_v<decltype(e), window_event::resized>)
-					render_window->windowMovedOrResized();
+					main_window.get_window().windowMovedOrResized();
 				else if constexpr (std::is_same_v<decltype(e), window_event::focus_gained>)
-					render_window->setFocused(true);
+					main_window.get_window().setFocused(true);
 				else if constexpr (std::is_same_v<decltype(e), window_event::focus_lost>)
-					render_window->setFocused(false);
+					main_window.get_window().setFocused(false);
 			}, event.data);
 		}
 	}
@@ -82,10 +84,16 @@ namespace ot::graphics
 
 	bool module::impl::render()
 	{
-		if (render_window->isVisible())
+		if (main_window.get_window().isVisible())
 			return Ogre::Root::getSingleton().renderOneFrame();
 
 		return true;
+	}
+
+	window const& module::impl::get_window(window_id id) const noexcept
+	{
+		assert(id == main_window.get_id());
+		return main_window;
 	}
 
 	module::module()
@@ -119,5 +127,10 @@ namespace ot::graphics
 	bool module::render()
 	{
 		return pimpl->render();
+	}
+
+	window const& module::get_window(window_id id) const noexcept
+	{
+		return pimpl->get_window(id);
 	}
 }
