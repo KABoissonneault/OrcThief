@@ -26,10 +26,14 @@ namespace ot::graphics
 		~scene_impl();
 
 		Ogre::SceneManager& get_scene_manager() noexcept { return *scene_manager; }
+		
 		camera& get_camera() noexcept { return main_camera; }
+		camera const& get_camera() const noexcept { return main_camera; }
 		node::object& get_root_node() noexcept { return scene_root; }
 
 		void update(math::seconds dt);
+
+		std::optional<node::object_id> raycast_from_camera(double viewport_x, double viewport_y) const;
 	};
 
 	void init_scene(scene& s, uptr<scene_impl, fwd_delete<scene_impl>> p);

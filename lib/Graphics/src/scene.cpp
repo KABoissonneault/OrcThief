@@ -23,6 +23,11 @@ namespace ot::graphics
 		return *s.pimpl;
 	}
 
+	scene_impl const& get_impl(scene const& s)
+	{
+		return *s.pimpl;
+	}
+
 	scene_impl::scene_impl(size_t number_threads, Ogre::TextureGpu* render_texture, ogre::string const& workspace_def)
 	{
 		auto& root = Ogre::Root::getSingleton();
@@ -69,28 +74,29 @@ namespace ot::graphics
 	void scene_impl::update(math::seconds dt)
 	{
 		scene_manager->updateSceneGraph();
-
-		Ogre::Ray const ray = main_camera->getCameraToViewportRay(0.5f, 0.5f);
-		Ogre::RaySceneQuery* const sceneQuery = scene_manager->createRayQuery(ray, Ogre::SceneManager::QUERY_ENTITY_DEFAULT_MASK);
-		sceneQuery->setSortByDistance(true, 1);
-		
-		Ogre::RaySceneQueryResult& result = sceneQuery->execute();
-		if (result.size() == 0)
-			return;
-
-		if (result.size() == 1)
-		{
-
-		}
-
-		for (Ogre::RaySceneQueryResultEntry const& entry : result)
-		{
-			Ogre::MovableObject* const object = entry.movable;
-			Ogre::IdType const id = object->getId();
-		}
 	}
 
+	std::optional<node::object_id> scene_impl::raycast_from_camera(double viewport_x, double viewport_y) const
+	{
+		Ogre::Ray const ray = main_camera->getCameraToViewportRay(static_cast<Ogre::Real>(viewport_x), static_cast<Ogre::Real>(viewport_y));
+		Ogre::RaySceneQuery* const sceneQuery = scene_manager->createRayQuery(ray, Ogre::SceneManager::QUERY_ENTITY_DEFAULT_MASK);
+		sceneQuery->setSortByDistance(true, 1); // TODO: increase
+
+		Ogre::RaySceneQueryResult& result = sceneQuery->execute();
+		if (result.size() == 0)
+			return {};
+
+		// TODO: improve
+		else
+			return node::object_id(result.front().movable->getId());
+	}
+	
 	camera& scene::get_camera() noexcept
+	{
+		return get_impl(*this).get_camera();
+	}
+
+	camera const& scene::get_camera() const noexcept
 	{
 		return get_impl(*this).get_camera();
 	}
@@ -98,6 +104,11 @@ namespace ot::graphics
 	node::object& scene::get_root_node() noexcept
 	{
 		return get_impl(*this).get_root_node();
+	}
+
+	std::optional<node::object_id> scene::raycast_from_camera(double viewport_x, double viewport_y) const
+	{
+		return get_impl(*this).raycast_from_camera(viewport_x, viewport_y);
 	}
 
 	void scene::update(math::seconds dt)
