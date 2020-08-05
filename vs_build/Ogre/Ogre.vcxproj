@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -152,6 +152,7 @@
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Components\Hlms\Unlit.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\Container.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\Element.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\Manager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\PanelElement.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\System.h" />
