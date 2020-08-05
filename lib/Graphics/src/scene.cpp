@@ -1,5 +1,6 @@
 #include "scene.h"
 
+#include "ogre_conversion.h"
 #include "node/static_mesh.h"
 #include "node/light.h"
 
@@ -63,10 +64,9 @@ namespace ot::graphics
 		scene_manager->updateSceneGraph();
 	}
 
-	std::optional<node::object_id> scene_impl::raycast_from_camera(double viewport_x, double viewport_y) const
+	std::optional<node::object_id> scene_impl::raycast_object(ray r) const
 	{
-		Ogre::Ray const ray = main_camera->getCameraToViewportRay(static_cast<Ogre::Real>(viewport_x), static_cast<Ogre::Real>(viewport_y));
-		Ogre::RaySceneQuery* const sceneQuery = scene_manager->createRayQuery(ray, Ogre::SceneManager::QUERY_ENTITY_DEFAULT_MASK);
+		Ogre::RaySceneQuery* const sceneQuery = scene_manager->createRayQuery(to_ogre_ray(r), Ogre::SceneManager::QUERY_ENTITY_DEFAULT_MASK);
 		sceneQuery->setSortByDistance(true, 1); // TODO: increase
 
 		Ogre::RaySceneQueryResult& result = sceneQuery->execute();
@@ -93,9 +93,9 @@ namespace ot::graphics
 		return get_impl(*this).get_root_node();
 	}
 
-	std::optional<node::object_id> scene::raycast_from_camera(double viewport_x, double viewport_y) const
+	std::optional<node::object_id> scene::raycast_object(ray r) const
 	{
-		return get_impl(*this).raycast_from_camera(viewport_x, viewport_y);
+		return get_impl(*this).raycast_object(r);
 	}
 
 	void scene::update(math::seconds dt)

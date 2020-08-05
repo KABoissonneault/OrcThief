@@ -168,6 +168,7 @@
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Mesh2.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\MeshManager2.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Prerequisites.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Ray.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\RenderSystem.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ResourceGroupManager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Root.h" />
@@ -175,6 +176,7 @@
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\SceneNode.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\SubMesh2.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Vao\Manager.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Vector3.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Window.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\WindowEventUtilities.h" />
   </ItemGroup>

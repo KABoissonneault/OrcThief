@@ -1,7 +1,8 @@
 #include "static_mesh.h"
 
 #include "scene.h"
-#include "object.h"
+#include "ogre_conversion.h"
+#include "node/object.h"
 #include "graphics/mesh_definition.h"
 
 #include "Ogre/Root.h"
@@ -33,9 +34,7 @@ namespace ot::graphics::node
 	void init_static_mesh(static_mesh& smesh, Ogre::SceneNode* snode, Ogre::MeshPtr mptr) noexcept
 	{
 		detail::init_static_mesh_impl(smesh, snode, &mptr);
-	}
-
-	
+	}	
 
 	Ogre::MeshPtr& get_mesh_ptr(static_mesh& smesh) noexcept
 	{
@@ -116,16 +115,6 @@ namespace ot::graphics::node
 				};
 			}
 		};
-
-		[[nodiscard]] Ogre::Vector3 to_ogre_vector(math::point3d p)
-		{
-			return { static_cast<float>(p.x), static_cast<float>(p.y), static_cast<float>(p.z) };
-		}
-
-		[[nodiscard]] Ogre::Vector3 to_ogre_vector(math::vector3d p)
-		{
-			return { static_cast<float>(p.x), static_cast<float>(p.y), static_cast<float>(p.z) };
-		}
 
 		// Creates a static vertex buffer 
 		[[nodiscard]] Ogre::VertexBufferPacked* create_static_vertex_buffer(Ogre::VertexElement2Vec const& buffer_elements, size_t num_vertices, ogre::unique_geometry_mem initial_data)

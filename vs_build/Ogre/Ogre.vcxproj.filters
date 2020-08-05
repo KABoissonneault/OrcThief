@@ -129,6 +129,12 @@
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\Element.h">
       <Filter>include\Components\Overlay</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Ray.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Vector3.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\Ogre\src\RenderSystem.cpp">

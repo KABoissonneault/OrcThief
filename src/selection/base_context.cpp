@@ -34,7 +34,8 @@ namespace ot::selection
 			double const viewport_x = static_cast<double>(mouse.x) / width;
 			double const viewport_y = static_cast<double>(mouse.y) / height;
 
-			auto const result = current_scene->raycast_from_camera(viewport_x, viewport_y);
+			graphics::ray const r = get_world_ray_from_viewport(current_scene->get_camera(), viewport_x, viewport_y);
+			auto const result = current_scene->raycast_object(r);
 			if (!result)
 				return true;
 
@@ -58,5 +59,17 @@ namespace ot::selection
 	bool base_context::handle_mouse_motion_event(SDL_MouseMotionEvent const& mouse)
 	{
 		return next_context != nullptr && next_context->handle_mouse_motion_event(mouse);
+	}
+
+	void base_context::get_debug_string(std::string& s) const 
+	{ 
+		if (next_context != nullptr)
+		{
+			next_context->get_debug_string(s);
+		}
+		else
+		{
+			s += "Left-click on a Brush to select it\n";
+		}
 	}
 }

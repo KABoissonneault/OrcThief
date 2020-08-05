@@ -1,6 +1,7 @@
 #pragma once
 
 #include "graphics/scene.fwd.h"
+#include "graphics/ray.h"
 #include "graphics/node/object.fwd.h"
 
 #include "math/unit/time.h"
@@ -30,9 +31,8 @@ namespace ot::graphics
 
 		void update(math::seconds dt);
 
-		// Projects a raycast from the viewport of the main camera, represented by normalized coordinates from 0 to 1, a ratio from the top-left corner of the "screen"
-		// Returns the closest hit object
-		std::optional<node::object_id> raycast_from_camera(double viewport_x, double viewport_y) const;
+		// Casts the ray in the scene, and detects the nearest object
+		std::optional<node::object_id> raycast_object(ray r) const;
 	};	
 }
 
