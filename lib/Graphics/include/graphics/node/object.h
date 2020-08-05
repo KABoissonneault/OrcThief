@@ -14,7 +14,7 @@ namespace ot::graphics::node
 
 	class object
 	{
-		std::byte storage[sizeof(void*)];
+		void* pimpl;
 
 		friend void detail::init_object_impl(object&, void*) noexcept;
 		friend void* detail::get_scene_node_impl(object const&) noexcept;

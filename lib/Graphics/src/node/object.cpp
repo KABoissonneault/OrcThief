@@ -9,15 +9,12 @@ namespace ot::graphics::node
 	{
 		void init_object_impl(object& n, void* snode) noexcept
 		{
-			static_assert(sizeof(object::storage) == sizeof(void*));
-			memcpy(&n.storage, &snode, sizeof(void*));
+			n.pimpl = snode;
 		}
 
 		void* get_scene_node_impl(object const& n) noexcept
 		{
-			void* snode;
-			memcpy(&snode, &n.storage, sizeof(Ogre::SceneNode*));
-			return snode;
+			return n.pimpl;
 		}
 	}
 
@@ -43,7 +40,7 @@ namespace ot::graphics::node
 
 	object::object(object&& other) noexcept
 	{
-		init_object(*this, &get_scene_node(other));
+		init_object(*this, static_cast<Ogre::SceneNode*>(other.pimpl));
 		init_object(other, nullptr);
 	}
 
@@ -52,7 +49,7 @@ namespace ot::graphics::node
 		if (this != &other)
 		{
 			destroy_node();
-			init_object(*this, &get_scene_node(other));
+			init_object(*this, static_cast<Ogre::SceneNode*>(other.pimpl));
 			init_object(other, nullptr);
 		}
 		return *this;
@@ -65,8 +62,7 @@ namespace ot::graphics::node
 
 	void object::destroy_node() noexcept
 	{
-		Ogre::SceneNode* snode;
-		memcpy(&snode, &storage, sizeof(Ogre::SceneNode*));
+		auto const snode = static_cast<Ogre::SceneNode*>(pimpl);
 
 		if (snode != nullptr && snode->getParent() != nullptr) // don't destroy root node
 		{
