@@ -108,7 +108,6 @@ namespace
 			// Takes ownership of main_archive, but copies library_archives
 			auto const pbs_manager = OGRE_NEW Ogre::HlmsPbs(main_archive, &library_archives);
 			hlms_manager->registerHlms(pbs_manager);
-			pbs_manager->loadLtcMatrix();
 		}
 	}
 }

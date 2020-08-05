@@ -137,7 +137,11 @@
     <PostBuildEvent>
       <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).dll RenderSystem_Direct3D11$(OgreLibExtension).dll RenderSystem_GL3Plus$(OgreLibExtension).dll RenderSystem_NULL$(OgreLibExtension).dll OgreOverlay$(OgreLibExtension).dll OgreHlmsPbs$(OgreLibExtension).dll OgreHlmsUnlit$(OgreLibExtension).dll FreeImage.dll zlib.dll
 if '$(Configuration)' == 'Debug' powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).pdb RenderSystem_Direct3D11$(OgreLibExtension).pdb RenderSystem_GL3Plus$(OgreLibExtension).pdb RenderSystem_NULL$(OgreLibExtension).pdb OgreOverlay$(OgreLibExtension).pdb OgreHlmsPbs$(OgreLibExtension).pdb OgreHlmsUnlit$(OgreLibExtension).pdb
-powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\SDL2\bin\$(Platform)\$(Configuration) SDL2.dll SDL2.pdb</Command>
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\SDL2\bin\$(Platform)\$(Configuration) SDL2.dll SDL2.pdb
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res $(SolutionDir)..\ext\Ogre\Samples\Media\packs DebugPack.zip
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Hlms\Common $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Common Any GLSL HLSL
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Hlms\Pbs $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Pbs Any GLSL HLSL
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Hlms\Unlit $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Unlit Any GLSL HLSL</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copying project dependencies</Message>
@@ -164,7 +168,11 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(Ou
     <PostBuildEvent>
       <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).dll RenderSystem_Direct3D11$(OgreLibExtension).dll RenderSystem_GL3Plus$(OgreLibExtension).dll RenderSystem_NULL$(OgreLibExtension).dll OgreOverlay$(OgreLibExtension).dll OgreHlmsPbs$(OgreLibExtension).dll OgreHlmsUnlit$(OgreLibExtension).dll FreeImage.dll zlib.dll
 if '$(Configuration)' == 'Debug' powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).pdb RenderSystem_Direct3D11$(OgreLibExtension).pdb RenderSystem_GL3Plus$(OgreLibExtension).pdb RenderSystem_NULL$(OgreLibExtension).pdb OgreOverlay$(OgreLibExtension).pdb OgreHlmsPbs$(OgreLibExtension).pdb OgreHlmsUnlit$(OgreLibExtension).pdb
-powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\SDL2\bin\$(Platform)\$(Configuration) SDL2.dll SDL2.pdb</Command>
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\SDL2\bin\$(Platform)\$(Configuration) SDL2.dll SDL2.pdb
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res $(SolutionDir)..\ext\Ogre\Samples\Media\packs DebugPack.zip
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Hlms\Common $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Common Any GLSL HLSL
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Hlms\Pbs $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Pbs Any GLSL HLSL
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Hlms\Unlit $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Unlit Any GLSL HLSL</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copying project dependencies</Message>
