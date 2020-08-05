@@ -5,6 +5,7 @@
 
 #include "Ogre/RenderSystem.h"
 #include "Ogre/Compositor/CompositorManager2.h"
+#include "Ogre/Components/Overlay/Manager.h"
 #include "Ogre/Window.h"
 
 
@@ -45,12 +46,18 @@ namespace ot::graphics
 
 		Ogre::CompositorManager2* const compositor_manager = root.getCompositorManager2();
 		compositor_manager->createBasicWorkspaceDef(k_workspace_def, k_background_color);
+
+		overlay_system.reset(new Ogre::v1::OverlaySystem);
 	}
 
 	auto module::impl::create_scene(size_t num_threads) -> scene
 	{
 		scene s;
 		init_scene(s, uptr<scene_impl, fwd_delete<scene_impl>>{ new scene_impl(num_threads, main_window.get_window().getTexture(), k_workspace_def) });
+		
+		Ogre::SceneManager& scene_manager = get_impl(s).get_scene_manager();
+		scene_manager.addRenderQueueListener(overlay_system.get());
+		scene_manager.getRenderQueue()->setSortRenderQueue(Ogre::v1::OverlayManager::getSingleton().mDefaultRenderQueueId, Ogre::RenderQueue::StableSort);
 		return s;
 	}
 

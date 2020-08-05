@@ -5,14 +5,18 @@
 #include "graphics/window_type.h"
 #include "window.h"
 
+#include "core/uptr.h"
+
 #include "math/unit/time.h"
 
+#include "Ogre/Components/Overlay/System.h"
 
 namespace ot::graphics
 {
 	class module::impl
 	{
 		window main_window;
+		uptr<Ogre::v1::OverlaySystem> overlay_system;
 
 	public:
 		void initialize(window_parameters const& window_params);

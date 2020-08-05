@@ -161,6 +161,11 @@
     <ClInclude Include="..\..\lib\Graphics\include\graphics\node\object.h" />
     <ClInclude Include="..\..\lib\graphics\include\graphics\node\static_mesh.fwd.h" />
     <ClInclude Include="..\..\lib\graphics\include\graphics\node\static_mesh.h" />
+    <ClInclude Include="..\..\lib\Graphics\include\graphics\overlay\container.h" />
+    <ClInclude Include="..\..\lib\graphics\include\graphics\overlay\element.h" />
+    <ClInclude Include="..\..\lib\Graphics\include\graphics\overlay\panel.h" />
+    <ClInclude Include="..\..\lib\graphics\include\graphics\overlay\surface.h" />
+    <ClInclude Include="..\..\lib\graphics\include\graphics\overlay\text.h" />
     <ClInclude Include="..\..\lib\graphics\include\graphics\scene.fwd.h" />
     <ClInclude Include="..\..\lib\graphics\include\graphics\scene.h" />
     <ClInclude Include="..\..\lib\graphics\include\graphics\window.h" />
@@ -170,6 +175,11 @@
     <ClInclude Include="..\..\lib\Graphics\src\node\light.h" />
     <ClInclude Include="..\..\lib\Graphics\src\node\object.h" />
     <ClInclude Include="..\..\lib\Graphics\src\node\static_mesh.h" />
+    <ClInclude Include="..\..\lib\graphics\src\overlay\container.h" />
+    <ClInclude Include="..\..\lib\graphics\src\overlay\element.h" />
+    <ClInclude Include="..\..\lib\graphics\src\overlay\panel.h" />
+    <ClInclude Include="..\..\lib\graphics\src\overlay\surface.h" />
+    <ClInclude Include="..\..\lib\graphics\src\overlay\text.h" />
     <ClInclude Include="..\..\lib\Graphics\src\scene.h" />
     <ClInclude Include="..\..\lib\Graphics\src\shadowed_text.h" />
     <ClInclude Include="..\..\lib\graphics\src\window.h" />
@@ -181,6 +191,11 @@
     <ClCompile Include="..\..\lib\graphics\src\node\light.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\node\object.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\node\static_mesh.cpp" />
+    <ClCompile Include="..\..\lib\graphics\src\overlay\container.cpp" />
+    <ClCompile Include="..\..\lib\graphics\src\overlay\element.cpp" />
+    <ClCompile Include="..\..\lib\graphics\src\overlay\panel.cpp" />
+    <ClCompile Include="..\..\lib\graphics\src\overlay\surface.cpp" />
+    <ClCompile Include="..\..\lib\graphics\src\overlay\text.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\scene.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\shadowed_text.cpp" />
     <ClCompile Include="..\..\lib\graphics\src\window.cpp" />

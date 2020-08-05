@@ -44,10 +44,6 @@ namespace ot::graphics
 		Ogre::CompositorManager2* const compositor_manager = root.getCompositorManager2();
 		main_workspace = compositor_manager->addWorkspace(scene_manager, render_texture, main_camera.get(), workspace_def, true /*enabled*/);
 
-		overlay_system = std::make_unique<Ogre::v1::OverlaySystem>();
-		scene_manager->addRenderQueueListener(overlay_system.get());
-		scene_manager->getRenderQueue()->setSortRenderQueue(Ogre::v1::OverlayManager::getSingleton().mDefaultRenderQueueId, Ogre::RenderQueue::StableSort);
-
 		scene_manager->setShadowDirectionalLightExtrusionDistance(500.0f);
 		scene_manager->setShadowFarDistance(500.0f);
 	}
@@ -58,17 +54,8 @@ namespace ot::graphics
 
 		if (scene_manager != nullptr)
 		{
-			if (overlay_system != nullptr)
-			{
-				scene_manager->removeRenderQueueListener(overlay_system.get());
-			}
 			Ogre::Root::getSingleton().destroySceneManager(scene_manager);
 		}
-
-		overlay_system.reset();
-		main_workspace = nullptr;
-		main_camera = nullptr;
-		scene_manager = nullptr;
 	}
 
 	void scene_impl::update(math::seconds dt)

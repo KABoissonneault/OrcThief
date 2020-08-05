@@ -19,7 +19,6 @@ namespace ot::graphics
 		node::object scene_root;
 		camera main_camera;
 		Ogre::CompositorWorkspace* main_workspace;
-		std::unique_ptr<Ogre::v1::OverlaySystem> overlay_system;
 
 	public:
 		scene_impl(size_t number_threads, Ogre::TextureGpu* render_window, ogre::string const& workspace_def);
