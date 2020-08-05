@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\graphics\include\graphics\camera.h" />
+    <ClInclude Include="..\..\lib\graphics\include\graphics\color.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\mesh_definition.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\module.h" />
     <ClInclude Include="..\..\lib\graphics\include\graphics\node\light.fwd.h" />
