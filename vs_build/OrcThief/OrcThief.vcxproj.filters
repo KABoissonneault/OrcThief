@@ -8,6 +8,9 @@
     <Filter Include="src\selection">
       <UniqueIdentifier>{a72bd6fa-e7ca-459c-8dc4-faa317cdb88d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\hud">
+      <UniqueIdentifier>{672e3afc-732a-406a-9fae-edd616d5c228}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -28,6 +31,9 @@
     <ClCompile Include="..\..\src\selection\context.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\hud\shadowed_text.cpp">
+      <Filter>src\hud</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\application.h">
@@ -44,6 +50,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\selection\brush_context.h">
       <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hud\shadowed_text.h">
+      <Filter>src\hud</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

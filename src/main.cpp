@@ -106,7 +106,9 @@ namespace
 				});
 
 			// Takes ownership of main_archive, but copies library_archives
-			hlms_manager->registerHlms(OGRE_NEW Ogre::HlmsPbs(main_archive, &library_archives));
+			auto const pbs_manager = OGRE_NEW Ogre::HlmsPbs(main_archive, &library_archives);
+			hlms_manager->registerHlms(pbs_manager);
+			pbs_manager->loadLtcMatrix();
 		}
 	}
 }
@@ -158,7 +160,7 @@ extern "C" int main(int argc, char** argv)
 	app.setup_default_scene();
 	
 	app.run();
-
+	
 	SDL_Quit();
 
 	return 0;

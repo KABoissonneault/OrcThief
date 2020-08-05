@@ -181,7 +181,6 @@
     <ClInclude Include="..\..\lib\graphics\src\overlay\surface.h" />
     <ClInclude Include="..\..\lib\graphics\src\overlay\text.h" />
     <ClInclude Include="..\..\lib\Graphics\src\scene.h" />
-    <ClInclude Include="..\..\lib\Graphics\src\shadowed_text.h" />
     <ClInclude Include="..\..\lib\graphics\src\window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -197,7 +196,6 @@
     <ClCompile Include="..\..\lib\graphics\src\overlay\surface.cpp" />
     <ClCompile Include="..\..\lib\graphics\src\overlay\text.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\scene.cpp" />
-    <ClCompile Include="..\..\lib\Graphics\src\shadowed_text.cpp" />
     <ClCompile Include="..\..\lib\graphics\src\window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

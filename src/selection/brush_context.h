@@ -27,5 +27,7 @@ namespace ot::selection
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key) override;
 		virtual bool handle_mouse_button_event(SDL_MouseButtonEvent const& mouse) override;
 		virtual bool handle_mouse_motion_event(SDL_MouseMotionEvent const& mouse) override;
+
+		virtual void get_debug_string(std::string& s) const override;
 	};
 }

@@ -73,4 +73,9 @@ namespace ot::selection
 			select(selected_brush - 1);
 		}
 	}
+
+	void brush_context::get_debug_string(std::string& s) const
+	{
+		s += "Selected brush: " + std::to_string(selected_brush) + "\n";
+	}
 }

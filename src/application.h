@@ -2,6 +2,7 @@
 
 #include "selection/context.h"
 #include "map.h"
+#include "hud/shadowed_text.h"
 
 #include "core/uptr.h"
 
@@ -13,8 +14,10 @@
 #include "graphics/mesh_definition.h"
 #include "graphics/node/static_mesh.h"
 #include "graphics/node/light.h"
+#include "graphics/overlay/surface.h"
 
 #include <span>
+#include <optional>
 
 namespace ot
 {
@@ -24,11 +27,14 @@ namespace ot
 		graphics::module graphics;
 		graphics::scene main_scene;
 
-		ot::graphics::node::directional_light light;
+		graphics::node::directional_light light;
 
 		map current_map;
 
 		uptr<selection::context> selection_context;
+
+		graphics::overlay::surface debug_surface;
+		std::optional<hud::shadowed_text> debug_text;
 
 		void update(math::seconds dt);
 	

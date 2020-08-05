@@ -196,6 +196,13 @@ namespace ot
 		light = graphics::node::create_directional_light(main_scene.get_root_node());
 		light.set_position({ 10.0, 10.0, -10.0 });
 		light.set_direction(normalized(math::vector3d{ -1.0, -1.0, 1.0 }));
+
+		debug_surface = graphics::overlay::create_surface("DebugSurface");
+		debug_text.emplace(debug_surface, "DebugText");
+		debug_text->set_font("DebugFont");
+		debug_text->set_height(0.025);
+
+		debug_surface.show();
 	}
 
 	brush application::make_brush(std::span<math::plane const> planes, std::string const& name, math::vector3d position)
@@ -280,6 +287,10 @@ namespace ot
 
 	void application::update(math::seconds dt)
 	{
+		std::string s;
+		selection_context->get_debug_string(s);
+		debug_text->set_text(s);
+
 		graphics.update(dt);
 		main_scene.update(dt);
 
