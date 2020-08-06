@@ -7,6 +7,9 @@
     <Filter Include="include\iterator">
       <UniqueIdentifier>{420e9fe4-6b37-4841-a5ee-92cad71143d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{25ceb382-1d0a-42a1-b992-831608aff679}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Core\include\Core\compiler.h">
@@ -27,5 +30,10 @@
     <ClInclude Include="..\..\lib\Core\include\core\fwd_delete.h">
       <Filter>include</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\lib\core\src\float.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

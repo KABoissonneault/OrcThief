@@ -149,6 +149,9 @@
     <ClCompile Include="..\..\src\math\plane.test.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\vs_build\Core\Core.vcxproj">
+      <Project>{d53df004-1a22-4158-a426-c3a1c677abd3}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\vs_build\Graphics\Graphics.vcxproj">
       <Project>{808fa609-f742-469c-bc5d-895d9e45cbee}</Project>
     </ProjectReference>

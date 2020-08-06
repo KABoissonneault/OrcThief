@@ -3,25 +3,17 @@
 #include <cmath>
 #include <cfloat>
 
+#include <cstdio>
+
 namespace ot
 {
 	namespace detail
 	{
 		template<typename Float>
-		inline int float_cmp(Float lhs, Float rhs, Float epsilon)
-		{
-			int exponent;
-			std::frexp(std::fmax(lhs, rhs), &exponent);
-			Float const delta = std::ldexp(epsilon, exponent);
-			Float const difference = lhs - rhs;
+		inline int float_cmp(Float lhs, Float rhs, Float epsilon);
 
-			if (difference > delta)
-				return 1; // lhs > rhs
-			else if (difference < -delta)
-				return -1; // lhs < rhs
-			else
-				return 0; // lhs == rhs
-		}
+		extern template int float_cmp(float, float, float);
+		extern template int float_cmp(double, double, double);
 	}
 
 	// Compares two floats, lhs and rhs, and return:
