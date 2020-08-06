@@ -4,7 +4,7 @@
 #include "Ogre/Ray.h"
 
 #include "math/vector3.h"
-#include "graphics/ray.h"
+#include "math/ray.h"
 
 namespace ot::graphics
 {
@@ -44,7 +44,7 @@ namespace ot::graphics
 		};
 	}
 
-	inline ray to_graphics_ray(Ogre::Ray r) noexcept
+	inline math::ray to_graphics_ray(Ogre::Ray r) noexcept
 	{
 		return {
 			to_math_point(r.getOrigin()),
@@ -52,7 +52,7 @@ namespace ot::graphics
 		};
 	}
 
-	inline Ogre::Ray to_ogre_ray(ray r) noexcept
+	inline Ogre::Ray to_ogre_ray(math::ray r) noexcept
 	{
 		return {
 			to_ogre_vector(r.origin),

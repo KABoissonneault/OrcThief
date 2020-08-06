@@ -3,12 +3,14 @@
 #include "math/vector3.h"
 #include "math/plane.h"
 #include "math/aabb.h"
+#include "math/ray.h"
 #include "core/size_t.h"
 #include "core/iterator/arrow_proxy.h"
 
 #include <vector>
 #include <span>
 #include <cassert>
+#include <optional>
 
 namespace ot::graphics
 {	
@@ -58,22 +60,22 @@ namespace ot::graphics
 		[[nodiscard]] math::point3d get_position(mesh_definition const& m, id v);
 
 		// Returns a range of the half-edges around the given vertex
-		[[nodiscard]] auto get_half_edges(mesh_definition const& m, vertex::id vertex) -> detail::half_edge_range<detail::vertex_half_edge_iteration>;
+		[[nodiscard]] auto get_half_edges(mesh_definition const& m, id vertex) -> detail::half_edge_range<detail::vertex_half_edge_iteration>;
 	}
 
 	namespace half_edge
 	{
 		// Returns the vertex the half-edge originates from
-		[[nodiscard]] vertex::id get_source_vertex(mesh_definition const& m, half_edge::id e);
+		[[nodiscard]] vertex::id get_source_vertex(mesh_definition const& m, id e);
 
 		// Returns the vertex the half-edge is pointing to
-		[[nodiscard]] vertex::id get_target_vertex(mesh_definition const& m, half_edge::id e);
+		[[nodiscard]] vertex::id get_target_vertex(mesh_definition const& m, id e);
 
 		// Returns the face the half-edge is on
-		[[nodiscard]] face::id get_face(mesh_definition const& m, half_edge::id e);
+		[[nodiscard]] face::id get_face(mesh_definition const& m, id e);
 
 		// Returns the half-edge's twin
-		[[nodiscard]] id get_twin(mesh_definition const& m, half_edge::id e);
+		[[nodiscard]] id get_twin(mesh_definition const& m, id e);
 
 		// Splits the half-edge and its twin in two at the given point, creating two new half-edges 
 		// The input edge is modified to have the new edge as its "next", and the new half-edge is returned
@@ -89,22 +91,25 @@ namespace ot::graphics
 		//   - 'point' must be on the edge
 		// 
 		// Returns: The new edge after the input one
-		half_edge::id split_at(mesh_definition & m, half_edge::id edge_id, math::point3d point);
+		half_edge::id split_at(mesh_definition & m, id edge_id, math::point3d point);
 	}
 
 	namespace face
 	{
 		// Returns the normal vector of the face
-		[[nodiscard]] math::vector3d get_normal(mesh_definition const& m, face::id face);
+		[[nodiscard]] math::vector3d get_normal(mesh_definition const& m, id face);
 
 		// Returns a range of the half-edges around the given face
-		[[nodiscard]] auto get_half_edges(mesh_definition const& m, face::id face) -> detail::half_edge_range<detail::face_half_edge_iteration>;
+		[[nodiscard]] auto get_half_edges(mesh_definition const& m, id face) -> detail::half_edge_range<detail::face_half_edge_iteration>;
 
 		// Returns a range of vertices around the given face
-		[[nodiscard]] auto get_vertices(mesh_definition const& m, face::id face) -> detail::face_vertex_range;
+		[[nodiscard]] auto get_vertices(mesh_definition const& m, id face) -> detail::face_vertex_range;
 
 		// Returns the number of vertices on the face
-		[[nodiscard]] size_t get_vertex_count(mesh_definition const& m, face::id face);
+		[[nodiscard]] size_t get_vertex_count(mesh_definition const& m, id face);
+
+		// Returns the plane parallel to the face
+		[[nodiscard]] math::plane get_plane(mesh_definition const& m, id face);
 	}
 
 	// A mesh representing a three-dimensional manifold formed of faces, vertices, and pairs of half-edges between each vertex
@@ -114,7 +119,6 @@ namespace ot::graphics
 		struct vertex_data
 		{
 			math::point3d position;
-			math::vector3d normal;
 			half_edge::id first_edge;
 		};
 		
@@ -178,6 +182,7 @@ namespace ot::graphics
 		friend auto face::get_half_edges(mesh_definition const& m, face::id face) -> detail::half_edge_range<detail::face_half_edge_iteration>;
 		friend auto face::get_vertices(mesh_definition const& m, face::id face) -> detail::face_vertex_range;
 		friend size_t face::get_vertex_count(mesh_definition const& m, face::id face);
+		friend math::plane face::get_plane(mesh_definition const& m, face::id face);
 
 		struct point_intersection;
 		static std::vector<point_intersection> find_intersections(std::span<const math::plane> planes, std::vector<vertex_data>& vertices, std::vector<half_edge_data>& half_edges);
@@ -488,18 +493,6 @@ namespace ot::graphics
 
 	namespace face
 	{
-		inline math::vector3d get_normal(mesh_definition const& m, id face)
-		{
-			auto const vertices = get_vertices(m, face);
-			auto vertex_it = vertices.begin();
-			auto const vertex0 = *vertex_it++;
-			auto const vertex1 = *vertex_it++;
-			auto const vertex2 = *vertex_it++;
-			auto const vector0 = get_position(m, vertex1) - get_position(m, vertex0);
-			auto const vector1 = get_position(m, vertex2) - get_position(m, vertex1);
-			return normalized(cross_product(vector0, vector1));
-		}
-
 		inline auto get_half_edges(mesh_definition const& m, id face) -> detail::half_edge_range<detail::face_half_edge_iteration>
 		{
 			return { &m, m.get_face(face).first_edge };

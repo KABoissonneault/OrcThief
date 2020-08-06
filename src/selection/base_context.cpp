@@ -34,7 +34,7 @@ namespace ot::selection
 			double const viewport_x = static_cast<double>(mouse.x) / width;
 			double const viewport_y = static_cast<double>(mouse.y) / height;
 
-			graphics::ray const r = get_world_ray_from_viewport(current_scene->get_camera(), viewport_x, viewport_y);
+			math::ray const r = get_world_ray_from_viewport(current_scene->get_camera(), viewport_x, viewport_y);
 			auto const result = current_scene->raycast_object(r);
 			if (!result)
 				return true;

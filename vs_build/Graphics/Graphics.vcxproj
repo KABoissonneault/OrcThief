@@ -166,7 +166,6 @@
     <ClInclude Include="..\..\lib\Graphics\include\graphics\overlay\panel.h" />
     <ClInclude Include="..\..\lib\graphics\include\graphics\overlay\surface.h" />
     <ClInclude Include="..\..\lib\graphics\include\graphics\overlay\text.h" />
-    <ClInclude Include="..\..\lib\graphics\include\graphics\ray.h" />
     <ClInclude Include="..\..\lib\graphics\include\graphics\scene.fwd.h" />
     <ClInclude Include="..\..\lib\graphics\include\graphics\scene.h" />
     <ClInclude Include="..\..\lib\graphics\include\graphics\window.h" />

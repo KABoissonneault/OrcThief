@@ -2,7 +2,7 @@
 
 #include "math/vector3.h"
 
-#include "graphics/ray.h"
+#include "math/ray.h"
 
 namespace ot::graphics
 {
@@ -16,5 +16,5 @@ namespace ot::graphics
 	//   viewport_y: distance from the top of the screen in normalizes coordinates [0, 1]
 	//
 	// Returns: ray from viewport position toward the world
-	[[nodiscard]] ray get_world_ray_from_viewport(camera const& c, double viewport_x, double viewport_y);
+	[[nodiscard]] math::ray get_world_ray_from_viewport(camera const& c, double viewport_x, double viewport_y);
 }

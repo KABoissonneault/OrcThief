@@ -164,6 +164,7 @@ namespace ot::graphics::node
 			for (auto const& face : mesh.get_faces())
 			{
 				auto const face_vertex_count = get_vertex_count(mesh, face);
+				assert(face_vertex_count >= 3); // I've had issues at some point, better make sure
 				auto const triangle_count = face_vertex_count - 2;
 
 				vertex_count += face_vertex_count;

@@ -24,9 +24,14 @@ namespace ot::math
 	{
 		T x, y, z;
 
-		T norm() const
+		[[nodiscard]] T norm() const
 		{
 			return static_cast<T>(std::sqrt(x * x + y * y + z * z));
+		}
+
+		[[nodiscard]] constexpr T norm_squared() const noexcept
+		{
+			return x * x + y * y + z * z;
 		}
 	};
 
@@ -146,6 +151,18 @@ namespace ot::math
 		return { std::midpoint(lhs.x, rhs.x), std::midpoint(lhs.y, rhs.y), std::midpoint(lhs.z, rhs.z) };
 	}
 
+	template<typename T>
+	[[nodiscard]] constexpr inline point3<T> destination_from_origin(vector3<T> v) noexcept
+	{
+		return { v.x, v.y, v.z };
+	}
+
+	template<typename T>
+	[[nodiscard]] constexpr inline vector3<T> vector_from_origin(point3<T> v) noexcept
+	{
+		return { v.x, v.y, v.z };
+	}
+
 	using point3i = point3<int>;
 	using point3f = point3<float>;
 	using point3d = point3<double>;
@@ -173,6 +190,8 @@ namespace ot::math
 		return ot::float_eq(v.norm(), 1.0);
 	}
 
+	using ot::float_eq;
+
 	[[nodiscard]] inline bool float_eq(point3f lhs, point3f rhs) noexcept
 	{
 		return ot::float_eq(lhs.x, rhs.x) && ot::float_eq(lhs.y, rhs.y) && ot::float_eq(lhs.z, rhs.z);
@@ -193,5 +212,17 @@ namespace ot::math
 		return ot::float_eq(lhs.x, rhs.x) && ot::float_eq(lhs.y, rhs.y) && ot::float_eq(lhs.z, rhs.z);
 	}
 
+	// Returns the distance between the point p0 and the line represented by p1 and p2
+	[[nodiscard]] inline double distance_point_to_line(point3d p0, point3d p1, point3d p2)
+	{
+		return cross_product(p2 - p1, p1 - p0).norm() / (p2 - p1).norm();
+	}
 
+	// Returns the 'inverse' of the input vector
+	//
+	// This is the logical equivalent of v^-1, not -v. Useful for "dividing" vectors
+	[[nodiscard]] inline vector3d inverse(vector3d v)
+	{
+		return v / v.norm_squared();
+	}
 }

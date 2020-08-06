@@ -7,6 +7,9 @@
     <Filter Include="include\unit">
       <UniqueIdentifier>{3b4de833-4703-45cf-963f-6568349a94d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{67930f7f-84d2-4d3c-8832-08bf051e48df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Math\include\Math\vector3.h">
@@ -21,5 +24,16 @@
     <ClInclude Include="..\..\lib\Math\include\math\aabb.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\math\include\math\ray.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\lib\math\src\ray.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Math\src\plane.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

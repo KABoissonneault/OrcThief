@@ -194,6 +194,9 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ProjectReference Include="..\Graphics\Graphics.vcxproj">
       <Project>{808fa609-f742-469c-bc5d-895d9e45cbee}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Math\Math.vcxproj">
+      <Project>{66b5eaca-d273-47fe-9fd2-843251be43e2}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Ogre\Ogre.vcxproj">
       <Project>{198acbb3-600f-44e4-8ae8-872597830fbc}</Project>
     </ProjectReference>

@@ -3,12 +3,12 @@
 #include <catch2/catch.hpp>
 
 ot::math::plane const cube_planes[6] = {
-	{{0, 0, 1}, 1},
-	{{1, 0, 0}, 1},
-	{{0, 1, 0}, 1},
-	{{-1, 0, 0}, 0},
-	{{0, -1, 0}, 0},
-	{{0, 0, -1}, 0},
+	{{0, 0, 1}, 0.5},
+	{{1, 0, 0}, 0.5},
+	{{0, 1, 0}, 0.5},
+	{{-1, 0, 0}, 0.5},
+	{{0, -1, 0}, 0.5},
+	{{0, 0, -1}, 0.5},
 };
 
 TEST_CASE("mesh::make_cube", "[math]")
@@ -25,6 +25,7 @@ TEST_CASE("mesh::make_cube", "[math]")
 
 		REQUIRE(get_vertex_count(cube, face) == 4);
 		REQUIRE(is_normalized(get_normal(cube, face)));
+		REQUIRE(float_eq(get_plane(cube, face), cube_planes[static_cast<size_t>(face)]));
 
 		// Test that each face has 4 edges
 		auto const half_edges = get_half_edges(cube, face);
@@ -64,8 +65,8 @@ TEST_CASE("mesh::make_cube", "[math]")
 	}
 
 	auto const bounds = cube.get_bounds();
-	REQUIRE(float_eq(bounds.max(), ot::math::point3d{ 1., 1., 1. }));
-	REQUIRE(float_eq(bounds.min(), ot::math::point3d{ 0., 0., 0. }));
+	REQUIRE(float_eq(bounds.max(), ot::math::point3d{ 0.5, 0.5, 0.5 }));
+	REQUIRE(float_eq(bounds.min(), ot::math::point3d{ -0.5, -0.5, -0.5 }));
 }
 
 TEST_CASE("mesh::split_edge", "[math­]")
@@ -76,7 +77,7 @@ TEST_CASE("mesh::split_edge", "[math­]")
 	// Find the edge pointing at the {1, 1, 1} vertex
 	auto const found_edge = std::find_if(top_face_edges.begin(), top_face_edges.end(), [&cube](ot::graphics::half_edge::id const h)
 	{
-		return float_eq(get_position(cube, get_target_vertex(cube, h)), { 1, 1, 1 });
+		return float_eq(get_position(cube, get_target_vertex(cube, h)), { 0.5, 0.5, 0.5 });
 	});
 
 	REQUIRE(found_edge != top_face_edges.end());

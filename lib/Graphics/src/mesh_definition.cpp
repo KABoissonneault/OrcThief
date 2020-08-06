@@ -48,6 +48,31 @@ namespace ot::graphics
 		}
 	}
 
+	namespace face
+	{
+		math::vector3d get_normal(mesh_definition const& m, id face)
+		{
+			auto const vertices = get_vertices(m, face);
+			auto vertex_it = vertices.begin();
+			auto const vertex0 = *vertex_it++;
+			auto const vertex1 = *vertex_it++;
+			auto const vertex2 = *vertex_it++;
+			auto const vector0 = get_position(m, vertex1) - get_position(m, vertex0);
+			auto const vector1 = get_position(m, vertex2) - get_position(m, vertex1);
+			return normalized(cross_product(vector0, vector1));
+		}
+
+		math::plane get_plane(mesh_definition const& m, id face)
+		{
+			mesh_definition::face_data const& f = m.get_face(face);
+			mesh_definition::half_edge_data const& h = m.get_half_edge(f.first_edge);
+			math::point3d const p = get_position(m, h.vertex);
+			math::vector3d const n = get_normal(m, face);
+			double const d = dot_product(vector_from_origin(p), n);
+			return { n, d };
+		}
+	}
+
 	namespace
 	{
 		math::vector3d get_average_normal(std::span<math::plane const> planes)
@@ -124,7 +149,6 @@ namespace ot::graphics
 						auto const vertex_id = vertex::id(vertices.size());
 						mesh_definition::vertex_data& vertex = vertices.emplace_back();
 						vertex.position = *intersection_result;
-						vertex.normal = get_average_normal(plane_values);
 						vertex.first_edge = half_edge::id::none;
 
 						point_intersection intersection;

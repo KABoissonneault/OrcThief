@@ -1,9 +1,9 @@
 #pragma once
 
 #include "graphics/scene.fwd.h"
-#include "graphics/ray.h"
 #include "graphics/node/object.fwd.h"
 
+#include "math/ray.h"
 #include "math/unit/time.h"
 
 #include "core/uptr.h"
@@ -32,7 +32,7 @@ namespace ot::graphics
 		void update(math::seconds dt);
 
 		// Casts the ray in the scene, and detects the nearest object
-		std::optional<node::object_id> raycast_object(ray r) const;
+		std::optional<node::object_id> raycast_object(math::ray r) const;
 	};	
 }
 
