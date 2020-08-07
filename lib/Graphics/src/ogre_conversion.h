@@ -1,9 +1,11 @@
 #pragma once
 
 #include "Ogre/Vector3.h"
+#include "Ogre/Quaternion.h"
 #include "Ogre/Ray.h"
 
 #include "math/vector3.h"
+#include "math/quaternion.h"
 #include "math/ray.h"
 
 namespace ot::graphics
@@ -42,6 +44,16 @@ namespace ot::graphics
 			v.y,
 			v.z
 		};
+	}
+
+	inline math::quaternion to_math_quaternion(Ogre::Quaternion q) noexcept
+	{
+		return { q.w, q.x, q.y, q.z };
+	}
+
+	inline Ogre::Quaternion to_ogre_quaternion(math::quaternion q) noexcept
+	{
+		return { static_cast<Ogre::Real>(q.w), static_cast<Ogre::Real>(q.x), static_cast<Ogre::Real>(q.y), static_cast<Ogre::Real>(q.z) };
 	}
 
 	inline math::ray to_graphics_ray(Ogre::Ray r) noexcept

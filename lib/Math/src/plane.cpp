@@ -47,4 +47,11 @@ namespace ot::math
 			-(p1.normal.y * ad23 + p2.normal.y * ad31 + p3.normal.y * ad12) / w
 		};
 	}
+
+	plane transform(plane p, quaternion rotation, vector3d displacement)
+	{
+		p.normal = rotate(p.normal, rotation);
+		p.distance += dot_product(p.normal, displacement);
+		return p;
+	}
 }

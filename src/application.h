@@ -42,7 +42,7 @@ namespace ot
 		bool initialize();
 		void setup_default_scene();
 
-		brush make_brush(std::span<math::plane const> planes, std::string const& name, math::vector3d position);
+		brush make_brush(std::span<math::plane const> planes, std::string const& name, math::point3d position);
 
 		void run();
 	};

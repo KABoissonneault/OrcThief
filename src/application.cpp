@@ -205,7 +205,7 @@ namespace ot
 		debug_surface.show();
 	}
 
-	brush application::make_brush(std::span<math::plane const> planes, std::string const& name, math::vector3d position)
+	brush application::make_brush(std::span<math::plane const> planes, std::string const& name, math::point3d position)
 	{
 		auto mesh = graphics::mesh_definition::make_from_planes(planes);
 		auto node = graphics::node::create_static_mesh(main_scene.get_root_node(), name, mesh);

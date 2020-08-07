@@ -3,6 +3,8 @@
 #include "Ogre/SceneNode.h"
 #include "Ogre/SceneManager.h"
 
+#include "ogre_conversion.h"
+
 namespace ot::graphics::node
 {
 	namespace detail
@@ -104,14 +106,24 @@ namespace ot::graphics::node
 		return false;
 	}
 
-	void object::set_position(math::vector3d p)
+	void object::set_position(math::point3d p)
 	{
-		get_scene_node(*this).setPosition(static_cast<Ogre::Real>(p.x), static_cast<Ogre::Real>(p.y), static_cast<Ogre::Real>(p.z));
+		get_scene_node(*this).setPosition(to_ogre_vector(p));
+	}
+
+	math::point3d object::get_position() const noexcept
+	{
+		return to_math_point(get_scene_node(*this).getPosition());
+	}
+
+	math::quaternion object::get_rotation() const noexcept
+	{
+		return to_math_quaternion(get_scene_node(*this).getOrientation());
 	}
 
 	void object::set_direction(math::vector3d direction)
 	{
-		get_scene_node(*this).setDirection(static_cast<Ogre::Real>(direction.x), static_cast<Ogre::Real>(direction.y), static_cast<Ogre::Real>(direction.z));
+		get_scene_node(*this).setDirection(to_ogre_vector(direction));
 	}
 
 	void object::rotate_around(math::vector3d axis, double rad)

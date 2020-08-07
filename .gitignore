@@ -44,3 +44,5 @@ ext/Ogre
 /res/
 *.FileListAbsolute.txt
 *.CopyComplete
+/ext/boost
+*.recipe

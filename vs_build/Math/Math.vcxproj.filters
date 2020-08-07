@@ -27,12 +27,18 @@
     <ClInclude Include="..\..\lib\math\include\math\ray.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\math\include\math\quaternion.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\math\src\ray.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\lib\Math\src\plane.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\math\src\quaternion.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

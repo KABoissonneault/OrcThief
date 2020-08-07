@@ -168,6 +168,7 @@
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Mesh2.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\MeshManager2.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Prerequisites.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\Quaternion.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Ray.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\RenderSystem.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ResourceGroupManager.h" />

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math/vector3.h"
+#include "math/quaternion.h"
 
 #include <optional>
 #include <cfloat>
@@ -34,6 +35,8 @@ namespace ot::math
 	
 	[[nodiscard]] plane_side_result get_plane_side(plane p, point3d v);
 	[[nodiscard]] std::optional<point3d> find_intersection(plane p1, plane p2, plane p3);
+
+	[[nodiscard]] plane transform(plane p, quaternion rotation, vector3d displacement);
 
 	using ot::float_eq;
 	[[nodiscard]] inline bool float_eq(plane const& lhs, plane const& rhs)

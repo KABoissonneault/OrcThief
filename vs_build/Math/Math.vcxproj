@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -121,6 +121,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\ext\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,6 +137,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\ext\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,12 +149,14 @@
   <ItemGroup>
     <ClInclude Include="..\..\lib\Math\include\math\aabb.h" />
     <ClInclude Include="..\..\lib\Math\include\math\plane.h" />
+    <ClInclude Include="..\..\lib\math\include\math\quaternion.h" />
     <ClInclude Include="..\..\lib\math\include\math\ray.h" />
     <ClInclude Include="..\..\lib\Math\include\math\unit\time.h" />
     <ClInclude Include="..\..\lib\Math\include\Math\vector3.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\Math\src\plane.cpp" />
+    <ClCompile Include="..\..\lib\math\src\quaternion.cpp" />
     <ClCompile Include="..\..\lib\math\src\ray.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

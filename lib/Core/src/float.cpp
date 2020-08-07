@@ -30,8 +30,8 @@ namespace ot
 			{
 				minscaled = std::ldexp(lfrac, lexp - rexp);
 				maxfrac = rfrac;
-
-			} else
+			} 
+			else
 			{
 				minscaled = std::ldexp(rfrac, rexp - lexp);
 				maxfrac = lfrac;

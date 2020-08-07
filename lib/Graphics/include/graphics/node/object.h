@@ -3,6 +3,7 @@
 #include "graphics/node/object.fwd.h"
 
 #include "math/vector3.h"
+#include "math/quaternion.h"
 
 namespace ot::graphics::node
 {
@@ -30,12 +31,16 @@ namespace ot::graphics::node
 		~object();
 
 		// Id of the node itself
-		node_id get_node_id() const noexcept;
+		[[nodiscard]] node_id get_node_id() const noexcept;
 
 		// Returns true if the node contains a sub-object with the given id
 		bool contains(object_id id) const noexcept;
 
-		void set_position(math::vector3d position);
+		void set_position(math::point3d position);
+		[[nodiscard]] math::point3d get_position() const noexcept;
+
+		[[nodiscard]] math::quaternion get_rotation() const noexcept;
+
 		void set_direction(math::vector3d direction);
 		void rotate_around(math::vector3d axis, double rad);
 
