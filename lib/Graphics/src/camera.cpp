@@ -6,14 +6,19 @@
 
 namespace ot::graphics
 {
-	void set_position(camera& c, math::vector3d position)
+	void set_position(camera& c, math::point3d position)
 	{
-		c->setPosition(static_cast<Ogre::Real>(position.x), static_cast<Ogre::Real>(position.y), static_cast<Ogre::Real>(position.z));
+		c->setPosition(to_ogre_vector(position));
 	}
 
-	void look_at(camera& c, math::vector3d position)
+	math::point3d get_position(camera const& c)
 	{
-		c->lookAt(static_cast<Ogre::Real>(position.x), static_cast<Ogre::Real>(position.y), static_cast<Ogre::Real>(position.z));
+		return to_math_point(c->getPosition());
+	}
+
+	void look_at(camera& c, math::point3d position)
+	{
+		c->lookAt(to_ogre_vector(position));
 	}
 
 	math::ray get_world_ray_from_viewport(camera const& c, double viewport_x, double viewport_y)
