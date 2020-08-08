@@ -71,6 +71,29 @@ namespace ot::graphics
 			double const d = dot_product(vector_from_origin(p), n);
 			return { n, d };
 		}
+
+		bool is_on_face(mesh_definition const& m, id face, math::point3d p)
+		{
+			math::vector3d const face_normal = get_normal(m, face);
+
+			for (graphics::half_edge::id const he : get_half_edges(m, face))
+			{
+				math::line const l = get_line(m, he);
+
+				math::vector3d const v1 = l.b - l.a;
+				math::vector3d const v2 = l.a - p;
+
+				math::vector3d const vr = cross_product(v1, v2);
+
+				// If the cross product is in the same direction as the face normal, the point is outside the face
+				if (dot_product(vr, face_normal) > 0)
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
 	}
 
 	namespace

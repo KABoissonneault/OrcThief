@@ -4,6 +4,7 @@
 #include "math/plane.h"
 #include "math/aabb.h"
 #include "math/ray.h"
+#include "math/line.h"
 #include "core/size_t.h"
 #include "core/iterator/arrow_proxy.h"
 
@@ -77,6 +78,9 @@ namespace ot::graphics
 		// Returns the half-edge's twin
 		[[nodiscard]] id get_twin(mesh_definition const& m, id e);
 
+		// Returns the line from the source vertex to the target vertex
+		[[nodiscard]] math::line get_line(mesh_definition const& m, id e);
+
 		// Splits the half-edge and its twin in two at the given point, creating two new half-edges 
 		// The input edge is modified to have the new edge as its "next", and the new half-edge is returned
 		// The new half-edge will have the current twin as its twin, and the current half-edge will have the new twin as its twin
@@ -110,6 +114,10 @@ namespace ot::graphics
 
 		// Returns the plane parallel to the face
 		[[nodiscard]] math::plane get_plane(mesh_definition const& m, id face);
+
+		// Returns whether the point is on the face. 
+		// The point must be in the local coordinates of the mesh definition
+		[[nodiscard]] bool is_on_face(mesh_definition const& m, id face, math::point3d p);
 	}
 
 	// A mesh representing a three-dimensional manifold formed of faces, vertices, and pairs of half-edges between each vertex
@@ -470,24 +478,29 @@ namespace ot::graphics
 
 	namespace half_edge
 	{
-		inline vertex::id get_source_vertex(mesh_definition const& m, half_edge::id e)
+		inline vertex::id get_source_vertex(mesh_definition const& m, id e)
 		{
 			return m.get_half_edge(m.get_half_edge(e).twin).vertex;
 		}
 
-		inline vertex::id get_target_vertex(mesh_definition const& m, half_edge::id e)
+		inline vertex::id get_target_vertex(mesh_definition const& m, id e)
 		{
 			return m.get_half_edge(e).vertex;
 		}
 
-		inline id get_twin(mesh_definition const& m, half_edge::id e)
+		inline id get_twin(mesh_definition const& m, id e)
 		{
 			return m.get_half_edge(e).twin;
 		}
 
-		inline face::id get_face(mesh_definition const& m, half_edge::id e)
+		inline face::id get_face(mesh_definition const& m, id e)
 		{
 			return m.get_half_edge(e).face;
+		}
+
+		inline math::line get_line(mesh_definition const& m, id e)
+		{
+			return { get_position(m, get_source_vertex(m, e)), get_position(m, get_target_vertex(m, e)) };
 		}
 	}
 
