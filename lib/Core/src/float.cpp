@@ -19,25 +19,21 @@ namespace ot
 					return 0;
 			}
 
+			// Scale the smallest value to the same exponent as the largest one, and compare the difference in the "frac" part
 			int lexp;
 			int rexp;
-			Float const lfrac = std::frexp(lhs, &lexp);
-			Float const rfrac = std::frexp(rhs, &rexp);
+			Float lfrac = std::frexp(lhs, &lexp);
+			Float rfrac = std::frexp(rhs, &rexp);
 
-			Float minscaled;
-			Float maxfrac;
 			if (lexp < rexp)
 			{
-				minscaled = std::ldexp(lfrac, lexp - rexp);
-				maxfrac = rfrac;
-			} 
-			else
+				lfrac = std::ldexp(lfrac, lexp - rexp);
+			} else if (rexp < lexp)
 			{
-				minscaled = std::ldexp(rfrac, rexp - lexp);
-				maxfrac = lfrac;
+				rfrac = std::ldexp(rfrac, rexp - lexp);
 			}
 
-			Float const difference = maxfrac - minscaled;
+			Float const difference = lfrac - rfrac;
 
 			if (difference > epsilon)
 				return 1; // lhs > rhs
