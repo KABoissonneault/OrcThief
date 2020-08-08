@@ -148,13 +148,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Math\include\math\aabb.h" />
+    <ClInclude Include="..\..\lib\math\include\math\line.h" />
     <ClInclude Include="..\..\lib\Math\include\math\plane.h" />
     <ClInclude Include="..\..\lib\math\include\math\quaternion.h" />
     <ClInclude Include="..\..\lib\math\include\math\ray.h" />
+    <ClInclude Include="..\..\lib\math\include\math\transformation.h" />
     <ClInclude Include="..\..\lib\Math\include\math\unit\time.h" />
     <ClInclude Include="..\..\lib\Math\include\Math\vector3.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\lib\math\src\line.cpp" />
     <ClCompile Include="..\..\lib\Math\src\plane.cpp" />
     <ClCompile Include="..\..\lib\math\src\quaternion.cpp" />
     <ClCompile Include="..\..\lib\math\src\ray.cpp" />

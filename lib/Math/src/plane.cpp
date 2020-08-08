@@ -48,10 +48,10 @@ namespace ot::math
 		};
 	}
 
-	plane transform(plane p, quaternion rotation, vector3d displacement)
+	plane transform(plane p, transformation const& t)
 	{
-		p.normal = rotate(p.normal, rotation);
-		p.distance += dot_product(p.normal, displacement);
+		p.normal = rotate(p.normal, t.rotation);
+		p.distance += dot_product(p.normal, t.displacement);
 		return p;
 	}
 }

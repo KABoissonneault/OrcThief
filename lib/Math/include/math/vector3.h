@@ -66,6 +66,12 @@ namespace ot::math
 	}
 
 	template<typename T>
+	[[nodiscard]] constexpr inline vector3<T> operator-(vector3<T> v) noexcept
+	{
+		return { -v.x, -v.y, -v.z };
+	}
+
+	template<typename T>
 	[[nodiscard]] constexpr inline point3<T> operator-(point3<T> lhs, vector3<T> rhs) noexcept
 	{
 		return { lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z };

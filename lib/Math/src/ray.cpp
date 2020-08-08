@@ -17,6 +17,6 @@ namespace ot::math
 
 		double const numerator = dot_product(p.get_point() - this->origin, p.normal);
 		double const d = numerator / denominator;
-		return destination_from_origin(this->direction * d);
+		return this->origin + this->direction * d;
 	}
 }

@@ -2,16 +2,27 @@
 
 #include "math/vector3.h"
 
+#include "core/float.h"
+
 namespace ot::math
 {
 	struct quaternion
 	{
 		double w, x, y, z;
 
-		static quaternion make_rotx(double angle);
-		static quaternion make_roty(double angle);
-		static quaternion make_rotz(double angle);
+		[[nodiscard]] static quaternion identity() noexcept;
+		[[nodiscard]] static quaternion x_rad_rotation(double angle) noexcept;
+		[[nodiscard]] static quaternion y_rad_rotation(double angle) noexcept;
+		[[nodiscard]] static quaternion z_rad_rotation(double angle) noexcept;
+		[[nodiscard]] static quaternion x_deg_rotation(double angle) noexcept;
+		[[nodiscard]] static quaternion y_deg_rotation(double angle) noexcept;
+		[[nodiscard]] static quaternion z_deg_rotation(double angle) noexcept;
 	};
 
-	[[nodiscard]] vector3d rotate(vector3d v, quaternion q);
+	[[nodiscard]] quaternion invert(quaternion const& q) noexcept;
+
+	[[nodiscard]] vector3d rotate(vector3d v, quaternion q) noexcept;
+
+	using ot::float_eq;
+	[[nodiscard]] bool float_eq(quaternion const& lhs, quaternion const& rhs);
 }

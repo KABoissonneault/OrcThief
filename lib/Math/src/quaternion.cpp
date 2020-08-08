@@ -1,5 +1,19 @@
 #include "math/quaternion.h"
 
+#include "core/compiler.h"
+
+#if OT_COMPILER_MSVC
+#define OT_BOOST_INCLUDE_BEGIN \
+	__pragma(warning(push)) \
+	__pragma(warning(disable:4100)) /* unreferenced formal parameter */ 
+#define OT_BOOST_INCLUDE_END \
+	__pragma(warning(pop))
+#else
+#define OT_BOOST_INCLUDE_BEGIN
+#define OT_BOOST_INCLUDE_END
+#endif
+
+OT_BOOST_INCLUDE_BEGIN
 #include <boost/qvm/quat_traits.hpp>
 #include <boost/qvm/quat_traits_defaults.hpp>
 #include <boost/qvm/quat_operations.hpp>
@@ -9,6 +23,11 @@
 #include <boost/qvm/vec_traits_defaults.hpp>
 
 #include <boost/qvm/quat_vec_operations.hpp>
+OT_BOOST_INCLUDE_END
+
+#include <numbers>
+
+static constexpr auto deg_to_rad = std::numbers::pi / 180.0;
 
 namespace boost::qvm
 {
@@ -79,24 +98,57 @@ namespace boost::qvm
 
 namespace ot::math
 {
-	quaternion quaternion::make_rotx(double angle)
+	quaternion quaternion::identity() noexcept
+	{
+		return boost::qvm::identity_quat<double>();
+	}
+
+	quaternion quaternion::x_rad_rotation(double angle) noexcept
 	{
 		return boost::qvm::rotx_quat(angle);
 	}
 
-	quaternion quaternion::make_roty(double angle)
+	quaternion quaternion::y_rad_rotation(double angle) noexcept
 	{
 		return boost::qvm::roty_quat(angle);
 	}
 
-	quaternion quaternion::make_rotz(double angle)
+	quaternion quaternion::z_rad_rotation(double angle) noexcept
 	{
 		return boost::qvm::rotz_quat(angle);
 	}
 
-	vector3d rotate(vector3d v, quaternion q)
+	quaternion quaternion::x_deg_rotation(double angle) noexcept
+	{
+		return x_rad_rotation(angle * deg_to_rad);
+	}
+
+	quaternion quaternion::y_deg_rotation(double angle) noexcept
+	{
+		return y_rad_rotation(angle * deg_to_rad);
+	}
+	
+	quaternion quaternion::z_deg_rotation(double angle) noexcept
+	{
+		return z_rad_rotation(angle * deg_to_rad);
+	}
+
+	quaternion invert(quaternion const& q) noexcept
+	{
+		return boost::qvm::inverse(q);
+	}
+
+	vector3d rotate(vector3d v, quaternion q) noexcept
 	{
 		using boost::qvm::operator*;
 		return q * v;
+	}
+
+	bool float_eq(quaternion const& lhs, quaternion const& rhs)
+	{
+		return boost::qvm::cmp(lhs, rhs, [](double lhs, double rhs)
+		{
+			return float_eq(lhs, rhs);
+		});
 	}
 }
