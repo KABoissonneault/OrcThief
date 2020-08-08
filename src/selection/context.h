@@ -1,5 +1,7 @@
 #pragma once
 
+#include "math/unit/time.h"
+
 #include <SDL_events.h>
 
 #include <string>
@@ -10,6 +12,8 @@ namespace ot::selection
 	{
 	public:
 		virtual ~context() = 0;
+
+		virtual void update(math::seconds dt) { (void)dt; }
 
 		// Returns true if the input was handled
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key) = 0;

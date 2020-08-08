@@ -293,6 +293,7 @@ namespace ot
 
 		graphics.update(dt);
 		main_scene.update(dt);
+		selection_context->update(dt);
 
 		for (auto& brush : current_map.get_brushes())
 		{

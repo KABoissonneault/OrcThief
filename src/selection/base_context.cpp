@@ -6,6 +6,14 @@
 
 namespace ot::selection
 {
+	void base_context::update(math::seconds dt)
+	{
+		if (next_context != nullptr)
+		{
+			next_context->update(dt);
+		}
+	}
+
 	bool base_context::handle_keyboard_event(SDL_KeyboardEvent const& key)
 	{
 		// Handle Escape first
@@ -35,7 +43,7 @@ namespace ot::selection
 			double const viewport_y = static_cast<double>(mouse.y) / height;
 
 			math::ray const r = get_world_ray_from_viewport(current_scene->get_camera(), viewport_x, viewport_y);
-			auto const result = current_scene->raycast_object(r);
+			auto const result = current_scene->raycast_object(r); // TODO: currently hits wireframes
 			if (!result)
 				return true;
 
