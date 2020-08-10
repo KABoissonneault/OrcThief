@@ -23,6 +23,6 @@ namespace ot::graphics
 
 	math::ray get_world_ray_from_viewport(camera const& c, double viewport_x, double viewport_y)
 	{
-		return to_graphics_ray(c->getCameraToViewportRay(static_cast<Ogre::Real>(viewport_x), static_cast<Ogre::Real>(viewport_y)));
+		return to_math_ray(c->getCameraToViewportRay(static_cast<Ogre::Real>(viewport_x), static_cast<Ogre::Real>(viewport_y)));
 	}
 }
