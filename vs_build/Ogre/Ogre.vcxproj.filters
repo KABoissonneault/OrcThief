@@ -31,6 +31,9 @@
     <Filter Include="include\Vao">
       <UniqueIdentifier>{b06888a3-8ebe-4e62-b6be-2c8b3fab377f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Components\Hlms\Unlit">
+      <UniqueIdentifier>{28094e6f-5ac1-42f6-9a65-64dba266be33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Root.h">
@@ -137,6 +140,15 @@
     </ClInclude>
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Quaternion.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\ManualObject2.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\ColourValue.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\Components\Hlms\Unlit\Datablock.h">
+      <Filter>include\Components\Hlms\Unlit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
