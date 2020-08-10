@@ -1,5 +1,7 @@
 #include "selection/brush_context.h"
 
+#include "datablock.h"
+
 #include "graphics/camera.h"
 #include "graphics/window.h"
 
@@ -20,12 +22,13 @@ namespace ot::selection
 				if (result)
 				{
 					math::point3d const intersection = *result;
-					math::point3d const local_intersection = transform(intersection, invert(brush_transform));
+					math::point3d const local_intersection = detransform(intersection, invert(brush_transform));
 					if (is_on_face(mesh, face, local_intersection))
 					{
 						double const intersection_distance_sq = (camera_wpos - intersection).norm_squared();
 						if (float_cmp(intersection_distance_sq, current_distance_sq) < 0)
 						{
+							current_distance_sq = intersection_distance_sq;
 							current_face = face; // nearest face that the cursor is hovering
 						}
 					}
@@ -43,7 +46,7 @@ namespace ot::selection
 		}
 	}
 
-	brush_context::brush_context(map& current_map, graphics::scene const& current_scene, graphics::window const& main_window, size_t selected_brush) noexcept
+	brush_context::brush_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window, size_t selected_brush) noexcept
 		: current_map(&current_map)
 		, current_scene(&current_scene)
 		, main_window(&main_window)
@@ -54,8 +57,19 @@ namespace ot::selection
 	void brush_context::update(math::seconds dt)
 	{
 		(void)dt;
+	}
 
-		
+	void brush_context::render(graphics::node::manual& m)
+	{
+		brush const& b = current_map->get_brushes()[selected_brush];
+		math::transformation const t = b.get_world_transform(math::transformation::identity());
+
+		m.add_wiremesh(datablock::overlay_unlit, b.mesh_def, t);
+
+		if (hovered_face != graphics::face::id::none)
+		{
+			m.add_face(datablock::overlay_unlit, b.mesh_def, hovered_face, t);
+		}
 	}
 
 	bool brush_context::handle_keyboard_event(SDL_KeyboardEvent const& key)
@@ -66,7 +80,8 @@ namespace ot::selection
 			if (keysym.mod & KMOD_LSHIFT)
 			{
 				select_previous();
-			} else
+			}
+			else
 			{
 				select_next();
 			}
@@ -86,7 +101,7 @@ namespace ot::selection
 			graphics::camera const& camera = current_scene->get_camera();
 			math::ray const mouse_ray = get_world_ray_from_viewport(camera, viewport_x, viewport_y);
 
-			brush& brush = current_map->get_brushes()[selected_brush];
+			brush const& brush = current_map->get_brushes()[selected_brush];
 			auto const& mesh = brush.mesh_def;
 
 			math::quaternion const world_rot = brush.node.get_rotation();
@@ -96,9 +111,9 @@ namespace ot::selection
 			auto const result = get_closest_face(get_position(camera), mouse_ray, { world_displacement, world_rot }, mesh);
 			if (result)
 			{
-				// TODO: face mesh
 				hovered_face = *result;
-			} else
+			} 
+			else
 			{
 				hovered_face = graphics::face::id::none;
 			}
@@ -120,10 +135,6 @@ namespace ot::selection
 
 	void brush_context::select(size_t brush_idx)
 	{
-		selection_node = {}; // need to destroy the "SelectedBrush" object first
-
-		brush& brush = current_map->get_brushes()[brush_idx];
-		selection_node = graphics::node::create_static_wireframe_mesh(brush.node, "SelectedBrush", brush.mesh_def);
 		selected_brush = brush_idx;
 	}
 

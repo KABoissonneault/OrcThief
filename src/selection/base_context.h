@@ -13,13 +13,13 @@ namespace ot::selection
 	// The context at the root of the application. Handles object selection and global events
 	class base_context : public context
 	{
-		map* current_map;
+		map const* current_map;
 		graphics::scene const* current_scene;
 		graphics::window const* main_window;
 		uptr<context> next_context;
 
 	public:
-		base_context(map& current_map, graphics::scene const& current_scene, graphics::window const& main_window) noexcept
+		base_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window) noexcept
 			: current_map(&current_map)
 			, current_scene(&current_scene)
 			, main_window(&main_window)
@@ -28,6 +28,7 @@ namespace ot::selection
 		}
 
 		virtual void update(math::seconds dt) override;
+		virtual void render(graphics::node::manual& m) override;
 
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key) override;
 		virtual bool handle_mouse_button_event(SDL_MouseButtonEvent const& mouse) override;

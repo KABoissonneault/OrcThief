@@ -180,6 +180,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\application.cpp" />
+    <ClCompile Include="..\..\src\datablock.cpp" />
     <ClCompile Include="..\..\src\hud\shadowed_text.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\map.cpp" />
@@ -206,6 +207,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\application.h" />
+    <ClInclude Include="..\..\src\datablock.h" />
     <ClInclude Include="..\..\src\hud\shadowed_text.h" />
     <ClInclude Include="..\..\src\map.h" />
     <ClInclude Include="..\..\src\selection\base_context.h" />

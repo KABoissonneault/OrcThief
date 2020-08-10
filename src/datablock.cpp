@@ -17,7 +17,7 @@ namespace ot::datablock
 		Ogre::HlmsManager& hlms_manager = *root.getHlmsManager();
 		Ogre::HlmsUnlit& hlms_unlit = static_cast<Ogre::HlmsUnlit&>(*hlms_manager.getHlms(Ogre::HLMS_UNLIT));
 
-		overlay_macro.mDepthBiasConstant = 0.1f;
+		overlay_macro.mDepthBiasConstant = 100.f;
 		
 		auto const default_unlit_block = static_cast<Ogre::HlmsUnlitDatablock*>(
 			hlms_unlit.createDatablock(overlay_unlit, overlay_unlit, overlay_macro, Ogre::HlmsBlendblock(), Ogre::HlmsParamVec())

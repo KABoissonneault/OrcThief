@@ -32,6 +32,7 @@ namespace ot
 		map current_map;
 
 		uptr<selection::context> selection_context;
+		graphics::node::manual selection_render;
 
 		graphics::overlay::surface debug_surface;
 		std::optional<hud::shadowed_text> debug_text;

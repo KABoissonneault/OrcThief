@@ -2,6 +2,8 @@
 
 #include "math/unit/time.h"
 
+#include "graphics/node/manual.h"
+
 #include <SDL_events.h>
 
 #include <string>
@@ -14,6 +16,7 @@ namespace ot::selection
 		virtual ~context() = 0;
 
 		virtual void update(math::seconds dt) { (void)dt; }
+		virtual void render(graphics::node::manual& m) = 0;
 
 		// Returns true if the input was handled
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key) = 0;

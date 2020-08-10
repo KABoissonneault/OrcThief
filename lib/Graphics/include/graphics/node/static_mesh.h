@@ -36,6 +36,5 @@ namespace ot::graphics
 		};
 
 		[[nodiscard]] static_mesh create_static_mesh(object& parent, std::string const& name, mesh_definition const& mesh);
-		[[nodiscard]] static_mesh create_static_wireframe_mesh(object& parent, std::string const& name, mesh_definition const& mesh);
 	}
 }

@@ -14,6 +14,14 @@ namespace ot::selection
 		}
 	}
 
+	void base_context::render(graphics::node::manual& m)
+	{
+		if (next_context != nullptr)
+		{
+			next_context->render(m);
+		}
+	}
+
 	bool base_context::handle_keyboard_event(SDL_KeyboardEvent const& key)
 	{
 		// Handle Escape first

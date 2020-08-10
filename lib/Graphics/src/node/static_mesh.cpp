@@ -104,18 +104,6 @@ namespace ot::graphics::node
 			}
 		};
 
-		struct wireframe_vertex
-		{
-			Ogre::Vector3 position;
-
-			[[nodiscard]] static Ogre::VertexElement2Vec get_vertex_buffer_elements()
-			{
-				return {
-					Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_POSITION)
-				};
-			}
-		};
-
 		// Creates a static vertex buffer 
 		[[nodiscard]] Ogre::VertexBufferPacked* create_static_vertex_buffer(Ogre::VertexElement2Vec const& buffer_elements, size_t num_vertices, ogre::unique_geometry_mem initial_data)
 		{
@@ -137,12 +125,6 @@ namespace ot::graphics::node
 		[[nodiscard]] Ogre::VertexBufferPackedVec make_render_vertex_buffers(geometry_data data)
 		{
 			Ogre::VertexBufferPacked* const vertex_buffer = create_static_vertex_buffer(render_vertex::get_vertex_buffer_elements(), data.size, std::move(data).buffer);
-			return { vertex_buffer };
-		}
-
-		[[nodiscard]] Ogre::VertexBufferPackedVec make_wireframe_vertex_buffers(geometry_data data)
-		{
-			Ogre::VertexBufferPacked* const vertex_buffer = create_static_vertex_buffer(wireframe_vertex::get_vertex_buffer_elements(), data.size, std::move(data).buffer);
 			return { vertex_buffer };
 		}
 
@@ -169,21 +151,6 @@ namespace ot::graphics::node
 
 				vertex_count += face_vertex_count;
 				index_count += triangle_count * 3;
-			}
-			return { vertex_count, index_count };
-		}
-
-		[[nodiscard]] std::pair<size_t, size_t> get_wireframe_vertex_index_count(mesh_definition const& mesh)
-		{
-			size_t vertex_count = 0;
-			size_t index_count = 0;
-			for (auto const& face : mesh.get_faces())
-			{
-				auto const face_vertex_count = get_vertex_count(mesh, face);
-				auto const edge_count = face_vertex_count;
-
-				vertex_count += face_vertex_count;
-				index_count += edge_count * 2;
 			}
 			return { vertex_count, index_count };
 		}
@@ -241,46 +208,6 @@ namespace ot::graphics::node
 			};
 		}
 
-		[[nodiscard]] auto make_wireframe_data(mesh_definition const& mesh) -> vertex_array_data
-		{
-			auto const [vertex_count, index_count] = get_wireframe_vertex_index_count(mesh);
-
-			ogre::unique_geometry_mem vertex_mem = ogre::allocate_geometry(sizeof(wireframe_vertex) * vertex_count);
-			ogre::unique_geometry_mem index_mem = ogre::allocate_geometry(index_count * sizeof(Ogre::uint16));
-			auto const vertex_mem_begin = reinterpret_cast<wireframe_vertex*>(vertex_mem.get());
-			auto vertex_it = vertex_mem_begin;
-			auto index_it = reinterpret_cast<Ogre::uint16*>(index_mem.get());
-
-			for (auto const& face : mesh.get_faces())
-			{
-				auto const vertices = get_vertices(mesh, face);
-				auto const face_vertex_count = static_cast<Ogre::uint16>(get_vertex_count(mesh, face));
-
-				auto const base_index = static_cast<Ogre::uint16>(std::distance(vertex_mem_begin, vertex_it));
-
-				// push vertices
-				for (auto const vertex : vertices)
-				{
-					new(vertex_it++) wireframe_vertex{ to_ogre_vector(get_position(mesh, vertex)) };
-				}
-
-				// push indices
-				for (Ogre::uint16 i = 0; i < face_vertex_count - 1; ++i) {
-					new(index_it++) Ogre::uint16(base_index + i);
-					new(index_it++) Ogre::uint16(base_index + i + 1);
-				}
-
-				new(index_it++) Ogre::uint16(base_index + face_vertex_count - 1);
-				new(index_it++) Ogre::uint16(base_index);
-			}
-
-			return
-			{
-				{ std::move(vertex_mem), vertex_count }
-				, { std::move(index_mem), index_count }
-			};
-		}
-
 		[[nodiscard]] Ogre::VertexArrayObject* make_render_vao(mesh_definition const& mesh)
 		{
 			auto& root = Ogre::Root::getSingleton();
@@ -293,20 +220,6 @@ namespace ot::graphics::node
 			auto const index_buffer = make_index_buffer(std::move(index_data));
 
 			return vao_manager->createVertexArrayObject(vertex_buffers, index_buffer, Ogre::OT_TRIANGLE_LIST);
-		}
-
-		[[nodiscard]] Ogre::VertexArrayObject* make_wireframe_vao(mesh_definition const& mesh)
-		{
-			auto& root = Ogre::Root::getSingleton();
-			auto const render_system = root.getRenderSystem();
-			auto const vao_manager = render_system->getVaoManager();
-
-			auto [vertex_data, index_data] = make_wireframe_data(mesh);
-
-			auto const vertex_buffers = make_wireframe_vertex_buffers(std::move(vertex_data));
-			auto const index_buffer = make_index_buffer(std::move(index_data));
-
-			return vao_manager->createVertexArrayObject(vertex_buffers, index_buffer, Ogre::OT_LINE_LIST);
 		}
 
 		[[nodiscard]] void set_mesh_bounds(Ogre::Mesh& render_mesh, math::aabb const& mesh_bounds)
@@ -339,28 +252,6 @@ namespace ot::graphics::node
 
 		static_mesh m;
 		init_static_mesh(m, mesh_node, std::move(render_mesh));
-		return m;
-	}
-
-	static_mesh create_static_wireframe_mesh(object& parent, std::string const& name, mesh_definition const& mesh)
-	{
-		Ogre::SceneManager& scene_manager = *get_scene_node(parent).getCreator();
-		auto& mesh_manager = Ogre::MeshManager::getSingleton();
-
-		Ogre::MeshPtr wireframe_mesh = mesh_manager.createManual(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-		
-		Ogre::SubMesh* wireframe_submesh = wireframe_mesh->createSubMesh();
-		auto const vao = make_wireframe_vao(mesh);
-		wireframe_submesh->mVao[Ogre::VpNormal].push_back(vao);
-
-		set_mesh_bounds(*wireframe_mesh, mesh.get_bounds());
-
-		Ogre::Item* const item = scene_manager.createItem(wireframe_mesh, Ogre::SCENE_DYNAMIC);
-		Ogre::SceneNode* const mesh_node = get_scene_node(parent).createChildSceneNode(Ogre::SCENE_DYNAMIC);
-		mesh_node->attachObject(item);
-
-		static_mesh m;
-		init_static_mesh(m, mesh_node, std::move(wireframe_mesh));
 		return m;
 	}
 }

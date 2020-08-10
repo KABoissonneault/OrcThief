@@ -34,6 +34,9 @@
     <ClCompile Include="..\..\src\hud\shadowed_text.cpp">
       <Filter>src\hud</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\datablock.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\application.h">
@@ -53,6 +56,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\hud\shadowed_text.h">
       <Filter>src\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\datablock.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

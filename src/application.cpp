@@ -203,6 +203,8 @@ namespace ot
 		debug_text->set_height(0.025);
 
 		debug_surface.show();
+
+		selection_render = graphics::node::create_manual(main_scene.get_root_node());
 	}
 
 	brush application::make_brush(std::span<math::plane const> planes, std::string const& name, math::point3d position)
@@ -290,6 +292,9 @@ namespace ot
 		std::string s;
 		selection_context->get_debug_string(s);
 		debug_text->set_text(s);
+
+		selection_render.clear();
+		selection_context->render(selection_render);
 
 		graphics.update(dt);
 		main_scene.update(dt);

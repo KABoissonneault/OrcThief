@@ -3,6 +3,8 @@
 #include "graphics/mesh_definition.h"
 #include "graphics/node/static_mesh.h"
 
+#include "math/transformation.h"
+
 #include <vector>
 #include <span>
 
@@ -12,6 +14,9 @@ namespace ot
 	{
 		graphics::mesh_definition mesh_def;
 		ot::graphics::node::static_mesh node;
+
+		math::transformation get_local_transform() const noexcept;
+		math::transformation get_world_transform(math::transformation const& parent) const noexcept;
 	};
 
 	class map

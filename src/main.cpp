@@ -13,6 +13,7 @@
 #include "math/unit/time.h"
 
 #include "application.h"
+#include "datablock.h"
 
 #include <SDL.h>
 #include "SDL2/window.h"
@@ -155,6 +156,8 @@ extern "C" int main(int argc, char** argv)
 
 	load_hlms(resource_folder_path);
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups(true);
+
+	ot::datablock::initialize();
 
 	app.setup_default_scene();
 	
