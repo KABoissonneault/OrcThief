@@ -11,4 +11,12 @@ namespace ot::math
 
 		return vr.norm() / v1.norm();
 	}
+
+	line transform(line const& l, transformation const& t)
+	{
+		return {
+			transform(l.a, t),
+			transform(l.b, t)
+		};
+	}
 }

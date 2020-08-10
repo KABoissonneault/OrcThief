@@ -138,6 +138,12 @@ namespace ot::math
 		return boost::qvm::inverse(q);
 	}
 
+	quaternion concatenate(quaternion const& lhs, quaternion const& rhs) noexcept
+	{
+		using boost::qvm::operator*;
+		return lhs * rhs;
+	}
+
 	vector3d rotate(vector3d v, quaternion q) noexcept
 	{
 		using boost::qvm::operator*;

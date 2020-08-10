@@ -9,6 +9,8 @@ namespace ot::math
 	{
 		vector3d displacement;
 		quaternion rotation;
+
+		static transformation identity() noexcept { return { vector3d{0, 0, 0}, quaternion::identity() }; }
 	};
 
 	[[nodiscard]] inline transformation invert(transformation const& t) noexcept
@@ -16,6 +18,14 @@ namespace ot::math
 		return {
 			-t.displacement,
 			invert(t.rotation)
+		};
+	}
+
+	[[nodiscard]] inline transformation concatenate(transformation const& lhs, transformation const& rhs) noexcept
+	{
+		return {
+			lhs.displacement + rhs.displacement,
+			concatenate(lhs.rotation, rhs.rotation)
 		};
 	}
 

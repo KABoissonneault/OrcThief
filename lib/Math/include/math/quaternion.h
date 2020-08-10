@@ -20,6 +20,7 @@ namespace ot::math
 	};
 
 	[[nodiscard]] quaternion invert(quaternion const& q) noexcept;
+	[[nodiscard]] quaternion concatenate(quaternion const& lhs, quaternion const& rhs) noexcept;
 
 	[[nodiscard]] vector3d rotate(vector3d v, quaternion q) noexcept;
 
