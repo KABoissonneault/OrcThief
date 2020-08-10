@@ -32,7 +32,7 @@ namespace ot::graphics
 
 		void update(math::seconds dt);
 
-		std::optional<node::object_id> raycast_object(math::ray r) const;
+		std::vector<node::object_id> raycast_objects(math::ray r) const;
 	};
 
 	void init_scene(scene& s, uptr<scene_impl, fwd_delete<scene_impl>> p);

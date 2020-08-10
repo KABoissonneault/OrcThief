@@ -64,18 +64,21 @@ namespace ot::graphics
 		scene_manager->updateSceneGraph();
 	}
 
-	std::optional<node::object_id> scene_impl::raycast_object(math::ray r) const
+	std::vector<node::object_id> scene_impl::raycast_objects(math::ray r) const
 	{
 		Ogre::RaySceneQuery* const sceneQuery = scene_manager->createRayQuery(to_ogre_ray(r), Ogre::SceneManager::QUERY_ENTITY_DEFAULT_MASK);
-		sceneQuery->setSortByDistance(true, 1); // TODO: increase
+		sceneQuery->setSortByDistance(true);
 
 		Ogre::RaySceneQueryResult& result = sceneQuery->execute();
-		if (result.size() == 0)
-			return {};
+		
+		std::vector<node::object_id> object_ids;
+		object_ids.reserve(result.size());
+		std::transform(result.begin(), result.end(), std::back_inserter(object_ids), [](Ogre::RaySceneQueryResultEntry const& r)
+		{
+			return static_cast<node::object_id>(r.movable->getId());
+		});
 
-		// TODO: improve
-		else
-			return node::object_id(result.front().movable->getId());
+		return object_ids;
 	}
 	
 	camera& scene::get_camera() noexcept
@@ -93,9 +96,9 @@ namespace ot::graphics
 		return get_impl(*this).get_root_node();
 	}
 
-	std::optional<node::object_id> scene::raycast_object(math::ray r) const
+	std::vector<node::object_id> scene::raycast_objects(math::ray r) const
 	{
-		return get_impl(*this).raycast_object(r);
+		return get_impl(*this).raycast_objects(r);
 	}
 
 	void scene::update(math::seconds dt)

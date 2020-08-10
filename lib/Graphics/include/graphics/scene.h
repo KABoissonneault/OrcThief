@@ -8,7 +8,7 @@
 
 #include "core/uptr.h"
 
-#include <optional>
+#include <vector>
 
 namespace ot::graphics
 {
@@ -32,7 +32,7 @@ namespace ot::graphics
 		void update(math::seconds dt);
 
 		// Casts the ray in the scene, and detects the nearest object
-		std::optional<node::object_id> raycast_object(math::ray r) const;
+		std::vector<node::object_id> raycast_objects(math::ray r) const;
 	};	
 }
 

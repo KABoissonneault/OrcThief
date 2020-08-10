@@ -43,20 +43,21 @@ namespace ot::selection
 			double const viewport_y = static_cast<double>(mouse.y) / height;
 
 			math::ray const r = get_world_ray_from_viewport(current_scene->get_camera(), viewport_x, viewport_y);
-			auto const result = current_scene->raycast_object(r); // TODO: currently hits wireframes
-			if (!result)
-				return true;
+			auto const result = current_scene->raycast_objects(r);
 
-			graphics::node::object_id const hit_object = *result;
-			std::span<brush const> const brushes = current_map->get_brushes();
-			auto const found_brush = std::find_if(brushes.begin(), brushes.end(), [hit_object](brush const& b) 
-			{ 
-				return b.node.contains(hit_object); 
-			});
-			assert(found_brush != brushes.end() && "Hit a non-existing brush");
+			for (graphics::node::object_id const hit_object : result)
+			{
+				std::span<brush const> const brushes = current_map->get_brushes();
+				auto const found_brush = std::find_if(brushes.begin(), brushes.end(), [hit_object](brush const& b)
+				{
+					return b.node.contains(hit_object);
+				});
+				if (found_brush == brushes.end())
+					continue;
 
-			size_t const hit_brush_idx = std::distance(brushes.begin(), found_brush);
-			next_context.reset(new brush_context(*current_map, *current_scene, *main_window, hit_brush_idx));
+				size_t const hit_brush_idx = std::distance(brushes.begin(), found_brush);
+				next_context.reset(new brush_context(*current_map, *current_scene, *main_window, hit_brush_idx));
+			}
 
 			return true;
 		}
