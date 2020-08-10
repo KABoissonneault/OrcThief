@@ -34,4 +34,10 @@ namespace ot::math
 		vector3d const rotated_vector = rotate(vector_from_origin(p), t.rotation);
 		return destination_from_origin(rotated_vector + t.displacement);
 	}
+
+	[[nodiscard]] inline point3d detransform(point3d p, transformation const& t) noexcept
+	{
+		point3d const dp = p + t.displacement;
+		return destination_from_origin(rotate(vector_from_origin(dp), t.rotation));
+	}
 }
