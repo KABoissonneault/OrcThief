@@ -1,5 +1,7 @@
 #pragma once
 
+#include "mesh_definition.fwd.h"
+
 #include "math/vector3.h"
 #include "math/plane.h"
 #include "math/aabb.h"
@@ -35,8 +37,6 @@ namespace ot::graphics
 	{
 		enum class id : size_t { none = -1 };
 	}
-	
-	class mesh_definition;
 
 	namespace detail
 	{
@@ -159,6 +159,7 @@ namespace ot::graphics
 	public:
 		[[nodiscard]] detail::id_range<vertex::id> get_vertices() const noexcept;
 		[[nodiscard]] detail::id_range<face::id> get_faces() const noexcept;
+		[[nodiscard]] detail::id_range<half_edge::id> get_half_edges() const noexcept;
 		[[nodiscard]] math::aabb get_bounds() const noexcept { return bounds; }
 
 		// Factories
@@ -461,6 +462,10 @@ namespace ot::graphics
 	inline detail::id_range<face::id> mesh_definition::get_faces() const noexcept
 	{
 		return { face::id(0), face::id(faces.size()) };
+	}
+	inline detail::id_range<half_edge::id> mesh_definition::get_half_edges() const noexcept
+	{
+		return { half_edge::id(0), half_edge::id(half_edges.size()) };
 	}
 
 	namespace vertex
