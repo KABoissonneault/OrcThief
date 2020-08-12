@@ -8,7 +8,7 @@
 
 namespace ot::selection
 {
-	class brush_context : public context
+	class brush_context : public composite_context
 	{
 		map const* current_map;
 		graphics::scene const* current_scene;
@@ -25,7 +25,7 @@ namespace ot::selection
 		void select_previous();
 
 	public:
-		brush_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window, size_t selected_brush) noexcept;
+		brush_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window, size_t selected_brush, int mouse_x, int mouse_y) noexcept;
 
 		virtual void update(math::seconds dt) override;
 		virtual void render(graphics::node::manual& m) override;

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "core/uptr.h"
-
 #include "selection/context.h"
 #include "map.h"
 
@@ -11,12 +9,11 @@
 namespace ot::selection
 {
 	// The context at the root of the application. Handles object selection and global events
-	class base_context : public context
+	class base_context : public composite_context
 	{
 		map const* current_map;
 		graphics::scene const* current_scene;
 		graphics::window const* main_window;
-		uptr<context> next_context;
 
 	public:
 		base_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window) noexcept
@@ -27,12 +24,8 @@ namespace ot::selection
 
 		}
 
-		virtual void update(math::seconds dt) override;
-		virtual void render(graphics::node::manual& m) override;
-
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key) override;
 		virtual bool handle_mouse_button_event(SDL_MouseButtonEvent const& mouse) override;
-		virtual bool handle_mouse_motion_event(SDL_MouseMotionEvent const& mouse) override;
 
 		virtual void get_debug_string(std::string& s) const override;
 	};

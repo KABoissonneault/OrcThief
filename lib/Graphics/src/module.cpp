@@ -9,7 +9,7 @@
 #include "Ogre/Window.h"
 
 
-const Ogre::ColourValue k_background_color(.4f, 0.4f, 0.8f);
+const Ogre::ColourValue k_background_color(.4f, 0.8f, 0.4f);
 const Ogre::String k_workspace_def("DefaultWorkspace");
 
 namespace ot::graphics

@@ -187,6 +187,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClCompile Include="..\..\src\selection\base_context.cpp" />
     <ClCompile Include="..\..\src\selection\brush_context.cpp" />
     <ClCompile Include="..\..\src\selection\context.cpp" />
+    <ClCompile Include="..\..\src\selection\face_context.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.vcxproj">
@@ -213,6 +214,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClInclude Include="..\..\src\selection\base_context.h" />
     <ClInclude Include="..\..\src\selection\brush_context.h" />
     <ClInclude Include="..\..\src\selection\context.h" />
+    <ClInclude Include="..\..\src\selection\face_context.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

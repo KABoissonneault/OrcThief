@@ -5,6 +5,8 @@
 #include "graphics/camera.h"
 #include "graphics/window.h"
 
+#include "selection/face_context.h"
+
 namespace ot::selection
 {
 	namespace
@@ -46,10 +48,12 @@ namespace ot::selection
 		}
 	}
 
-	brush_context::brush_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window, size_t selected_brush) noexcept
+	brush_context::brush_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window, size_t selected_brush, int mouse_x, int mouse_y) noexcept
 		: current_map(&current_map)
 		, current_scene(&current_scene)
 		, main_window(&main_window)
+		, mouse_x(mouse_x)
+		, mouse_y(mouse_y)
 	{
 		select(selected_brush);
 	}
@@ -57,6 +61,30 @@ namespace ot::selection
 	void brush_context::update(math::seconds dt)
 	{
 		(void)dt;
+
+		double const viewport_x = static_cast<double>(mouse_x) / get_width(*main_window);
+		double const viewport_y = static_cast<double>(mouse_y) / get_height(*main_window);
+		graphics::camera const& camera = current_scene->get_camera();
+		math::ray const mouse_ray = get_world_ray_from_viewport(camera, viewport_x, viewport_y);
+
+		brush const& brush = current_map->get_brushes()[selected_brush];
+		auto const& mesh = brush.mesh_def;
+
+		math::quaternion const world_rot = brush.node.get_rotation();
+		math::point3d const local_pos = brush.node.get_position();
+		math::vector3d const world_displacement = vector_from_origin(local_pos);
+
+		auto const result = get_closest_face(get_position(camera), mouse_ray, { world_displacement, world_rot }, mesh);
+		if (result)
+		{
+			hovered_face = *result;
+		} 
+		else
+		{
+			hovered_face = graphics::face::id::none;
+		}
+
+		composite_context::update(dt);
 	}
 
 	void brush_context::render(graphics::node::manual& m)
@@ -66,14 +94,21 @@ namespace ot::selection
 
 		m.add_wiremesh(datablock::overlay_unlit, b.mesh_def, t);
 
-		if (hovered_face != graphics::face::id::none)
+		if (hovered_face != graphics::face::id::none && next_context == nullptr)
 		{
-			m.add_face(datablock::overlay_unlit, b.mesh_def, hovered_face, t);
+			m.add_face(datablock::overlay_unlit_transparent_light, b.mesh_def, hovered_face, t);
 		}
+
+		composite_context::render(m);
 	}
 
 	bool brush_context::handle_keyboard_event(SDL_KeyboardEvent const& key)
 	{
+		if (composite_context::handle_keyboard_event(key))
+		{
+			return true;
+		}
+
 		SDL_Keysym const& keysym = key.keysym;
 		if (keysym.scancode == SDL_SCANCODE_TAB && key.state == SDL_RELEASED)
 		{
@@ -94,34 +129,22 @@ namespace ot::selection
 
 	bool brush_context::handle_mouse_button_event(SDL_MouseButtonEvent const& mouse)
 	{
-		if (mouse.state == SDL_RELEASED && mouse.button == 3)
+		mouse_x = mouse.x;
+		mouse_y = mouse.y;
+
+		if (mouse.button == 1 && mouse.state == SDL_RELEASED && hovered_face != graphics::face::id::none)
 		{
-			double const viewport_x = static_cast<double>(mouse.x) / get_width(*main_window);
-			double const viewport_y = static_cast<double>(mouse.y) / get_height(*main_window);
-			graphics::camera const& camera = current_scene->get_camera();
-			math::ray const mouse_ray = get_world_ray_from_viewport(camera, viewport_x, viewport_y);
-
-			brush const& brush = current_map->get_brushes()[selected_brush];
-			auto const& mesh = brush.mesh_def;
-
-			math::quaternion const world_rot = brush.node.get_rotation();
-			math::point3d const local_pos = brush.node.get_position();
-			math::vector3d const world_displacement = vector_from_origin(local_pos);
-
-			auto const result = get_closest_face(get_position(camera), mouse_ray, { world_displacement, world_rot }, mesh);
-			if (result)
-			{
-				hovered_face = *result;
-			} 
-			else
-			{
-				hovered_face = graphics::face::id::none;
-			}
-
+			next_context.reset(new face_context(*current_map, *current_scene, *main_window, selected_brush, hovered_face));
 			return true;
 		}
 
-		return false;
+		if (mouse.button == 3 && mouse.state == SDL_RELEASED && next_context != nullptr)
+		{
+			next_context.reset();
+			return true;
+		}
+
+		return composite_context::handle_mouse_button_event(mouse);
 	}
 
 	bool brush_context::handle_mouse_motion_event(SDL_MouseMotionEvent const& mouse)
@@ -130,7 +153,7 @@ namespace ot::selection
 		mouse_x = mouse.x;
 		mouse_y = mouse.y;
 
-		return false;
+		return composite_context::handle_mouse_motion_event(mouse);
 	}
 
 	void brush_context::select(size_t brush_idx)
@@ -164,10 +187,17 @@ namespace ot::selection
 
 	void brush_context::get_debug_string(std::string& s) const
 	{
-		s += "Selected brush: " + std::to_string(selected_brush) + "\n";
-		if (hovered_face != graphics::face::id::none)
+		if (next_context != nullptr)
 		{
-			s += "Hovered face: " + std::to_string(static_cast<size_t>(hovered_face)) + "\n";
- 		}
+			composite_context::get_debug_string(s);
+		}
+		else
+		{
+			s += "Selected brush: " + std::to_string(selected_brush) + "\n";
+			if (hovered_face != graphics::face::id::none)
+			{
+				s += "Hovered face: " + std::to_string(static_cast<size_t>(hovered_face)) + "\n";
+			}
+		}
 	}
 }

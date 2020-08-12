@@ -6,37 +6,21 @@
 
 namespace ot::selection
 {
-	void base_context::update(math::seconds dt)
-	{
-		if (next_context != nullptr)
-		{
-			next_context->update(dt);
-		}
-	}
-
-	void base_context::render(graphics::node::manual& m)
-	{
-		if (next_context != nullptr)
-		{
-			next_context->render(m);
-		}
-	}
-
 	bool base_context::handle_keyboard_event(SDL_KeyboardEvent const& key)
 	{
 		// Handle Escape first
 		if (key.keysym.scancode == SDL_SCANCODE_ESCAPE && key.state == SDL_RELEASED)
 		{
-			next_context.reset();
+			next_context.reset(); // remove selection
 			return true;
 		}
 
-		return next_context != nullptr && next_context->handle_keyboard_event(key);
+		return composite_context::handle_keyboard_event(key);
 	}
 
 	bool base_context::handle_mouse_button_event(SDL_MouseButtonEvent const& mouse)
 	{
-		if (next_context != nullptr && next_context->handle_mouse_button_event(mouse))
+		if (composite_context::handle_mouse_button_event(mouse))
 		{
 			return true;
 		}
@@ -64,7 +48,7 @@ namespace ot::selection
 					continue;
 
 				size_t const hit_brush_idx = std::distance(brushes.begin(), found_brush);
-				next_context.reset(new brush_context(*current_map, *current_scene, *main_window, hit_brush_idx));
+				next_context.reset(new brush_context(*current_map, *current_scene, *main_window, hit_brush_idx, mouse.x, mouse.y));
 			}
 
 			return true;
@@ -73,16 +57,11 @@ namespace ot::selection
 		return false;
 	}
 
-	bool base_context::handle_mouse_motion_event(SDL_MouseMotionEvent const& mouse)
-	{
-		return next_context != nullptr && next_context->handle_mouse_motion_event(mouse);
-	}
-
 	void base_context::get_debug_string(std::string& s) const 
 	{ 
 		if (next_context != nullptr)
 		{
-			next_context->get_debug_string(s);
+			composite_context::get_debug_string(s);
 		}
 		else
 		{
