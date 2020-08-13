@@ -10,6 +10,7 @@
 namespace ot::datablock
 {
 	std::string const overlay_unlit("OverlayUnlit");	
+	std::string const overlay_unlit_vertex("OverlayUnlitVertex");	
 	std::string const overlay_unlit_transparent_light("OverlayUnlitTransparentLight");
 	std::string const overlay_unlit_transparent_heavy("OverlayUnlitTransparentHeavy");
 
@@ -41,6 +42,7 @@ namespace ot::datablock
 		};
 
 		make_colored_overlay_block(overlay_unlit, Ogre::HlmsBlendblock(), Ogre::ColourValue::White);
+		make_colored_overlay_block(overlay_unlit_vertex, Ogre::HlmsBlendblock(), Ogre::ColourValue::Blue);
 		make_colored_overlay_block(overlay_unlit_transparent_light, overlay_blend, Ogre::ColourValue{ 1.0f, 1.0f, 1.0f, 0.25f });
 		make_colored_overlay_block(overlay_unlit_transparent_heavy, overlay_blend, Ogre::ColourValue{ 1.0f, 1.0f, 1.0f, 0.75f });
 	}

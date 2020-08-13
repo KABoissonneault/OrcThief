@@ -96,6 +96,14 @@ namespace ot::selection
 			m.add_face(datablock::overlay_unlit_transparent_light, b.mesh_def, hovered_face, t);
 		}
 
+		auto const vertices = b.mesh_def.get_vertices();
+		for (graphics::vertex::id const vertex : vertices)
+		{
+			math::point3d const vertex_pos = transform(get_position(b.mesh_def, vertex), t);
+			math::transformation const vt{ vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04 };
+			m.add_mesh(datablock::overlay_unlit_vertex, graphics::mesh_definition::get_cube(), vt);
+		}
+
 		composite_context::render(m);
 	}
 
