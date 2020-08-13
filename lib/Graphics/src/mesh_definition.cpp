@@ -1,4 +1,4 @@
-#include "graphics/mesh_definition.h"
+#include "mesh_definition.h"
 
 #include <numeric>
 

@@ -173,6 +173,7 @@
     <ClInclude Include="..\..\lib\graphics\include\graphics\window.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\window_type.h" />
     <ClInclude Include="..\..\lib\Graphics\src\camera.h" />
+    <ClInclude Include="..\..\lib\graphics\src\mesh_definition.h" />
     <ClInclude Include="..\..\lib\Graphics\src\module.h" />
     <ClInclude Include="..\..\lib\Graphics\src\node\light.h" />
     <ClInclude Include="..\..\lib\graphics\src\node\manual.h" />
