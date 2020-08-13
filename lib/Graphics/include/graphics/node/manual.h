@@ -23,11 +23,19 @@ namespace ot::graphics
 			// Removes all sections
 			void clear() noexcept;
 
-			// Adds a section of lines
+			// Add a section of lines
 			void add_lines(std::string const& datablock, std::span<math::line const> lines);
-			// Adds a bunch of lines for the entire mesh
+
+			// Add a section of points
+			void add_points(std::string const& datablock, std::span<math::point3d const> points);
+
+			// Add section of triangles for the entire mesh
+			void add_mesh(std::string const& datablock, mesh_definition const& mesh, math::transformation const& t);
+
+			// Add section of lines for the entire mesh
 			void add_wiremesh(std::string const& datablock, mesh_definition const& mesh, math::transformation const& t);
-			// Renders a single face of a mesh
+
+			// Add a section consisting of a single face of a mesh
 			void add_face(std::string const& datablock, mesh_definition const& mesh, face::id face, math::transformation const& t);
 		};
 
