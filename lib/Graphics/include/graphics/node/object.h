@@ -41,6 +41,8 @@ namespace ot::graphics::node
 
 		[[nodiscard]] math::quaternion get_rotation() const noexcept;
 
+		[[nodiscard]] double get_scale() const noexcept;
+
 		void set_direction(math::vector3d direction);
 		void rotate_around(math::vector3d axis, double rad);
 

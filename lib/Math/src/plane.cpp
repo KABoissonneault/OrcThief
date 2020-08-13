@@ -50,6 +50,7 @@ namespace ot::math
 
 	plane transform(plane p, transformation const& t)
 	{
+		p.distance *= t.scale;
 		p.normal = rotate(p.normal, t.rotation);
 		p.distance += dot_product(p.normal, t.displacement);
 		return p;

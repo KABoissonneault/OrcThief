@@ -121,6 +121,11 @@ namespace ot::graphics::node
 		return to_math_quaternion(get_scene_node(*this).getOrientation());
 	}
 
+	double object::get_scale() const noexcept
+	{
+		return get_scene_node(*this).getScale()[0]; // we only do uniform scaling here
+	}
+
 	void object::set_direction(math::vector3d direction)
 	{
 		get_scene_node(*this).setDirection(to_ogre_vector(direction));

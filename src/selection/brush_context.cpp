@@ -70,11 +70,8 @@ namespace ot::selection
 		brush const& brush = current_map->get_brushes()[selected_brush];
 		auto const& mesh = brush.mesh_def;
 
-		math::quaternion const world_rot = brush.node.get_rotation();
-		math::point3d const local_pos = brush.node.get_position();
-		math::vector3d const world_displacement = vector_from_origin(local_pos);
-
-		auto const result = get_closest_face(get_position(camera), mouse_ray, { world_displacement, world_rot }, mesh);
+		math::transformation const t = brush.get_world_transform(math::transformation::identity());
+		auto const result = get_closest_face(get_position(camera), mouse_ray, t, mesh);
 		if (result)
 		{
 			hovered_face = *result;
