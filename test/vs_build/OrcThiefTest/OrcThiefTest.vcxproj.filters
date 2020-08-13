@@ -33,7 +33,7 @@
     <ClCompile Include="..\..\src\core\float.test.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\math\mesh_definition.test.cpp">
+    <ClCompile Include="..\..\src\graphics\mesh_definition.test.cpp">
       <Filter>Source Files\graphics</Filter>
     </ClCompile>
   </ItemGroup>

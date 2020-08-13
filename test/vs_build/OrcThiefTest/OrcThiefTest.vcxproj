@@ -144,8 +144,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\core\float.test.cpp" />
+    <ClCompile Include="..\..\src\graphics\mesh_definition.test.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
-    <ClCompile Include="..\..\src\math\mesh_definition.test.cpp" />
     <ClCompile Include="..\..\src\math\plane.test.cpp" />
   </ItemGroup>
   <ItemGroup>
