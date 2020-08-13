@@ -168,6 +168,8 @@ namespace ot::graphics
 		// The mesh will have as many faces as the number of input planes, and the faces will preserve the same order as the plane with the same normal
 		[[nodiscard]] static mesh_definition make_from_planes(std::span<const math::plane> planes);
 
+		[[nodiscard]] static mesh_definition const& get_cube();
+
 	private:
 		template<template<typename Iterator> typename Iteration>
 		friend class detail::half_edge_range;

@@ -343,4 +343,18 @@ namespace ot::graphics
 
 		return m;
 	}
+
+	mesh_definition const& mesh_definition::get_cube()
+	{
+		using planes = ot::math::plane[6];
+		static mesh_definition const cube = make_from_planes(planes{
+			{{0, 0, 1}, 0.5},
+			{{1, 0, 0}, 0.5},
+			{{0, 1, 0}, 0.5},
+			{{-1, 0, 0}, 0.5},
+			{{0, -1, 0}, 0.5},
+			{{0, 0, -1}, 0.5},
+		});
+		return cube;
+	}
 }
