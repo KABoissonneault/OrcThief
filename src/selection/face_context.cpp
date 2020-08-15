@@ -19,7 +19,7 @@ namespace ot::selection
 		brush const& b = current_map->get_brushes()[selected_brush];
 		math::transformation const t = b.get_world_transform(math::transformation::identity());
 
-		m.add_face(datablock::overlay_unlit_transparent_heavy, b.mesh_def, selected_face, t);
+		m.add_face(datablock::overlay_unlit_transparent_heavy, graphics::face::cref{ b.mesh_def, selected_face }, t);
 	}
 
 	void face_context::get_debug_string(std::string& s) const

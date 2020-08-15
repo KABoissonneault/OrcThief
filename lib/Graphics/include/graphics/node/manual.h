@@ -36,7 +36,7 @@ namespace ot::graphics
 			void add_wiremesh(std::string const& datablock, mesh_definition const& mesh, math::transformation const& t);
 
 			// Add a section consisting of a single face of a mesh
-			void add_face(std::string const& datablock, mesh_definition const& mesh, face::id face, math::transformation const& t);
+			void add_face(std::string const& datablock, face::cref face, math::transformation const& t);
 		};
 
 		manual create_manual(object& parent);

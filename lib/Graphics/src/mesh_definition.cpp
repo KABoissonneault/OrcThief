@@ -6,23 +6,25 @@ namespace ot::graphics
 {	
 	namespace half_edge
 	{
-		auto split_at(mesh_definition & m, id edge_id, math::point3d point) -> id
+		auto ref::split_at(math::point3d point) const -> ref
 		{
-			m.half_edges.reserve(m.half_edges.capacity() + 2);
+			m->half_edges.reserve(m->half_edges.capacity() + 2);
 
-			mesh_definition::half_edge_data& edge = m.get_half_edge(edge_id);
+			auto const edge_id = e;
+
+			mesh_definition::half_edge_data& edge = m->get_half_edge_data(edge_id);
 
 			auto const twin_id = edge.twin;
-			mesh_definition::half_edge_data& twin = m.get_half_edge(twin_id);
+			mesh_definition::half_edge_data& twin = m->get_half_edge_data(twin_id);
 
-			auto const new_edge_id = id(m.half_edges.size());
-			auto& new_edge = m.half_edges.emplace_back();
+			auto const new_edge_id = id(m->half_edges.size());
+			auto& new_edge = m->half_edges.emplace_back();
 
-			auto const new_twin_id = id(m.half_edges.size());
-			auto& new_twin = m.half_edges.emplace_back();
+			auto const new_twin_id = id(m->half_edges.size());
+			auto& new_twin = m->half_edges.emplace_back();
 
-			auto const new_vertex_id = vertex::id(m.vertices.size());
-			mesh_definition::vertex_data& new_vertex = m.vertices.emplace_back();
+			auto const new_vertex_id = vertex::id(m->vertices.size());
+			mesh_definition::vertex_data& new_vertex = m->vertices.emplace_back();
 			new_vertex.position = point;
 			new_vertex.first_edge = new_edge_id;
 
@@ -44,41 +46,41 @@ namespace ot::graphics
 			twin.next = new_twin_id;
 			twin.twin = new_edge_id;
 
-			return new_edge_id;
+			return { *m, new_edge_id };
 		}
 	}
 
 	namespace face
 	{
-		math::vector3d get_normal(mesh_definition const& m, id face)
+		math::vector3d cref::get_normal() const
 		{
-			auto const vertices = get_vertices(m, face);
+			auto const vertices = get_vertices();
 			auto vertex_it = vertices.begin();
 			auto const vertex0 = *vertex_it++;
 			auto const vertex1 = *vertex_it++;
 			auto const vertex2 = *vertex_it++;
-			auto const vector0 = get_position(m, vertex1) - get_position(m, vertex0);
-			auto const vector1 = get_position(m, vertex2) - get_position(m, vertex1);
+			auto const vector0 = vertex1.get_position() - vertex0.get_position();
+			auto const vector1 = vertex2.get_position() - vertex1.get_position();
 			return normalized(cross_product(vector0, vector1));
 		}
 
-		math::plane get_plane(mesh_definition const& m, id face)
+		math::plane cref::get_plane() const
 		{
-			mesh_definition::face_data const& f = m.get_face(face);
-			mesh_definition::half_edge_data const& h = m.get_half_edge(f.first_edge);
-			math::point3d const p = get_position(m, h.vertex);
-			math::vector3d const n = get_normal(m, face);
+			mesh_definition::face_data const& data = m->get_face_data(f);
+			mesh_definition::half_edge_data const& h = m->get_half_edge_data(data.first_edge);
+			math::point3d const p = vertex::cref{ *m, h.vertex }.get_position();
+			math::vector3d const n = get_normal();
 			double const d = dot_product(vector_from_origin(p), n);
 			return { n, d };
 		}
 
-		bool is_on_face(mesh_definition const& m, id face, math::point3d p)
+		bool cref::is_on_face(math::point3d p) const
 		{
-			math::vector3d const face_normal = get_normal(m, face);
+			math::vector3d const face_normal = get_normal();
 
-			for (graphics::half_edge::id const he : get_half_edges(m, face))
+			for (graphics::half_edge::cref const he : get_half_edges())
 			{
-				math::line const l = get_line(m, he);
+				math::line const l = he.get_line();
 
 				math::vector3d const v1 = l.b - l.a;
 				math::vector3d const v2 = l.a - p;

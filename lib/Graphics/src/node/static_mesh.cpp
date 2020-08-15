@@ -145,7 +145,7 @@ namespace ot::graphics::node
 			size_t index_count = 0;
 			for (auto const& face : mesh.get_faces())
 			{
-				auto const face_vertex_count = get_vertex_count(mesh, face);
+				auto const face_vertex_count = face.get_vertex_count();
 				assert(face_vertex_count >= 3); // I've had issues at some point, better make sure
 				auto const triangle_count = face_vertex_count - 2;
 
@@ -175,16 +175,16 @@ namespace ot::graphics::node
 			
 			for (auto const& face : mesh.get_faces())
 			{
-				auto const vertices = get_vertices(mesh, face);
-				auto const face_vertex_count = get_vertex_count(mesh, face);
-				auto const normal = to_ogre_vector(get_normal(mesh, face));
+				auto const vertices = face.get_vertices();
+				auto const face_vertex_count = face.get_vertex_count();
+				auto const normal = to_ogre_vector(face.get_normal());
 
 				auto const base_index = static_cast<Ogre::uint16>(std::distance(vertex_mem_begin, vertex_it));
 
 				// push vertices
 				for (auto const vertex : vertices)
 				{
-					new(vertex_it++) render_vertex{ to_ogre_vector(get_position(mesh, vertex)), normal };
+					new(vertex_it++) render_vertex{ to_ogre_vector(vertex.get_position()), normal };
 				}
 
 				// push indices

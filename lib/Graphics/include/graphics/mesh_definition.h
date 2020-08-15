@@ -40,11 +40,17 @@ namespace ot::graphics
 
 	namespace detail
 	{
-		template<typename IdType>
-		class id_range;
+		template<typename RefType>
+		class cref_range;
+
+		template<typename RefType>
+		class ref_range;
 
 		template<template<typename Iterator> typename Iteration>
 		class half_edge_range;
+
+		template<template<typename Iterator> typename Iteration>
+		class const_half_edge_range;
 
 		template<typename Iterator>
 		class face_half_edge_iteration;
@@ -53,71 +59,296 @@ namespace ot::graphics
 		class vertex_half_edge_iteration;
 
 		class face_vertex_range;
+
+		class const_face_vertex_range;
 	}
 
 	namespace vertex
 	{
-		// Get the position in the mesh's local space of the vertex
-		[[nodiscard]] math::point3d get_position(mesh_definition const& m, id v);
+		class cref
+		{
+			mesh_definition const* m;
+			id v;
 
-		// Returns a range of the half-edges around the given vertex
-		[[nodiscard]] auto get_half_edges(mesh_definition const& m, id vertex) -> detail::half_edge_range<detail::vertex_half_edge_iteration>;
+		public:
+			using id_type = id;
+			using mesh_type = mesh_definition const;
+
+			cref(mesh_definition const& m, id v) noexcept
+				: m(&m)
+				, v(v)
+			{
+
+			}
+
+			[[nodiscard]] id get_id() const noexcept { return v; }
+
+			// Get the position in the mesh's local space of the vertex
+			[[nodiscard]] math::point3d get_position() const;
+
+			// Returns a range of the half-edges around the given vertex
+			[[nodiscard]] auto get_half_edges() const -> detail::const_half_edge_range<detail::vertex_half_edge_iteration>;
+
+			[[nodiscard]] friend bool operator==(cref lhs, cref rhs) noexcept
+			{
+				return lhs.m == rhs.m && lhs.v == rhs.v;
+			}
+
+			[[nodiscard]] friend bool operator!=(cref lhs, cref rhs) noexcept
+			{
+				return !(lhs == rhs);
+			}
+		};
+
+		class ref 
+		{
+			mesh_definition* m;
+			id v;
+
+		public:
+			using id_type = id;
+			using mesh_type = mesh_definition;
+
+			ref(mesh_definition& m, id v) noexcept
+				: m(&m)
+				, v(v)
+			{
+
+			}
+
+			[[nodiscard]] cref as_const() const noexcept { return { *m, v }; }
+			operator cref() const noexcept { return as_const(); }
+
+			[[nodiscard]] id get_id() const noexcept { return v; }
+
+			// Get the position in the mesh's local space of the vertex
+			[[nodiscard]] math::point3d get_position() const;
+
+			// Returns a range of the half-edges around the given vertex
+			[[nodiscard]] auto get_half_edges() const -> detail::half_edge_range<detail::vertex_half_edge_iteration>;
+
+			[[nodiscard]] friend bool operator==(ref lhs, ref rhs) noexcept
+			{
+				return lhs.m == rhs.m && lhs.v == rhs.v;
+			}
+
+			[[nodiscard]] friend bool operator!=(ref lhs, ref rhs) noexcept
+			{
+				return !(lhs == rhs);
+			}
+		};
 	}
 
 	namespace half_edge
 	{
-		// Returns the vertex the half-edge originates from
-		[[nodiscard]] vertex::id get_source_vertex(mesh_definition const& m, id e);
+		class cref
+		{
+			mesh_definition const* m;
+			id e;
 
-		// Returns the vertex the half-edge is pointing to
-		[[nodiscard]] vertex::id get_target_vertex(mesh_definition const& m, id e);
+		public:
+			using id_type = id;
+			using mesh_type = mesh_definition const;
 
-		// Returns the face the half-edge is on
-		[[nodiscard]] face::id get_face(mesh_definition const& m, id e);
+			cref(mesh_definition const& m, id e)
+				: m(&m)
+				, e(e)
+			{
 
-		// Returns the half-edge's twin
-		[[nodiscard]] id get_twin(mesh_definition const& m, id e);
+			}
 
-		// Returns the line from the source vertex to the target vertex
-		[[nodiscard]] math::line get_line(mesh_definition const& m, id e);
+			[[nodiscard]] id get_id() const noexcept { return e; }
 
-		// Splits the half-edge and its twin in two at the given point, creating two new half-edges 
-		// The input edge is modified to have the new edge as its "next", and the new half-edge is returned
-		// The new half-edge will have the current twin as its twin, and the current half-edge will have the new twin as its twin
-		// 
-		//   Before:                                  After:
-		//     Current Edge                             Current Edge  New Vertex     New Edge
-		//   A --------------------------------> B    A ----------------> C ----------------> B
-		//   A <-------------------------------- B    A <---------------- C <---------------- B
-		//     Current Twin                             New Twin                 Current Twin
-		// 
-		// Expects:
-		//   - 'point' must be on the edge
-		// 
-		// Returns: The new edge after the input one
-		half_edge::id split_at(mesh_definition & m, id edge_id, math::point3d point);
+			// Returns the vertex the half-edge originates from
+			[[nodiscard]] vertex::cref get_source_vertex() const;
+
+			// Returns the vertex the half-edge is pointing to
+			[[nodiscard]] vertex::cref get_target_vertex() const;
+
+			// Returns the face the half-edge is on
+			[[nodiscard]] face::cref get_face() const;
+
+			// Returns the half-edge's twin
+			[[nodiscard]] cref get_twin() const;
+
+			// Returns the line from the source vertex to the target vertex
+			[[nodiscard]] math::line get_line() const;
+
+			[[nodiscard]] friend bool operator==(cref lhs, cref rhs) noexcept
+			{
+				return lhs.m == rhs.m && lhs.e == rhs.e;
+			}
+
+			[[nodiscard]] friend bool operator!=(cref lhs, cref rhs) noexcept
+			{
+				return !(lhs == rhs);
+			}
+		};
+
+		class ref 
+		{
+			mesh_definition* m;
+			id e;
+
+		public:
+			using id_type = id;
+			using mesh_type = mesh_definition;
+
+			ref(mesh_definition& m, id e)
+				: m(&m)
+				, e(e)
+			{
+
+			}
+
+			[[nodiscard]] cref as_const() const noexcept { return { *m, e }; }
+			operator cref() const noexcept { return as_const(); }
+
+			[[nodiscard]] id get_id() const noexcept { return e; }
+
+			// Returns the vertex the half-edge originates from
+			[[nodiscard]] vertex::ref get_source_vertex() const;
+
+			// Returns the vertex the half-edge is pointing to
+			[[nodiscard]] vertex::ref get_target_vertex() const;
+
+			// Returns the face the half-edge is on
+			[[nodiscard]] face::ref get_face() const;
+
+			// Returns the half-edge's twin
+			[[nodiscard]] ref get_twin() const;
+
+			// Returns the line from the source vertex to the target vertex
+			[[nodiscard]] math::line get_line() const;
+
+			// Splits the half-edge and its twin in two at the given point, creating two new half-edges 
+			// The input edge is modified to have the new edge as its "next", and the new half-edge is returned
+			// The new half-edge will have the current twin as its twin, and the current half-edge will have the new twin as its twin
+			// 
+			//   Before:                                  After:
+			//     Current Edge                             Current Edge  New Vertex     New Edge
+			//   A --------------------------------> B    A ----------------> C ----------------> B
+			//   A <-------------------------------- B    A <---------------- C <---------------- B
+			//     Current Twin                             New Twin                 Current Twin
+			// 
+			// Expects:
+			//   - 'point' must be on the edge
+			// 
+			// Returns: The new edge after the input one
+			ref split_at(math::point3d point) const;
+
+			[[nodiscard]] friend bool operator==(ref lhs, ref rhs) noexcept
+			{
+				return lhs.m == rhs.m && lhs.e == rhs.e;
+			}
+
+			[[nodiscard]] friend bool operator!=(ref lhs, ref rhs) noexcept
+			{
+				return !(lhs == rhs);
+			}
+		};
 	}
 
 	namespace face
 	{
-		// Returns the normal vector of the face
-		[[nodiscard]] math::vector3d get_normal(mesh_definition const& m, id face);
+		class cref
+		{
+			mesh_definition const* m;
+			id f;
 
-		// Returns a range of the half-edges around the given face
-		[[nodiscard]] auto get_half_edges(mesh_definition const& m, id face) -> detail::half_edge_range<detail::face_half_edge_iteration>;
+		public:
+			using id_type = id;
+			using mesh_type = mesh_definition const;
 
-		// Returns a range of vertices around the given face
-		[[nodiscard]] auto get_vertices(mesh_definition const& m, id face) -> detail::face_vertex_range;
+			cref(mesh_definition const& m, id f)
+				: m(&m)
+				, f(f)
+			{
 
-		// Returns the number of vertices on the face
-		[[nodiscard]] size_t get_vertex_count(mesh_definition const& m, id face);
+			}
 
-		// Returns the plane parallel to the face
-		[[nodiscard]] math::plane get_plane(mesh_definition const& m, id face);
+			[[nodiscard]] id get_id() const noexcept { return f; }
 
-		// Returns whether the point is on the face. 
-		// The point must be in the local coordinates of the mesh definition
-		[[nodiscard]] bool is_on_face(mesh_definition const& m, id face, math::point3d p);
+			// Returns the normal vector of the face
+			[[nodiscard]] math::vector3d get_normal() const;
+
+			// Returns a range of the half-edges around the given face
+			[[nodiscard]] auto get_half_edges() const -> detail::const_half_edge_range<detail::face_half_edge_iteration>;
+
+			// Returns a range of vertices around the given face
+			[[nodiscard]] auto get_vertices() const->detail::const_face_vertex_range;
+
+			// Returns the number of vertices on the face
+			[[nodiscard]] size_t get_vertex_count() const;
+
+			// Returns the plane parallel to the face
+			[[nodiscard]] math::plane get_plane() const;
+
+			// Returns whether the point is on the face. 
+			// The point must be in the local coordinates of the mesh definition
+			[[nodiscard]] bool is_on_face(math::point3d p) const;
+
+			[[nodiscard]] friend bool operator==(cref lhs, cref rhs) noexcept
+			{
+				return lhs.m == rhs.m && lhs.f == rhs.f;
+			}
+
+			[[nodiscard]] friend bool operator!=(cref lhs, cref rhs) noexcept
+			{
+				return !(lhs == rhs);
+			}
+		};
+
+		class ref
+		{
+			mesh_definition* m;
+			id f;
+
+		public:
+			using id_type = id;
+			using mesh_type = mesh_definition;
+
+			ref(mesh_definition& m, id f)
+				: m(&m)
+				, f(f)
+			{
+
+			}
+
+			[[nodiscard]] cref as_const() const noexcept { return { *m, f }; }
+			operator cref() const noexcept { return as_const(); }
+
+			[[nodiscard]] id get_id() const noexcept { return f; }
+
+			// Returns the normal vector of the face
+			[[nodiscard]] math::vector3d get_normal() const { return as_const().get_normal(); }
+
+			// Returns a range of the half-edges around the given face
+			[[nodiscard]] auto get_half_edges() const -> detail::half_edge_range<detail::face_half_edge_iteration>;
+
+			// Returns a range of vertices around the given face
+			[[nodiscard]] auto get_vertices() const -> detail::face_vertex_range;
+
+			// Returns the number of vertices on the face
+			[[nodiscard]] size_t get_vertex_count() const;
+
+			// Returns the plane parallel to the face
+			[[nodiscard]] math::plane get_plane() const { return as_const().get_plane(); }
+
+			// Returns whether the point is on the face. 
+			// The point must be in the local coordinates of the mesh definition
+			[[nodiscard]] bool is_on_face(math::point3d p) const { return as_const().is_on_face(p); }
+
+			[[nodiscard]] friend bool operator==(ref lhs, ref rhs) noexcept
+			{
+				return lhs.m == rhs.m && lhs.f == rhs.f;
+			}
+
+			[[nodiscard]] friend bool operator!=(ref lhs, ref rhs) noexcept
+			{
+				return !(lhs == rhs);
+			}
+		};
 	}
 
 	// A mesh representing a three-dimensional manifold formed of faces, vertices, and pairs of half-edges between each vertex
@@ -149,17 +380,20 @@ namespace ot::graphics
 		math::aabb bounds{};
 
 		// Accessors
-		[[nodiscard]] half_edge_data& get_half_edge(half_edge::id id) { return half_edges[static_cast<size_t>(id)]; }
-		[[nodiscard]] half_edge_data const& get_half_edge(half_edge::id id) const { return half_edges[static_cast<size_t>(id)]; }
-		[[nodiscard]] vertex_data& get_vertex(vertex::id id) { return vertices[static_cast<size_t>(id)]; }
-		[[nodiscard]] vertex_data const& get_vertex(vertex::id id) const { return vertices[static_cast<size_t>(id)]; }
-		[[nodiscard]] face_data& get_face(face::id id) { return faces[static_cast<size_t>(id)]; }
-		[[nodiscard]] face_data const& get_face(face::id id) const { return faces[static_cast<size_t>(id)]; }
+		[[nodiscard]] half_edge_data& get_half_edge_data(half_edge::id id) { return half_edges[static_cast<size_t>(id)]; }
+		[[nodiscard]] half_edge_data const& get_half_edge_data(half_edge::id id) const { return half_edges[static_cast<size_t>(id)]; }
+		[[nodiscard]] vertex_data& get_vertex_data(vertex::id id) { return vertices[static_cast<size_t>(id)]; }
+		[[nodiscard]] vertex_data const& get_vertex_data(vertex::id id) const { return vertices[static_cast<size_t>(id)]; }
+		[[nodiscard]] face_data& get_face_data(face::id id) { return faces[static_cast<size_t>(id)]; }
+		[[nodiscard]] face_data const& get_face_data(face::id id) const { return faces[static_cast<size_t>(id)]; }
 
 	public:
-		[[nodiscard]] detail::id_range<vertex::id> get_vertices() const noexcept;
-		[[nodiscard]] detail::id_range<face::id> get_faces() const noexcept;
-		[[nodiscard]] detail::id_range<half_edge::id> get_half_edges() const noexcept;
+		[[nodiscard]] auto get_vertices() const noexcept -> detail::ref_range<vertex::cref>;
+		[[nodiscard]] auto get_vertices() noexcept -> detail::ref_range<vertex::ref>;
+		[[nodiscard]] auto get_half_edges() const noexcept -> detail::ref_range<half_edge::cref>;
+		[[nodiscard]] auto get_half_edges() noexcept -> detail::ref_range<half_edge::ref>;
+		[[nodiscard]] auto get_faces() const noexcept -> detail::ref_range<face::cref>;
+		[[nodiscard]] auto get_faces() noexcept -> detail::ref_range<face::ref>;
 		[[nodiscard]] math::aabb get_bounds() const noexcept { return bounds; }
 
 		// Factories
@@ -172,6 +406,9 @@ namespace ot::graphics
 
 	private:
 		template<template<typename Iterator> typename Iteration>
+		friend class detail::const_half_edge_range;
+		
+		template<template<typename Iterator> typename Iteration>
 		friend class detail::half_edge_range;
 
 		template<typename Iterator>
@@ -180,20 +417,15 @@ namespace ot::graphics
 		template<typename Iterator>
 		friend class detail::vertex_half_edge_iteration;
 
+		friend class detail::const_face_vertex_range;
 		friend class detail::face_vertex_range;
 
-		friend math::point3d vertex::get_position(mesh_definition const& m, vertex::id v);
-		friend auto vertex::get_half_edges(mesh_definition const& m, vertex::id vertex) -> detail::half_edge_range<detail::vertex_half_edge_iteration>;
-		friend vertex::id half_edge::get_source_vertex(mesh_definition const& m, half_edge::id e);
-		friend vertex::id half_edge::get_target_vertex(mesh_definition const& m, half_edge::id e);
-		friend half_edge::id half_edge::get_twin(mesh_definition const& m, half_edge::id v);
-		friend face::id half_edge::get_face(mesh_definition const& m, half_edge::id v);
-		friend half_edge::id half_edge::split_at(mesh_definition & m, half_edge::id v, math::point3d p);
-		friend math::vector3d face::get_normal(mesh_definition const& m, face::id v);
-		friend auto face::get_half_edges(mesh_definition const& m, face::id face) -> detail::half_edge_range<detail::face_half_edge_iteration>;
-		friend auto face::get_vertices(mesh_definition const& m, face::id face) -> detail::face_vertex_range;
-		friend size_t face::get_vertex_count(mesh_definition const& m, face::id face);
-		friend math::plane face::get_plane(mesh_definition const& m, face::id face);
+		friend class vertex::cref;
+		friend class vertex::ref;
+		friend class half_edge::cref;
+		friend class half_edge::ref;
+		friend class face::cref;
+		friend class face::ref;
 
 		struct point_intersection;
 		static std::vector<point_intersection> find_intersections(std::span<const math::plane> planes, std::vector<vertex_data>& vertices, std::vector<half_edge_data>& half_edges);
@@ -203,16 +435,21 @@ namespace ot::graphics
 
 	namespace detail
 	{
-		template<typename IdType>
-		class id_range
+		template<typename RefType>
+		class ref_range
 		{
-			IdType first;
-			IdType after_last;
-		public:
-			using value_type = IdType;
+			using id_type = typename RefType::id_type;
+			using mesh_type = typename RefType::mesh_type;
 
-			id_range(IdType first, IdType after_last)
-				: first(first)
+			mesh_type* mesh;
+			id_type first;
+			id_type after_last;
+		public:
+			using value_type = RefType;
+
+			ref_range(mesh_type& mesh, id_type first, id_type after_last)
+				: mesh(&mesh)
+				, first(first)
 				, after_last(after_last)
 			{
 
@@ -220,15 +457,17 @@ namespace ot::graphics
 
 			class iterator
 			{
-				IdType id;
+				mesh_type* mesh;
+				id_type id;
 			public:
-				explicit iterator(IdType id)
-					: id(id)
+				explicit iterator(mesh_type& mesh, id_type id)
+					: mesh(&mesh)
+					, id(id)
 				{
 
 				}
 
-				using value_type = IdType;
+				using value_type = ref_range::value_type;
 				using reference = value_type;
 				using pointer = value_type const*;
 				using difference_type = ptrdiff_t;
@@ -236,15 +475,15 @@ namespace ot::graphics
 
 				reference operator*() const
 				{
-					return id;
+					return { *mesh, id };
 				}
 				arrow_proxy<value_type> operator->() const
 				{
-					return { id };
+					return { { *mesh, id } };
 				}
 				iterator& operator++()
 				{
-					id = value_type(static_cast<size_t>(id) + 1);
+					id = id_type(static_cast<size_t>(id) + 1);
 					return *this;
 				}
 				iterator operator++(int)
@@ -263,24 +502,24 @@ namespace ot::graphics
 				}
 			};
 
-			[[nodiscard]] iterator begin() const noexcept { return iterator{ first }; }
-			[[nodiscard]] iterator end() const noexcept { return iterator{ after_last }; }
+			[[nodiscard]] iterator begin() const noexcept { return iterator{ *mesh, first }; }
+			[[nodiscard]] iterator end() const noexcept { return iterator{ *mesh, after_last }; }
 			[[nodiscard]] size_t size() const noexcept { return static_cast<size_t>(after_last) - static_cast<size_t>(first); }
-			[[nodiscard]] value_type operator[](size_t i) const noexcept { return value_type(i); }
+			[[nodiscard]] value_type operator[](size_t i) const noexcept { return { *mesh, id_type(i) }; }
 		};
 
 		template<template<typename Iterator> typename Iteration >
-		class half_edge_range
+		class const_half_edge_range
 		{
 			mesh_definition const* m = nullptr;
 			half_edge::id first = half_edge_id::empty;
 
 		public:
-			using value_type = half_edge::id;
+			using value_type = half_edge::cref;
 
-			half_edge_range() = default;
-			half_edge_range(mesh_definition const* m, half_edge::id first) noexcept
-				: m(m)
+			const_half_edge_range() = default;
+			const_half_edge_range(mesh_definition const& m, half_edge::id first) noexcept
+				: m(&m)
 				, first(first)
 			{
 
@@ -296,15 +535,15 @@ namespace ot::graphics
 
 			public:
 				iterator() = default;
-				iterator(mesh_definition const* m, half_edge::id first, half_edge::id current) noexcept
-					: m(m)
+				iterator(mesh_definition const& m, half_edge::id first, half_edge::id current) noexcept
+					: m(&m)
 					, first(first)
 					, current(current)
 				{
 
 				}
 
-				using value_type = half_edge::id;
+				using value_type = const_half_edge_range::value_type;
 				using reference = value_type;
 				using pointer = value_type*;
 				using difference_type = size_t;
@@ -312,11 +551,11 @@ namespace ot::graphics
 
 				reference operator*() const
 				{
-					return current;
+					return { *m, current };
 				}
 				arrow_proxy<value_type> operator->() const
 				{
-					return { current };
+					return { { *m, current } };
 				}
 				bool operator==(iterator other) const noexcept
 				{
@@ -330,8 +569,73 @@ namespace ot::graphics
 				}
 			};
 
-			[[nodiscard]] iterator begin() const { return { m, first, first }; }
-			[[nodiscard]] iterator end() const { return { m, first, half_edge::id::none }; }
+			[[nodiscard]] iterator begin() const { return { *m, first, first }; }
+			[[nodiscard]] iterator end() const { return { *m, first, half_edge::id::none }; }
+		};
+
+		template<template<typename Iterator> typename Iteration >
+		class half_edge_range
+		{
+			mesh_definition* m = nullptr;
+			half_edge::id first = half_edge_id::empty;
+
+		public:
+			using value_type = half_edge::ref;
+
+			half_edge_range() = default;
+			half_edge_range(mesh_definition& m, half_edge::id first) noexcept
+				: m(&m)
+				, first(first)
+			{
+
+			}
+
+			class iterator : public Iteration<iterator>
+			{
+				mesh_definition* m = nullptr;
+				half_edge::id first = half_edge_id::none;
+				half_edge::id current = half_edge_id::none;
+
+				friend Iteration<iterator>;
+
+			public:
+				iterator() = default;
+				iterator(mesh_definition& m, half_edge::id first, half_edge::id current) noexcept
+					: m(&m)
+					, first(first)
+					, current(current)
+				{
+
+				}
+
+				using value_type = half_edge_range::value_type;
+				using reference = value_type;
+				using pointer = value_type*;
+				using difference_type = size_t;
+				using iterator_category = std::input_iterator_tag;
+
+				reference operator*() const
+				{
+					return { *m, current };
+				}
+				arrow_proxy<value_type> operator->() const
+				{
+					return { { *m, current } };
+				}
+				bool operator==(iterator other) const noexcept
+				{
+					return m == other.m
+						&& first == other.first
+						&& current == other.current;
+				}
+				bool operator!=(iterator other) const noexcept
+				{
+					return !(*this == other);
+				}
+			};
+
+			[[nodiscard]] iterator begin() const { return { *m, first, first }; }
+			[[nodiscard]] iterator end() const { return { *m, first, half_edge::id::none }; }
 		};
 
 		template<typename Iterator>
@@ -343,7 +647,7 @@ namespace ot::graphics
 			{
 				auto& self = static_cast<derived&>(*this);
 
-				auto const next = self.m->get_half_edge(self.current).next;
+				auto const next = self.m->get_half_edge_data(self.current).next;
 				if (next == self.first)
 				{
 					self.current = half_edge::id::none;
@@ -372,7 +676,7 @@ namespace ot::graphics
 			{
 				auto& self = static_cast<derived&>(*this);
 
-				auto const next = self.m->get_half_edge(self.m->get_half_edge(self.current).twin).next;
+				auto const next = self.m->get_half_edge_data(self.m->get_half_edge_data(self.current).twin).next;
 				if (next == self.first)
 				{
 					self.current = half_edge::id::none;
@@ -394,15 +698,15 @@ namespace ot::graphics
 
 		class face_vertex_range
 		{
-			mesh_definition const* m = nullptr;
+			mesh_definition* m = nullptr;
 			half_edge::id first = half_edge::id::none;
 
 		public:
 			using value_type = vertex::id;
 
 			face_vertex_range() = default;
-			face_vertex_range(mesh_definition const* m, half_edge::id first)
-				: m(m)
+			face_vertex_range(mesh_definition& m, half_edge::id first)
+				: m(&m)
 				, first(first)
 			{
 
@@ -410,7 +714,7 @@ namespace ot::graphics
 
 			class iterator : public detail::face_half_edge_iteration<iterator>
 			{
-				mesh_definition const* m = nullptr;
+				mesh_definition* m = nullptr;
 				half_edge::id first = half_edge::id::none;
 				half_edge::id current = half_edge::id::none;
 
@@ -418,15 +722,15 @@ namespace ot::graphics
 
 			public:
 				iterator() = default;
-				iterator(mesh_definition const* m, half_edge::id first, half_edge::id current) noexcept
-					: m(m)
+				iterator(mesh_definition& m, half_edge::id first, half_edge::id current) noexcept
+					: m(&m)
 					, first(first)
 					, current(current)
 				{
 
 				}
 
-				using value_type = vertex::id;
+				using value_type = vertex::ref;
 				using reference = value_type;
 				using pointer = value_type*;
 				using difference_type = size_t;
@@ -434,7 +738,7 @@ namespace ot::graphics
 
 				reference operator*() const
 				{
-					return get_source_vertex(*m, current);
+					return half_edge::ref{ *m, current }.get_source_vertex();
 				}
 				arrow_proxy<value_type> operator->() const
 				{
@@ -452,81 +756,212 @@ namespace ot::graphics
 				}
 			};
 
-			[[nodiscard]] iterator begin() const noexcept { return { m, first, first }; }
-			[[nodiscard]] iterator end() const noexcept { return { m, first, half_edge::id::none }; }
+			[[nodiscard]] iterator begin() const noexcept { return { *m, first, first }; }
+			[[nodiscard]] iterator end() const noexcept { return { *m, first, half_edge::id::none }; }
+		};
+
+		class const_face_vertex_range
+		{
+			mesh_definition const* m = nullptr;
+			half_edge::id first = half_edge::id::none;
+
+		public:
+			using value_type = vertex::id;
+
+			const_face_vertex_range() = default;
+			const_face_vertex_range(mesh_definition const& m, half_edge::id first)
+				: m(&m)
+				, first(first)
+			{
+
+			}
+
+			class iterator : public detail::face_half_edge_iteration<iterator>
+			{
+				mesh_definition const* m = nullptr;
+				half_edge::id first = half_edge::id::none;
+				half_edge::id current = half_edge::id::none;
+
+				friend face_half_edge_iteration<iterator>;
+
+			public:
+				iterator() = default;
+				iterator(mesh_definition const& m, half_edge::id first, half_edge::id current) noexcept
+					: m(&m)
+					, first(first)
+					, current(current)
+				{
+
+				}
+
+				using value_type = vertex::cref;
+				using reference = value_type;
+				using pointer = value_type*;
+				using difference_type = size_t;
+				using iterator_category = std::forward_iterator_tag;
+
+				reference operator*() const
+				{
+					return half_edge::cref{ *m, current }.get_source_vertex();
+				}
+				arrow_proxy<value_type> operator->() const
+				{
+					return arrow_proxy(**this);
+				}
+				bool operator==(iterator other) const noexcept
+				{
+					return m == other.m
+						&& first == other.first
+						&& current == other.current;
+				}
+				bool operator!=(iterator other) const noexcept
+				{
+					return !(*this == other);
+				}
+			};
+
+			[[nodiscard]] iterator begin() const noexcept { return { *m, first, first }; }
+			[[nodiscard]] iterator end() const noexcept { return { *m, first, half_edge::id::none }; }
 		};
 	}
 
-	inline detail::id_range<vertex::id> mesh_definition::get_vertices() const noexcept
+	inline auto mesh_definition::get_vertices() const noexcept -> detail::ref_range<vertex::cref>
 	{
-		return { vertex::id(0), vertex::id(vertices.size()) };
+		return { *this, vertex::id(0), vertex::id(vertices.size()) };
 	}
-	inline detail::id_range<face::id> mesh_definition::get_faces() const noexcept
+
+	inline auto mesh_definition::get_vertices() noexcept -> detail::ref_range<vertex::ref>
 	{
-		return { face::id(0), face::id(faces.size()) };
+		return { *this, vertex::id(0), vertex::id(vertices.size()) };
 	}
-	inline detail::id_range<half_edge::id> mesh_definition::get_half_edges() const noexcept
+
+	inline auto mesh_definition::get_faces() const noexcept -> detail::ref_range<face::cref>
 	{
-		return { half_edge::id(0), half_edge::id(half_edges.size()) };
+		return { *this, face::id(0), face::id(faces.size()) };
+	}
+
+	inline auto mesh_definition::get_faces() noexcept -> detail::ref_range<face::ref>
+	{
+		return { *this, face::id(0), face::id(faces.size()) };
+	}
+
+	inline auto mesh_definition::get_half_edges() const noexcept -> detail::ref_range<half_edge::cref>
+	{
+		return { *this, half_edge::id(0), half_edge::id(half_edges.size()) };
+	}
+
+	inline auto mesh_definition::get_half_edges() noexcept -> detail::ref_range<half_edge::ref>
+	{
+		return { *this, half_edge::id(0), half_edge::id(half_edges.size()) };
 	}
 
 	namespace vertex
 	{
-		inline math::point3d get_position(mesh_definition const& m, vertex::id vertex)
+		inline math::point3d cref::get_position() const
 		{
-			return m.get_vertex(vertex).position;
+			return m->get_vertex_data(v).position;
 		}
 
-		inline auto get_half_edges(mesh_definition const& m, vertex::id vertex) -> detail::half_edge_range<detail::vertex_half_edge_iteration>
+		inline auto cref::get_half_edges() const -> detail::const_half_edge_range<detail::vertex_half_edge_iteration>
 		{
-			return { &m, m.get_vertex(vertex).first_edge };
+			return { *m, m->get_vertex_data(v).first_edge };
+		}
+
+		inline math::point3d ref::get_position() const
+		{
+			return as_const().get_position();
+		}
+
+		inline auto ref::get_half_edges() const -> detail::half_edge_range<detail::vertex_half_edge_iteration>
+		{
+			return { *m, m->get_vertex_data(v).first_edge };
 		}
 	}
 
 	namespace half_edge
 	{
-		inline vertex::id get_source_vertex(mesh_definition const& m, id e)
+		inline vertex::cref cref::get_source_vertex() const
 		{
-			return m.get_half_edge(m.get_half_edge(e).twin).vertex;
+			return { *m, m->get_half_edge_data(m->get_half_edge_data(e).twin).vertex };
 		}
 
-		inline vertex::id get_target_vertex(mesh_definition const& m, id e)
+		inline vertex::cref cref::get_target_vertex() const
 		{
-			return m.get_half_edge(e).vertex;
+			return { *m, m->get_half_edge_data(e).vertex };
 		}
 
-		inline id get_twin(mesh_definition const& m, id e)
+		inline cref cref::get_twin() const
 		{
-			return m.get_half_edge(e).twin;
+			return { *m, m->get_half_edge_data(e).twin };
 		}
 
-		inline face::id get_face(mesh_definition const& m, id e)
+		inline face::cref cref::get_face() const
 		{
-			return m.get_half_edge(e).face;
+			return { *m, m->get_half_edge_data(e).face };
 		}
 
-		inline math::line get_line(mesh_definition const& m, id e)
+		inline math::line cref::get_line() const
 		{
-			return { get_position(m, get_source_vertex(m, e)), get_position(m, get_target_vertex(m, e)) };
+			return { get_source_vertex().get_position(), get_target_vertex().get_position() };
+		}
+
+		inline vertex::ref ref::get_source_vertex() const
+		{
+			return { *m, m->get_half_edge_data(m->get_half_edge_data(e).twin).vertex };
+		}
+
+		inline vertex::ref ref::get_target_vertex() const
+		{
+			return { *m, m->get_half_edge_data(e).vertex };
+		}
+
+		inline ref ref::get_twin() const
+		{
+			return { *m, m->get_half_edge_data(e).twin };
+		}
+
+		inline face::ref ref::get_face() const
+		{
+			return { *m, m->get_half_edge_data(e).face };
+		}
+
+		inline math::line ref::get_line() const
+		{
+			return as_const().get_line();
 		}
 	}
 
 	namespace face
 	{
-		inline auto get_half_edges(mesh_definition const& m, id face) -> detail::half_edge_range<detail::face_half_edge_iteration>
+		inline auto cref::get_half_edges() const -> detail::const_half_edge_range<detail::face_half_edge_iteration>
 		{
-			return { &m, m.get_face(face).first_edge };
+			return { *m, m->get_face_data(f).first_edge };
 		}
 
-		inline auto get_vertices(mesh_definition const& m, face::id face) -> detail::face_vertex_range
+		inline auto cref::get_vertices() const -> detail::const_face_vertex_range
 		{
-			return { &m, m.get_face(face).first_edge };
+			return { *m, m->get_face_data(f).first_edge };
 		}
 
-		inline size_t get_vertex_count(mesh_definition const& m, face::id face)
+		inline size_t cref::get_vertex_count() const
 		{
-			auto const he = get_half_edges(m, face);
+			auto const he = get_half_edges();
 			return std::distance(he.begin(), he.end());
+		}
+
+		inline auto ref::get_half_edges() const -> detail::half_edge_range<detail::face_half_edge_iteration>
+		{
+			return { *m, m->get_face_data(f).first_edge };
+		}
+
+		inline auto ref::get_vertices() const -> detail::face_vertex_range
+		{
+			return { *m, m->get_face_data(f).first_edge };
+		}
+
+		inline size_t ref::get_vertex_count() const
+		{
+			return as_const().get_vertex_count();
 		}
 	}
 }

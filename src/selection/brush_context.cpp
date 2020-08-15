@@ -15,9 +15,9 @@ namespace ot::selection
 		{
 			graphics::face::id current_face = graphics::face::id::none;
 			double current_distance_sq = DBL_MAX;
-			for (graphics::face::id const face : mesh.get_faces())
+			for (graphics::face::cref const face : mesh.get_faces())
 			{
-				math::plane const local_plane = get_plane(mesh, face);
+				math::plane const local_plane = face.get_plane();
 				math::plane const world_plane = transform(local_plane, brush_transform);
 
 				auto const result = mouse_ray.intersects(world_plane);
@@ -25,13 +25,13 @@ namespace ot::selection
 				{
 					math::point3d const intersection = *result;
 					math::point3d const local_intersection = detransform(intersection, invert(brush_transform));
-					if (is_on_face(mesh, face, local_intersection))
+					if (face.is_on_face(local_intersection))
 					{
 						double const intersection_distance_sq = (camera_wpos - intersection).norm_squared();
 						if (float_cmp(intersection_distance_sq, current_distance_sq) < 0)
 						{
 							current_distance_sq = intersection_distance_sq;
-							current_face = face; // nearest face that the cursor is hovering
+							current_face = face.get_id(); // nearest face that the cursor is hovering
 						}
 					}
 				}
@@ -93,13 +93,13 @@ namespace ot::selection
 
 		if (hovered_face != graphics::face::id::none && next_context == nullptr)
 		{
-			m.add_face(datablock::overlay_unlit_transparent_light, b.mesh_def, hovered_face, t);
+			m.add_face(datablock::overlay_unlit_transparent_light, { b.mesh_def, hovered_face }, t);
 		}
 
 		auto const vertices = b.mesh_def.get_vertices();
-		for (graphics::vertex::id const vertex : vertices)
+		for (graphics::vertex::cref const vertex : vertices)
 		{
-			math::point3d const vertex_pos = transform(get_position(b.mesh_def, vertex), t);
+			math::point3d const vertex_pos = transform(vertex.get_position(), t);
 			math::transformation const vt{ vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04 };
 			m.add_mesh(datablock::overlay_unlit_vertex, graphics::mesh_definition::get_cube(), vt);
 		}

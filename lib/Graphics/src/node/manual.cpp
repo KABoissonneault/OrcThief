@@ -86,12 +86,11 @@ namespace ot::graphics::node
 		manual_object.begin(datablock, Ogre::OT_TRIANGLE_LIST);
 
 		Ogre::uint32 current_index = 0;
-		for_each_triangle(mesh, [&current_index, &manual_object, &t](mesh_definition const& mesh, vertex::id first_vertex, vertex::id second_vertex, vertex::id third_vertex)
+		for_each_triangle(mesh, [&current_index, &manual_object, &t](vertex::cref first_vertex, vertex::cref second_vertex, vertex::cref third_vertex)
 		{
-			using graphics::vertex::get_position;
-			math::point3d const p1 = transform(get_position(mesh, first_vertex), t);
-			math::point3d const p2 = transform(get_position(mesh, second_vertex), t);
-			math::point3d const p3 = transform(get_position(mesh, third_vertex), t);
+			math::point3d const p1 = transform(first_vertex.get_position(), t);
+			math::point3d const p2 = transform(second_vertex.get_position(), t);
+			math::point3d const p3 = transform(third_vertex.get_position(), t);
 			current_index = add_triangle(manual_object, p1, p2, p3, current_index);
 		});
 
@@ -105,9 +104,9 @@ namespace ot::graphics::node
 		manual_object.begin(datablock, Ogre::OT_LINE_LIST);
 
 		Ogre::uint32 current_index = 0;
-		for (half_edge::id const he : mesh.get_half_edges())
+		for (half_edge::cref const he : mesh.get_half_edges())
 		{
-			math::line const local_line = get_line(mesh, he);
+			math::line const local_line = he.get_line();
 			math::line const world_line = transform(local_line, t);
 			current_index = add_line(manual_object, world_line, current_index);
 		}
@@ -115,7 +114,7 @@ namespace ot::graphics::node
 		manual_object.end();
 	}
 
-	void manual::add_face(std::string const& datablock, mesh_definition const& mesh, face::id face, math::transformation const& t)
+	void manual::add_face(std::string const& datablock, face::cref face, math::transformation const& t)
 	{
 		Ogre::ManualObject& manual_object = get_manual(*this);
 
@@ -123,12 +122,11 @@ namespace ot::graphics::node
 
 		Ogre::uint32 current_index = 0;
 
-		for_each_triangle(mesh, face, [&current_index, &manual_object, &t] (mesh_definition const& mesh, vertex::id first_vertex, vertex::id second_vertex, vertex::id third_vertex)
+		for_each_triangle(face, [&current_index, &manual_object, &t](vertex::cref first_vertex, vertex::cref second_vertex, vertex::cref third_vertex)
 		{
-			using graphics::vertex::get_position;
-			math::point3d const p1 = transform(get_position(mesh, first_vertex), t);
-			math::point3d const p2 = transform(get_position(mesh, second_vertex), t);
-			math::point3d const p3 = transform(get_position(mesh, third_vertex), t);
+			math::point3d const p1 = transform(first_vertex.get_position(), t);
+			math::point3d const p2 = transform(second_vertex.get_position(), t);
+			math::point3d const p3 = transform(third_vertex.get_position(), t);
 			current_index = add_triangle(manual_object, p1, p2, p3, current_index);
 		});
 
