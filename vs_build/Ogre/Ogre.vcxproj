@@ -150,6 +150,7 @@
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Camera.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ColourValue.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Components\Hlms\Pbs.h" />
+    <ClInclude Include="..\..\lib\ogre\include\ogre\components\hlms\pbs\Datablock.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Components\Hlms\Unlit.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Components\Hlms\Unlit\Datablock.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay.h" />

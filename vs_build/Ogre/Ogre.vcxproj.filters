@@ -34,6 +34,9 @@
     <Filter Include="include\Components\Hlms\Unlit">
       <UniqueIdentifier>{28094e6f-5ac1-42f6-9a65-64dba266be33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Components\Hlms\Pbs">
+      <UniqueIdentifier>{071eeb6d-2b2b-4675-8c11-911644771e6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Root.h">
@@ -149,6 +152,9 @@
     </ClInclude>
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Components\Hlms\Unlit\Datablock.h">
       <Filter>include\Components\Hlms\Unlit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\ogre\include\ogre\components\hlms\pbs\Datablock.h">
+      <Filter>include\Components\Hlms\Pbs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
