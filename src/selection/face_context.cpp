@@ -1,5 +1,7 @@
 #include "selection/face_context.h"
 
+#include "selection/edge_context.h"
+
 #include "datablock.h"
 #include "input.h"
 
@@ -85,6 +87,25 @@ namespace ot::selection
 
 		composite_context::render(m);
 	}
+
+	bool face_context::handle_mouse_button_event(SDL_MouseButtonEvent const& e)
+	{
+		if (composite_context::handle_mouse_button_event(e))
+			return true;
+
+		if (e.button == 1 && e.state == SDL_RELEASED && hovered_edge != graphics::half_edge::id::none)
+		{
+			next_context.reset(new edge_context(*current_map, *current_scene, *main_window, selected_brush, selected_face, hovered_edge));
+			return true;
+		}
+
+		if (e.button == 3 && e.state == SDL_RELEASED && next_context != nullptr)
+		{
+			next_context.reset();
+			return true;
+		}
+
+		return false;
 	}
 
 	void face_context::get_debug_string(std::string& s) const

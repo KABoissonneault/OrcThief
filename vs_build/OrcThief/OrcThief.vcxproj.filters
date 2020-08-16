@@ -43,6 +43,9 @@
     <ClCompile Include="..\..\src\input.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\selection\edge_context.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\application.h">
@@ -71,6 +74,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\input.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\selection\edge_context.h">
+      <Filter>src\selection</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
