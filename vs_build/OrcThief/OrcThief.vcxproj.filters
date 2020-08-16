@@ -40,6 +40,9 @@
     <ClCompile Include="..\..\src\selection\face_context.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\input.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\application.h">
@@ -65,6 +68,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\selection\face_context.h">
       <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\input.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

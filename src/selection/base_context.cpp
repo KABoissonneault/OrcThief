@@ -48,9 +48,16 @@ namespace ot::selection
 					continue;
 
 				size_t const hit_brush_idx = std::distance(brushes.begin(), found_brush);
-				next_context.reset(new brush_context(*current_map, *current_scene, *main_window, hit_brush_idx, mouse.x, mouse.y));
+				next_context.reset(new brush_context(*current_map, *current_scene, *main_window, hit_brush_idx));
 			}
 
+			return true;
+		}
+
+		// Right-click removes the current selection, if not handled by a sub-context first
+		if (mouse.button == 3 && mouse.state == SDL_RELEASED)
+		{
+			next_context.reset();
 			return true;
 		}
 

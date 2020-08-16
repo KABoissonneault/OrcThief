@@ -10,6 +10,8 @@
 
 namespace ot
 {
+	enum class entity_id : uint32_t {};
+
 	struct brush
 	{
 		graphics::mesh_definition mesh_def;
@@ -17,6 +19,7 @@ namespace ot
 
 		math::transformation get_local_transform() const noexcept;
 		math::transformation get_world_transform(math::transformation const& parent) const noexcept;
+		entity_id get_id() const noexcept;
 	};
 
 	class map

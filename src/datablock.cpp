@@ -11,6 +11,7 @@ namespace ot::datablock
 {
 	std::string const overlay_unlit("OverlayUnlit");	
 	std::string const overlay_unlit_vertex("OverlayUnlitVertex");	
+	std::string const overlay_unlit_edge("OverlayUnlitEdge");	
 	std::string const overlay_unlit_transparent_light("OverlayUnlitTransparentLight");
 	std::string const overlay_unlit_transparent_heavy("OverlayUnlitTransparentHeavy");
 

@@ -182,6 +182,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClCompile Include="..\..\src\application.cpp" />
     <ClCompile Include="..\..\src\datablock.cpp" />
     <ClCompile Include="..\..\src\hud\shadowed_text.cpp" />
+    <ClCompile Include="..\..\src\input.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\map.cpp" />
     <ClCompile Include="..\..\src\selection\base_context.cpp" />
@@ -210,6 +211,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClInclude Include="..\..\src\application.h" />
     <ClInclude Include="..\..\src\datablock.h" />
     <ClInclude Include="..\..\src\hud\shadowed_text.h" />
+    <ClInclude Include="..\..\src\input.h" />
     <ClInclude Include="..\..\src\map.h" />
     <ClInclude Include="..\..\src\selection\base_context.h" />
     <ClInclude Include="..\..\src\selection\brush_context.h" />

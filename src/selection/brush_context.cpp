@@ -1,6 +1,7 @@
 #include "selection/brush_context.h"
 
 #include "datablock.h"
+#include "input.h"
 
 #include "graphics/camera.h"
 #include "graphics/window.h"
@@ -48,12 +49,10 @@ namespace ot::selection
 		}
 	}
 
-	brush_context::brush_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window, size_t selected_brush, int mouse_x, int mouse_y) noexcept
+	brush_context::brush_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window, size_t selected_brush) noexcept
 		: current_map(&current_map)
 		, current_scene(&current_scene)
 		, main_window(&main_window)
-		, mouse_x(mouse_x)
-		, mouse_y(mouse_y)
 	{
 		select(selected_brush);
 	}
@@ -61,6 +60,12 @@ namespace ot::selection
 	void brush_context::update(math::seconds dt)
 	{
 		(void)dt;
+
+		if (!has_focus(*main_window))
+			return;
+
+		int mouse_x, mouse_y;
+		input::get_mouse_position(mouse_x, mouse_y);
 
 		double const viewport_x = static_cast<double>(mouse_x) / get_width(*main_window);
 		double const viewport_y = static_cast<double>(mouse_y) / get_height(*main_window);
@@ -134,9 +139,6 @@ namespace ot::selection
 
 	bool brush_context::handle_mouse_button_event(SDL_MouseButtonEvent const& mouse)
 	{
-		mouse_x = mouse.x;
-		mouse_y = mouse.y;
-
 		if (mouse.button == 1 && mouse.state == SDL_RELEASED && hovered_face != graphics::face::id::none)
 		{
 			next_context.reset(new face_context(*current_map, *current_scene, *main_window, selected_brush, hovered_face));
@@ -150,15 +152,6 @@ namespace ot::selection
 		}
 
 		return composite_context::handle_mouse_button_event(mouse);
-	}
-
-	bool brush_context::handle_mouse_motion_event(SDL_MouseMotionEvent const& mouse)
-	{
-		// Just taking the info, not actually handling the event
-		mouse_x = mouse.x;
-		mouse_y = mouse.y;
-
-		return composite_context::handle_mouse_motion_event(mouse);
 	}
 
 	void brush_context::select(size_t brush_idx)
@@ -192,17 +185,14 @@ namespace ot::selection
 
 	void brush_context::get_debug_string(std::string& s) const
 	{
+		s += "Selected brush: " + std::to_string(selected_brush) + "\n";
 		if (next_context != nullptr)
 		{
 			composite_context::get_debug_string(s);
 		}
-		else
-		{
-			s += "Selected brush: " + std::to_string(selected_brush) + "\n";
-			if (hovered_face != graphics::face::id::none)
-			{
-				s += "Hovered face: " + std::to_string(static_cast<size_t>(hovered_face)) + "\n";
-			}
+		else if (hovered_face != graphics::face::id::none)
+		{			
+			s += "Hovered face: " + std::to_string(static_cast<size_t>(hovered_face)) + "\n";
 		}
 	}
 }

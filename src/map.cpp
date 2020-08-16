@@ -14,6 +14,12 @@ namespace ot
 		return concatenate(parent, get_local_transform());
 	}
 
+	entity_id brush::get_id() const noexcept
+	{
+		// can't be bothered to give it a separate id now
+		return static_cast<entity_id>(node.get_node_id());
+	}
+
 	void map::add_brush(brush b)
 	{
 		brushes.push_back(std::move(b));

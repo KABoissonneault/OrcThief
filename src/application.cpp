@@ -302,7 +302,10 @@ namespace ot
 
 		for (auto& brush : current_map.get_brushes())
 		{
-			brush.node.rotate_around(math::vector3d{ 0.0, 1.0, 0.0 }, dt.count());
+			if (!selection_context->is_selected(brush.get_id()))
+			{
+				brush.node.rotate_around(math::vector3d{ 0.0, 1.0, 0.0 }, dt.count());
+			}
 		}
 	}
 }
