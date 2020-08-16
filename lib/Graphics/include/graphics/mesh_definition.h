@@ -74,6 +74,7 @@ namespace ot::graphics
 			using id_type = id;
 			using mesh_type = mesh_definition const;
 
+			cref() = default;
 			cref(mesh_definition const& m, id v) noexcept
 				: m(&m)
 				, v(v)
@@ -109,6 +110,7 @@ namespace ot::graphics
 			using id_type = id;
 			using mesh_type = mesh_definition;
 
+			ref() = default;
 			ref(mesh_definition& m, id v) noexcept
 				: m(&m)
 				, v(v)
@@ -150,6 +152,7 @@ namespace ot::graphics
 			using id_type = id;
 			using mesh_type = mesh_definition const;
 
+			cref() = default;
 			cref(mesh_definition const& m, id e)
 				: m(&m)
 				, e(e)
@@ -194,6 +197,7 @@ namespace ot::graphics
 			using id_type = id;
 			using mesh_type = mesh_definition;
 
+			ref() = default;
 			ref(mesh_definition& m, id e)
 				: m(&m)
 				, e(e)
@@ -260,6 +264,7 @@ namespace ot::graphics
 			using id_type = id;
 			using mesh_type = mesh_definition const;
 
+			cref() = default;
 			cref(mesh_definition const& m, id f)
 				: m(&m)
 				, f(f)
@@ -308,6 +313,7 @@ namespace ot::graphics
 			using id_type = id;
 			using mesh_type = mesh_definition;
 
+			ref() = default;
 			ref(mesh_definition& m, id f)
 				: m(&m)
 				, f(f)
@@ -506,6 +512,7 @@ namespace ot::graphics
 			[[nodiscard]] iterator end() const noexcept { return iterator{ *mesh, after_last }; }
 			[[nodiscard]] size_t size() const noexcept { return static_cast<size_t>(after_last) - static_cast<size_t>(first); }
 			[[nodiscard]] value_type operator[](size_t i) const noexcept { return { *mesh, id_type(i) }; }
+			[[nodiscard]] value_type operator[](id_type i) const noexcept { return { *mesh, i }; }
 		};
 
 		template<template<typename Iterator> typename Iteration >
