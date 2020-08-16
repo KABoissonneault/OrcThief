@@ -11,6 +11,7 @@ namespace ot::datablock
 {
 	std::string const overlay_unlit("OverlayUnlit");	
 	std::string const overlay_unlit_vertex("OverlayUnlitVertex");	
+	std::string const overlay_unlit_vertex_transparent("OverlayUnlitVertexTransparent");
 	std::string const overlay_unlit_edge("OverlayUnlitEdge");	
 	std::string const overlay_unlit_transparent_light("OverlayUnlitTransparentLight");
 	std::string const overlay_unlit_transparent_heavy("OverlayUnlitTransparentHeavy");
@@ -25,8 +26,7 @@ namespace ot::datablock
 		overlay_macro.mDepthFunc = Ogre::CMPF_LESS_EQUAL;
 		overlay_macro.mDepthWrite = false;
 		overlay_macro.mDepthCheck = true;
-		overlay_macro.mDepthBiasConstant = 10.f;
-		overlay_macro.mDepthBiasSlopeScale = 10.f;
+		overlay_macro.mDepthBiasSlopeScale = 7.f;
 
 		Ogre::HlmsBlendblock overlay_blend;
 		overlay_blend.mIsTransparent = 1;
@@ -44,7 +44,9 @@ namespace ot::datablock
 
 		make_colored_overlay_block(overlay_unlit, Ogre::HlmsBlendblock(), Ogre::ColourValue::White);
 		make_colored_overlay_block(overlay_unlit_vertex, Ogre::HlmsBlendblock(), Ogre::ColourValue::Blue);
+		make_colored_overlay_block(overlay_unlit_vertex_transparent, overlay_blend, Ogre::ColourValue::Blue - Ogre::ColourValue{ 0, 0, 0, 0.5f });
+		make_colored_overlay_block(overlay_unlit_edge, Ogre::HlmsBlendblock(), Ogre::ColourValue::Red);
 		make_colored_overlay_block(overlay_unlit_transparent_light, overlay_blend, Ogre::ColourValue{ 1.0f, 1.0f, 1.0f, 0.25f });
-		make_colored_overlay_block(overlay_unlit_transparent_heavy, overlay_blend, Ogre::ColourValue{ 1.0f, 1.0f, 1.0f, 0.75f });
+		make_colored_overlay_block(overlay_unlit_transparent_heavy, overlay_blend, Ogre::ColourValue{ 1.0f, 1.0f, 1.0f, 0.6f });
 	}
 }
