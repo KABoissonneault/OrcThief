@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <span>
+#include <memory>
 
 namespace ot
 {
@@ -14,7 +15,7 @@ namespace ot
 
 	struct brush
 	{
-		graphics::mesh_definition mesh_def;
+		std::shared_ptr<graphics::mesh_definition const> mesh_def;
 		ot::graphics::node::static_mesh node;
 
 		math::transformation get_local_transform() const noexcept;

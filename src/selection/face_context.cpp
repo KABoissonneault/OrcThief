@@ -21,9 +21,16 @@ namespace ot::selection
 	{
 		(void)dt;
 
-		if (!has_focus(*main_window))
-			return;
+		if (next_context == nullptr && has_focus(*main_window))
+		{
+			detect_hovered_edge();
+		}
 
+		composite_context::update(dt);
+	}
+
+	void face_context::detect_hovered_edge()
+	{
 		int mouse_x, mouse_y;
 		input::get_mouse_position(mouse_x, mouse_y);
 
@@ -33,11 +40,11 @@ namespace ot::selection
 		math::ray const mouse_ray = get_world_ray_from_viewport(camera, viewport_x, viewport_y);
 
 		brush const& brush = current_map->get_brushes()[selected_brush];
-		auto const& mesh = brush.mesh_def;
+		auto const& mesh = *brush.mesh_def;
 
 		math::transformation const t = brush.get_world_transform(math::transformation::identity());
 
-		graphics::face::cref const face = mesh.get_faces()[selected_face];
+		auto const face = mesh.get_face(selected_face);
 		math::plane const local_plane = face.get_plane();
 		math::plane const world_plane = transform(local_plane, t);
 
@@ -68,17 +75,21 @@ namespace ot::selection
 		brush const& b = current_map->get_brushes()[selected_brush];
 		math::transformation const t = b.get_world_transform(math::transformation::identity());
 
-		m.add_face(datablock::overlay_unlit_transparent_heavy, graphics::face::cref{ b.mesh_def, selected_face }, t);
+		m.add_face(datablock::overlay_unlit_transparent_heavy, b.mesh_def->get_face(selected_face), t);
 
 		if (hovered_edge != graphics::half_edge::id::none)
 		{
-			math::line const local_line = graphics::half_edge::cref{ b.mesh_def, hovered_edge }.get_line();
+			math::line const local_line = b.mesh_def->get_half_edge(hovered_edge).get_line();
 			m.add_line(datablock::overlay_unlit_edge, transform(local_line, t));
 		}
+
+		composite_context::render(m);
+	}
 	}
 
 	void face_context::get_debug_string(std::string& s) const
 	{
 		s += "Selected face: " + std::to_string(static_cast<size_t>(selected_face)) + "\n";
+		composite_context::get_debug_string(s);
 	}
 }

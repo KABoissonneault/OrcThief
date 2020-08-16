@@ -8,7 +8,7 @@
 
 namespace ot::selection
 {
-	class face_context : public context
+	class face_context : public composite_context
 	{
 		map const* current_map;
 		graphics::scene const* current_scene;
@@ -17,6 +17,8 @@ namespace ot::selection
 		size_t selected_brush;
 		graphics::face::id selected_face;
 		graphics::half_edge::id hovered_edge = graphics::half_edge::id::none;
+
+		void detect_hovered_edge();
 
 	public:
 		face_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window, size_t selected_brush, graphics::face::id selected_face);

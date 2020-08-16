@@ -61,9 +61,16 @@ namespace ot::selection
 	{
 		(void)dt;
 
-		if (!has_focus(*main_window))
-			return;
+		if (next_context == nullptr && has_focus(*main_window))
+		{
+			detect_hovered_face();
+		}
 
+		composite_context::update(dt);
+	}
+
+	void brush_context::detect_hovered_face()
+	{
 		int mouse_x, mouse_y;
 		input::get_mouse_position(mouse_x, mouse_y);
 
@@ -73,7 +80,7 @@ namespace ot::selection
 		math::ray const mouse_ray = get_world_ray_from_viewport(camera, viewport_x, viewport_y);
 
 		brush const& brush = current_map->get_brushes()[selected_brush];
-		auto const& mesh = brush.mesh_def;
+		auto const& mesh = *brush.mesh_def;
 
 		math::transformation const t = brush.get_world_transform(math::transformation::identity());
 		auto const result = get_closest_face(get_position(camera), mouse_ray, t, mesh);
@@ -85,8 +92,6 @@ namespace ot::selection
 		{
 			hovered_face = graphics::face::id::none;
 		}
-
-		composite_context::update(dt);
 	}
 
 	void brush_context::render(graphics::node::manual& m)
@@ -94,14 +99,14 @@ namespace ot::selection
 		brush const& b = current_map->get_brushes()[selected_brush];
 		math::transformation const t = b.get_world_transform(math::transformation::identity());
 
-		m.add_wiremesh(datablock::overlay_unlit, b.mesh_def, t);
+		m.add_wiremesh(datablock::overlay_unlit, *b.mesh_def, t);
 
 		if (hovered_face != graphics::face::id::none && next_context == nullptr)
 		{
-			m.add_face(datablock::overlay_unlit_transparent_light, { b.mesh_def, hovered_face }, t);
+			m.add_face(datablock::overlay_unlit_transparent_light, { *b.mesh_def, hovered_face }, t);
 		}
 
-		auto const vertices = b.mesh_def.get_vertices();
+		auto const vertices = b.mesh_def->get_vertices();
 		for (graphics::vertex::cref const vertex : vertices)
 		{
 			math::point3d const vertex_pos = transform(vertex.get_position(), t);
@@ -139,6 +144,9 @@ namespace ot::selection
 
 	bool brush_context::handle_mouse_button_event(SDL_MouseButtonEvent const& mouse)
 	{
+		if (composite_context::handle_mouse_button_event(mouse))
+			return true;
+
 		if (mouse.button == 1 && mouse.state == SDL_RELEASED && hovered_face != graphics::face::id::none)
 		{
 			next_context.reset(new face_context(*current_map, *current_scene, *main_window, selected_brush, hovered_face));
@@ -151,7 +159,7 @@ namespace ot::selection
 			return true;
 		}
 
-		return composite_context::handle_mouse_button_event(mouse);
+		return false;
 	}
 
 	void brush_context::select(size_t brush_idx)

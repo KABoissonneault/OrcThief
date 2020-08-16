@@ -21,6 +21,8 @@ namespace ot::selection
 		void select_next();
 		void select_previous();
 
+		void detect_hovered_face();
+
 	public:
 		brush_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window, size_t selected_brush) noexcept;
 
