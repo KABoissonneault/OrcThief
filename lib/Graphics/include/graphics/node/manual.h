@@ -23,6 +23,9 @@ namespace ot::graphics
 			// Removes all sections
 			void clear() noexcept;
 
+			// Add a section of a single line
+			void add_line(std::string const& datablock, math::line line);
+
 			// Add a section of lines
 			void add_lines(std::string const& datablock, std::span<math::line const> lines);
 

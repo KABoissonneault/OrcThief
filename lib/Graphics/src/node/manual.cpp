@@ -10,7 +10,7 @@ namespace ot::graphics::node
 {
 	namespace
 	{
-		Ogre::uint32 add_line(Ogre::ManualObject& manual_object, math::line const l, Ogre::uint32 current_index)
+		Ogre::uint32 add_line_data(Ogre::ManualObject& manual_object, math::line const l, Ogre::uint32 current_index)
 		{
 			manual_object.position(to_ogre_vector(l.a));
 			manual_object.position(to_ogre_vector(l.b));
@@ -48,6 +48,19 @@ namespace ot::graphics::node
 		get_manual(*this).clear();
 	}
 
+	void manual::add_line(std::string const& datablock, math::line line)
+	{
+		Ogre::ManualObject& manual_object = get_manual(*this);
+
+		manual_object.begin(datablock, Ogre::OT_LINE_LIST);
+
+		manual_object.position(to_ogre_vector(line.a));
+		manual_object.position(to_ogre_vector(line.b));
+		manual_object.line(0, 1);
+
+		manual_object.end();
+	}
+
 	void manual::add_lines(std::string const& datablock, std::span<math::line const> lines)
 	{
 		Ogre::ManualObject& manual_object = get_manual(*this);
@@ -57,7 +70,7 @@ namespace ot::graphics::node
 		Ogre::uint32 current_index = 0;
 		for (math::line const l : lines)
 		{
-			current_index = add_line(manual_object, l, current_index);
+			current_index = add_line_data(manual_object, l, current_index);
 		}
 
 		manual_object.end();
@@ -108,7 +121,7 @@ namespace ot::graphics::node
 		{
 			math::line const local_line = he.get_line();
 			math::line const world_line = transform(local_line, t);
-			current_index = add_line(manual_object, world_line, current_index);
+			current_index = add_line_data(manual_object, world_line, current_index);
 		}
 
 		manual_object.end();
