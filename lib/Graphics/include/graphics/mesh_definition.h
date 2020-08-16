@@ -394,6 +394,12 @@ namespace ot::graphics
 		[[nodiscard]] face_data const& get_face_data(face::id id) const { return faces[static_cast<size_t>(id)]; }
 
 	public:
+		[[nodiscard]] vertex::cref get_vertice(vertex::id id) const noexcept { return { *this, id }; }
+		[[nodiscard]] vertex::ref get_vertice(vertex::id id) noexcept { return { *this, id }; }
+		[[nodiscard]] half_edge::cref get_half_edge(half_edge::id id) const noexcept { return { *this, id }; }
+		[[nodiscard]] half_edge::ref get_half_edge(half_edge::id id) noexcept { return { *this, id }; }
+		[[nodiscard]] face::cref get_face(face::id id) const noexcept { return { *this, id }; }
+		[[nodiscard]] face::ref get_face(face::id id) noexcept { return { *this, id }; }
 		[[nodiscard]] auto get_vertices() const noexcept -> detail::ref_range<vertex::cref>;
 		[[nodiscard]] auto get_vertices() noexcept -> detail::ref_range<vertex::ref>;
 		[[nodiscard]] auto get_half_edges() const noexcept -> detail::ref_range<half_edge::cref>;
