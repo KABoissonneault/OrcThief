@@ -21,5 +21,6 @@ namespace ot::graphics
 
 		int get_width() const noexcept;
 		int get_height() const noexcept;
+		bool has_focus() const noexcept;
 	};
 }

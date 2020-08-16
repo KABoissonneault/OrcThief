@@ -21,6 +21,11 @@ namespace ot::graphics
 		return static_cast<int>(render->getHeight());
 	}
 
+	bool window::has_focus() const noexcept
+	{
+		return render->isFocused();
+	}
+
 	int get_width(window const& w) noexcept
 	{
 		return w.get_width();
@@ -29,5 +34,10 @@ namespace ot::graphics
 	int get_height(window const& w) noexcept
 	{
 		return w.get_height();
+	}
+
+	bool has_focus(window const& w) noexcept
+	{
+		return w.has_focus();
 	}
 }
