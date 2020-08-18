@@ -23,10 +23,7 @@ namespace ot::datablock
 		Ogre::HlmsUnlit& hlms_unlit = static_cast<Ogre::HlmsUnlit&>(*hlms_manager.getHlms(Ogre::HLMS_UNLIT));
 
 		Ogre::HlmsMacroblock overlay_macro;
-		overlay_macro.mDepthFunc = Ogre::CMPF_LESS_EQUAL;
-		overlay_macro.mDepthWrite = false;
-		overlay_macro.mDepthCheck = true;
-		overlay_macro.mDepthBiasSlopeScale = 7.f;
+		overlay_macro.mDepthCheck = false;
 
 		Ogre::HlmsBlendblock overlay_blend;
 		overlay_blend.mIsTransparent = 1;
