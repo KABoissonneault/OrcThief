@@ -5,45 +5,87 @@
 
 #include "ogre_conversion.h"
 
+#include <utility>
+
 namespace ot::graphics::node
 {
 	namespace detail
 	{
-		void init_object_impl(object& n, void* snode) noexcept
+		object_cref make_object_cref(void const* pimpl) noexcept
 		{
-			n.pimpl = snode;
+			object_cref o;
+			o.pimpl = pimpl;
+			return o;
+		}
+		
+		object_ref make_object_ref(void* pimpl) noexcept
+		{
+			object_ref o;
+			o.pimpl = pimpl;
+			return o;
+		}
+		
+		void const* get_object_impl(object_cref r) noexcept
+		{
+			return r.pimpl;
 		}
 
-		void* get_scene_node_impl(object const& n) noexcept
+		void* get_object_impl(object_ref r) noexcept
 		{
-			return n.pimpl;
+			return r.pimpl;
 		}
 	}
 
-	void init_object(object& n, Ogre::SceneNode* snode) noexcept
+	object_cref make_null_cref() noexcept
 	{
-		detail::init_object_impl(n, snode);
+		return detail::make_object_cref(nullptr);
 	}
 
-	Ogre::SceneNode& get_scene_node(object& n) noexcept
+	object_ref make_null_ref() noexcept
 	{
-		return *static_cast<Ogre::SceneNode*>(detail::get_scene_node_impl(n));
+		return detail::make_object_ref(nullptr);
 	}
 
-	Ogre::SceneNode const& get_scene_node(object const& n) noexcept
+	bool is_null(object_cref r) noexcept
 	{
-		return *static_cast<Ogre::SceneNode const*>(detail::get_scene_node_impl(n));
+		return detail::get_object_impl(r) == nullptr;
+	}
+
+	bool is_null(object_ref r) noexcept
+	{
+		return detail::get_object_impl(r) == nullptr;
+	}
+
+	object_cref make_object_cref(Ogre::SceneNode const& node) noexcept
+	{
+		return detail::make_object_cref(&node);
+	}
+
+	object_ref make_object_ref(Ogre::SceneNode& node) noexcept
+	{
+		return detail::make_object_ref(&node);
+	}
+
+	Ogre::SceneNode const& get_scene_node(object_cref r) noexcept
+	{
+		return *static_cast<Ogre::SceneNode const*>(detail::get_object_impl(r));
+	}
+
+	Ogre::SceneNode& get_scene_node(object_ref r) noexcept
+	{
+		return *static_cast<Ogre::SceneNode*>(detail::get_object_impl(r));
 	}
 
 	object::object() noexcept
+		: ref(make_null_ref())
 	{
-		init_object(*this, nullptr);
+		
 	}
 
 	object::object(object&& other) noexcept
+		: ref(std::exchange(other.ref, make_null_ref()))
 	{
-		init_object(*this, static_cast<Ogre::SceneNode*>(other.pimpl));
-		init_object(other, nullptr);
+
 	}
 
 	object& object::operator=(object&& other) noexcept
@@ -51,8 +93,7 @@ namespace ot::graphics::node
 		if (this != &other)
 		{
 			destroy_node();
-			init_object(*this, static_cast<Ogre::SceneNode*>(other.pimpl));
-			init_object(other, nullptr);
+			ref = std::exchange(other.ref, make_null_ref());
 		}
 		return *this;
 	}
@@ -64,36 +105,47 @@ namespace ot::graphics::node
 
 	void object::destroy_node() noexcept
 	{
-		auto const snode = static_cast<Ogre::SceneNode*>(pimpl);
+		if (is_null(ref))
+			return;
 
-		if (snode != nullptr && snode->getParent() != nullptr) // don't destroy root node
+		Ogre::SceneNode& snode = get_scene_node(ref);
+		Ogre::SceneManager* const creator_scene = snode.getCreator();
+		if (creator_scene == nullptr)
+			return;
+		
+		// Destroy all attached objects
+		std::vector<Ogre::MovableObject*> attached_objects;
+		for (Ogre::MovableObject* attached_object : snode.getAttachedObjectIterator())
 		{
-			Ogre::SceneManager* const creator_scene = snode->getCreator();
-			if (creator_scene != nullptr)
-			{
-				std::vector<Ogre::MovableObject*> attached_objects;
-				for (Ogre::MovableObject* attached_object : snode->getAttachedObjectIterator())
-				{
-					attached_objects.push_back(attached_object);
-				}
-
-				for (Ogre::MovableObject* attached_object : attached_objects)
-				{
-					creator_scene->destroyMovableObject(attached_object);
-				}
-
-				creator_scene->destroySceneNode(snode);
-			}
+			attached_objects.push_back(attached_object);
 		}
+
+		for (Ogre::MovableObject* attached_object : attached_objects)
+		{
+			creator_scene->destroyMovableObject(attached_object);
+		}
+
+		// Destroy node
+		creator_scene->destroySceneNode(&snode);
 	}
 
-	node_id object::get_node_id() const noexcept
+	node_id object_cref::get_node_id() const noexcept
 	{
 		Ogre::SceneNode const& scene_node = get_scene_node(*this);
 		return node_id(scene_node.getId());
 	}
 
-	bool object::contains(object_id id) const noexcept
+	node_id object_ref::get_node_id() const noexcept
+	{
+		return static_cast<object_cref>(*this).get_node_id();
+	}
+
+	node_id object::get_node_id() const noexcept
+	{
+		return static_cast<object_cref>(*this).get_node_id();
+	}
+
+	bool object_cref::contains(object_id id) const noexcept
 	{
 		Ogre::SceneNode const& scene_node = get_scene_node(*this);
 		Ogre::SceneNode::ConstObjectIterator attached_objects = scene_node.getAttachedObjectIterator();
@@ -106,32 +158,82 @@ namespace ot::graphics::node
 		return false;
 	}
 
-	void object::set_position(math::point3d p)
+	bool object_ref::contains(object_id id) const noexcept
+	{
+		return static_cast<object_cref>(*this).contains(id);
+	}
+
+	bool object::contains(object_id id) const noexcept
+	{
+		return static_cast<object_cref>(*this).contains(id);
+	}
+
+	void object_ref::set_position(math::point3d p) const noexcept
 	{
 		get_scene_node(*this).setPosition(to_ogre_vector(p));
 	}
 
-	math::point3d object::get_position() const noexcept
+	void object::set_position(math::point3d p) noexcept
+	{
+		static_cast<object_ref>(*this).set_position(p);
+	}
+
+	math::point3d object_cref::get_position() const noexcept
 	{
 		return to_math_point(get_scene_node(*this).getPosition());
 	}
 
-	math::quaternion object::get_rotation() const noexcept
+	math::point3d object_ref::get_position() const noexcept
+	{
+		return static_cast<object_cref>(*this).get_position();
+	}
+
+	math::point3d object::get_position() const noexcept
+	{
+		return static_cast<object_cref>(*this).get_position();
+	}
+
+	math::quaternion object_cref::get_rotation() const noexcept
 	{
 		return to_math_quaternion(get_scene_node(*this).getOrientation());
 	}
 
-	double object::get_scale() const noexcept
+	math::quaternion object_ref::get_rotation() const noexcept
+	{
+		return static_cast<object_cref>(*this).get_rotation();
+	}
+
+	math::quaternion object::get_rotation() const noexcept
+	{
+		return static_cast<object_cref>(*this).get_rotation();
+	}
+
+	double object_cref::get_scale() const noexcept
 	{
 		return get_scene_node(*this).getScale()[0]; // we only do uniform scaling here
 	}
 
-	void object::set_direction(math::vector3d direction)
+	double object_ref::get_scale() const noexcept
+	{
+		return static_cast<object_cref>(*this).get_scale();
+	}
+
+	double object::get_scale() const noexcept
+	{
+		return static_cast<object_cref>(*this).get_scale();
+	}
+
+	void object_ref::set_direction(math::vector3d direction) const noexcept
 	{
 		get_scene_node(*this).setDirection(to_ogre_vector(direction));
 	}
 
-	void object::rotate_around(math::vector3d axis, double rad)
+	void object::set_direction(math::vector3d direction) noexcept
+	{
+		static_cast<object_ref>(*this).set_direction(direction);
+	}
+
+	void object_ref::rotate_around(math::vector3d axis, double rad) const noexcept
 	{
 		get_scene_node(*this).rotate(
 			Ogre::Vector3(static_cast<Ogre::Real>(axis.x), static_cast<Ogre::Real>(axis.y), static_cast<Ogre::Real>(axis.z)),
@@ -139,8 +241,18 @@ namespace ot::graphics::node
 		);
 	}
 
-	void object::attach_child(object& child)
+	void object::rotate_around(math::vector3d axis, double rad) noexcept
+	{
+		static_cast<object_ref>(*this).rotate_around(axis, rad);
+	}
+
+	void object_ref::attach_child(object_ref child) const noexcept
 	{
 		get_scene_node(*this).addChild(&get_scene_node(child));
+	}
+
+	void object::attach_child(object_ref child) noexcept
+	{
+		static_cast<object_ref>(*this).attach_child(child);
 	}
 }

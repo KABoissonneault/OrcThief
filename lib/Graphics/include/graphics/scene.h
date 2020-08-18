@@ -27,7 +27,7 @@ namespace ot::graphics
 		// Returns the main camera the scene is rendered to 
 		[[nodiscard]] camera& get_camera() noexcept;
 		[[nodiscard]] camera const& get_camera() const noexcept;
-		[[nodiscard]] node::object& get_root_node() noexcept;
+		[[nodiscard]] node::object_ref get_root_node() noexcept;
 
 		void update(math::seconds dt);
 

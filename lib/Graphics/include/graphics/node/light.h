@@ -7,7 +7,8 @@ namespace ot::graphics::node
 {
 	class directional_light : public object 
 	{ 
+		friend directional_light create_directional_light(object_ref parent);
 	};
 
-	[[nodiscard]] directional_light create_directional_light(object& parent);
+	[[nodiscard]] directional_light create_directional_light(object_ref parent);
 }

@@ -1,6 +1,7 @@
 #include "scene.h"
 
 #include "ogre_conversion.h"
+#include "node/object.h"
 #include "node/static_mesh.h"
 #include "node/light.h"
 
@@ -34,7 +35,6 @@ namespace ot::graphics
 		auto& root = Ogre::Root::getSingleton();
 
 		scene_manager = root.createSceneManager(Ogre::ST_GENERIC, number_threads);
-		init_object(scene_root, scene_manager->getRootSceneNode(Ogre::SCENE_DYNAMIC));
 
 		main_camera = scene_manager->createCamera("Main Camera");
 		auto const camera = main_camera.get();
@@ -51,12 +51,15 @@ namespace ot::graphics
 
 	scene_impl::~scene_impl()
 	{
-		scene_root = {};
-
 		if (scene_manager != nullptr)
 		{
 			Ogre::Root::getSingleton().destroySceneManager(scene_manager);
 		}
+	}
+
+	node::object_ref scene_impl::get_root_node() noexcept
+	{
+		return node::make_object_ref(*scene_manager->getRootSceneNode(Ogre::SCENE_DYNAMIC));
 	}
 
 	void scene_impl::update(math::seconds dt)
@@ -91,7 +94,7 @@ namespace ot::graphics
 		return get_impl(*this).get_camera();
 	}
 
-	node::object& scene::get_root_node() noexcept
+	node::object_ref scene::get_root_node() noexcept
 	{
 		return get_impl(*this).get_root_node();
 	}

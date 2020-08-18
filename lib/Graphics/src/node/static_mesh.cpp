@@ -21,7 +21,7 @@ namespace ot::graphics::node
 			auto const snode = static_cast<Ogre::SceneNode*>(snode_data);
 			auto& mesh = *static_cast<Ogre::MeshPtr*>(mesh_ptr);
 
-			init_object(smesh, snode);
+			smesh.ref = make_object_ref(snode);
 			get_mesh_ptr(smesh) = std::move(mesh);
 		}
 
@@ -231,7 +231,7 @@ namespace ot::graphics::node
 		}
 	}
 
-	static_mesh create_static_mesh(object& parent, std::string const& name, mesh_definition const& mesh)
+	static_mesh create_static_mesh(object_ref parent, std::string const& name, mesh_definition const& mesh)
 	{
 		Ogre::SceneManager& scene_manager = *get_scene_node(parent).getCreator();
 		auto& mesh_manager = Ogre::MeshManager::getSingleton();

@@ -16,7 +16,6 @@ namespace ot::graphics
 	class scene_impl
 	{
 		Ogre::SceneManager* scene_manager;
-		node::object scene_root;
 		camera main_camera;
 		Ogre::CompositorWorkspace* main_workspace;
 
@@ -28,7 +27,7 @@ namespace ot::graphics
 		
 		camera& get_camera() noexcept { return main_camera; }
 		camera const& get_camera() const noexcept { return main_camera; }
-		node::object& get_root_node() noexcept { return scene_root; }
+		node::object_ref get_root_node() noexcept;
 
 		void update(math::seconds dt);
 

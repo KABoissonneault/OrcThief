@@ -146,7 +146,7 @@ namespace ot::graphics::node
 		manual_object.end();
 	}
 
-	manual create_manual(object& parent)
+	manual create_manual(object_ref parent)
 	{
 		Ogre::SceneManager& scene_manager = *get_scene_node(parent).getCreator();
 		Ogre::ManualObject* manual_object = scene_manager.createManualObject(Ogre::SCENE_DYNAMIC);
@@ -154,7 +154,7 @@ namespace ot::graphics::node
 		manual_node->attachObject(manual_object);
 
 		manual m;
-		init_object(m, manual_node);
+		m.ref = make_object_ref(*manual_node);
 		return m;
 	}
 }

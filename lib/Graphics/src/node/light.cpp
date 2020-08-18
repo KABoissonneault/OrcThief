@@ -7,7 +7,7 @@
 
 namespace ot::graphics::node
 {
-	directional_light create_directional_light(object& parent)
+	directional_light create_directional_light(object_ref parent)
 	{
 		Ogre::SceneManager& scene_manager = *get_scene_node(parent).getCreator();
 		Ogre::Light* light_object = scene_manager.createLight();
@@ -16,8 +16,8 @@ namespace ot::graphics::node
 		Ogre::SceneNode* light_node = scene_manager.getRootSceneNode(Ogre::SCENE_DYNAMIC)->createChildSceneNode(Ogre::SCENE_DYNAMIC);
 		light_node->attachObject(light_object);
 
-		node::directional_light light;
-		init_object(light, light_node);
+		directional_light light;
+		light.ref = make_object_ref(*light_node);
 		return light;
 	}
 }
