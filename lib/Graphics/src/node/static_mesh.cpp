@@ -21,7 +21,7 @@ namespace ot::graphics::node
 			auto const snode = static_cast<Ogre::SceneNode*>(snode_data);
 			auto& mesh = *static_cast<Ogre::MeshPtr*>(mesh_ptr);
 
-			smesh.ref = make_object_ref(snode);
+			smesh.set_impl(make_object_ref(snode));
 			get_mesh_ptr(smesh) = std::move(mesh);
 		}
 

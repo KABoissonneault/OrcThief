@@ -154,7 +154,7 @@ namespace ot::graphics::node
 		manual_node->attachObject(manual_object);
 
 		manual m;
-		m.ref = make_object_ref(*manual_node);
+		m.set_impl(make_object_ref(*manual_node));
 		return m;
 	}
 }

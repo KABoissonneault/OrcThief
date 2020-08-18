@@ -17,7 +17,7 @@ namespace ot::graphics::node
 		light_node->attachObject(light_object);
 
 		directional_light light;
-		light.ref = make_object_ref(*light_node);
+		light.set_impl(make_object_ref(*light_node));
 		return light;
 	}
 }
