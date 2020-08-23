@@ -20,7 +20,7 @@ namespace ot::selection
 	public:
 		virtual ~context() = 0;
 
-		virtual void update(math::seconds dt) { (void)dt; }
+		virtual void update() { }
 		virtual void render(graphics::node::manual& m) { (void)m; }
 
 		// Returns true if the input was handled
@@ -39,7 +39,7 @@ namespace ot::selection
 		uptr<context> next_context;
 
 	public:
-		virtual void update(math::seconds dt) override;
+		virtual void update() override;
 		virtual void render(graphics::node::manual& m) override;
 
 		// Returns true if the input was handled

@@ -4,10 +4,10 @@ namespace ot::selection
 {
 	context::~context() = default;
 
-	void composite_context::update(math::seconds dt)
+	void composite_context::update()
 	{
 		if (next_context != nullptr)
-			next_context->update(dt);
+			next_context->update();
 	}
 	
 	void composite_context::render(graphics::node::manual& m)

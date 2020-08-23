@@ -25,8 +25,9 @@ namespace ot::selection
 	public:
 		edge_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window, size_t selected_brush, graphics::face::id selected_face, graphics::half_edge::id selected_edge);
 
-		virtual void update(math::seconds dt) override;
+		virtual void update() override;
 		virtual void render(graphics::node::manual& m) override;
 		virtual bool handle_mouse_button_event(SDL_MouseButtonEvent const& e, action::accumulator& acc) override;
+		virtual void get_debug_string(std::string& s) const override;
 	};
 }

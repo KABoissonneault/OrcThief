@@ -57,16 +57,14 @@ namespace ot::selection
 		select(selected_brush);
 	}
 
-	void brush_context::update(math::seconds dt)
+	void brush_context::update()
 	{
-		(void)dt;
-
 		if (next_context == nullptr && has_focus(*main_window))
 		{
 			detect_hovered_face();
 		}
 
-		composite_context::update(dt);
+		composite_context::update();
 	}
 
 	void brush_context::detect_hovered_face()
@@ -106,6 +104,8 @@ namespace ot::selection
 			m.add_face(datablock::overlay_unlit_transparent_light, { *b.mesh_def, hovered_face }, t);
 		}
 
+		composite_context::render(m);
+
 		auto const vertices = b.mesh_def->get_vertices();
 		for (graphics::vertex::cref const vertex : vertices)
 		{
@@ -113,8 +113,6 @@ namespace ot::selection
 			math::transformation const vt{ vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04 };
 			m.add_mesh(datablock::overlay_unlit_vertex, graphics::mesh_definition::get_cube(), vt);
 		}
-
-		composite_context::render(m);
 	}
 
 	bool brush_context::handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc)
@@ -190,15 +188,20 @@ namespace ot::selection
 	}
 
 	void brush_context::get_debug_string(std::string& s) const
-	{
-		s += "Selected brush: " + std::to_string(selected_brush) + "\n";
+	{		
 		if (next_context != nullptr)
 		{
 			composite_context::get_debug_string(s);
 		}
-		else if (hovered_face != graphics::face::id::none)
+		else 
 		{			
-			s += "Hovered face: " + std::to_string(static_cast<size_t>(hovered_face)) + "\n";
+			s += "Left-click on a face to select it\n";
+			s += "Right-click to deselect the brush\n";
+			s += "Selected brush: " + std::to_string(selected_brush) + "\n";
+			if (hovered_face != graphics::face::id::none)
+			{
+				s += "Hovered face: " + std::to_string(static_cast<size_t>(hovered_face)) + "\n";
+			}
 		}
 	}
 }

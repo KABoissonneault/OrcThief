@@ -19,16 +19,14 @@ namespace ot::selection
 
 	}
 
-	void face_context::update(math::seconds dt)
+	void face_context::update()
 	{
-		(void)dt;
-
 		if (next_context == nullptr && has_focus(*main_window))
 		{
 			detect_hovered_edge();
 		}
 
-		composite_context::update(dt);
+		composite_context::update();
 	}
 
 	void face_context::detect_hovered_edge()
@@ -52,7 +50,10 @@ namespace ot::selection
 
 		auto const intersection_result = mouse_ray.intersects(world_plane);
 		if (!intersection_result)
+		{
+			hovered_edge = graphics::half_edge::id::none;
 			return;
+		}
 
 		math::point3d const& intersection_point = *intersection_result;
 		math::point3d const local_point = detransform(intersection_point, invert(t));
@@ -110,7 +111,20 @@ namespace ot::selection
 
 	void face_context::get_debug_string(std::string& s) const
 	{
-		s += "Selected face: " + std::to_string(static_cast<size_t>(selected_face)) + "\n";
-		composite_context::get_debug_string(s);
+		if (next_context != nullptr)
+		{
+			composite_context::get_debug_string(s);
+		} 
+		else
+		{
+			s += "Left-click to select the edge\n";
+			s += "Right-click to deselect the face\n";
+			s += "Selected brush: " + std::to_string(selected_brush) + "\n";
+			s += "Selected face: " + std::to_string(static_cast<size_t>(selected_face)) + "\n";
+			if (hovered_edge != graphics::half_edge::id::none)
+			{
+				s += "Hovered edge: " + std::to_string(static_cast<size_t>(hovered_edge)) + "\n";
+			}
+		}
 	}
 }

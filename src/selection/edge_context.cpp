@@ -22,10 +22,8 @@ namespace ot::selection
 
 	}
 
-	void edge_context::update(math::seconds dt)
+	void edge_context::update()
 	{
-		(void)dt;
-
 		preview_edge_split();
 	}
 
@@ -53,7 +51,10 @@ namespace ot::selection
 
 		auto const intersection_result = mouse_ray.intersects(world_plane);
 		if (!intersection_result)
+		{
+			local_split = std::nullopt;
 			return;
+		}
 
 		math::point3d const& intersection_point = *intersection_result;
 		math::point3d const local_point = detransform(intersection_point, invert(t));
@@ -100,5 +101,15 @@ namespace ot::selection
 		}
 
 		return false;
+	}
+
+	void edge_context::get_debug_string(std::string& s) const
+	{
+		s += "Left-click to split the edge\n";
+		s += "CTRL+Z to undo\n";
+		s += "Right-click to deselect the edge\n";
+		s += "Selected brush: " + std::to_string(selected_brush) + "\n";
+		s += "Selected face: " + std::to_string(static_cast<size_t>(selected_face)) + "\n";
+		s += "Selected edge: " + std::to_string(static_cast<size_t>(selected_edge)) + "\n";
 	}
 }

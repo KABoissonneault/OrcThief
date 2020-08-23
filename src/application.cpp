@@ -226,7 +226,8 @@ namespace ot
 		auto frame_accumulator = frame_time;
 
 		bool quit = false;
-		while (!quit) {
+		while (!quit) 
+		{
 			// Events
 			SDL_PumpEvents();
 
@@ -248,8 +249,10 @@ namespace ot
 			}
 
 			// Rendering
-			if (!graphics.render())
+			if (!render())
+			{
 				break;
+			}
 
 			auto const current_frame = std::chrono::steady_clock::now();
 			frame_accumulator += std::min(1._s, std::chrono::duration_cast<ot::math::seconds>(current_frame - last_frame));
@@ -309,24 +312,26 @@ namespace ot
 
 	void application::update(math::seconds dt)
 	{
-		std::string s;
-		selection_context->get_debug_string(s);
-		debug_text->set_text(s);
-
-		selection_render.clear();
-		selection_context->render(selection_render);
-
-		graphics.update(dt);
-		main_scene.update(dt);
-		selection_context->update(dt);
-
 		for (auto& brush : current_map.get_brushes())
 		{
 			if (!selection_context->is_selected(brush.get_id()))
 			{
 				brush.node.rotate_around(math::vector3d{ 0.0, 1.0, 0.0 }, dt.count());
 			}
-		}
+		}		
+	}
+
+	bool application::render()
+	{
+		std::string s;
+		selection_context->get_debug_string(s);
+		debug_text->set_text(s);
+
+		selection_context->update();
+		selection_render.clear();
+		selection_context->render(selection_render);
+
+		return graphics.render();
 	}
 
 	void application::actions::push_brush_action(uptr<action::brush_base, fwd_delete<action::brush_base>> action)

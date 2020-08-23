@@ -49,14 +49,15 @@ namespace ot
 		
 		actions selection_actions;
 
-		void update(math::seconds dt);
 		void handle_events();
+		void update(math::seconds dt);
+		[[nodiscard]] bool render();
 
 	public:
-		bool initialize();
+		[[nodiscard]] bool initialize();
 		void setup_default_scene();
 
-		brush make_brush(std::span<math::plane const> planes, std::string const& name, math::point3d position);
+		[[nodiscard]] brush make_brush(std::span<math::plane const> planes, std::string const& name, math::point3d position);
 
 		void run();
 	};
