@@ -179,6 +179,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\action\brush.cpp" />
     <ClCompile Include="..\..\src\application.cpp" />
     <ClCompile Include="..\..\src\datablock.cpp" />
     <ClCompile Include="..\..\src\hud\shadowed_text.cpp" />
@@ -209,6 +210,9 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\action\accumulator.h" />
+    <ClInclude Include="..\..\src\action\brush.fwd.h" />
+    <ClInclude Include="..\..\src\action\brush.h" />
     <ClInclude Include="..\..\src\application.h" />
     <ClInclude Include="..\..\src\datablock.h" />
     <ClInclude Include="..\..\src\hud\shadowed_text.h" />
