@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/uptr.h"
+#include "core/fwd_delete.fwd.h"
 
 namespace ot
 {
