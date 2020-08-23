@@ -34,7 +34,7 @@ namespace ot::graphics::node
 			// Gets the local rotation of the node
 			[[nodiscard]] math::quaternion get_rotation() const noexcept;
 
-			// gets the local scale of the node
+			// Gets the local scale of the node
 			[[nodiscard]] double get_scale() const noexcept;
 		};
 	}
@@ -47,6 +47,10 @@ namespace ot::graphics::node
 		friend void const* detail::get_object_impl(object_cref) noexcept;
 
 		friend class detail::object_const_impl<object_cref>;
+
+	public:
+		// Get the node of the parent
+		object_cref get_parent() const noexcept;
 	};
 	
 	class object_ref : public detail::object_const_impl<object_ref>
@@ -69,6 +73,9 @@ namespace ot::graphics::node
 
 		// Sets the input node as a child of this node.
 		void attach_child(object_ref child) const noexcept;
+
+		// Get the node of the parent
+		object_ref get_parent() const noexcept;
 	};
 
 	class object : public detail::object_const_impl<object>
@@ -100,6 +107,11 @@ namespace ot::graphics::node
 
 		// Sets the input node as a child of this node.
 		void attach_child(object_ref child) noexcept;
+
+		// Get the node of the parent
+		object_cref get_parent() const noexcept;
+		// Get the node of the parent
+		object_ref get_parent() noexcept;
 	};
 
 	extern template class detail::object_const_impl<object_cref>;

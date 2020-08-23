@@ -99,6 +99,16 @@ namespace ot::graphics::node
 		return *static_cast<Ogre::SceneNode*>(detail::get_object_impl(r));
 	}
 
+	object_cref object_cref::get_parent() const noexcept
+	{
+		return make_object_cref(*get_scene_node(*this).getParentSceneNode());
+	}
+
+	object_ref object_ref::get_parent() const noexcept
+	{
+		return make_object_ref(*get_scene_node(*this).getParentSceneNode());
+	}
+
 	object::object() noexcept
 		: pimpl(nullptr)
 	{
@@ -198,5 +208,15 @@ namespace ot::graphics::node
 	void object::attach_child(object_ref child) noexcept
 	{
 		static_cast<object_ref>(*this).attach_child(child);
+	}
+
+	object_cref object::get_parent() const noexcept
+	{
+		return static_cast<object_cref>(*this).get_parent();
+	}
+
+	object_ref object::get_parent() noexcept
+	{
+		return static_cast<object_ref>(*this).get_parent();
 	}
 }
