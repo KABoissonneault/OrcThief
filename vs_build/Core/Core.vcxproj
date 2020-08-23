@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\lib\Core\include\Core\compiler.h" />
     <ClInclude Include="..\..\lib\Core\include\core\float.h" />
+    <ClInclude Include="..\..\lib\core\include\core\fwd_delete.fwd.h" />
     <ClInclude Include="..\..\lib\Core\include\core\fwd_delete.h" />
     <ClInclude Include="..\..\lib\Core\include\core\iterator\arrow_proxy.h" />
     <ClInclude Include="..\..\lib\Core\include\Core\size_t.h" />
