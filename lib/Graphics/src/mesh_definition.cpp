@@ -8,7 +8,7 @@ namespace ot::graphics
 	{
 		auto ref::split_at(math::point3d point) const -> ref
 		{
-			m->half_edges.reserve(m->half_edges.capacity() + 2);
+			m->half_edges.reserve(m->half_edges.size() + 2);
 
 			auto const edge_id = e;
 
