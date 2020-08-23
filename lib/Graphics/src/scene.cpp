@@ -2,8 +2,6 @@
 
 #include "ogre_conversion.h"
 #include "node/object.h"
-#include "node/static_mesh.h"
-#include "node/light.h"
 
 #include "core/fwd_delete.h"
 
