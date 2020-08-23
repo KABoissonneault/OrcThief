@@ -27,5 +27,6 @@ namespace ot::selection
 
 		virtual void update(math::seconds dt) override;
 		virtual void render(graphics::node::manual& m) override;
+		virtual bool handle_mouse_button_event(SDL_MouseButtonEvent const& e, action::accumulator& acc) override;
 	};
 }

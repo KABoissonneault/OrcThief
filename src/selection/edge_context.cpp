@@ -2,6 +2,7 @@
 
 #include "datablock.h"
 #include "input.h"
+#include "action/brush.h"
 
 #include "graphics/camera.h"
 
@@ -76,5 +77,28 @@ namespace ot::selection
 			math::transformation const cube_transform{ vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04 };
 			m.add_mesh(datablock::overlay_unlit_vertex_transparent, graphics::mesh_definition::get_cube(), cube_transform);
 		}
+	}
+
+	bool edge_context::handle_mouse_button_event(SDL_MouseButtonEvent const& e, action::accumulator& acc)
+	{
+		if (e.button == 1 && e.state == SDL_RELEASED)
+		{
+			if (!local_split)
+				return false;
+
+			brush const& b = current_map->get_brushes()[selected_brush];
+			graphics::half_edge::cref const edge = b.mesh_def->get_half_edge(selected_edge);
+			math::line const local_line = edge.get_line();
+
+			math::point3d const p = *local_split;
+			if (float_eq(p, local_line.a) || float_eq(p, local_line.b)) // If the point is at the extremities, don't split
+				return false;
+						
+			acc.emplace_brush_action<action::split_edge>(b, selected_edge, p);
+
+			return true;
+		}
+
+		return false;
 	}
 }

@@ -21,6 +21,9 @@ namespace ot
 		math::transformation get_local_transform() const noexcept;
 		math::transformation get_world_transform(math::transformation const& parent) const noexcept;
 		entity_id get_id() const noexcept;
+
+		void reload_node();
+		void reload_node(std::shared_ptr<graphics::mesh_definition const> new_def);
 	};
 
 	class map
@@ -32,5 +35,7 @@ namespace ot
 
 		std::span<brush> get_brushes() noexcept { return brushes; }
 		std::span<brush const> get_brushes() const noexcept { return brushes; }
+		brush const* find_brush(entity_id id) const noexcept;
+		brush* find_brush(entity_id id) noexcept;
 	};
 }

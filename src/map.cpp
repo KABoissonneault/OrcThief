@@ -20,8 +20,30 @@ namespace ot
 		return static_cast<entity_id>(node.get_node_id());
 	}
 
+	void brush::reload_node()
+	{
+		node.reload_mesh(*mesh_def);
+	}
+
+	void brush::reload_node(std::shared_ptr<graphics::mesh_definition const> new_def)
+	{
+		mesh_def = std::move(new_def);
+		reload_node();
+	}
+
 	void map::add_brush(brush b)
 	{
 		brushes.push_back(std::move(b));
+	}
+
+	brush const* map::find_brush(entity_id id) const noexcept
+	{
+		auto const it_found = std::find_if(brushes.begin(), brushes.end(), [id](brush const& b) { return b.get_id() == id; });
+		return it_found != brushes.end() ? std::to_address(it_found) : nullptr;
+	}
+
+	brush* map::find_brush(entity_id id) noexcept
+	{
+		return const_cast<brush*>(static_cast<map const*>(this)->find_brush(id));
 	}
 }

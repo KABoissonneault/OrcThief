@@ -6,7 +6,7 @@
 
 namespace ot::selection
 {
-	bool base_context::handle_keyboard_event(SDL_KeyboardEvent const& key)
+	bool base_context::handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc)
 	{
 		// Handle Escape first
 		if (key.keysym.scancode == SDL_SCANCODE_ESCAPE && key.state == SDL_RELEASED)
@@ -15,15 +15,13 @@ namespace ot::selection
 			return true;
 		}
 
-		return composite_context::handle_keyboard_event(key);
+		return composite_context::handle_keyboard_event(key, acc);
 	}
 
-	bool base_context::handle_mouse_button_event(SDL_MouseButtonEvent const& mouse)
+	bool base_context::handle_mouse_button_event(SDL_MouseButtonEvent const& mouse, action::accumulator& acc)
 	{
-		if (composite_context::handle_mouse_button_event(mouse))
-		{
+		if (composite_context::handle_mouse_button_event(mouse, acc))
 			return true;
-		}
 
 		// Left-click for selection
 		if (mouse.button == 1 && mouse.state == SDL_RELEASED)

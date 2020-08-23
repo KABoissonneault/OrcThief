@@ -88,9 +88,9 @@ namespace ot::selection
 		composite_context::render(m);
 	}
 
-	bool face_context::handle_mouse_button_event(SDL_MouseButtonEvent const& e)
+	bool face_context::handle_mouse_button_event(SDL_MouseButtonEvent const& e, action::accumulator& acc)
 	{
-		if (composite_context::handle_mouse_button_event(e))
+		if (composite_context::handle_mouse_button_event(e, acc))
 			return true;
 
 		if (e.button == 1 && e.state == SDL_RELEASED && hovered_edge != graphics::half_edge::id::none)

@@ -29,8 +29,8 @@ namespace ot::selection
 		virtual void update(math::seconds dt) override;
 		virtual void render(graphics::node::manual& m) override;
 
-		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key) override;
-		virtual bool handle_mouse_button_event(SDL_MouseButtonEvent const& mouse) override;
+		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) override;
+		virtual bool handle_mouse_button_event(SDL_MouseButtonEvent const& mouse, action::accumulator& acc) override;
 
 		virtual bool is_selected(entity_id id) const noexcept override { return current_map->get_brushes()[selected_brush].get_id() == id; }
 

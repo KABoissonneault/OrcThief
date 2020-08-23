@@ -1,6 +1,7 @@
 #include "application.h"
 
 #include "selection/base_context.h"
+#include "action/brush.h"
 
 #include "graphics/scene.h"
 #include "graphics/camera.h"
@@ -15,6 +16,8 @@
 #include <SDL_video.h>
 #include <SDL_syswm.h>
 #include <SDL_events.h>
+
+#include <iterator>
 
 namespace ot
 {
@@ -190,7 +193,7 @@ namespace ot
 		current_map.add_brush(make_brush(pyramid_planes, "Pyramid", { -2.5, 0.0, 0.0 }));
 
 		auto& camera = main_scene.get_camera();
-		set_position(camera, { 0.0, 2.5, -7.5 });
+		set_position(camera, { 0.0, 2.0, -5.5 });
 		look_at(camera, { 0.0, 0.0, 0.0 });
 
 		light = graphics::node::create_directional_light(main_scene.get_root_node());
@@ -235,40 +238,7 @@ namespace ot
 
 			handle_window_events(graphics);
 
-			{
-				SDL_Event e;
-				while (SDL_PollEvent(&e))
-				{
-					switch (e.type)
-					{
-					case SDL_KEYUP:
-					case SDL_KEYDOWN:
-						if (selection_context != nullptr && selection_context->handle_keyboard_event(e.key))
-						{
-							continue;
-						}
-
-						break;
-
-					case SDL_MOUSEBUTTONUP:
-					case SDL_MOUSEBUTTONDOWN:
-						if (selection_context != nullptr && selection_context->handle_mouse_button_event(e.button))
-						{
-							continue;
-						}
-
-						break;
-
-					case SDL_MOUSEMOTION:
-						if (selection_context != nullptr && selection_context->handle_mouse_motion_event(e.motion))
-						{
-							continue;
-						}
-
-						break;
-					}
-				}
-			}
+			handle_events();
 
 			// Update
 			while (frame_accumulator >= frame_time)
@@ -285,6 +255,56 @@ namespace ot
 			frame_accumulator += std::min(1._s, std::chrono::duration_cast<ot::math::seconds>(current_frame - last_frame));
 			last_frame = current_frame;
 		}
+	}
+
+	void application::handle_events()
+	{
+		SDL_Event e;
+		while (SDL_PollEvent(&e))
+		{
+			switch (e.type)
+			{
+			case SDL_KEYUP:
+			case SDL_KEYDOWN:
+			{
+				SDL_KeyboardEvent const& key = e.key;
+
+				if (key.keysym.scancode == SDL_SCANCODE_Z 
+					&& (key.keysym.mod & KMOD_CTRL) != 0 && (key.keysym.mod & KMOD_ALT) == 0 && (key.keysym.mod & KMOD_SHIFT) == 0
+					&& key.state == SDL_PRESSED
+					&& key.repeat == 0)
+				{
+					selection_actions.undo_latest(current_map);
+					continue;
+				}
+
+				if (selection_context != nullptr && selection_context->handle_keyboard_event(key, selection_actions))
+				{
+					continue;
+				}
+
+				break;
+			}
+			case SDL_MOUSEBUTTONUP:
+			case SDL_MOUSEBUTTONDOWN:
+				if (selection_context != nullptr && selection_context->handle_mouse_button_event(e.button, selection_actions))
+				{
+					continue;
+				}
+
+				break;
+
+			case SDL_MOUSEMOTION:
+				if (selection_context != nullptr && selection_context->handle_mouse_motion_event(e.motion, selection_actions))
+				{
+					continue;
+				}
+
+				break;
+			}
+		}
+
+		selection_actions.apply_actions(current_map);
 	}
 
 	void application::update(math::seconds dt)
@@ -307,5 +327,33 @@ namespace ot
 				brush.node.rotate_around(math::vector3d{ 0.0, 1.0, 0.0 }, dt.count());
 			}
 		}
+	}
+
+	void application::actions::push_brush_action(uptr<action::brush_base, fwd_delete<action::brush_base>> action)
+	{ 
+		current_brush.push_back(std::move(action)); 
+	}
+
+	void application::actions::apply_actions(map& current_map)
+	{
+		if (current_brush.empty())
+			return;
+
+		for (auto& action : current_brush)
+		{
+			action->apply(current_map);
+		}
+
+		previous_brush.insert(previous_brush.end(), std::make_move_iterator(current_brush.begin()), std::make_move_iterator(current_brush.end()));
+		current_brush.clear();		
+	}
+	
+	void application::actions::undo_latest(map& current_map)
+	{
+		if (previous_brush.empty())
+			return;
+
+		previous_brush.back()->undo(current_map);
+		previous_brush.pop_back();
 	}
 }

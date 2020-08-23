@@ -117,12 +117,10 @@ namespace ot::selection
 		composite_context::render(m);
 	}
 
-	bool brush_context::handle_keyboard_event(SDL_KeyboardEvent const& key)
+	bool brush_context::handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc)
 	{
-		if (composite_context::handle_keyboard_event(key))
-		{
+		if (composite_context::handle_keyboard_event(key, acc))
 			return true;
-		}
 
 		SDL_Keysym const& keysym = key.keysym;
 		if (keysym.scancode == SDL_SCANCODE_TAB && key.state == SDL_RELEASED)
@@ -142,9 +140,9 @@ namespace ot::selection
 		return false;
 	}
 
-	bool brush_context::handle_mouse_button_event(SDL_MouseButtonEvent const& mouse)
+	bool brush_context::handle_mouse_button_event(SDL_MouseButtonEvent const& mouse, action::accumulator& acc)
 	{
-		if (composite_context::handle_mouse_button_event(mouse))
+		if (composite_context::handle_mouse_button_event(mouse, acc))
 			return true;
 
 		if (mouse.button == 1 && mouse.state == SDL_RELEASED && hovered_face != graphics::face::id::none)

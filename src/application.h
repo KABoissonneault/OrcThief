@@ -1,6 +1,7 @@
 #pragma once
 
 #include "selection/context.h"
+#include "action/accumulator.h"
 #include "map.h"
 #include "hud/shadowed_text.h"
 
@@ -35,8 +36,22 @@ namespace ot
 		graphics::overlay::surface debug_surface;
 		std::optional<hud::shadowed_text> debug_text;
 
+		class actions : public action::accumulator
+		{
+			std::vector<uptr<action::brush_base, fwd_delete<action::brush_base>>> current_brush;
+			std::vector<uptr<action::brush_base, fwd_delete<action::brush_base>>> previous_brush;
+
+		public:
+			virtual void push_brush_action(uptr<action::brush_base, fwd_delete<action::brush_base>> action);
+			void apply_actions(map& current_map);
+			void undo_latest(map& current_map);
+		};
+		
+		actions selection_actions;
+
 		void update(math::seconds dt);
-	
+		void handle_events();
+
 	public:
 		bool initialize();
 		void setup_default_scene();
