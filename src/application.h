@@ -11,8 +11,6 @@
 
 #include "graphics/module.h"
 #include "graphics/scene.h"
-#include "graphics/mesh_definition.h"
-#include "graphics/node/static_mesh.h"
 #include "graphics/node/light.h"
 #include "graphics/overlay/surface.h"
 

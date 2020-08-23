@@ -1,4 +1,4 @@
-#include "static_mesh.h"
+#include "node/mesh.h"
 
 #include "scene.h"
 #include "ogre_conversion.h"
@@ -16,7 +16,7 @@ namespace ot::graphics::node
 {
 	namespace detail
 	{
-		void init_static_mesh_impl(static_mesh& smesh, void* snode_data, void* mesh_ptr) noexcept
+		void init_mesh_impl(mesh& smesh, void* snode_data, void* mesh_ptr) noexcept
 		{
 			auto const snode = static_cast<Ogre::SceneNode*>(snode_data);
 			auto& mesh = *static_cast<Ogre::MeshPtr*>(mesh_ptr);
@@ -25,42 +25,47 @@ namespace ot::graphics::node
 			get_mesh_ptr(smesh) = std::move(mesh);
 		}
 
-		void* get_mesh_ptr_impl(static_mesh& smesh) noexcept
+		void const* get_mesh_ptr_impl(mesh const& smesh) noexcept
 		{
 			return &smesh.storage_mesh;
 		}
 	}
 
-	void init_static_mesh(static_mesh& smesh, Ogre::SceneNode* snode, Ogre::MeshPtr mptr) noexcept
+	void init_mesh(mesh& smesh, Ogre::SceneNode* snode, Ogre::MeshPtr mptr) noexcept
 	{
-		detail::init_static_mesh_impl(smesh, snode, &mptr);
-	}	
-
-	Ogre::MeshPtr& get_mesh_ptr(static_mesh& smesh) noexcept
-	{
-		return *static_cast<Ogre::MeshPtr*>(detail::get_mesh_ptr_impl(smesh));
+		detail::init_mesh_impl(smesh, snode, &mptr);
 	}
 
-	Ogre::MeshPtr&& get_mesh_ptr(static_mesh&& smesh) noexcept
+	Ogre::MeshPtr const& get_mesh_ptr(mesh const& smesh) noexcept
 	{
-		return std::move(*static_cast<Ogre::MeshPtr*>(detail::get_mesh_ptr_impl(smesh)));
+		return *static_cast<Ogre::MeshPtr const*>(detail::get_mesh_ptr_impl(smesh));
 	}
 
-	static_mesh::static_mesh() noexcept
+	Ogre::MeshPtr& get_mesh_ptr(mesh& smesh) noexcept
 	{
-		static_assert(offsetof(static_mesh, storage_mesh) == sizeof(object) && alignof(static_mesh) == alignof(Ogre::MeshPtr));
-		static_assert(sizeof(static_mesh::storage_mesh) == sizeof(Ogre::MeshPtr));
+		return const_cast<Ogre::MeshPtr&>(get_mesh_ptr(static_cast<mesh const&>(smesh)));
+	}
+
+	Ogre::MeshPtr&& get_mesh_ptr(mesh&& smesh) noexcept
+	{
+		return const_cast<Ogre::MeshPtr&&>(get_mesh_ptr(static_cast<mesh const&>(smesh)));
+	}
+
+	mesh::mesh() noexcept
+	{
+		static_assert(offsetof(mesh, storage_mesh) == sizeof(object) && alignof(mesh) == alignof(Ogre::MeshPtr));
+		static_assert(sizeof(mesh::storage_mesh) == sizeof(Ogre::MeshPtr));
 
 		new(storage_mesh) Ogre::MeshPtr;
 	}
 
-	static_mesh::static_mesh(static_mesh&& other) noexcept
+	mesh::mesh(mesh&& other) noexcept
 		: object(std::move(other))
 	{
 		new(storage_mesh) Ogre::MeshPtr(get_mesh_ptr(std::move(other)));
 	}
 
-	static_mesh& static_mesh::operator=(static_mesh&& other) noexcept
+	mesh& mesh::operator=(mesh&& other) noexcept
 	{
 		if (this != &other)
 		{
@@ -71,13 +76,13 @@ namespace ot::graphics::node
 		return *this;
 	}
 
-	static_mesh::~static_mesh()
+	mesh::~mesh()
 	{
 		destroy_mesh();
 		get_mesh_ptr(*this).~SharedPtr();
 	}
 
-	void static_mesh::destroy_mesh() noexcept
+	void mesh::destroy_mesh() noexcept
 	{
 		auto& mesh_ptr = get_mesh_ptr(*this);
 		if (mesh_ptr != nullptr)
@@ -85,6 +90,11 @@ namespace ot::graphics::node
 			auto& mesh_manager = Ogre::MeshManager::getSingleton();
 			mesh_manager.remove(mesh_ptr);
 		}
+	}
+
+	std::string const& mesh::get_mesh_name() const noexcept
+	{
+		return get_mesh_ptr(*this)->getName();
 	}
 
 	namespace
@@ -222,36 +232,55 @@ namespace ot::graphics::node
 			return vao_manager->createVertexArrayObject(vertex_buffers, index_buffer, Ogre::OT_TRIANGLE_LIST);
 		}
 
-		[[nodiscard]] void set_mesh_bounds(Ogre::Mesh& render_mesh, math::aabb const& mesh_bounds)
+		void set_mesh_bounds(Ogre::Mesh& render_mesh, math::aabb const& mesh_bounds)
 		{
 			math::point3d const bounds_center = mesh_bounds.position;
 			math::vector3d const bounds_half_size = mesh_bounds.half_size;
 			render_mesh._setBounds(Ogre::Aabb(to_ogre_vector(bounds_center), to_ogre_vector(bounds_half_size)), false);
 			render_mesh._setBoundingSphereRadius(bounds_half_size.norm());
 		}
+
+		[[nodiscard]] Ogre::MeshPtr make_mesh(std::string const& name, mesh_definition const& mesh_def)
+		{
+			auto& mesh_manager = Ogre::MeshManager::getSingleton();
+
+			Ogre::MeshPtr render_mesh = mesh_manager.createManual(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+
+			Ogre::SubMesh* render_submesh = render_mesh->createSubMesh();
+			auto const vao = make_render_vao(mesh_def);
+			render_submesh->mVao[Ogre::VpNormal].push_back(vao);
+			render_submesh->mVao[Ogre::VpShadow].push_back(vao);
+
+			set_mesh_bounds(*render_mesh, mesh_def.get_bounds());
+
+			return render_mesh;
+		}
 	}
 
-	static_mesh create_static_mesh(object_ref parent, std::string const& name, mesh_definition const& mesh)
+	void mesh::reload_mesh(mesh_definition const& mesh_def)
+	{
+		Ogre::MeshPtr& ptr = get_mesh_ptr(*this);
+
+		auto const name = ptr->getName(); // copy
+
+		destroy_mesh();
+
+		ptr = make_mesh(name, mesh_def);
+	}
+
+	mesh create_mesh(object_ref parent, std::string const& name, mesh_definition const& mesh_def)
 	{
 		Ogre::SceneManager& scene_manager = *get_scene_node(parent).getCreator();
-		auto& mesh_manager = Ogre::MeshManager::getSingleton();
-
-		Ogre::MeshPtr render_mesh = mesh_manager.createManual(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-
-		Ogre::SubMesh* render_submesh = render_mesh->createSubMesh();
-		auto const vao = make_render_vao(mesh);
-		render_submesh->mVao[Ogre::VpNormal].push_back(vao);
-		render_submesh->mVao[Ogre::VpShadow].push_back(vao);
-
-		set_mesh_bounds(*render_mesh, mesh.get_bounds());
+		
+		Ogre::MeshPtr render_mesh = make_mesh(name, mesh_def);
 
 		Ogre::SceneNode* const root_node = scene_manager.getRootSceneNode(Ogre::SCENE_DYNAMIC);
 		Ogre::Item* const item = scene_manager.createItem(render_mesh, Ogre::SCENE_DYNAMIC);
 		Ogre::SceneNode* const mesh_node = root_node->createChildSceneNode(Ogre::SCENE_DYNAMIC);
 		mesh_node->attachObject(item);
 
-		static_mesh m;
-		init_static_mesh(m, mesh_node, std::move(render_mesh));
+		mesh m;
+		init_mesh(m, mesh_node, std::move(render_mesh));
 		return m;
 	}
 }

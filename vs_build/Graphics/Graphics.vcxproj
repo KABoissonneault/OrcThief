@@ -161,8 +161,8 @@
     <ClInclude Include="..\..\lib\graphics\include\graphics\node\manual.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\node\object.fwd.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\node\object.h" />
-    <ClInclude Include="..\..\lib\graphics\include\graphics\node\static_mesh.fwd.h" />
-    <ClInclude Include="..\..\lib\graphics\include\graphics\node\static_mesh.h" />
+    <ClInclude Include="..\..\lib\graphics\include\graphics\node\mesh.fwd.h" />
+    <ClInclude Include="..\..\lib\graphics\include\graphics\node\mesh.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\overlay\container.h" />
     <ClInclude Include="..\..\lib\graphics\include\graphics\overlay\element.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\overlay\panel.h" />
@@ -178,7 +178,6 @@
     <ClInclude Include="..\..\lib\Graphics\src\node\light.h" />
     <ClInclude Include="..\..\lib\graphics\src\node\manual.h" />
     <ClInclude Include="..\..\lib\Graphics\src\node\object.h" />
-    <ClInclude Include="..\..\lib\Graphics\src\node\static_mesh.h" />
     <ClInclude Include="..\..\lib\graphics\src\ogre_conversion.h" />
     <ClInclude Include="..\..\lib\graphics\src\overlay\container.h" />
     <ClInclude Include="..\..\lib\graphics\src\overlay\element.h" />
@@ -195,7 +194,7 @@
     <ClCompile Include="..\..\lib\graphics\src\node\light.cpp" />
     <ClCompile Include="..\..\lib\graphics\src\node\manual.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\node\object.cpp" />
-    <ClCompile Include="..\..\lib\Graphics\src\node\static_mesh.cpp" />
+    <ClCompile Include="..\..\lib\Graphics\src\node\mesh.cpp" />
     <ClCompile Include="..\..\lib\graphics\src\overlay\container.cpp" />
     <ClCompile Include="..\..\lib\graphics\src\overlay\element.cpp" />
     <ClCompile Include="..\..\lib\graphics\src\overlay\panel.cpp" />

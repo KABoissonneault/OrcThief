@@ -1,7 +1,7 @@
 #pragma once
 
 #include "graphics/mesh_definition.h"
-#include "graphics/node/static_mesh.h"
+#include "graphics/node/mesh.h"
 
 #include "math/transformation.h"
 
@@ -16,7 +16,7 @@ namespace ot
 	struct brush
 	{
 		std::shared_ptr<graphics::mesh_definition const> mesh_def;
-		ot::graphics::node::static_mesh node;
+		ot::graphics::node::mesh node;
 
 		math::transformation get_local_transform() const noexcept;
 		math::transformation get_world_transform(math::transformation const& parent) const noexcept;

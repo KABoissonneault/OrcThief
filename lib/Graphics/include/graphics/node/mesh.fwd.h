@@ -2,5 +2,5 @@
 
 namespace ot::graphics::node
 {
-	class static_mesh;
+	class mesh;
 }
