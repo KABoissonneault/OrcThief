@@ -378,6 +378,7 @@ namespace ot::graphics
 		struct face_data
 		{
 			half_edge::id first_edge; // arbitrary half-edge along the face
+			math::vector3d normal;
 		};
 
 		std::vector<vertex_data> vertices;

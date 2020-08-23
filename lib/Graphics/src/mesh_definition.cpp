@@ -6,6 +6,11 @@ namespace ot::graphics
 {	
 	namespace half_edge
 	{
+		//   Before:                                  After:
+		//     Current Edge                             Current Edge  New Vertex     New Edge
+		//   A --------------------------------> B    A ----------------> C ----------------> B
+		//   A <-------------------------------- B    A <---------------- C <---------------- B
+		//     Current Twin                             New Twin                 Current Twin
 		auto ref::split_at(math::point3d point) const -> ref
 		{
 			m->half_edges.reserve(m->half_edges.size() + 2);
@@ -54,14 +59,7 @@ namespace ot::graphics
 	{
 		math::vector3d cref::get_normal() const
 		{
-			auto const vertices = get_vertices();
-			auto vertex_it = vertices.begin();
-			auto const vertex0 = *vertex_it++;
-			auto const vertex1 = *vertex_it++;
-			auto const vertex2 = *vertex_it++;
-			auto const vector0 = vertex1.get_position() - vertex0.get_position();
-			auto const vector1 = vertex2.get_position() - vertex1.get_position();
-			return normalized(cross_product(vector0, vector1));
+			return m->get_face_data(f).normal;
 		}
 
 		math::plane cref::get_plane() const
@@ -279,20 +277,19 @@ namespace ot::graphics
 					// index of the shared plane for each edge intersection
 					int plane_index1;
 					int plane_index2;
-					if (edge1.planes[0] == edge2.planes[0])
-					{
-						plane_index1 = 0; plane_index2 = 0;
-					} else if (edge1.planes[0] == edge2.planes[1])
-					{
-						plane_index1 = 0; plane_index2 = 1;
-					} else if (edge1.planes[1] == edge2.planes[0])
-					{
-						plane_index1 = 1; plane_index2 = 0;
-					} else if (edge1.planes[1] == edge2.planes[1])
-					{
-						plane_index1 = 1; plane_index2 = 1;
-					} else
-					{
+					if (edge1.planes[0] == edge2.planes[0]) {
+						plane_index1 = 0; 
+						plane_index2 = 0;
+					} else if (edge1.planes[0] == edge2.planes[1]) {
+						plane_index1 = 0; 
+						plane_index2 = 1;
+					} else if (edge1.planes[1] == edge2.planes[0]) {
+						plane_index1 = 1; 
+						plane_index2 = 0;
+					} else if (edge1.planes[1] == edge2.planes[1]){
+						plane_index1 = 1; 
+						plane_index2 = 1;
+					} else {
 						continue;
 					}
 
@@ -338,6 +335,8 @@ namespace ot::graphics
 	{
 		mesh_definition m;		
 		m.faces.resize(planes.size());
+		for (size_t i = 0; i < planes.size(); ++i)
+			m.faces[i].normal = planes[i].normal;
 
 		std::vector<point_intersection> const intersections = find_intersections(planes, m.vertices, m.half_edges);
 		resolve_edge_directions(planes, intersections, m.half_edges, m.faces);
