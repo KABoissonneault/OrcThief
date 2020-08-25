@@ -54,6 +54,8 @@ namespace ot
 		[[nodiscard]] bool render();
 
 	public:
+		application(sdl::unique_window window);
+
 		[[nodiscard]] bool initialize();
 		void setup_default_scene();
 

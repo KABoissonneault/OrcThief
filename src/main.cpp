@@ -1,3 +1,4 @@
+#include "window.h"
 #include "Ogre/Root.h"
 #include "Ogre/ConfigFile.h"
 #include "Ogre/ResourceGroupManager.h"
@@ -24,6 +25,7 @@
 namespace
 {
 	std::filesystem::path resource_folder_path;
+	char const* const k_window_title = "OrcThief";
 
 	[[nodiscard]] bool load_program_config()
 	{
@@ -148,7 +150,9 @@ extern "C" int main(int argc, char** argv)
 
 	root.initialise(false /*create window*/);
 
-	ot::application app;
+	ot::sdl::unique_window main_window = ot::create_window(k_window_title);
+
+	ot::application app(std::move(main_window));
 	if (!app.initialize())
 	{
 		return -1;

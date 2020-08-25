@@ -12,7 +12,7 @@ namespace ot::selection
 {
 	namespace
 	{
-		std::optional<graphics::face::id> get_closest_face(math::point3d camera_wpos, math::ray const& mouse_ray, math::transformation const& brush_transform, graphics::mesh_definition const& mesh)
+		graphics::face::id get_closest_face(math::point3d camera_wpos, math::ray const& mouse_ray, math::transformation const& brush_transform, graphics::mesh_definition const& mesh)
 		{
 			graphics::face::id current_face = graphics::face::id::none;
 			double current_distance_sq = DBL_MAX;
@@ -38,14 +38,7 @@ namespace ot::selection
 				}
 			}
 
-			if (current_face == graphics::face::id::none)
-			{
-				return {};
-			} 
-			else
-			{
-				return current_face;
-			}
+			return current_face;
 		}
 	}
 
@@ -59,6 +52,8 @@ namespace ot::selection
 
 	void brush_context::update()
 	{
+		hovered_face = graphics::face::id::none;
+
 		if (next_context == nullptr && has_focus(*main_window))
 		{
 			detect_hovered_face();
@@ -81,15 +76,7 @@ namespace ot::selection
 		auto const& mesh = *brush.mesh_def;
 
 		math::transformation const t = brush.get_world_transform(math::transformation::identity());
-		auto const result = get_closest_face(get_position(camera), mouse_ray, t, mesh);
-		if (result)
-		{
-			hovered_face = *result;
-		} 
-		else
-		{
-			hovered_face = graphics::face::id::none;
-		}
+		hovered_face = get_closest_face(get_position(camera), mouse_ray, t, mesh);
 	}
 
 	void brush_context::render(graphics::node::manual& m)

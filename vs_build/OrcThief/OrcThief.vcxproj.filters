@@ -52,6 +52,9 @@
     <ClCompile Include="..\..\src\action\brush.cpp">
       <Filter>src\action</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\window.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\application.h">
@@ -92,6 +95,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\action\brush.fwd.h">
       <Filter>src\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\window.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
