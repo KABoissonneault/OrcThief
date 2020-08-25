@@ -1,10 +1,11 @@
 #pragma once
 
 #include <string>
+#include <filesystem>
 
 namespace ot::datablock
 {
-	void initialize();
+	void initialize(std::filesystem::path const& resource_folder);
 
 	extern std::string const overlay_unlit;
 	extern std::string const overlay_unlit_vertex;
