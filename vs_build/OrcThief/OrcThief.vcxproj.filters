@@ -55,6 +55,9 @@
     <ClCompile Include="..\..\src\window.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\ImGui.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\application.h">
@@ -97,6 +100,9 @@
       <Filter>src\action</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\window.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ImGui.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

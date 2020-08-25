@@ -1,6 +1,8 @@
 #include "application.h"
 #include "datablock.h"
 #include "window.h"
+#include "ImGui.h"
+
 #include "Ogre/Root.h"
 #include "Ogre/ConfigFile.h"
 #include "Ogre/ResourceGroupManager.h"
@@ -103,6 +105,12 @@ extern "C" int main(int argc, char** argv)
 	root.initialise(false /*create window*/);
 
 	ot::sdl::unique_window main_window = ot::create_window(k_window_title);
+	
+	if (!ot::initialize_imgui(*main_window))
+	{
+		std::fprintf(stderr, "Cannot initialize ImGui\n");
+		return -1;
+	}
 
 	ot::application app(std::move(main_window));
 	if (!app.initialize())
@@ -116,8 +124,12 @@ extern "C" int main(int argc, char** argv)
 
 	app.setup_default_scene();
 	
+	// Run
 	app.run();
 	
+	// Exit
+	ot::shutdown_imgui();
+
 	SDL_Quit();
 
 	return 0;
