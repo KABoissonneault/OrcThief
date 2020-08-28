@@ -165,7 +165,6 @@
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ConfigFile.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ConfigOptionMap.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\detail\common.h" />
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Direct3D11\RenderSystem.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\HlmsManager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Item.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ManualObject2.h" />

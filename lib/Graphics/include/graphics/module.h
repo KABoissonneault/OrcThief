@@ -34,7 +34,7 @@ namespace ot::graphics
 		module& operator=(module&&) noexcept = default;
 		~module();
 
-		void initialize(window_parameters const& window_params);
+		[[nodiscard]] bool initialize(window_parameters const& window_params);
 
 		[[nodiscard]] scene create_scene(size_t number_threads);
 		

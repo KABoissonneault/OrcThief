@@ -19,7 +19,9 @@ namespace ot::graphics
 		uptr<Ogre::v1::OverlaySystem> overlay_system;
 
 	public:
-		void initialize(window_parameters const& window_params);
+		~impl();
+
+		[[nodiscard]] bool initialize(window_parameters const& window_params);
 
 		[[nodiscard]] scene create_scene(size_t number_threads);
 

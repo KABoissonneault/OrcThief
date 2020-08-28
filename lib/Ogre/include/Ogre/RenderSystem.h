@@ -13,4 +13,14 @@ namespace ot::ogre::render_system
 	bool get_resolution(config_option_map const& config, int& width, int& height);
 	bool get_hardware_gamma_conversion(config_option_map const& config, bool& result);
 	bool get_vsync(config_option_map const& config, bool& result);
+
+	namespace d3d11
+	{
+		extern std::string const name;
+
+		namespace attribute
+		{
+			extern Ogre::IdString const device;
+		}
+	}
 }

@@ -89,10 +89,10 @@ namespace ot
 			return Ogre::PlatformInformation::getNumLogicalCores();
 		}
 
-		void initialize_graphics(ot::graphics::module& g, SDL_Window& window)
+		bool initialize_graphics(ot::graphics::module& g, SDL_Window& window)
 		{
 			auto const window_params = make_window_parameters(window);
-			g.initialize(window_params);
+			return g.initialize(window_params);
 		}
 
 		void push_window_event(SDL_Event const& e, std::vector<ot::graphics::window_event>& window_events)
@@ -148,7 +148,8 @@ namespace ot
 
 	bool application::initialize()
 	{
-		initialize_graphics(graphics, *main_window);
+		if (!initialize_graphics(graphics, *main_window))
+			return false;
 
 		main_scene = graphics.create_scene(get_number_threads() - 1);
 

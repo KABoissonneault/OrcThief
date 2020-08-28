@@ -8,8 +8,12 @@
 #include "Ogre/Components/Overlay/Manager.h"
 #include "Ogre/Window.h"
 
+#include <imgui.h>
+#include <imgui_impl_dx11.h>
 
-const Ogre::ColourValue k_background_color(.4f, 0.8f, 0.4f);
+#include <d3d11.h>
+
+const Ogre::ColourValue k_background_color(0.2f, 0.8f, 0.6f);
 const Ogre::String k_workspace_def("DefaultWorkspace");
 
 namespace ot::graphics
@@ -29,10 +33,11 @@ namespace ot::graphics
 		}
 	}
 
-	void module::impl::initialize(window_parameters const& window_params)
+	bool module::impl::initialize(window_parameters const& window_params)
 	{
 		auto& root = Ogre::Root::getSingleton();
-		auto const& config = root.getRenderSystem()->getConfigOptions();
+		Ogre::RenderSystem* const render_system = root.getRenderSystem();
+		auto const& config = render_system->getConfigOptions();
 
 		auto const misc_params = ot::ogre::render_window_misc_params{}
 			.set_external_window_handle(window_params.window_handle)
@@ -44,10 +49,39 @@ namespace ot::graphics
 
 		main_window = { render_window, window_id };
 
+		if (render_system->getName() == ogre::render_system::d3d11::name)
+		{
+			ID3D11Device* device = nullptr;
+			render_window->getCustomAttribute(ogre::render_system::d3d11::attribute::device, &device);
+			assert(device != nullptr);
+
+			ID3D11DeviceContext* device_context;
+			device->GetImmediateContext(&device_context);
+			assert(device_context != nullptr);
+
+			if (!ImGui_ImplDX11_Init(device, device_context))
+			{
+				std::fprintf(stderr, "error [Graphics]: cannot initialize ImGui DX11\n");
+				return false;
+			}
+		}
+		else
+		{
+			std::printf("error [Graphics]: unsupported render system '%s'\n", render_system->getName().c_str());
+			return false;
+		}
+
 		Ogre::CompositorManager2* const compositor_manager = root.getCompositorManager2();
 		compositor_manager->createBasicWorkspaceDef(k_workspace_def, k_background_color);
 
 		overlay_system.reset(new Ogre::v1::OverlaySystem);
+
+		return true;
+	}
+
+	module::impl::~impl()
+	{
+		ImGui_ImplDX11_Shutdown();
 	}
 
 	auto module::impl::create_scene(size_t num_threads) -> scene
@@ -111,9 +145,9 @@ namespace ot::graphics
 
 	module::~module() = default;
 
-	void module::initialize(window_parameters const& window_params)
+	bool module::initialize(window_parameters const& window_params)
 	{
-		pimpl->initialize(window_params);
+		return pimpl->initialize(window_params);
 	}
 
 	auto module::create_scene(size_t number_threads) -> scene

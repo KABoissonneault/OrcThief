@@ -75,4 +75,14 @@ namespace ot::ogre::render_system
 		result = Ogre::StringConverter::parseBool(found->second.currentValue, false, &error);
 		return !error;
 	}
+
+	namespace d3d11
+	{
+		std::string const name("Direct3D11 Rendering Subsystem");
+
+		namespace attribute
+		{
+			Ogre::IdString const device("D3DDEVICE");
+		}
+	}
 }
