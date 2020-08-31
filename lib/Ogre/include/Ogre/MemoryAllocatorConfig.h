@@ -40,7 +40,13 @@ namespace ot::ogre
 		}
 	};
 
+	using unique_resource_mem = std::unique_ptr<void, simd_deleter<Ogre::MEMCATEGORY_RESOURCE>>;
 	using unique_geometry_mem = std::unique_ptr<void, simd_deleter<Ogre::MEMCATEGORY_GEOMETRY>>;
+
+	[[nodiscard]] inline unique_resource_mem allocate_resource(size_t bytes_n)
+	{
+		return unique_resource_mem(OGRE_MALLOC_SIMD(bytes_n, Ogre::MEMCATEGORY_RESOURCE));
+	}
 
 	[[nodiscard]] inline unique_geometry_mem allocate_geometry(size_t bytes_n)
 	{

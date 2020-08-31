@@ -165,6 +165,7 @@
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ConfigFile.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ConfigOptionMap.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\detail\common.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\FrameListener.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\HlmsManager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Item.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ManualObject2.h" />
@@ -174,12 +175,17 @@
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Prerequisites.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Quaternion.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Ray.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Renderable.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\RenderOperation.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\RenderQueueListener.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\RenderSystem.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ResourceGroupManager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Root.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\SceneManager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\SceneNode.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\StagingTexture.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\SubMesh2.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\TextureGpuManager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Vao\Manager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Vector3.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Window.h" />

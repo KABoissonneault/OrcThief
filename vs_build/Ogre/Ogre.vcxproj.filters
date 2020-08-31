@@ -156,6 +156,24 @@
     <ClInclude Include="..\..\lib\ogre\include\ogre\components\hlms\pbs\Datablock.h">
       <Filter>include\Components\Hlms\Pbs</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Renderable.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\RenderOperation.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\TextureGpuManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\StagingTexture.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\FrameListener.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\RenderQueueListener.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\Ogre\src\RenderSystem.cpp">
