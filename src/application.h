@@ -22,6 +22,17 @@ namespace ot
 {
 	class application
 	{
+		class actions : public action::accumulator
+		{
+			std::vector<uptr<action::brush_base, fwd_delete<action::brush_base>>> current_brush;
+			std::vector<uptr<action::brush_base, fwd_delete<action::brush_base>>> previous_brush;
+
+		public:
+			virtual void push_brush_action(uptr<action::brush_base, fwd_delete<action::brush_base>> action);
+			void apply_actions(map& current_map);
+			void undo_latest(map& current_map);
+		};
+
 		sdl::unique_window main_window;
 		graphics::module graphics;
 		graphics::scene main_scene;
@@ -35,19 +46,10 @@ namespace ot
 
 		graphics::overlay::surface debug_surface;
 		std::optional<hud::shadowed_text> debug_text;
-
-		class actions : public action::accumulator
-		{
-			std::vector<uptr<action::brush_base, fwd_delete<action::brush_base>>> current_brush;
-			std::vector<uptr<action::brush_base, fwd_delete<action::brush_base>>> previous_brush;
-
-		public:
-			virtual void push_brush_action(uptr<action::brush_base, fwd_delete<action::brush_base>> action);
-			void apply_actions(map& current_map);
-			void undo_latest(map& current_map);
-		};
 		
 		actions selection_actions;
+
+		bool wants_quit = false;
 
 		void handle_events();
 		void update(math::seconds dt);

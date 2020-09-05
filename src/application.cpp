@@ -25,6 +25,13 @@ namespace ot
 {
 	namespace
 	{
+		bool keyboard_modifier_is(int mod)
+		{
+			constexpr auto k_modifiers = KMOD_CTRL | KMOD_SHIFT | KMOD_ALT;
+			auto const modifier_state = SDL_GetModState() & k_modifiers;
+			return (modifier_state & mod) && !(modifier_state & ~mod);
+		}
+
 		math::plane const cube_planes[6] = {
 			{{0, 0, 1}, 0.5},
 			{{1, 0, 0}, 0.5},
@@ -122,24 +129,6 @@ namespace ot
 				break;
 			}
 		}
-
-		void handle_window_events(ot::graphics::module& g)
-		{
-			SDL_Event events[4]; // I'm not sure if I should expect more than 4 window events per frame
-			while (int const count = SDL_PeepEvents(events, 4, SDL_GETEVENT, SDL_WINDOWEVENT, SDL_WINDOWEVENT))
-			{
-				using ot::graphics::window_event;
-				using ot::graphics::window_id;
-				std::vector<window_event> window_events;
-				window_events.reserve(count);
-				for (size_t i = 0; i < count; ++i)
-				{
-					push_window_event(events[i], window_events);
-				}
-
-				g.on_window_events(window_events);
-			}
-		}
 	}
 
 	application::application(sdl::unique_window window)
@@ -200,20 +189,9 @@ namespace ot
 		auto const frame_time = 0.02_s;
 		auto frame_accumulator = frame_time;
 
-		bool quit = false;
-		while (!quit) 
+		while (!wants_quit) 
 		{
 			// Events
-			SDL_PumpEvents();
-
-			if (SDL_HasEvent(SDL_QUIT))
-			{
-				quit = true;
-				break;
-			}
-
-			handle_window_events(graphics);
-
 			handle_events();
 
 			// Update
@@ -237,7 +215,10 @@ namespace ot
 
 	void application::handle_events()
 	{
+		SDL_PumpEvents();
+
 		ImGuiIO& imgui_io = ImGui::GetIO();
+		std::vector<ot::graphics::window_event> window_events;
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
@@ -247,26 +228,32 @@ namespace ot
 			case SDL_KEYUP:
 			case SDL_KEYDOWN:
 			{
+				SDL_KeyboardEvent const& key = e.key;
+				auto const k_modifiers = KMOD_CTRL | KMOD_ALT | KMOD_SHIFT;
+
 				if (imgui_io.WantCaptureKeyboard)
 				{
 					ImGui_ImplSDL2_ProcessEvent(&e);
-					continue;
+
+					if (key.state == SDL_PRESSED && key.keysym.scancode == SDL_SCANCODE_F4 && keyboard_modifier_is(KMOD_LALT))
+						wants_quit = true;
+
+					break;
 				}
 
-				SDL_KeyboardEvent const& key = e.key;
 
 				if (key.keysym.scancode == SDL_SCANCODE_Z 
-					&& (key.keysym.mod & KMOD_CTRL) != 0 && (key.keysym.mod & KMOD_ALT) == 0 && (key.keysym.mod & KMOD_SHIFT) == 0
+					&& keyboard_modifier_is(KMOD_CTRL)
 					&& key.state == SDL_PRESSED
 					&& key.repeat == 0)
 				{
 					selection_actions.undo_latest(current_map);
-					continue;
+					break;
 				}
 
 				if (selection_context != nullptr && selection_context->handle_keyboard_event(key, selection_actions))
 				{
-					continue;
+					break;
 				}
 
 				break;
@@ -287,14 +274,37 @@ namespace ot
 				break;
 
 			case SDL_MOUSEMOTION:
+				if (imgui_io.WantCaptureMouse)
+				{
+					ImGui_ImplSDL2_ProcessEvent(&e);
+					continue;
+				}
+
 				if (selection_context != nullptr && selection_context->handle_mouse_motion_event(e.motion, selection_actions))
 				{
 					continue;
 				}
 
 				break;
+
+			case SDL_WINDOWEVENT:
+				ImGui_ImplSDL2_ProcessEvent(&e);
+				push_window_event(e, window_events);
+
+				if (e.window.event == SDL_WINDOWEVENT_CLOSE && e.window.windowID == SDL_GetWindowID(main_window.get()))
+				{
+					wants_quit = true;
+				}
+
+				break;
+
+			case SDL_QUIT:
+				wants_quit = true;
+				break;
 			}
 		}
+
+		graphics.on_window_events(window_events);
 
 		selection_actions.apply_actions(current_map);
 	}
@@ -325,19 +335,19 @@ namespace ot
 		selection_context->render(selection_render);
 
 		// Render
-		ImGui::Render();
+		ImGui::Render();		
+
+		// End frame
+		if (!graphics.render())
+		{
+			return false;
+		}
 
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
-		}		
-
-		// End frame
-		if (!graphics.render())
-		{
-			return false;
 		}
 
 		ImGui::EndFrame();
