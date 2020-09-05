@@ -160,8 +160,12 @@
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\PanelElement.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\System.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Components\Overlay\TextAreaElement.h" />
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\CompositorManager2.h" />
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\CompositorWorkspace.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\Manager2.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\NodeDef.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\Pass.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\PassDef.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\PassProvider.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\Workspace.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ConfigFile.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ConfigOptionMap.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\detail\common.h" />

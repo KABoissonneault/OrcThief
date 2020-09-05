@@ -13,15 +13,6 @@
     <Filter Include="src">
       <UniqueIdentifier>{ce5bb308-6c81-4445-91bb-375c2abeea7c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\Components">
-      <UniqueIdentifier>{eed8dab7-8d3c-46bd-954d-f8b8628acec4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\Components\Hlms">
-      <UniqueIdentifier>{d850c800-57e9-4588-a13e-2b73e370ff32}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\Components\Overlay">
-      <UniqueIdentifier>{0fe34d33-f8a5-4b3d-9a5c-dbd68b93d902}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Components">
       <UniqueIdentifier>{bbc9acf3-e94e-4739-8f6f-8c9fef64fa27}</UniqueIdentifier>
     </Filter>
@@ -31,11 +22,20 @@
     <Filter Include="include\Vao">
       <UniqueIdentifier>{b06888a3-8ebe-4e62-b6be-2c8b3fab377f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Components">
+      <UniqueIdentifier>{eed8dab7-8d3c-46bd-954d-f8b8628acec4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Components\Hlms">
+      <UniqueIdentifier>{d850c800-57e9-4588-a13e-2b73e370ff32}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\Components\Hlms\Unlit">
       <UniqueIdentifier>{28094e6f-5ac1-42f6-9a65-64dba266be33}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\Components\Hlms\Pbs">
       <UniqueIdentifier>{071eeb6d-2b2b-4675-8c11-911644771e6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Components\Overlay">
+      <UniqueIdentifier>{0fe34d33-f8a5-4b3d-9a5c-dbd68b93d902}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,17 +48,11 @@
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Window.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\CompositorManager2.h">
-      <Filter>include\Compositor</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\WindowEventUtilities.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\MemoryAllocatorConfig.h">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\CompositorWorkspace.h">
-      <Filter>include\Compositor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\RenderSystem.h">
       <Filter>include</Filter>
@@ -173,6 +167,24 @@
     </ClInclude>
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\RenderQueueListener.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\Manager2.h">
+      <Filter>include\Compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\Workspace.h">
+      <Filter>include\Compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\NodeDef.h">
+      <Filter>include\Compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\Pass.h">
+      <Filter>include\Compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\PassDef.h">
+      <Filter>include\Compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\PassProvider.h">
+      <Filter>include\Compositor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

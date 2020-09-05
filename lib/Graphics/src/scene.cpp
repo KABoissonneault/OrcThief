@@ -8,7 +8,7 @@
 #include "Ogre/Root.h"
 
 #include "Ogre/Camera.h"
-#include "Ogre/Compositor/CompositorManager2.h"
+#include "Ogre/Compositor/Manager2.h"
 #include "Ogre/Components/Overlay/Manager.h"
 
 namespace ot::graphics
