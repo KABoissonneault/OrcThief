@@ -41,6 +41,12 @@ namespace ot::graphics
 		void on_window_events(std::span<window_event const> events);
 		
 		void update(math::seconds dt);
+
+		// Clears the rendering state, preparing the system for this frame's rendering
+		// Must be called before all rendering
+		void start_frame();
+
+		// Called at the end of the rendering process, to render all of the graphics elements on the viewport(s)
 		// Returns false if rendering has failed and graphics cannot continue
 		[[nodiscard]] bool render();
 

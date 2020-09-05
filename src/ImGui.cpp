@@ -16,9 +16,10 @@ namespace ot
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_NavEnableGamepad | ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_ViewportsEnable;
 
+		ImGui::StyleColorsDark();
+
 		ImGuiStyle& style = ImGui::GetStyle();
-		style.WindowRounding = 0.0f;
-		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+		style.WindowRounding = 1.0f;
 
 		if (!ImGui_ImplSDL2_InitForD3D(&window))
 			return false;
@@ -29,5 +30,6 @@ namespace ot
 	void shutdown_imgui()
 	{
 		ImGui_ImplSDL2_Shutdown();
+		ImGui::DestroyContext();
 	}
 }

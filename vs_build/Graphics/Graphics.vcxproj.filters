@@ -19,6 +19,9 @@
     <Filter Include="src\overlay">
       <UniqueIdentifier>{64a90bcf-899e-40ef-a665-e124d882f003}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\imgui">
+      <UniqueIdentifier>{aec4c0fc-0fdd-4b63-a597-527ed9d7d976}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Graphics\include\graphics\window_type.h">
@@ -129,6 +132,15 @@
     <ClInclude Include="..\..\lib\Graphics\src\node\mesh.h">
       <Filter>src\node</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Graphics\src\imgui\renderer.h">
+      <Filter>src\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Graphics\src\imgui\d3d11_renderer.h">
+      <Filter>src\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Graphics\src\imgui\system.h">
+      <Filter>src\imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\Graphics\src\module.cpp">
@@ -172,6 +184,15 @@
     </ClCompile>
     <ClCompile Include="..\..\lib\Graphics\src\node\mesh.cpp">
       <Filter>src\node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Graphics\src\imgui\d3d11_renderer.cpp">
+      <Filter>src\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Graphics\src\imgui\system.cpp">
+      <Filter>src\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Graphics\src\imgui\renderer.cpp">
+      <Filter>src\imgui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

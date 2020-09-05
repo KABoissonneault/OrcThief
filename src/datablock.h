@@ -5,7 +5,8 @@
 
 namespace ot::datablock
 {
-	void initialize(std::filesystem::path const& resource_folder);
+	void load_hlms(std::filesystem::path const& resource_folder);
+	void initialize();
 
 	extern std::string const overlay_unlit;
 	extern std::string const overlay_unlit_vertex;

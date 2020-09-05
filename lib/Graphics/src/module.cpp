@@ -8,11 +8,6 @@
 #include "Ogre/Components/Overlay/Manager.h"
 #include "Ogre/Window.h"
 
-#include <imgui.h>
-#include <imgui_impl_dx11.h>
-
-#include <d3d11.h>
-
 const Ogre::ColourValue k_background_color(0.2f, 0.8f, 0.6f);
 const Ogre::String k_workspace_def("DefaultWorkspace");
 
@@ -49,30 +44,17 @@ namespace ot::graphics
 
 		main_window = { render_window, window_id };
 
-		if (render_system->getName() == ogre::render_system::d3d11::name)
-		{
-			ID3D11Device* device = nullptr;
-			render_window->getCustomAttribute(ogre::render_system::d3d11::attribute::device, &device);
-			assert(device != nullptr);
-
-			ID3D11DeviceContext* device_context;
-			device->GetImmediateContext(&device_context);
-			assert(device_context != nullptr);
-
-			if (!ImGui_ImplDX11_Init(device, device_context))
-			{
-				std::fprintf(stderr, "error [Graphics]: cannot initialize ImGui DX11\n");
-				return false;
-			}
-		}
-		else
-		{
-			std::printf("error [Graphics]: unsupported render system '%s'\n", render_system->getName().c_str());
-			return false;
-		}
-
 		Ogre::CompositorManager2* const compositor_manager = root.getCompositorManager2();
 		compositor_manager->createBasicWorkspaceDef(k_workspace_def, k_background_color);
+		Ogre::CompositorWorkspaceDef* const compositor_workspace_def = compositor_manager->getWorkspaceDefinition(k_workspace_def);
+
+		imgui.reset(new imgui::system);
+
+		if (!imgui->initialize(compositor_workspace_def))
+		{
+			std::fprintf(stderr, "error [Graphics]: cannot initialize ImGui\n");
+			return false;
+		}
 
 		overlay_system.reset(new Ogre::v1::OverlaySystem);
 
@@ -81,7 +63,7 @@ namespace ot::graphics
 
 	module::impl::~impl()
 	{
-		ImGui_ImplDX11_Shutdown();
+		imgui->shutdown();
 	}
 
 	auto module::impl::create_scene(size_t num_threads) -> scene
@@ -121,6 +103,11 @@ namespace ot::graphics
 	void module::impl::update(math::seconds dt)
 	{
 		(void)dt;
+	}
+
+	void module::impl::start_frame()
+	{
+		imgui->new_frame();
 	}
 
 	bool module::impl::render()
@@ -163,6 +150,11 @@ namespace ot::graphics
 	void module::update(math::seconds dt)
 	{
 		pimpl->update(dt);
+	}
+
+	void module::start_frame()
+	{
+		pimpl->start_frame();
 	}
 
 	bool module::render()

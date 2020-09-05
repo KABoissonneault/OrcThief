@@ -17,6 +17,8 @@
 #include <SDL_syswm.h>
 #include <SDL_events.h>
 
+#include <imgui_impl_sdl.h>
+
 #include <iterator>
 
 namespace ot
@@ -235,6 +237,8 @@ namespace ot
 
 	void application::handle_events()
 	{
+		ImGuiIO& imgui_io = ImGui::GetIO();
+
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
 		{
@@ -243,6 +247,12 @@ namespace ot
 			case SDL_KEYUP:
 			case SDL_KEYDOWN:
 			{
+				if (imgui_io.WantCaptureKeyboard)
+				{
+					ImGui_ImplSDL2_ProcessEvent(&e);
+					continue;
+				}
+
 				SDL_KeyboardEvent const& key = e.key;
 
 				if (key.keysym.scancode == SDL_SCANCODE_Z 
@@ -263,6 +273,12 @@ namespace ot
 			}
 			case SDL_MOUSEBUTTONUP:
 			case SDL_MOUSEBUTTONDOWN:
+				if (imgui_io.WantCaptureMouse)
+				{
+					ImGui_ImplSDL2_ProcessEvent(&e);
+					continue;
+				}
+
 				if (selection_context != nullptr && selection_context->handle_mouse_button_event(e.button, selection_actions))
 				{
 					continue;
@@ -296,6 +312,10 @@ namespace ot
 
 	bool application::render()
 	{
+		// Start frame
+		graphics.start_frame();
+		ImGui_ImplSDL2_NewFrame(main_window.get());
+		ImGui::NewFrame();
 		std::string s;
 		selection_context->get_debug_string(s);
 		debug_text->set_text(s);
@@ -304,7 +324,25 @@ namespace ot
 		selection_render.clear();
 		selection_context->render(selection_render);
 
-		return graphics.render();
+		// Render
+		ImGui::Render();
+
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}		
+
+		// End frame
+		if (!graphics.render())
+		{
+			return false;
+		}
+
+		ImGui::EndFrame();
+
+		return true;
 	}
 
 	void application::actions::push_brush_action(uptr<action::brush_base, fwd_delete<action::brush_base>> action)

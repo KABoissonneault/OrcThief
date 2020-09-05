@@ -21,56 +21,51 @@ namespace ot::datablock
 	std::string const overlay_unlit_transparent_light("OverlayUnlitTransparentLight");
 	std::string const overlay_unlit_transparent_heavy("OverlayUnlitTransparentHeavy");
 
-	namespace
+	void load_hlms(std::filesystem::path const& resource_folder)
 	{
-		void load_hlms(std::filesystem::path const& resource_folder)
+		auto& root = Ogre::Root::getSingleton();
+		Ogre::HlmsManager* const hlms_manager = root.getHlmsManager();
+
+		Ogre::String main_folder;
+		Ogre::StringVector library_folders;
 		{
-			auto& root = Ogre::Root::getSingleton();
-			Ogre::HlmsManager* const hlms_manager = root.getHlmsManager();
+			Ogre::HlmsUnlit::getDefaultPaths(main_folder, library_folders);
 
-			Ogre::String main_folder;
-			Ogre::StringVector library_folders;
+			auto const main_path = resource_folder / main_folder;
+			Ogre::Archive* const main_archive = Ogre::ArchiveManager::getSingleton().load(main_path.string(), ot::ogre::archive_type::filesystem, true /*read-only*/);
+
+			Ogre::ArchiveVec library_archives(library_folders.size());
+			std::transform(library_folders.begin(), library_folders.end(), library_archives.begin(), [&resource_folder](auto const& library_folder)
 			{
-				Ogre::HlmsUnlit::getDefaultPaths(main_folder, library_folders);
+				auto const library_path = resource_folder / library_folder;
+				return Ogre::ArchiveManager::getSingleton().load(library_path.string(), ot::ogre::archive_type::filesystem, true /*read-only*/);
+			});
 
-				auto const main_path = resource_folder / main_folder;
-				Ogre::Archive* const main_archive = Ogre::ArchiveManager::getSingleton().load(main_path.string(), ot::ogre::archive_type::filesystem, true /*read-only*/);
+			// Takes ownership of main_archive, but copies library_archives
+			hlms_manager->registerHlms(OGRE_NEW Ogre::HlmsUnlit(main_archive, &library_archives));
+		}
 
-				Ogre::ArchiveVec library_archives(library_folders.size());
-				std::transform(library_folders.begin(), library_folders.end(), library_archives.begin(), [&resource_folder](auto const& library_folder)
-				{
-					auto const library_path = resource_folder / library_folder;
-					return Ogre::ArchiveManager::getSingleton().load(library_path.string(), ot::ogre::archive_type::filesystem, true /*read-only*/);
-				});
+		{
+			Ogre::HlmsPbs::getDefaultPaths(main_folder, library_folders);
 
-				// Takes ownership of main_archive, but copies library_archives
-				hlms_manager->registerHlms(OGRE_NEW Ogre::HlmsUnlit(main_archive, &library_archives));
-			}
+			auto const main_path = resource_folder / main_folder;
+			Ogre::Archive* const main_archive = Ogre::ArchiveManager::getSingleton().load(main_path.string(), ot::ogre::archive_type::filesystem, true /*read-only*/);
 
+			Ogre::ArchiveVec library_archives(library_folders.size());
+			std::transform(library_folders.begin(), library_folders.end(), library_archives.begin(), [&resource_folder](auto const& library_folder)
 			{
-				Ogre::HlmsPbs::getDefaultPaths(main_folder, library_folders);
+				auto const library_path = resource_folder / library_folder;
+				return Ogre::ArchiveManager::getSingleton().load(library_path.string(), ot::ogre::archive_type::filesystem, true /*read-only*/);
+			});
 
-				auto const main_path = resource_folder / main_folder;
-				Ogre::Archive* const main_archive = Ogre::ArchiveManager::getSingleton().load(main_path.string(), ot::ogre::archive_type::filesystem, true /*read-only*/);
-
-				Ogre::ArchiveVec library_archives(library_folders.size());
-				std::transform(library_folders.begin(), library_folders.end(), library_archives.begin(), [&resource_folder](auto const& library_folder)
-				{
-					auto const library_path = resource_folder / library_folder;
-					return Ogre::ArchiveManager::getSingleton().load(library_path.string(), ot::ogre::archive_type::filesystem, true /*read-only*/);
-				});
-
-				// Takes ownership of main_archive, but copies library_archives
-				auto const pbs_manager = OGRE_NEW Ogre::HlmsPbs(main_archive, &library_archives);
-				hlms_manager->registerHlms(pbs_manager);
-			}
+			// Takes ownership of main_archive, but copies library_archives
+			auto const pbs_manager = OGRE_NEW Ogre::HlmsPbs(main_archive, &library_archives);
+			hlms_manager->registerHlms(pbs_manager);
 		}
 	}
 
-	void initialize(std::filesystem::path const& resource_folder)
+	void initialize()
 	{
-		load_hlms(resource_folder);
-
 		Ogre::Root& root = Ogre::Root::getSingleton();
 		Ogre::HlmsManager& hlms_manager = *root.getHlmsManager();
 		Ogre::HlmsUnlit& hlms_unlit = static_cast<Ogre::HlmsUnlit&>(*hlms_manager.getHlms(Ogre::HLMS_UNLIT));

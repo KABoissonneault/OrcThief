@@ -112,21 +112,23 @@ extern "C" int main(int argc, char** argv)
 		return -1;
 	}
 
-	ot::application app(std::move(main_window));
-	if (!app.initialize())
 	{
-		return -1;
+		ot::application app(std::move(main_window));
+		if (!app.initialize())
+		{
+			return -1;
+		}
+
+		ot::datablock::load_hlms(resource_folder_path);
+		ot::datablock::initialize();
+		Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups(true);
+
+		app.setup_default_scene();
+
+		// Run
+		app.run();
 	}
 
-	ot::datablock::initialize(resource_folder_path);
-	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups(true);
-
-
-	app.setup_default_scene();
-	
-	// Run
-	app.run();
-	
 	// Exit
 	ot::shutdown_imgui();
 

@@ -175,10 +175,14 @@
     <ClInclude Include="..\..\lib\graphics\include\graphics\window.h" />
     <ClInclude Include="..\..\lib\Graphics\include\graphics\window_type.h" />
     <ClInclude Include="..\..\lib\Graphics\src\camera.h" />
+    <ClInclude Include="..\..\lib\Graphics\src\imgui\d3d11_renderer.h" />
+    <ClInclude Include="..\..\lib\Graphics\src\imgui\renderer.h" />
+    <ClInclude Include="..\..\lib\Graphics\src\imgui\system.h" />
     <ClInclude Include="..\..\lib\graphics\src\mesh_definition.h" />
     <ClInclude Include="..\..\lib\Graphics\src\module.h" />
     <ClInclude Include="..\..\lib\Graphics\src\node\light.h" />
     <ClInclude Include="..\..\lib\graphics\src\node\manual.h" />
+    <ClInclude Include="..\..\lib\Graphics\src\node\mesh.h" />
     <ClInclude Include="..\..\lib\Graphics\src\node\object.h" />
     <ClInclude Include="..\..\lib\graphics\src\ogre_conversion.h" />
     <ClInclude Include="..\..\lib\graphics\src\overlay\container.h" />
@@ -191,6 +195,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\Graphics\src\camera.cpp" />
+    <ClCompile Include="..\..\lib\Graphics\src\imgui\d3d11_renderer.cpp" />
+    <ClCompile Include="..\..\lib\Graphics\src\imgui\renderer.cpp" />
+    <ClCompile Include="..\..\lib\Graphics\src\imgui\system.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\mesh_definition.cpp" />
     <ClCompile Include="..\..\lib\Graphics\src\module.cpp" />
     <ClCompile Include="..\..\lib\graphics\src\node\light.cpp" />
