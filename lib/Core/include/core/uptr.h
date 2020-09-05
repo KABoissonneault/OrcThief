@@ -119,4 +119,7 @@ namespace ot
 	{
 		return uptr(new T(std::forward<Args>(args)...));
 	}
+
+	template<typename T>
+	using fwd_uptr = uptr<T, fwd_delete<T>>;
 }
