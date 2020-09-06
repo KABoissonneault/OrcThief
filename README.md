@@ -7,7 +7,7 @@ The project aims to be as portable as possible, at least in terms of output. For
 
 Fate has not yet decided what the game is going to be about.
 
-# Building
+# Build
 
 ## Generator
 
@@ -19,32 +19,36 @@ We don't provide binaries on this repo, therefore the user will be required to i
 
 ### Ogre3d
 
-The project depends Ogre3d 2.2 (aka Ogre Next). The location of the installation must be under "/ext/Ogre" - symbolic links supported. 
+The project depends Ogre3d 2.2 (aka Ogre Next). 
+
+The location of the installation must be under "/ext/Ogre" - symbolic links supported. 
 
 The required components of the Ogre3d installation are:
 #### Headers
-- /OgreMain/include
-- /Components/Hlms/Unlit/include
-- /Components/Hlms/Pbs/include
-- /Components/Hlms/Common/include
-- /Components/Overlay/include
+- /OgreMain/include/...
+- /Components/Hlms/Unlit/include/...
+- /Components/Hlms/Pbs/include/...
+- /Components/Hlms/Common/include/...
+- /Components/Overlay/include/...
 
 Those should all be available by cloning Ogre3d's Git repository.
 
 #### Binaries and build headers
 The user will also need to prepare manually a "/build" folder. This folder consists of three things:
-- /build/include
-- /build/lib
-- /build/bin
+- /build/include/...
+- /build/lib/...
+- /build/bin/...
 
 Those folders contain the build configuration header, the built import libraries (for Windows), and the built dynamic libraries, respectively. Those can all be acquired by building Ogre3d through the CMake. Some information on how to acquire all of Ogre3d's dependencies can be found here: http://wiki.ogre3d.org/Building+Dependencies
 
 ### SDL2
-The project depends on SDL2. The location of the installation must be under "/ext/SDL2" - symbolic links supported.
+The project depends on SDL2. 
+
+The location of the installation must be under "/ext/SDL2" - symbolic links supported.
 
 The required components of the Ogre3d installation are:
 #### Headers
-- /include
+- /include/...
 
 This should already be available when downloading an SDL2 source repository.
 
@@ -58,6 +62,22 @@ Where "x64" is for 64-bits Windows binaries. Debug contains non-optimized binari
 - SDL2main.lib (same name in Debug)
 
 Adding PDB files too can't hurt.
+
+### Boost
+
+Yeah, Boost got in there. It's only Boost.QVM for now, it's just too good to pass on.
+
+The location of the installation must be under "/ext/boost" - symbolic links supported.
+
+#### Headers
+- /boost/qvm/...
+
+### TL;DR
+```
+mklink /D %ORC_THIEF%\ext\Ogre %MY_LIRARIES%\Ogre
+mklink /D %ORC_THIEF%\ext\SDL2 %MY_LIRARIES%\SDL2
+mklink /D %ORC_THIEF%\ext\boost %MY_LIBRARIES%\boost
+```
 
 ## Project
 
