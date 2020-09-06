@@ -3,10 +3,10 @@
 #include "selection/base_context.h"
 #include "action/brush.h"
 
-#include "graphics/scene.h"
-#include "graphics/camera.h"
-#include "graphics/node/mesh.h"
-#include "graphics/node/light.h"
+#include "egfx/scene.h"
+#include "egfx/camera.h"
+#include "egfx/node/mesh.h"
+#include "egfx/node/light.h"
 
 #include "Ogre/ConfigOptionMap.h"
 #include "Ogre/RenderSystem.h"
@@ -82,11 +82,11 @@ namespace ot
 			return (SDL_GetWindowFlags(&window) & SDL_WINDOW_FULLSCREEN) != 0;
 		}
 
-		ot::graphics::window_parameters make_window_parameters(SDL_Window& physical_window)
+		egfx::window_parameters make_window_parameters(SDL_Window& physical_window)
 		{
-			ot::graphics::window_parameters params;
+			egfx::window_parameters params;
 			params.window_handle = get_native_handle_string(physical_window);
-			params.event_id = ot::graphics::window_id{ SDL_GetWindowID(&physical_window) };
+			params.event_id = egfx::window_id{ SDL_GetWindowID(&physical_window) };
 			params.window_title = SDL_GetWindowTitle(&physical_window);
 			params.fullscreen = is_fullscren(physical_window);
 			SDL_GetWindowSize(&physical_window, &params.width, &params.height);
@@ -98,16 +98,16 @@ namespace ot
 			return Ogre::PlatformInformation::getNumLogicalCores();
 		}
 
-		bool initialize_graphics(ot::graphics::module& g, SDL_Window& window)
+		bool initialize_graphics(egfx::module& g, SDL_Window& window)
 		{
 			auto const window_params = make_window_parameters(window);
 			return g.initialize(window_params);
 		}
 
-		void push_window_event(SDL_Event const& e, std::vector<ot::graphics::window_event>& window_events)
+		void push_window_event(SDL_Event const& e, std::vector<egfx::window_event>& window_events)
 		{
-			using ot::graphics::window_event;
-			using ot::graphics::window_id;
+			using egfx::window_event;
+			using egfx::window_id;
 			switch (e.type)
 			{
 			case SDL_WINDOWEVENT:
@@ -144,7 +144,7 @@ namespace ot
 
 		main_scene = graphics.create_scene(get_number_threads() - 1);
 
-		auto const& render_window = graphics.get_window(graphics::window_id{ SDL_GetWindowID(main_window.get()) });
+		auto const& render_window = graphics.get_window(egfx::window_id{ SDL_GetWindowID(main_window.get()) });
 		selection_context.reset(new selection::base_context(current_map, main_scene, render_window));
 
 		return true;
@@ -160,24 +160,24 @@ namespace ot
 		set_position(camera, { 0.0, 2.0, -5.5 });
 		look_at(camera, { 0.0, 0.0, 0.0 });
 
-		light = graphics::node::create_directional_light(main_scene.get_root_node());
+		light = egfx::node::create_directional_light(main_scene.get_root_node());
 		light.set_position({ 10.0, 10.0, -10.0 });
 		light.set_direction(normalized(math::vector3d{ -1.0, -1.0, 1.0 }));
 
-		debug_surface = graphics::overlay::create_surface("DebugSurface");
+		debug_surface = egfx::overlay::create_surface("DebugSurface");
 		debug_text.emplace(debug_surface, "DebugText");
 		debug_text->set_font("DebugFont");
 		debug_text->set_height(0.025);
 
 		debug_surface.show();
 
-		selection_render = graphics::node::create_manual(main_scene.get_root_node());
+		selection_render = egfx::node::create_manual(main_scene.get_root_node());
 	}
 
 	brush application::make_brush(std::span<math::plane const> planes, std::string const& name, math::point3d position)
 	{
-		auto mesh = std::make_shared<graphics::mesh_definition const>(graphics::mesh_definition::make_from_planes(planes));
-		auto node = graphics::node::create_mesh(main_scene.get_root_node(), name, *mesh);
+		auto mesh = std::make_shared<egfx::mesh_definition const>(egfx::mesh_definition::make_from_planes(planes));
+		auto node = egfx::node::create_mesh(main_scene.get_root_node(), name, *mesh);
 		node.set_position(position);
 		return { std::move(mesh), std::move(node) };
 	}
@@ -218,7 +218,7 @@ namespace ot
 		SDL_PumpEvents();
 
 		ImGuiIO& imgui_io = ImGui::GetIO();
-		std::vector<ot::graphics::window_event> window_events;
+		std::vector<egfx::window_event> window_events;
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e))

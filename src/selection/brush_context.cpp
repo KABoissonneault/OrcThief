@@ -3,8 +3,8 @@
 #include "datablock.h"
 #include "input.h"
 
-#include "graphics/camera.h"
-#include "graphics/window.h"
+#include "egfx/camera.h"
+#include "egfx/window.h"
 
 #include "selection/face_context.h"
 
@@ -12,11 +12,11 @@ namespace ot::selection
 {
 	namespace
 	{
-		graphics::face::id get_closest_face(math::point3d camera_wpos, math::ray const& mouse_ray, math::transformation const& brush_transform, graphics::mesh_definition const& mesh)
+		egfx::face::id get_closest_face(math::point3d camera_wpos, math::ray const& mouse_ray, math::transformation const& brush_transform, egfx::mesh_definition const& mesh)
 		{
-			graphics::face::id current_face = graphics::face::id::none;
+			egfx::face::id current_face = egfx::face::id::none;
 			double current_distance_sq = DBL_MAX;
-			for (graphics::face::cref const face : mesh.get_faces())
+			for (egfx::face::cref const face : mesh.get_faces())
 			{
 				math::plane const local_plane = face.get_plane();
 				math::plane const world_plane = transform(local_plane, brush_transform);
@@ -42,7 +42,7 @@ namespace ot::selection
 		}
 	}
 
-	brush_context::brush_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window, size_t selected_brush) noexcept
+	brush_context::brush_context(map const& current_map, egfx::scene const& current_scene, egfx::window const& main_window, size_t selected_brush) noexcept
 		: current_map(&current_map)
 		, current_scene(&current_scene)
 		, main_window(&main_window)
@@ -52,7 +52,7 @@ namespace ot::selection
 
 	void brush_context::update()
 	{
-		hovered_face = graphics::face::id::none;
+		hovered_face = egfx::face::id::none;
 
 		if (next_context == nullptr && has_focus(*main_window))
 		{
@@ -69,7 +69,7 @@ namespace ot::selection
 
 		double const viewport_x = static_cast<double>(mouse_x) / get_width(*main_window);
 		double const viewport_y = static_cast<double>(mouse_y) / get_height(*main_window);
-		graphics::camera const& camera = current_scene->get_camera();
+		egfx::camera const& camera = current_scene->get_camera();
 		math::ray const mouse_ray = get_world_ray_from_viewport(camera, viewport_x, viewport_y);
 
 		brush const& brush = current_map->get_brushes()[selected_brush];
@@ -79,14 +79,14 @@ namespace ot::selection
 		hovered_face = get_closest_face(get_position(camera), mouse_ray, t, mesh);
 	}
 
-	void brush_context::render(graphics::node::manual& m)
+	void brush_context::render(egfx::node::manual& m)
 	{
 		brush const& b = current_map->get_brushes()[selected_brush];
 		math::transformation const t = b.get_world_transform(math::transformation::identity());
 
 		m.add_wiremesh(datablock::overlay_unlit, *b.mesh_def, t);
 
-		if (hovered_face != graphics::face::id::none && next_context == nullptr)
+		if (hovered_face != egfx::face::id::none && next_context == nullptr)
 		{
 			m.add_face(datablock::overlay_unlit_transparent_light, { *b.mesh_def, hovered_face }, t);
 		}
@@ -94,11 +94,11 @@ namespace ot::selection
 		composite_context::render(m);
 
 		auto const vertices = b.mesh_def->get_vertices();
-		for (graphics::vertex::cref const vertex : vertices)
+		for (egfx::vertex::cref const vertex : vertices)
 		{
 			math::point3d const vertex_pos = transform(vertex.get_position(), t);
 			math::transformation const vt{ vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04 };
-			m.add_mesh(datablock::overlay_unlit_vertex, graphics::mesh_definition::get_cube(), vt);
+			m.add_mesh(datablock::overlay_unlit_vertex, egfx::mesh_definition::get_cube(), vt);
 		}
 	}
 
@@ -130,7 +130,7 @@ namespace ot::selection
 		if (composite_context::handle_mouse_button_event(mouse, acc))
 			return true;
 
-		if (mouse.button == 1 && mouse.state == SDL_RELEASED && hovered_face != graphics::face::id::none)
+		if (mouse.button == 1 && mouse.state == SDL_RELEASED && hovered_face != egfx::face::id::none)
 		{
 			next_context.reset(new face_context(*current_map, *current_scene, *main_window, selected_brush, hovered_face));
 			return true;
@@ -185,7 +185,7 @@ namespace ot::selection
 			s += "Left-click on a face to select it\n";
 			s += "Right-click to deselect the brush\n";
 			s += "Selected brush: " + std::to_string(selected_brush) + "\n";
-			if (hovered_face != graphics::face::id::none)
+			if (hovered_face != egfx::face::id::none)
 			{
 				s += "Hovered face: " + std::to_string(static_cast<size_t>(hovered_face)) + "\n";
 			}

@@ -1,6 +1,6 @@
 #include "map.h"
 
-#include "graphics/node/object.h"
+#include "egfx/node/object.h"
 
 namespace ot
 {
@@ -25,7 +25,7 @@ namespace ot
 		node.reload_mesh(*mesh_def);
 	}
 
-	void brush::reload_node(std::shared_ptr<graphics::mesh_definition const> new_def)
+	void brush::reload_node(std::shared_ptr<egfx::mesh_definition const> new_def)
 	{
 		mesh_def = std::move(new_def);
 		reload_node();

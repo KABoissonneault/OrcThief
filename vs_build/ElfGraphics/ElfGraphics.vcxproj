@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{808fa609-f742-469c-bc5d-895d9e45cbee}</ProjectGuid>
+    <RootNamespace>ElfGraphics</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ElfGraphics</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="elf_graphics.props" />
+    <Import Project="..\Ogre\Ogre.props" />
+    <Import Project="..\Core\Core.props" />
+    <Import Project="..\Math\Math.props" />
+    <Import Project="elf_graphics_private.props" />
+    <Import Project="..\ImGui\ImGui.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="elf_graphics.props" />
+    <Import Project="..\Ogre\Ogre.props" />
+    <Import Project="..\Core\Core.props" />
+    <Import Project="..\Math\Math.props" />
+    <Import Project="elf_graphics_private.props" />
+    <Import Project="..\ImGui\ImGui.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\camera.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\color.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\mesh_definition.fwd.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\mesh_definition.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\module.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\light.fwd.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\light.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\manual.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\object.fwd.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\object.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\mesh.fwd.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\mesh.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\overlay\container.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\overlay\element.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\overlay\panel.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\overlay\surface.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\overlay\text.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\scene.fwd.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\scene.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\window.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\window_type.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\camera.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\imgui\d3d11_renderer.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\imgui\renderer.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\imgui\system.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\mesh_definition.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\module.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\node\light.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\node\manual.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\node\mesh.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\node\object.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\ogre_conversion.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\overlay\container.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\overlay\element.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\overlay\panel.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\overlay\surface.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\overlay\text.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\scene.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\lib\ElfGraphics\src\camera.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\d3d11_renderer.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\renderer.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\system.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\mesh_definition.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\module.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\node\light.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\node\manual.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\node\object.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\node\mesh.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\overlay\container.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\overlay\element.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\overlay\panel.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\overlay\surface.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\overlay\text.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\scene.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\window.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

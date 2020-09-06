@@ -1,7 +1,7 @@
 #pragma once
 
 #include "action/brush.fwd.h"
-#include "graphics/mesh_definition.fwd.h"
+#include "egfx/mesh_definition.fwd.h"
 #include "map.h"
 
 #include <memory>
@@ -20,7 +20,7 @@ namespace ot::action
 	class single_brush : public brush_base
 	{
 		entity_id id;
-		std::shared_ptr<graphics::mesh_definition const> previous_state;
+		std::shared_ptr<egfx::mesh_definition const> previous_state;
 	protected:
 		single_brush(brush const& b);
 		
@@ -32,11 +32,11 @@ namespace ot::action
 
 	class split_edge : public single_brush
 	{
-		graphics::half_edge::id edge;
+		egfx::half_edge::id edge;
 		math::point3d point;
 
 	public:
-		split_edge(brush const& b, graphics::half_edge::id edge, math::point3d point);
+		split_edge(brush const& b, egfx::half_edge::id edge, math::point3d point);
 
 		virtual void apply(map& current_map) override;
 	};

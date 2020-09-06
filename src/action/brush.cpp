@@ -30,7 +30,7 @@ namespace ot::action
 		b->reload_node(std::move(previous_state));
 	}
 
-	split_edge::split_edge(brush const& b, graphics::half_edge::id edge, math::point3d point)
+	split_edge::split_edge(brush const& b, egfx::half_edge::id edge, math::point3d point)
 		: single_brush(b)
 		, edge(edge)
 		, point(point)
@@ -47,7 +47,7 @@ namespace ot::action
 			return;
 		}
 
-		auto new_mesh = std::make_shared<graphics::mesh_definition>(*b->mesh_def);
+		auto new_mesh = std::make_shared<egfx::mesh_definition>(*b->mesh_def);
 		new_mesh->get_half_edge(edge).split_at(point);
 		b->reload_node(std::move(new_mesh));
 	}

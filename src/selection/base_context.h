@@ -3,8 +3,8 @@
 #include "selection/context.h"
 #include "map.h"
 
-#include "graphics/scene.h"
-#include "graphics/window.h"
+#include "egfx/scene.h"
+#include "egfx/window.h"
 
 namespace ot::selection
 {
@@ -12,11 +12,11 @@ namespace ot::selection
 	class base_context : public composite_context
 	{
 		map const* current_map;
-		graphics::scene const* current_scene;
-		graphics::window const* main_window;
+		egfx::scene const* current_scene;
+		egfx::window const* main_window;
 
 	public:
-		base_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window) noexcept
+		base_context(map const& current_map, egfx::scene const& current_scene, egfx::window const& main_window) noexcept
 			: current_map(&current_map)
 			, current_scene(&current_scene)
 			, main_window(&main_window)

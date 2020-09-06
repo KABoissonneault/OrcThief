@@ -2,7 +2,7 @@
 
 #include "selection/brush_context.h"
 
-#include "graphics/camera.h"
+#include "egfx/camera.h"
 
 namespace ot::selection
 {
@@ -35,7 +35,7 @@ namespace ot::selection
 			math::ray const r = get_world_ray_from_viewport(current_scene->get_camera(), viewport_x, viewport_y);
 			auto const result = current_scene->raycast_objects(r);
 
-			for (graphics::node::object_id const hit_object : result)
+			for (egfx::node::object_id const hit_object : result)
 			{
 				std::span<brush const> const brushes = current_map->get_brushes();
 				auto const found_brush = std::find_if(brushes.begin(), brushes.end(), [hit_object](brush const& b)

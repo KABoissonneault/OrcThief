@@ -8,8 +8,8 @@
 #include "Ogre/ResourceGroupManager.h"
 #include "Ogre/ArchiveType.h"
 
-#include "graphics/window_type.h"
-#include "graphics/module.h"
+#include "egfx/window_type.h"
+#include "egfx/module.h"
 
 #include "math/unit/time.h"
 

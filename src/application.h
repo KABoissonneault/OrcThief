@@ -10,10 +10,11 @@
 #include "Ogre/MemoryAllocatorConfig.h"
 #include "SDL2/window.h"
 
-#include "graphics/module.h"
-#include "graphics/scene.h"
-#include "graphics/node/light.h"
-#include "graphics/overlay/surface.h"
+#include "egfx/module.h"
+#include "egfx/scene.h"
+#include "egfx/node/light.h"
+#include "egfx/node/manual.h"
+#include "egfx/overlay/surface.h"
 
 #include <span>
 #include <optional>
@@ -34,17 +35,17 @@ namespace ot
 		};
 
 		sdl::unique_window main_window;
-		graphics::module graphics;
-		graphics::scene main_scene;
+		egfx::module graphics;
+		egfx::scene main_scene;
 
-		graphics::node::directional_light light;
+		egfx::node::directional_light light;
 
 		map current_map;
 
 		uptr<selection::context> selection_context;
-		graphics::node::manual selection_render;
+		egfx::node::manual selection_render;
 
-		graphics::overlay::surface debug_surface;
+		egfx::overlay::surface debug_surface;
 		std::optional<hud::shadowed_text> debug_text;
 		
 		actions selection_actions;

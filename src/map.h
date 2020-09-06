@@ -1,7 +1,7 @@
 #pragma once
 
-#include "graphics/mesh_definition.h"
-#include "graphics/node/mesh.h"
+#include "egfx/mesh_definition.h"
+#include "egfx/node/mesh.h"
 
 #include "math/transformation.h"
 
@@ -15,15 +15,15 @@ namespace ot
 
 	struct brush
 	{
-		std::shared_ptr<graphics::mesh_definition const> mesh_def;
-		ot::graphics::node::mesh node;
+		std::shared_ptr<egfx::mesh_definition const> mesh_def;
+		egfx::node::mesh node;
 
 		math::transformation get_local_transform() const noexcept;
 		math::transformation get_world_transform(math::transformation const& parent) const noexcept;
 		entity_id get_id() const noexcept;
 
 		void reload_node();
-		void reload_node(std::shared_ptr<graphics::mesh_definition const> new_def);
+		void reload_node(std::shared_ptr<egfx::mesh_definition const> new_def);
 	};
 
 	class map

@@ -3,7 +3,7 @@
 #include "core/uptr.h"
 #include "math/unit/time.h"
 
-#include "graphics/node/manual.h"
+#include "egfx/node/manual.h"
 
 #include "action/accumulator.h"
 
@@ -21,7 +21,7 @@ namespace ot::selection
 		virtual ~context() = 0;
 
 		virtual void update() { }
-		virtual void render(graphics::node::manual& m) { (void)m; }
+		virtual void render(egfx::node::manual& m) { (void)m; }
 
 		// Returns true if the input was handled
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) { (void)key, (void) acc; return false; }
@@ -40,7 +40,7 @@ namespace ot::selection
 
 	public:
 		virtual void update() override;
-		virtual void render(graphics::node::manual& m) override;
+		virtual void render(egfx::node::manual& m) override;
 
 		// Returns true if the input was handled
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) override;

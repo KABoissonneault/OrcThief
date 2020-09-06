@@ -4,14 +4,19 @@
 #include "input.h"
 #include "action/brush.h"
 
-#include "graphics/camera.h"
+#include "egfx/camera.h"
 
 #include "math/vector3.h"
 #include "math/quaternion.h"
 
 namespace ot::selection
 {
-	edge_context::edge_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window, size_t selected_brush, graphics::face::id selected_face, graphics::half_edge::id selected_edge)
+	edge_context::edge_context(map const& current_map
+		, egfx::scene const& current_scene
+		, egfx::window const& main_window
+		, size_t selected_brush
+		, egfx::face::id selected_face
+		, egfx::half_edge::id selected_edge)
 		: current_map(&current_map)
 		, current_scene(&current_scene)
 		, main_window(&main_window)
@@ -24,6 +29,7 @@ namespace ot::selection
 
 	void edge_context::update()
 	{
+		local_split = std::nullopt;
 		preview_edge_split();
 	}
 
@@ -37,7 +43,7 @@ namespace ot::selection
 
 		double const viewport_x = static_cast<double>(mouse_x) / get_width(*main_window);
 		double const viewport_y = static_cast<double>(mouse_y) / get_height(*main_window);
-		graphics::camera const& camera = current_scene->get_camera();
+		egfx::camera const& camera = current_scene->get_camera();
 		math::ray const mouse_ray = get_world_ray_from_viewport(camera, viewport_x, viewport_y);
 
 		brush const& brush = current_map->get_brushes()[selected_brush];
@@ -51,10 +57,7 @@ namespace ot::selection
 
 		auto const intersection_result = mouse_ray.intersects(world_plane);
 		if (!intersection_result)
-		{
-			local_split = std::nullopt;
 			return;
-		}
 
 		math::point3d const& intersection_point = *intersection_result;
 		math::point3d const local_point = detransform(intersection_point, invert(t));
@@ -64,7 +67,7 @@ namespace ot::selection
 		local_split = clamped_project(line, local_point);
 	}
 
-	void edge_context::render(graphics::node::manual& m)
+	void edge_context::render(egfx::node::manual& m)
 	{
 		brush const& b = current_map->get_brushes()[selected_brush];
 		math::transformation const t = b.get_world_transform(math::transformation::identity());
@@ -76,7 +79,7 @@ namespace ot::selection
 		{
 			math::point3d const vertex_pos = transform(*local_split, t);
 			math::transformation const cube_transform{ vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04 };
-			m.add_mesh(datablock::overlay_unlit_vertex_transparent, graphics::mesh_definition::get_cube(), cube_transform);
+			m.add_mesh(datablock::overlay_unlit_vertex_transparent, egfx::mesh_definition::get_cube(), cube_transform);
 		}
 	}
 
@@ -88,7 +91,7 @@ namespace ot::selection
 				return false;
 
 			brush const& b = current_map->get_brushes()[selected_brush];
-			graphics::half_edge::cref const edge = b.mesh_def->get_half_edge(selected_edge);
+			egfx::half_edge::cref const edge = b.mesh_def->get_half_edge(selected_edge);
 			math::line const local_line = edge.get_line();
 
 			math::point3d const p = *local_split;

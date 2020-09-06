@@ -10,7 +10,7 @@ namespace ot::selection
 			next_context->update();
 	}
 	
-	void composite_context::render(graphics::node::manual& m)
+	void composite_context::render(egfx::node::manual& m)
 	{
 		if (next_context != nullptr)
 			next_context->render(m);

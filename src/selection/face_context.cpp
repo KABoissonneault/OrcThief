@@ -5,11 +5,15 @@
 #include "datablock.h"
 #include "input.h"
 
-#include "graphics/camera.h"
+#include "egfx/camera.h"
 
 namespace ot::selection
 {
-	face_context::face_context(map const& current_map, graphics::scene const& current_scene, graphics::window const& main_window, size_t selected_brush, graphics::face::id selected_face)
+	face_context::face_context(map const& current_map
+		, egfx::scene const& current_scene
+		, egfx::window const& main_window
+		, size_t selected_brush
+		, egfx::face::id selected_face)
 		: current_map(&current_map)
 		, current_scene(&current_scene)
 		, main_window(&main_window)
@@ -36,7 +40,7 @@ namespace ot::selection
 
 		double const viewport_x = static_cast<double>(mouse_x) / get_width(*main_window);
 		double const viewport_y = static_cast<double>(mouse_y) / get_height(*main_window);
-		graphics::camera const& camera = current_scene->get_camera();
+		egfx::camera const& camera = current_scene->get_camera();
 		math::ray const mouse_ray = get_world_ray_from_viewport(camera, viewport_x, viewport_y);
 
 		brush const& brush = current_map->get_brushes()[selected_brush];
@@ -60,7 +64,7 @@ namespace ot::selection
 
 		// Pick the closest edge
 		double current_distance_sq = DBL_MAX;
-		for (graphics::half_edge::cref const he : face.get_half_edges())
+		for (egfx::half_edge::cref const he : face.get_half_edges())
 		{
 			math::line const edge = he.get_line();
 			math::point3d const center = midpoint(edge.a, edge.b);
@@ -73,14 +77,14 @@ namespace ot::selection
 		}
 	}
 
-	void face_context::render(graphics::node::manual& m)
+	void face_context::render(egfx::node::manual& m)
 	{
 		brush const& b = current_map->get_brushes()[selected_brush];
 		math::transformation const t = b.get_world_transform(math::transformation::identity());
 
 		m.add_face(datablock::overlay_unlit_transparent_heavy, b.mesh_def->get_face(selected_face), t);
 
-		if (hovered_edge != graphics::half_edge::id::none)
+		if (hovered_edge != egfx::half_edge::id::none)
 		{
 			math::line const local_line = b.mesh_def->get_half_edge(hovered_edge).get_line();
 			m.add_line(datablock::overlay_unlit_edge, transform(local_line, t));
@@ -94,7 +98,7 @@ namespace ot::selection
 		if (composite_context::handle_mouse_button_event(e, acc))
 			return true;
 
-		if (e.button == 1 && e.state == SDL_RELEASED && hovered_edge != graphics::half_edge::id::none)
+		if (e.button == 1 && e.state == SDL_RELEASED && hovered_edge != egfx::half_edge::id::none)
 		{
 			next_context.reset(new edge_context(*current_map, *current_scene, *main_window, selected_brush, selected_face, hovered_edge));
 			return true;
@@ -121,7 +125,7 @@ namespace ot::selection
 			s += "Right-click to deselect the face\n";
 			s += "Selected brush: " + std::to_string(selected_brush) + "\n";
 			s += "Selected face: " + std::to_string(static_cast<size_t>(selected_face)) + "\n";
-			if (hovered_edge != graphics::half_edge::id::none)
+			if (hovered_edge != egfx::half_edge::id::none)
 			{
 				s += "Hovered edge: " + std::to_string(static_cast<size_t>(hovered_edge)) + "\n";
 			}
