@@ -149,9 +149,6 @@
     <ClCompile Include="..\..\lib\ElfGraphics\src\mesh_definition.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lib\ElfGraphics\src\scene.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\lib\ElfGraphics\src\node\light.cpp">
       <Filter>src\node</Filter>
     </ClCompile>

@@ -58,6 +58,9 @@
     <ClCompile Include="..\..\src\ImGui.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\lib\ElfGraphics\src\scene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\application.h">

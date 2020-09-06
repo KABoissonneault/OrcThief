@@ -181,6 +181,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\lib\ElfGraphics\src\scene.cpp" />
     <ClCompile Include="..\..\src\action\brush.cpp" />
     <ClCompile Include="..\..\src\application.cpp" />
     <ClCompile Include="..\..\src\datablock.cpp" />
