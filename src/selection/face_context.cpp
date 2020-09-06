@@ -55,7 +55,7 @@ namespace ot::selection
 		auto const intersection_result = mouse_ray.intersects(world_plane);
 		if (!intersection_result)
 		{
-			hovered_edge = graphics::half_edge::id::none;
+			hovered_edge = egfx::half_edge::id::none;
 			return;
 		}
 
