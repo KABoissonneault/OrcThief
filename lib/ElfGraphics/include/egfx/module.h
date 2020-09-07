@@ -36,7 +36,7 @@ namespace ot::egfx
 
 		[[nodiscard]] bool initialize(window_parameters const& window_params);
 
-		[[nodiscard]] scene create_scene(size_t number_threads);
+		[[nodiscard]] scene create_scene(std::string const& workspace, size_t number_threads);
 		
 		void on_window_events(std::span<window_event const> events);
 		

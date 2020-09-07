@@ -4,6 +4,7 @@
 
 #include "egfx/window_type.h"
 #include "window.h"
+#include "compositor.h"
 #include "imgui/system.h"
 
 #include "core/uptr.h"
@@ -17,6 +18,7 @@ namespace ot::egfx
 	class module::impl
 	{
 		window main_window;
+		pass_registry pass_reg;
 		uptr<Ogre::v1::OverlaySystem> overlay_system;
 		uptr<imgui::system> imgui;
 
@@ -25,7 +27,7 @@ namespace ot::egfx
 
 		[[nodiscard]] bool initialize(window_parameters const& window_params);
 
-		[[nodiscard]] scene create_scene(size_t number_threads);
+		[[nodiscard]] scene create_scene(std::string const& workspace, size_t number_threads);
 
 		void on_window_events(std::span<window_event const> events);
 

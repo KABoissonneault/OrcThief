@@ -176,6 +176,7 @@
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\window.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\window_type.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\camera.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\compositor.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\imgui\d3d11_renderer.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\imgui\renderer.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\imgui\system.h" />
@@ -196,6 +197,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\ElfGraphics\src\camera.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\compositor.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\d3d11_renderer.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\renderer.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\system.cpp" />

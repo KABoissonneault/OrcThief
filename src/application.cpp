@@ -14,7 +14,6 @@
 #include "SDL2/window.h"
 #include "SDL2/macro.h"
 #include <SDL_video.h>
-#include <SDL_syswm.h>
 #include <SDL_events.h>
 
 #include <imgui_impl_sdl.h>
@@ -63,45 +62,9 @@ namespace ot
 			{{0, sqrt_half, -sqrt_half}, 0.5},
 		};
 
-		std::string get_native_handle_string(SDL_Window& window)
-		{
-			SDL_SysWMinfo wm_info;
-			SDL_VERSION(&wm_info.version);
-			OT_SDL_ENSURE(SDL_GetWindowWMInfo(&window, &wm_info));
-			switch (wm_info.subsystem)
-			{
-#if defined(SDL_VIDEO_DRIVER_WINDOWS)
-			case SDL_SYSWM_WINDOWS: return std::to_string(reinterpret_cast<uintptr_t>(wm_info.info.win.window));
-#endif
-			default: OT_SDL_FAILURE("SDL_Window subsystem not implemented");
-			}
-		}
-
-		bool is_fullscren(SDL_Window& window)
-		{
-			return (SDL_GetWindowFlags(&window) & SDL_WINDOW_FULLSCREEN) != 0;
-		}
-
-		egfx::window_parameters make_window_parameters(SDL_Window& physical_window)
-		{
-			egfx::window_parameters params;
-			params.window_handle = get_native_handle_string(physical_window);
-			params.event_id = egfx::window_id{ SDL_GetWindowID(&physical_window) };
-			params.window_title = SDL_GetWindowTitle(&physical_window);
-			params.fullscreen = is_fullscren(physical_window);
-			SDL_GetWindowSize(&physical_window, &params.width, &params.height);
-			return params;
-		}
-
 		size_t get_number_threads()
 		{
 			return Ogre::PlatformInformation::getNumLogicalCores();
-		}
-
-		bool initialize_graphics(egfx::module& g, SDL_Window& window)
-		{
-			auto const window_params = make_window_parameters(window);
-			return g.initialize(window_params);
 		}
 
 		void push_window_event(SDL_Event const& e, std::vector<egfx::window_event>& window_events)
@@ -131,18 +94,16 @@ namespace ot
 		}
 	}
 
-	application::application(sdl::unique_window window)
+	application::application(sdl::unique_window window, egfx::module& graphics)
 		: main_window(std::move(window))
+		, graphics(graphics)
 	{
 
 	}
 
 	bool application::initialize()
 	{
-		if (!initialize_graphics(graphics, *main_window))
-			return false;
-
-		main_scene = graphics.create_scene(get_number_threads() - 1);
+		main_scene = graphics.create_scene("OrcThiefWorkspace", get_number_threads() - 1);
 
 		auto const& render_window = graphics.get_window(egfx::window_id{ SDL_GetWindowID(main_window.get()) });
 		selection_context.reset(new selection::base_context(current_map, main_scene, render_window));

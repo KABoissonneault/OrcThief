@@ -8,9 +8,6 @@
 #include "Ogre/Components/Overlay/Manager.h"
 #include "Ogre/Window.h"
 
-const Ogre::ColourValue k_background_color(0.2f, 0.8f, 0.6f);
-const Ogre::String k_workspace_def("DefaultWorkspace");
-
 namespace ot::egfx
 {
 	namespace
@@ -45,12 +42,10 @@ namespace ot::egfx
 		main_window = { render_window, window_id };
 
 		Ogre::CompositorManager2* const compositor_manager = root.getCompositorManager2();
-		compositor_manager->createBasicWorkspaceDef(k_workspace_def, k_background_color);
-		Ogre::CompositorWorkspaceDef* const compositor_workspace_def = compositor_manager->getWorkspaceDefinition(k_workspace_def);
+		compositor_manager->setCompositorPassProvider(&pass_reg);
 
 		imgui.reset(new imgui::system);
-
-		if (!imgui->initialize(compositor_workspace_def))
+		if (!imgui->initialize(pass_reg))
 		{
 			std::fprintf(stderr, "error [Graphics]: cannot initialize ImGui\n");
 			return false;
@@ -66,10 +61,10 @@ namespace ot::egfx
 		imgui->shutdown();
 	}
 
-	auto module::impl::create_scene(size_t num_threads) -> scene
+	auto module::impl::create_scene(std::string const& workspace, size_t num_threads) -> scene
 	{
 		scene s;
-		init_scene(s, uptr<scene_impl, fwd_delete<scene_impl>>{ new scene_impl(num_threads, main_window.get_window().getTexture(), k_workspace_def) });
+		init_scene(s, uptr<scene_impl, fwd_delete<scene_impl>>{ new scene_impl(num_threads, main_window.get_window().getTexture(), workspace) });
 		
 		Ogre::SceneManager& scene_manager = get_impl(s).get_scene_manager();
 		scene_manager.addRenderQueueListener(overlay_system.get());
@@ -137,9 +132,9 @@ namespace ot::egfx
 		return pimpl->initialize(window_params);
 	}
 
-	auto module::create_scene(size_t number_threads) -> scene
+	auto module::create_scene(std::string const& workspace, size_t number_threads) -> scene
 	{
-		return pimpl->create_scene(number_threads);
+		return pimpl->create_scene(workspace, number_threads);
 	}
 
 	void module::on_window_events(std::span<window_event const> events)

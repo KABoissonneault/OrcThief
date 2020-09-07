@@ -14,6 +14,7 @@
 #include "math/unit/time.h"
 
 #include <SDL.h>
+#include <SDL_syswm.h>
 #include "SDL2/window.h"
 #include "SDL2/macro.h"
 
@@ -67,6 +68,42 @@ namespace
 
 		return true;
 	}
+
+	std::string get_native_handle_string(SDL_Window& window)
+	{
+		SDL_SysWMinfo wm_info;
+		SDL_VERSION(&wm_info.version);
+		OT_SDL_ENSURE(SDL_GetWindowWMInfo(&window, &wm_info));
+		switch (wm_info.subsystem)
+		{
+#if defined(SDL_VIDEO_DRIVER_WINDOWS)
+		case SDL_SYSWM_WINDOWS: return std::to_string(reinterpret_cast<uintptr_t>(wm_info.info.win.window));
+#endif
+		default: OT_SDL_FAILURE("SDL_Window subsystem not implemented");
+		}
+	}
+
+	bool is_fullscreen(SDL_Window& window)
+	{
+		return (SDL_GetWindowFlags(&window) & SDL_WINDOW_FULLSCREEN) != 0;
+	}
+
+	ot::egfx::window_parameters make_window_parameters(SDL_Window& physical_window)
+	{
+		ot::egfx::window_parameters params;
+		params.window_handle = get_native_handle_string(physical_window);
+		params.event_id = ot::egfx::window_id{ SDL_GetWindowID(&physical_window) };
+		params.window_title = SDL_GetWindowTitle(&physical_window);
+		params.fullscreen = is_fullscreen(physical_window);
+		SDL_GetWindowSize(&physical_window, &params.width, &params.height);
+		return params;
+	}
+
+	bool initialize_graphics(ot::egfx::module& g, SDL_Window& window)
+	{
+		auto const window_params = make_window_parameters(window);
+		return g.initialize(window_params);
+	}
 }
 
 extern "C" int main(int argc, char** argv)
@@ -113,20 +150,26 @@ extern "C" int main(int argc, char** argv)
 	}
 
 	{
-		ot::application app(std::move(main_window));
-		if (!app.initialize())
-		{
+		ot::egfx::module graphics;
+		if (!initialize_graphics(graphics, *main_window))
 			return -1;
-		}
 
 		ot::datablock::load_hlms(resource_folder_path);
 		ot::datablock::initialize();
 		Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups(true);
 
-		app.setup_default_scene();
+		{
+			ot::application app(std::move(main_window), graphics);
+			if (!app.initialize())
+			{
+				return -1;
+			}
 
-		// Run
-		app.run();
+			app.setup_default_scene();
+
+			// Run
+			app.run();
+		}
 	}
 
 	// Exit

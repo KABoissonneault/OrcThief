@@ -35,7 +35,7 @@ namespace ot
 		};
 
 		sdl::unique_window main_window;
-		egfx::module graphics;
+		egfx::module& graphics;
 		egfx::scene main_scene;
 
 		egfx::node::directional_light light;
@@ -57,7 +57,7 @@ namespace ot
 		[[nodiscard]] bool render();
 
 	public:
-		application(sdl::unique_window window);
+		application(sdl::unique_window window, egfx::module& graphics);
 
 		[[nodiscard]] bool initialize();
 		void setup_default_scene();

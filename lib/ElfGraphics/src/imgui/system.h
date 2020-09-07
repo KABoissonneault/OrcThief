@@ -3,23 +3,30 @@
 #include "core/uptr.h"
 #include "imgui/renderer.h"
 
-namespace Ogre { class CompositorWorkspaceDef; }
+#include "compositor.h"
 
 namespace ot::egfx::imgui
 {
-	class pass_provider;
-
-	class system
+	class system : public pass_provider
 	{
 		uptr<renderer> render;
-		fwd_uptr<pass_provider> provider;
+		Ogre::IdString imgui_id;
+		pass_registry* pass_reg;
 
 	public:
-		bool initialize(Ogre::CompositorWorkspaceDef* def);
+		bool initialize(pass_registry& r);
 		void shutdown();
 		void new_frame();
+		
+		// pass_provider
+		virtual Ogre::IdString const& get_id() const override;
+		virtual compositor_pass_def* make_pass_def(Ogre::CompositorTargetDef* parentTargetDef, Ogre::CompositorNodeDef* parentNodeDef) override;
+		virtual Ogre::CompositorPass* make_pass(compositor_pass_def const* definition
+			, Ogre::Camera* defaultCamera
+			, Ogre::CompositorNode* parentNode
+			, Ogre::RenderTargetViewDef const* rtvDef
+			, Ogre::SceneManager* sceneManager
+		) override;
 	};
 
 }
-
-extern template struct ot::fwd_delete<ot::egfx::imgui::pass_provider>;

@@ -141,6 +141,9 @@
     <ClInclude Include="..\..\lib\ElfGraphics\src\imgui\system.h">
       <Filter>src\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\src\compositor.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\ElfGraphics\src\module.cpp">
@@ -190,6 +193,9 @@
     </ClCompile>
     <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\renderer.cpp">
       <Filter>src\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\ElfGraphics\src\compositor.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
