@@ -57,7 +57,7 @@ namespace ot::math
 	}
 
 	template<typename T>
-	constexpr inline point3<T>& operator+=(vector3<T>& lhs, vector3<T> rhs) noexcept
+	constexpr inline vector3<T>& operator+=(vector3<T>& lhs, vector3<T> rhs) noexcept
 	{
 		lhs.x += rhs.x;
 		lhs.y += rhs.y;
