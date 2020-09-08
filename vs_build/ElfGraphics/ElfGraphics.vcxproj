@@ -212,6 +212,7 @@
     <ClCompile Include="..\..\lib\ElfGraphics\src\overlay\panel.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\overlay\surface.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\overlay\text.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\scene.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

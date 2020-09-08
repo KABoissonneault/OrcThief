@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{66a50b86-6caa-47e9-b3bb-591b54281367}</ProjectGuid>
+    <RootNamespace>OgreTest</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>DwarfEditor</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Ogre\Ogre.props" />
+    <Import Project="..\Core\Core.props" />
+    <Import Project="..\SDL2\SDL2.props" />
+    <Import Project="..\ElfGraphics\elf_graphics.props" />
+    <Import Project="..\Math\Math.props" />
+    <Import Project="..\ImGui\ImGui.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Ogre\Ogre.props" />
+    <Import Project="..\Core\Core.props" />
+    <Import Project="..\SDL2\SDL2.props" />
+    <Import Project="..\ElfGraphics\elf_graphics.props" />
+    <Import Project="..\Math\Math.props" />
+    <Import Project="..\ImGui\ImGui.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\src\DwarfEditor;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OgreMain_d.lib;OgreHlmsUnlit_d.lib;OgreHlmsPbs_d.lib;OgreOverlay_d.lib;RenderSystem_Direct3D11_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).dll RenderSystem_Direct3D11$(OgreLibExtension).dll RenderSystem_GL3Plus$(OgreLibExtension).dll RenderSystem_NULL$(OgreLibExtension).dll OgreOverlay$(OgreLibExtension).dll OgreHlmsPbs$(OgreLibExtension).dll OgreHlmsUnlit$(OgreLibExtension).dll FreeImage.dll zlib.dll
+if '$(Configuration)' == 'Debug' powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).pdb RenderSystem_Direct3D11$(OgreLibExtension).pdb RenderSystem_GL3Plus$(OgreLibExtension).pdb RenderSystem_NULL$(OgreLibExtension).pdb OgreOverlay$(OgreLibExtension).pdb OgreHlmsPbs$(OgreLibExtension).pdb OgreHlmsUnlit$(OgreLibExtension).pdb
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\SDL2\bin\$(Platform)\$(Configuration) SDL2.dll SDL2.pdb
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res $(SolutionDir)..\ext\Ogre\Samples\Media\packs DebugPack.zip
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Hlms\Common $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Common Any GLSL HLSL
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Hlms\Pbs $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Pbs Any GLSL HLSL
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Hlms\Unlit $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Unlit Any GLSL HLSL</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying project dependencies</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\src\DwarfEditor;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OgreMain.lib;OgreHlmsUnlit.lib;OgreHlmsPbs.lib;OgreOverlay.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).dll RenderSystem_Direct3D11$(OgreLibExtension).dll RenderSystem_GL3Plus$(OgreLibExtension).dll RenderSystem_NULL$(OgreLibExtension).dll OgreOverlay$(OgreLibExtension).dll OgreHlmsPbs$(OgreLibExtension).dll OgreHlmsUnlit$(OgreLibExtension).dll FreeImage.dll zlib.dll
+if '$(Configuration)' == 'Debug' powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).pdb RenderSystem_Direct3D11$(OgreLibExtension).pdb RenderSystem_GL3Plus$(OgreLibExtension).pdb RenderSystem_NULL$(OgreLibExtension).pdb OgreOverlay$(OgreLibExtension).pdb OgreHlmsPbs$(OgreLibExtension).pdb OgreHlmsUnlit$(OgreLibExtension).pdb
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\SDL2\bin\$(Platform)\$(Configuration) SDL2.dll SDL2.pdb
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res $(SolutionDir)..\ext\Ogre\Samples\Media\packs DebugPack.zip
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Hlms\Common $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Common Any GLSL HLSL
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Hlms\Pbs $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Pbs Any GLSL HLSL
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Hlms\Unlit $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Unlit Any GLSL HLSL</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying project dependencies</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\DwarfEditor\action\brush.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\application.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\datablock.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\hud\shadowed_text.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\ImGui.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\input.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\main.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\map.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\selection\base_context.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\selection\brush_context.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\selection\context.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\selection\edge_context.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\selection\face_context.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.vcxproj">
+      <Project>{d53df004-1a22-4158-a426-c3a1c677abd3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ElfGraphics\ElfGraphics.vcxproj">
+      <Project>{808fa609-f742-469c-bc5d-895d9e45cbee}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ImGui\ImGui.vcxproj">
+      <Project>{4be66e88-82e8-4293-862a-cd2b15a927aa}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Math\Math.vcxproj">
+      <Project>{66b5eaca-d273-47fe-9fd2-843251be43e2}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Ogre\Ogre.vcxproj">
+      <Project>{198acbb3-600f-44e4-8ae8-872597830fbc}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\SDL2\SDL2.vcxproj">
+      <Project>{838da63b-a78c-49e4-9394-cc865cd6c762}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\DwarfEditor\action\accumulator.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\action\brush.fwd.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\action\brush.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\application.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\datablock.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\hud\shadowed_text.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\ImGui.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\input.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\map.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\selection\base_context.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\selection\brush_context.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\selection\context.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\selection\edge_context.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\selection\face_context.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\window.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

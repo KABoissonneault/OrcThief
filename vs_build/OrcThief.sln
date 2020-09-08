@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30128.74
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OrcThief", "OrcThief\OrcThief.vcxproj", "{66A50B86-6CAA-47E9-B3BB-591B54281367}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DwarfEditor", "DwarfEditor\DwarfEditor.vcxproj", "{66A50B86-6CAA-47E9-B3BB-591B54281367}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ogre", "Ogre\Ogre.vcxproj", "{198ACBB3-600F-44E4-8AE8-872597830FBC}"
 EndProject
