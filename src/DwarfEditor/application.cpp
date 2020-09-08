@@ -4,7 +4,7 @@
 #include "action/brush.h"
 
 #include "egfx/scene.h"
-#include "egfx/camera.h"
+#include "egfx/object/camera.h"
 #include "egfx/node/mesh.h"
 #include "egfx/node/light.h"
 
@@ -117,9 +117,9 @@ namespace ot::dedit
 		current_map.add_brush(make_brush(octagon_planes, "Octagon", { 0, 0.0, 0.0 }));
 		current_map.add_brush(make_brush(pyramid_planes, "Pyramid", { -2.5, 0.0, 0.0 }));
 
-		auto& camera = main_scene.get_camera();
-		set_position(camera, { 0.0, 2.0, -5.5 });
-		look_at(camera, { 0.0, 0.0, 0.0 });
+		egfx::object::camera_ref const camera = main_scene.get_camera();
+		camera.set_position({ 0.0, 2.0, -5.5 });
+		camera.look_at({ 0.0, 0.0, 0.0 });
 
 		light = egfx::node::create_directional_light(main_scene.get_root_node());
 		light.set_position({ 10.0, 10.0, -10.0 });

@@ -2,7 +2,7 @@
 
 #include "egfx/scene.h"
 #include "egfx/node/object.h"
-#include "camera.h"
+#include "egfx/object/camera.h"
 
 #include "Ogre/Prerequisites.h"
 #include "Ogre/Components/Overlay/System.h"
@@ -16,7 +16,7 @@ namespace ot::egfx
 	class scene_impl
 	{
 		Ogre::SceneManager* scene_manager;
-		camera main_camera;
+		object::camera main_camera;
 		Ogre::CompositorWorkspace* main_workspace;
 
 	public:
@@ -25,8 +25,8 @@ namespace ot::egfx
 
 		Ogre::SceneManager& get_scene_manager() noexcept { return *scene_manager; }
 		
-		camera& get_camera() noexcept { return main_camera; }
-		camera const& get_camera() const noexcept { return main_camera; }
+		object::camera_ref get_camera() noexcept { return main_camera; }
+		object::camera_cref get_camera() const noexcept { return main_camera; }
 		node::object_ref get_root_node() noexcept;
 
 		void update(math::seconds dt);

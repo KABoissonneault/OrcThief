@@ -3,7 +3,7 @@
 #include "datablock.h"
 #include "input.h"
 
-#include "egfx/camera.h"
+#include "egfx/object/camera.h"
 #include "egfx/window.h"
 
 #include "selection/face_context.h"
@@ -69,14 +69,14 @@ namespace ot::dedit::selection
 
 		double const viewport_x = static_cast<double>(mouse_x) / get_width(*main_window);
 		double const viewport_y = static_cast<double>(mouse_y) / get_height(*main_window);
-		egfx::camera const& camera = current_scene->get_camera();
-		math::ray const mouse_ray = get_world_ray_from_viewport(camera, viewport_x, viewport_y);
+		egfx::object::camera_cref const camera = current_scene->get_camera();
+		math::ray const mouse_ray = camera.get_world_ray(viewport_x, viewport_y);
 
 		brush const& brush = current_map->get_brushes()[selected_brush];
 		auto const& mesh = *brush.mesh_def;
 
 		math::transformation const t = brush.get_world_transform(math::transformation::identity());
-		hovered_face = get_closest_face(get_position(camera), mouse_ray, t, mesh);
+		hovered_face = get_closest_face(camera.get_position(), mouse_ray, t, mesh);
 	}
 
 	void brush_context::render(egfx::node::manual& m)

@@ -2,6 +2,7 @@
 
 #include "ogre_conversion.h"
 #include "node/object.h"
+#include "object/camera.h"
 
 #include "core/fwd_delete.h"
 
@@ -34,14 +35,14 @@ namespace ot::egfx
 
 		scene_manager = root.createSceneManager(Ogre::ST_GENERIC, number_threads);
 
-		main_camera = scene_manager->createCamera("Main Camera");
-		auto const camera = main_camera.get();
-		camera->setNearClipDistance(0.2f);
-		camera->setFarClipDistance(1000.0f);
-		camera->setAutoAspectRatio(true);
+		main_camera = object::make_camera(*scene_manager->createCamera("Main Camera"));
+		Ogre::Camera& camera = object::get_camera(main_camera);
+		camera.setNearClipDistance(0.2f);
+		camera.setFarClipDistance(1000.0f);
+		camera.setAutoAspectRatio(true);
 
 		Ogre::CompositorManager2* const compositor_manager = root.getCompositorManager2();
-		main_workspace = compositor_manager->addWorkspace(scene_manager, render_texture, main_camera.get(), workspace_def, true /*enabled*/);
+		main_workspace = compositor_manager->addWorkspace(scene_manager, render_texture, &camera, workspace_def, true /*enabled*/);
 
 		scene_manager->setShadowDirectionalLightExtrusionDistance(500.0f);
 		scene_manager->setShadowFarDistance(500.0f);
@@ -49,6 +50,8 @@ namespace ot::egfx
 
 	scene_impl::~scene_impl()
 	{
+		main_camera = {};
+
 		if (scene_manager != nullptr)
 		{
 			Ogre::Root::getSingleton().destroySceneManager(scene_manager);
@@ -82,12 +85,12 @@ namespace ot::egfx
 		return object_ids;
 	}
 	
-	camera& scene::get_camera() noexcept
+	object::camera_ref scene::get_camera() noexcept
 	{
 		return get_impl(*this).get_camera();
 	}
 
-	camera const& scene::get_camera() const noexcept
+	object::camera_cref scene::get_camera() const noexcept
 	{
 		return get_impl(*this).get_camera();
 	}

@@ -2,6 +2,7 @@
 
 #include "egfx/scene.fwd.h"
 #include "egfx/node/object.fwd.h"
+#include "egfx/object/camera.fwd.h"
 
 #include "math/ray.h"
 #include "math/unit/time.h"
@@ -13,7 +14,6 @@
 namespace ot::egfx
 {
 	class scene_impl;
-	class camera;
 
 	class scene
 	{
@@ -25,8 +25,8 @@ namespace ot::egfx
 
 	public:
 		// Returns the main camera the scene is rendered to 
-		[[nodiscard]] camera& get_camera() noexcept;
-		[[nodiscard]] camera const& get_camera() const noexcept;
+		[[nodiscard]] object::camera_ref get_camera() noexcept;
+		[[nodiscard]] object::camera_cref get_camera() const noexcept;
 		[[nodiscard]] node::object_ref get_root_node() noexcept;
 
 		void update(math::seconds dt);

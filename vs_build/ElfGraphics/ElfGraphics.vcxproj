@@ -154,7 +154,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\camera.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\color.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\mesh_definition.fwd.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\mesh_definition.h" />
@@ -166,6 +165,8 @@
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\object.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\mesh.fwd.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\mesh.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\object\camera.fwd.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\object\camera.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\overlay\container.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\overlay\element.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\overlay\panel.h" />
@@ -175,7 +176,7 @@
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\scene.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\window.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\window_type.h" />
-    <ClInclude Include="..\..\lib\ElfGraphics\src\camera.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\object\camera.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\compositor.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\imgui\d3d11_renderer.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\imgui\renderer.h" />
@@ -196,7 +197,7 @@
     <ClInclude Include="..\..\lib\ElfGraphics\src\window.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\lib\ElfGraphics\src\camera.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\object\camera.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\compositor.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\d3d11_renderer.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\renderer.cpp" />

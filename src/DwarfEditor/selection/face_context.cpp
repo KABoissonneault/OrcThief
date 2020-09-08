@@ -5,7 +5,7 @@
 #include "datablock.h"
 #include "input.h"
 
-#include "egfx/camera.h"
+#include "egfx/object/camera.h"
 
 namespace ot::dedit::selection
 {
@@ -40,8 +40,7 @@ namespace ot::dedit::selection
 
 		double const viewport_x = static_cast<double>(mouse_x) / get_width(*main_window);
 		double const viewport_y = static_cast<double>(mouse_y) / get_height(*main_window);
-		egfx::camera const& camera = current_scene->get_camera();
-		math::ray const mouse_ray = get_world_ray_from_viewport(camera, viewport_x, viewport_y);
+		math::ray const mouse_ray = current_scene->get_camera().get_world_ray(viewport_x, viewport_y);
 
 		brush const& brush = current_map->get_brushes()[selected_brush];
 		auto const& mesh = *brush.mesh_def;

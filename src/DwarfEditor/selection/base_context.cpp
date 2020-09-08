@@ -2,7 +2,7 @@
 
 #include "selection/brush_context.h"
 
-#include "egfx/camera.h"
+#include "egfx/object/camera.h"
 
 namespace ot::dedit::selection
 {
@@ -32,7 +32,7 @@ namespace ot::dedit::selection
 			double const viewport_x = static_cast<double>(mouse.x) / width;
 			double const viewport_y = static_cast<double>(mouse.y) / height;
 
-			math::ray const r = get_world_ray_from_viewport(current_scene->get_camera(), viewport_x, viewport_y);
+			math::ray const r = current_scene->get_camera().get_world_ray(viewport_x, viewport_y);
 			auto const result = current_scene->raycast_objects(r);
 
 			for (egfx::node::object_id const hit_object : result)
