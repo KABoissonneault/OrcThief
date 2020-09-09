@@ -154,7 +154,7 @@ extern "C" int main(int argc, char** argv)
 		if (!initialize_graphics(graphics, *main_window))
 			return -1;
 
-		ot::dedit::datablock::load_hlms(resource_folder_path);
+		ot::dedit::datablock::load_hlms(resource_folder_path / "Ogre");
 		ot::dedit::datablock::initialize();
 		Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups(true);
 
