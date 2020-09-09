@@ -44,17 +44,31 @@ namespace ot::egfx::object
 		}
 
 		template<typename Derived>
-		[[nodiscard]] math::ray camera_const_impl<Derived>::get_world_ray(double x_norm, double y_norm) const
+		math::ray camera_const_impl<Derived>::get_world_ray(double x_norm, double y_norm) const
 		{
 			auto const& camera = get_camera(static_cast<derived const&>(*this));
 			return to_math_ray(camera.getCameraToViewportRay(static_cast<Ogre::Real>(x_norm), static_cast<Ogre::Real>(y_norm)));
 		}
 
 		template<typename Derived>
-		[[nodiscard]] math::point3d camera_const_impl<Derived>::get_position() const
+		math::point3d camera_const_impl<Derived>::get_position() const
 		{
-			auto const& camera = get_camera(static_cast<derived const&>(*this));
+			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
 			return to_math_point(camera.getPosition());
+		}
+
+		template<typename Derived>
+		double camera_const_impl<Derived>::get_rad_fov_x() const
+		{
+			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
+			return camera.getFOVy().valueRadians() * camera.getAspectRatio();
+		}
+
+		template<typename Derived>
+		double camera_const_impl<Derived>::get_rad_fov_y() const
+		{
+			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
+			return camera.getFOVy().valueRadians();
 		}
 
 		template class camera_const_impl<camera_cref>;
@@ -90,6 +104,27 @@ namespace ot::egfx::object
 	void camera_ref::set_position(math::point3d position) const
 	{
 		get_camera(*this).setPosition(to_ogre_vector(position));
+	}
+
+	void camera_ref::move(math::vector3d displacement) const
+	{
+		get_camera(*this).moveRelative(to_ogre_vector(displacement));
+	}
+
+	void camera_ref::local_pitch(double rad) const
+	{
+		get_camera(*this).pitch(Ogre::Radian(rad));
+	}
+
+	void camera_ref::world_yaw(double rad) const
+	{
+		// We keep "fixed yaw" to true, which is set to +Y
+		get_camera(*this).yaw(Ogre::Radian(rad));
+	}
+
+	void camera_ref::rotate(math::quaternion rotation) const
+	{
+		get_camera(*this).rotate(to_ogre_quaternion(rotation));
 	}
 
 	void camera_ref::look_at(math::point3d position) const
@@ -137,11 +172,31 @@ namespace ot::egfx::object
 
 	void camera::set_position(math::point3d position)
 	{
-		return static_cast<camera_ref>(*this).set_position(position);
+		static_cast<camera_ref>(*this).set_position(position);
+	}
+
+	void camera::move(math::vector3d displacement)
+	{
+		static_cast<camera_ref>(*this).move(displacement);
+	}
+
+	void camera::local_pitch(double rad)
+	{
+		static_cast<camera_ref>(*this).local_pitch(rad);
+	}
+
+	void camera::world_yaw(double rad)
+	{
+		static_cast<camera_ref>(*this).world_yaw(rad);
+	}
+
+	void camera::rotate(math::quaternion rotation)
+	{
+		static_cast<camera_ref>(*this).rotate(rotation);
 	}
 
 	void camera::look_at(math::point3d position)
 	{
-		return static_cast<camera_ref>(*this).look_at(position);
+		static_cast<camera_ref>(*this).look_at(position);
 	}
 }

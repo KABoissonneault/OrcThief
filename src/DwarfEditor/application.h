@@ -3,6 +3,7 @@
 #include "selection/context.h"
 #include "action/accumulator.h"
 #include "map.h"
+#include "camera_controller.h"
 #include "hud/shadowed_text.h"
 
 #include "core/uptr.h"
@@ -21,8 +22,10 @@
 
 namespace ot::dedit
 {
-	class application
+	class application : private camera_controller<application>
 	{
+		friend class camera_controller<application>;
+
 		class actions : public action::accumulator
 		{
 			std::vector<uptr<action::brush_base, fwd_delete<action::brush_base>>> current_brush;
@@ -65,5 +68,8 @@ namespace ot::dedit
 		[[nodiscard]] brush make_brush(std::span<math::plane const> planes, std::string const& name, math::point3d position);
 
 		void run();
+
+		[[nodiscard]] egfx::scene& get_scene() noexcept { return main_scene; }
+		[[nodiscard]] egfx::window const& get_render_window() const noexcept { return graphics.get_window(egfx::window_id{ SDL_GetWindowID(main_window.get()) }); }
 	};
 }

@@ -218,27 +218,20 @@ namespace ot::dedit
 				if (imgui_io.WantCaptureMouse)
 				{
 					ImGui_ImplSDL2_ProcessEvent(&e);
-					continue;
+					break;
 				}
 
 				if (selection_context != nullptr && selection_context->handle_mouse_button_event(e.button, selection_actions))
-				{
-					continue;
-				}
+					break;
 
 				break;
 
 			case SDL_MOUSEMOTION:
-				if (imgui_io.WantCaptureMouse)
-				{
-					ImGui_ImplSDL2_ProcessEvent(&e);
-					continue;
-				}
+				if (camera_controller::handle_mouse_motion_event(e.motion))
+					break;
 
 				if (selection_context != nullptr && selection_context->handle_mouse_motion_event(e.motion, selection_actions))
-				{
-					continue;
-				}
+					break;
 
 				break;
 
@@ -266,6 +259,8 @@ namespace ot::dedit
 
 	void application::update(math::seconds dt)
 	{
+		camera_controller::update(dt);
+
 		for (auto& brush : current_map.get_brushes())
 		{
 			if (!selection_context->is_selected(brush.get_id()))

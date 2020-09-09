@@ -30,7 +30,13 @@ namespace ot::egfx::object
 			// Returns: ray from viewport position to the world
 			[[nodiscard]] math::ray get_world_ray(double x_norm, double y_norm) const;
 
+			// Gets the local position of the camera
 			[[nodiscard]] math::point3d get_position() const;
+
+			// Get the radians of the field of view on the horizontal axis
+			[[nodiscard]] double get_rad_fov_x() const;
+			// Get the radians of the field of view on the vertical axis
+			[[nodiscard]] double get_rad_fov_y() const;
 		};
 	}
 
@@ -59,7 +65,17 @@ namespace ot::egfx::object
 	public:
 		operator camera_cref() const noexcept { return detail::make_camera_cref(pimpl); }
 
+		// Sets the local position of the camera
 		void set_position(math::point3d position) const;
+		// Displaces the local position of the camera
+		void move(math::vector3d displacement) const;
+		// Rotate the camera around its local pitch axis
+		void local_pitch(double rad) const;
+		// Rotate the camera around the world yaw axis (ie: +Y)
+		void world_yaw(double rad) const;
+		// Rotate the camera around its local axes
+		void rotate(math::quaternion rotation) const;
+		// Sets the orientation of the camera so that the center of the viewport faces the position
 		void look_at(math::point3d position) const;
 	};
 
@@ -84,7 +100,17 @@ namespace ot::egfx::object
 		operator camera_cref() const noexcept { return detail::make_camera_cref(pimpl); }
 		operator camera_ref() noexcept { return detail::make_camera_ref(pimpl); }
 
+		// Sets local position of the camera
 		void set_position(math::point3d position);
+		// Displaces the local position of the camera
+		void move(math::vector3d displacement);
+		// Rotate the camera around its local pitch axis
+		void local_pitch(double rad);
+		// Rotate the camera around the world yaw axis (ie: +Y)
+		void world_yaw(double rad);
+		// Rotate the camera around its local axes
+		void rotate(math::quaternion rotation);
+		// Sets the orientation of the camera so that the center of the viewport faces the position
 		void look_at(math::point3d position);
 	};
 
