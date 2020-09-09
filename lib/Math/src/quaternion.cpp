@@ -144,6 +144,11 @@ namespace ot::math
 		return lhs * rhs;
 	}
 
+	quaternion operator*(quaternion const& lhs, double rhs) noexcept
+	{
+		return boost::qvm::operator*(lhs, rhs);
+	}
+
 	vector3d rotate(vector3d v, quaternion q) noexcept
 	{
 		using boost::qvm::operator*;

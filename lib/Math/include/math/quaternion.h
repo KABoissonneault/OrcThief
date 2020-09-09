@@ -21,6 +21,13 @@ namespace ot::math
 
 	[[nodiscard]] quaternion invert(quaternion const& q) noexcept;
 	[[nodiscard]] quaternion concatenate(quaternion const& lhs, quaternion const& rhs) noexcept;
+	template<typename... Args>
+	[[nodiscard]] inline quaternion concatenate(quaternion const& lhs, quaternion const& rhs, Args const&... args) noexcept
+	{
+		return concatenate(concatenate(lhs, rhs), args...);
+	}
+
+	[[nodiscard]] quaternion operator*(quaternion const& q, double m) noexcept;
 
 	[[nodiscard]] vector3d rotate(vector3d v, quaternion q) noexcept;
 
