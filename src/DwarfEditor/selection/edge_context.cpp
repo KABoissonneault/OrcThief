@@ -39,7 +39,7 @@ namespace ot::dedit::selection
 			return;
 
 		int mouse_x, mouse_y;
-		input::get_mouse_position(mouse_x, mouse_y);
+		input::mouse::get_position(mouse_x, mouse_y);
 
 		double const viewport_x = static_cast<double>(mouse_x) / get_width(*main_window);
 		double const viewport_y = static_cast<double>(mouse_y) / get_height(*main_window);

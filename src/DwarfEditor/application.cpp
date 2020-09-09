@@ -1,5 +1,6 @@
 #include "application.h"
 
+#include "input.h"
 #include "selection/base_context.h"
 #include "action/brush.h"
 
@@ -14,7 +15,6 @@
 #include "SDL2/window.h"
 #include "SDL2/macro.h"
 #include <SDL_video.h>
-#include <SDL_events.h>
 
 #include <imgui_impl_sdl.h>
 
@@ -24,13 +24,6 @@ namespace ot::dedit
 {
 	namespace
 	{
-		bool keyboard_modifier_is(int mod)
-		{
-			constexpr auto k_modifiers = KMOD_CTRL | KMOD_SHIFT | KMOD_ALT;
-			auto const modifier_state = SDL_GetModState() & k_modifiers;
-			return (modifier_state & mod) && !(modifier_state & ~mod);
-		}
-
 		math::plane const cube_planes[6] = {
 			{{0, 0, 1}, 0.5},
 			{{1, 0, 0}, 0.5},
@@ -190,13 +183,13 @@ namespace ot::dedit
 			case SDL_KEYDOWN:
 			{
 				SDL_KeyboardEvent const& key = e.key;
-				auto const k_modifiers = KMOD_CTRL | KMOD_ALT | KMOD_SHIFT;
+				auto const modifiers = input::keyboard::get_modifiers();
 
 				if (imgui_io.WantCaptureKeyboard)
 				{
 					ImGui_ImplSDL2_ProcessEvent(&e);
 
-					if (key.state == SDL_PRESSED && key.keysym.scancode == SDL_SCANCODE_F4 && keyboard_modifier_is(KMOD_LALT))
+					if (key.state == SDL_PRESSED && key.keysym.scancode == SDL_SCANCODE_F4 && modifiers == input::keyboard::mod::lalt)
 						wants_quit = true;
 
 					break;
@@ -204,9 +197,10 @@ namespace ot::dedit
 
 
 				if (key.keysym.scancode == SDL_SCANCODE_Z 
-					&& keyboard_modifier_is(KMOD_CTRL)
 					&& key.state == SDL_PRESSED
-					&& key.repeat == 0)
+					&& key.repeat == 0
+					&& modifiers == input::keyboard::mod_group::ctrl
+					)
 				{
 					selection_actions.undo_latest(current_map);
 					break;
