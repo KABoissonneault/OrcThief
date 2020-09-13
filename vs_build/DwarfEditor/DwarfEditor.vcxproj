@@ -183,6 +183,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClCompile Include="..\..\src\DwarfEditor\action\brush.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\application.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\camera_controller.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\config.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\datablock.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\hud\shadowed_text.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\ImGui.cpp" />
@@ -222,6 +223,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClInclude Include="..\..\src\DwarfEditor\action\brush.h" />
     <ClInclude Include="..\..\src\DwarfEditor\application.h" />
     <ClInclude Include="..\..\src\DwarfEditor\camera_controller.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\config.h" />
     <ClInclude Include="..\..\src\DwarfEditor\datablock.h" />
     <ClInclude Include="..\..\src\DwarfEditor\hud\shadowed_text.h" />
     <ClInclude Include="..\..\src\DwarfEditor\ImGui.h" />

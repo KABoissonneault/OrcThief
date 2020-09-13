@@ -61,6 +61,9 @@
     <ClCompile Include="..\..\src\DwarfEditor\camera_controller.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\config.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\DwarfEditor\application.h">
@@ -109,6 +112,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\camera_controller.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\config.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

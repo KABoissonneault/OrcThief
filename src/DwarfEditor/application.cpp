@@ -94,9 +94,15 @@ namespace ot::dedit
 
 	}
 
-	bool application::initialize()
+	bool application::initialize(config const& program_config)
 	{
-		main_scene = graphics.create_scene("OrcThiefWorkspace", get_number_threads() - 1);
+		main_scene = graphics.create_scene(std::string(program_config.get_scene().get_workspace()), get_number_threads() - 1);
+		
+		if (auto const maybe_ambiant = program_config.get_scene().get_ambient_light())
+		{
+			auto const ambiant_light = *maybe_ambiant;
+			main_scene.set_ambiant_light(ambiant_light.upper_hemisphere, ambiant_light.upper_hemisphere, ambiant_light.hemisphere_direction);
+		}
 
 		auto const& render_window = graphics.get_window(egfx::window_id{ SDL_GetWindowID(main_window.get()) });
 		selection_context.reset(new selection::base_context(current_map, main_scene, render_window));

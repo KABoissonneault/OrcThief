@@ -2,6 +2,7 @@
 #include "datablock.h"
 #include "window.h"
 #include "ImGui.h"
+#include "config.h"
 
 #include "Ogre/Root.h"
 #include "Ogre/ConfigFile.h"
@@ -22,10 +23,34 @@
 
 namespace
 {
-	std::filesystem::path resource_folder_path;
 	char const* const k_window_title = "OrcThief";
 
-	[[nodiscard]] bool load_program_config()
+	[[nodiscard]] void load_always_resources(Ogre::ConfigFile& program_config, std::filesystem::path const& resource_folder_path)
+	{
+		// Load the resources under [AlwaysLoad]
+		auto load_it = program_config.getSettingsIterator("AlwaysLoad");
+		for (auto const& kv : load_it)
+		{
+			auto const type_name = kv.first;
+			if (type_name != ot::ogre::archive_type::filesystem && type_name != ot::ogre::archive_type::zip && type_name != ot::ogre::archive_type::embedded_zip)
+			{
+				std::printf("warning: AlwaysLoad resource of type '%s' is not supported\n", type_name.c_str());
+				continue;
+			}
+
+			auto const resource_path = kv.second;
+			auto const full_path = resource_folder_path / resource_path;
+
+			if (!std::filesystem::exists(full_path))
+			{
+				std::printf("wrning: AlwaysLoad resource '%s' was requested but could not be found", full_path.string().c_str());
+				continue;
+			}
+			Ogre::ResourceGroupManager::getSingleton().addResourceLocation(full_path.string(), type_name);
+		}
+	}
+
+	[[nodiscard]] bool load_program_config(ot::dedit::config& config)
 	{
 		if (!std::filesystem::exists("config.cfg"))
 		{
@@ -37,34 +62,13 @@ namespace
 		Ogre::ConfigFile program_config;
 		program_config.load("config.cfg");
 
-		Ogre::String const resource_folder = program_config.getSetting("ResourceRoot", "Core");
-		if (resource_folder.empty())
-		{
-			std::printf("'ResourceRoot' under [Core] not found in 'config.cfg'. Ensure a proper config file is in the current working directory\n");
+		if (!config.load(program_config))
 			return false;
-		}
 
-		auto load_it = program_config.getSettingsIterator("AlwaysLoad");
-		resource_folder_path = std::filesystem::path(resource_folder);
-		for (auto const& kv : load_it)
-		{
-			auto const type_name = kv.first;
-			if (type_name != ot::ogre::archive_type::filesystem && type_name != ot::ogre::archive_type::zip && type_name != ot::ogre::archive_type::embedded_zip)
-			{
-				std::printf("Warning: AlwaysLoad resource of type '%s' is not supported\n", type_name.c_str());
-				continue;
-			}
+		std::string_view const resource_root = config.get_core().get_resource_root();
+		std::filesystem::path const resource_folder_path(resource_root);
 
-			auto const resource_path = kv.second;
-			auto const full_path = resource_folder_path / resource_path;
-
-			if (!std::filesystem::exists(full_path))
-			{
-				std::printf("Warning: AlwaysLoad resource '%s' was requested but could not be found", full_path.string().c_str());
-				continue;
-			}
-			Ogre::ResourceGroupManager::getSingleton().addResourceLocation(full_path.string(), type_name);
-		}
+		load_always_resources(program_config, resource_folder_path);
 
 		return true;
 	}
@@ -115,7 +119,8 @@ extern "C" int main(int argc, char** argv)
 	Ogre::Root root(plugin_path, config_path, log_path);
 
 	// Handle config.cfg
-	if (!load_program_config())
+	ot::dedit::config program_config;
+	if (!load_program_config(program_config))
 	{
 		return -1;
 	}
@@ -154,13 +159,16 @@ extern "C" int main(int argc, char** argv)
 		if (!initialize_graphics(graphics, *main_window))
 			return -1;
 
+		std::string_view const resource_root = program_config.get_core().get_resource_root();
+		std::filesystem::path const resource_folder_path(resource_root);
+
 		ot::dedit::datablock::load_hlms(resource_folder_path / "Ogre");
 		ot::dedit::datablock::initialize();
 		Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups(true);
 
 		{
 			ot::dedit::application app(std::move(main_window), graphics);
-			if (!app.initialize())
+			if (!app.initialize(program_config))
 			{
 				return -1;
 			}

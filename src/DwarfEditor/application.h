@@ -3,6 +3,7 @@
 #include "selection/context.h"
 #include "action/accumulator.h"
 #include "map.h"
+#include "config.h"
 #include "camera_controller.h"
 #include "hud/shadowed_text.h"
 
@@ -62,7 +63,7 @@ namespace ot::dedit
 	public:
 		application(sdl::unique_window window, egfx::module& graphics);
 
-		[[nodiscard]] bool initialize();
+		[[nodiscard]] bool initialize(config const& program_config);
 		void setup_default_scene();
 
 		[[nodiscard]] brush make_brush(std::span<math::plane const> planes, std::string const& name, math::point3d position);
