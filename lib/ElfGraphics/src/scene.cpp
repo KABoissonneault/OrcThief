@@ -68,6 +68,11 @@ namespace ot::egfx
 		scene_manager->updateSceneGraph();
 	}
 
+	void scene_impl::set_ambiant_light(color upper_hemisphere, color lower_hemisphere, math::vector3d direction)
+	{
+		scene_manager->setAmbientLight(to_ogre_colour(upper_hemisphere), to_ogre_colour(lower_hemisphere), to_ogre_vector(direction));
+	}
+
 	std::vector<node::object_id> scene_impl::raycast_objects(math::ray r) const
 	{
 		Ogre::RaySceneQuery* const sceneQuery = scene_manager->createRayQuery(to_ogre_ray(r), Ogre::SceneManager::QUERY_ENTITY_DEFAULT_MASK);
@@ -108,6 +113,11 @@ namespace ot::egfx
 	void scene::update(math::seconds dt)
 	{
 		get_impl(*this).update(dt);
+	}
+
+	void scene::set_ambiant_light(color upper_hemisphere, color lower_hemisphere, math::vector3d direction)
+	{
+		get_impl(*this).set_ambiant_light(upper_hemisphere, lower_hemisphere, direction);
 	}
 }
 

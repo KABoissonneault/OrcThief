@@ -3,6 +3,7 @@
 #include "egfx/scene.fwd.h"
 #include "egfx/node/object.fwd.h"
 #include "egfx/object/camera.fwd.h"
+#include "egfx/color.h"
 
 #include "math/ray.h"
 #include "math/unit/time.h"
@@ -30,6 +31,8 @@ namespace ot::egfx
 		[[nodiscard]] node::object_ref get_root_node() noexcept;
 
 		void update(math::seconds dt);
+
+		void set_ambiant_light(color upper_hemisphere, color lower_hemisphere, math::vector3d direction);
 
 		// Casts the ray in the scene, and detects the nearest object
 		std::vector<node::object_id> raycast_objects(math::ray r) const;
