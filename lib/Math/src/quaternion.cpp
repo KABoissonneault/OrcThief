@@ -27,7 +27,7 @@ OT_BOOST_INCLUDE_END
 
 #include <numbers>
 
-static constexpr auto deg_to_rad = std::numbers::pi / 180.0;
+static constexpr auto deg_to_rad = std::numbers::pi_v<float> / 180.0f;
 
 namespace boost::qvm
 {
@@ -38,10 +38,10 @@ namespace boost::qvm
 	};
 
 	template<>
-	struct quat_traits<ot::math::quaternion> : quat_traits_defaults<ot::math::quaternion, double>
+	struct quat_traits<ot::math::quaternion> : quat_traits_defaults<ot::math::quaternion, float>
 	{
 		template<int I>
-		static inline double& write_element(ot::math::quaternion& q)
+		static inline float& write_element(ot::math::quaternion& q)
 		{
 			if constexpr (I == 0)
 			{
@@ -63,16 +63,16 @@ namespace boost::qvm
 	};
 
 	template<>
-	struct is_vec<ot::math::vector3d>
+	struct is_vec<ot::math::vector3f>
 	{
 		static bool const value = true;
 	};
 
 	template<>
-	struct vec_traits<ot::math::vector3d> : vec_traits_defaults<ot::math::vector3d, double, 3>
+	struct vec_traits<ot::math::vector3f> : vec_traits_defaults<ot::math::vector3f, float, 3>
 	{
 		template<int I>
-		static inline double& write_element(ot::math::vector3d& v)
+		static inline float& write_element(ot::math::vector3f& v)
 		{
 			if constexpr (I == 0)
 			{
@@ -90,9 +90,9 @@ namespace boost::qvm
 	};
 
 	template<>
-	struct deduce_vec2<ot::math::quaternion, ot::math::vector3d, 3>
+	struct deduce_vec2<ot::math::quaternion, ot::math::vector3f, 3>
 	{
-		using type = ot::math::vector3d;
+		using type = ot::math::vector3f;
 	};
 }
 
@@ -100,35 +100,35 @@ namespace ot::math
 {
 	quaternion quaternion::identity() noexcept
 	{
-		return boost::qvm::identity_quat<double>();
+		return boost::qvm::identity_quat<float>();
 	}
 
-	quaternion quaternion::x_rad_rotation(double angle) noexcept
+	quaternion quaternion::x_rad_rotation(float angle) noexcept
 	{
 		return boost::qvm::rotx_quat(angle);
 	}
 
-	quaternion quaternion::y_rad_rotation(double angle) noexcept
+	quaternion quaternion::y_rad_rotation(float angle) noexcept
 	{
 		return boost::qvm::roty_quat(angle);
 	}
 
-	quaternion quaternion::z_rad_rotation(double angle) noexcept
+	quaternion quaternion::z_rad_rotation(float angle) noexcept
 	{
 		return boost::qvm::rotz_quat(angle);
 	}
 
-	quaternion quaternion::x_deg_rotation(double angle) noexcept
+	quaternion quaternion::x_deg_rotation(float angle) noexcept
 	{
 		return x_rad_rotation(angle * deg_to_rad);
 	}
 
-	quaternion quaternion::y_deg_rotation(double angle) noexcept
+	quaternion quaternion::y_deg_rotation(float angle) noexcept
 	{
 		return y_rad_rotation(angle * deg_to_rad);
 	}
 	
-	quaternion quaternion::z_deg_rotation(double angle) noexcept
+	quaternion quaternion::z_deg_rotation(float angle) noexcept
 	{
 		return z_rad_rotation(angle * deg_to_rad);
 	}
@@ -144,12 +144,12 @@ namespace ot::math
 		return lhs * rhs;
 	}
 
-	quaternion operator*(quaternion const& lhs, double rhs) noexcept
+	quaternion operator*(quaternion const& lhs, float rhs) noexcept
 	{
 		return boost::qvm::operator*(lhs, rhs);
 	}
 
-	vector3d rotate(vector3d v, quaternion q) noexcept
+	vector3f rotate(vector3f v, quaternion q) noexcept
 	{
 		using boost::qvm::operator*;
 		return q * v;
@@ -157,7 +157,7 @@ namespace ot::math
 
 	bool float_eq(quaternion const& lhs, quaternion const& rhs)
 	{
-		return boost::qvm::cmp(lhs, rhs, [](double lhs, double rhs)
+		return boost::qvm::cmp(lhs, rhs, [](float lhs, float rhs)
 		{
 			return float_eq(lhs, rhs);
 		});

@@ -16,8 +16,8 @@ namespace ot::dedit
 	{
 		using derived = Application;
 
-		double yaw = 0.0;
-		double pitch = 0.0;
+		float yaw = 0.0f;
+		float pitch = 0.0f;
 
 		[[nodiscard]] egfx::object::camera_ref get_camera() noexcept;
 		[[nodiscard]] egfx::window const& get_window() const noexcept;

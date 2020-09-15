@@ -9,9 +9,9 @@ namespace ot::math
 {
 	struct ray
 	{
-		point3d origin;
-		vector3d direction;
+		point3f origin;
+		vector3f direction;
 
-		std::optional<point3d> intersects(plane p) const noexcept;
+		std::optional<point3f> intersects(plane p) const noexcept;
 	};
 }

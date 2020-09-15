@@ -12,16 +12,16 @@ namespace ot::math
 	// A plane is represented with a vector for its normal as an axis, and the distance along this axis
 	struct plane
 	{
-		vector3d normal;
-		double distance;
+		vector3f normal;
+		float distance;
 
-		[[nodiscard]] constexpr double distance_to(point3d p) const noexcept
+		[[nodiscard]] constexpr float distance_to(point3f p) const noexcept
 		{
 			return normal.x * p.x + normal.y * p.y + normal.z * p.z - distance;
 		}
 
 		// Returns a point on the plane
-		[[nodiscard]] constexpr point3d get_point() const noexcept
+		[[nodiscard]] constexpr point3f get_point() const noexcept
 		{
 			return destination_from_origin(normal * distance);
 		}
@@ -34,8 +34,8 @@ namespace ot::math
 		outside, // positive side
 	};
 	
-	[[nodiscard]] plane_side_result get_plane_side(plane p, point3d v);
-	[[nodiscard]] std::optional<point3d> find_intersection(plane p1, plane p2, plane p3);
+	[[nodiscard]] plane_side_result get_plane_side(plane p, point3f v);
+	[[nodiscard]] std::optional<point3f> find_intersection(plane p1, plane p2, plane p3);
 
 	[[nodiscard]] plane transform(plane p, transformation const& t);
 

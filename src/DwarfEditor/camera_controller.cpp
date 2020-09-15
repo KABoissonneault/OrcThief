@@ -39,8 +39,8 @@ namespace ot::dedit
 		egfx::object::camera_ref const camera = get_camera();
 		egfx::window const& window = get_window();
 
-		yaw += -static_cast<double>(e.xrel) / static_cast<double>(get_width(window)) * camera.get_rad_fov_x();
-		pitch += -static_cast<double>(e.yrel) / static_cast<double>(get_height(window)) * camera.get_rad_fov_y();
+		yaw += -static_cast<float>(e.xrel) / static_cast<float>(get_width(window)) * camera.get_rad_fov_x();
+		pitch += -static_cast<float>(e.yrel) / static_cast<float>(get_height(window)) * camera.get_rad_fov_y();
 
 		return true; 
 	}
@@ -48,7 +48,7 @@ namespace ot::dedit
 	template<typename Application>
 	void camera_controller<Application>::translate(math::seconds dt)
 	{
-		math::vector3d velocity = { 0, 0, 0 };
+		math::vector3f velocity = { 0, 0, 0 };
 
 		if (input::keyboard::is_pressed(SDL_SCANCODE_W))
 			velocity += { 0, 0, -1 };
@@ -67,7 +67,7 @@ namespace ot::dedit
 			return;
 
 		velocity = normalized(velocity);
-		velocity *= 3.0; // TODO: parameterize
+		velocity *= 3.0f; // TODO: parameterize
 
 		get_camera().move(velocity * dt.count());
 	}
@@ -75,7 +75,7 @@ namespace ot::dedit
 	template<typename Application>
 	void camera_controller<Application>::rotate(math::seconds dt)
 	{
-		if (float_eq(pitch, 0.0) && float_eq(yaw, 0.0))
+		if (float_eq(pitch, 0.0f) && float_eq(yaw, 0.0f))
 			return;
 
 		egfx::object::camera_ref const c = get_camera();

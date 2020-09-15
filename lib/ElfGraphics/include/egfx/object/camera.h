@@ -28,15 +28,15 @@ namespace ot::egfx::object
 			//   y_norm: distance from the top of the screen in normalizes coordinates [0, 1]
 			//
 			// Returns: ray from viewport position to the world
-			[[nodiscard]] math::ray get_world_ray(double x_norm, double y_norm) const;
+			[[nodiscard]] math::ray get_world_ray(float x_norm, float y_norm) const;
 
 			// Gets the local position of the camera
-			[[nodiscard]] math::point3d get_position() const;
+			[[nodiscard]] math::point3f get_position() const;
 
 			// Get the radians of the field of view on the horizontal axis
-			[[nodiscard]] double get_rad_fov_x() const;
+			[[nodiscard]] float get_rad_fov_x() const;
 			// Get the radians of the field of view on the vertical axis
-			[[nodiscard]] double get_rad_fov_y() const;
+			[[nodiscard]] float get_rad_fov_y() const;
 		};
 	}
 
@@ -66,17 +66,17 @@ namespace ot::egfx::object
 		operator camera_cref() const noexcept { return detail::make_camera_cref(pimpl); }
 
 		// Sets the local position of the camera
-		void set_position(math::point3d position) const;
+		void set_position(math::point3f position) const;
 		// Displaces the local position of the camera
-		void move(math::vector3d displacement) const;
+		void move(math::vector3f displacement) const;
 		// Rotate the camera around its local pitch axis
-		void local_pitch(double rad) const;
+		void local_pitch(float rad) const;
 		// Rotate the camera around the world yaw axis (ie: +Y)
-		void world_yaw(double rad) const;
+		void world_yaw(float rad) const;
 		// Rotate the camera around its local axes
 		void rotate(math::quaternion rotation) const;
 		// Sets the orientation of the camera so that the center of the viewport faces the position
-		void look_at(math::point3d position) const;
+		void look_at(math::point3f position) const;
 	};
 
 	class camera : public detail::camera_const_impl<camera>
@@ -101,17 +101,17 @@ namespace ot::egfx::object
 		operator camera_ref() noexcept { return detail::make_camera_ref(pimpl); }
 
 		// Sets local position of the camera
-		void set_position(math::point3d position);
+		void set_position(math::point3f position);
 		// Displaces the local position of the camera
-		void move(math::vector3d displacement);
+		void move(math::vector3f displacement);
 		// Rotate the camera around its local pitch axis
-		void local_pitch(double rad);
+		void local_pitch(float rad);
 		// Rotate the camera around the world yaw axis (ie: +Y)
-		void world_yaw(double rad);
+		void world_yaw(float rad);
 		// Rotate the camera around its local axes
 		void rotate(math::quaternion rotation);
 		// Sets the orientation of the camera so that the center of the viewport faces the position
-		void look_at(math::point3d position);
+		void look_at(math::point3f position);
 	};
 
 	extern template class detail::camera_const_impl<camera_cref>;

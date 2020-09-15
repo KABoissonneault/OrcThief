@@ -30,7 +30,7 @@ namespace ot::dedit::action
 		b->reload_node(std::move(previous_state));
 	}
 
-	split_edge::split_edge(brush const& b, egfx::half_edge::id edge, math::point3d point)
+	split_edge::split_edge(brush const& b, egfx::half_edge::id edge, math::point3f point)
 		: single_brush(b)
 		, edge(edge)
 		, point(point)

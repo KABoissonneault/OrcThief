@@ -33,10 +33,10 @@ namespace ot::dedit::action
 	class split_edge : public single_brush
 	{
 		egfx::half_edge::id edge;
-		math::point3d point;
+		math::point3f point;
 
 	public:
-		split_edge(brush const& b, egfx::half_edge::id edge, math::point3d point);
+		split_edge(brush const& b, egfx::half_edge::id edge, math::point3f point);
 
 		virtual void apply(map& current_map) override;
 	};

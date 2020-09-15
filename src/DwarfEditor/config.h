@@ -38,7 +38,7 @@ namespace ot::dedit
 			{
 				egfx::color upper_hemisphere;
 				egfx::color lower_hemisphere;
-				math::vector3d hemisphere_direction;
+				math::vector3f hemisphere_direction;
 
 				[[nodiscard]] bool load(std::string_view value);
 			};

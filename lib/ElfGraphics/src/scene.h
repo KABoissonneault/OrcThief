@@ -31,7 +31,7 @@ namespace ot::egfx
 
 		void update(math::seconds dt);
 
-		void set_ambiant_light(color upper_hemisphere, color lower_hemisphere, math::vector3d direction);
+		void set_ambiant_light(color upper_hemisphere, color lower_hemisphere, math::vector3f direction);
 
 		std::vector<node::object_id> raycast_objects(math::ray r) const;
 	};

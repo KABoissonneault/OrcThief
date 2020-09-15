@@ -85,7 +85,7 @@ namespace ot::egfx
 			[[nodiscard]] id get_id() const noexcept { return v; }
 
 			// Get the position in the mesh's local space of the vertex
-			[[nodiscard]] math::point3d get_position() const;
+			[[nodiscard]] math::point3f get_position() const;
 
 			// Returns a range of the half-edges around the given vertex
 			[[nodiscard]] auto get_half_edges() const -> detail::const_half_edge_range<detail::vertex_half_edge_iteration>;
@@ -124,7 +124,7 @@ namespace ot::egfx
 			[[nodiscard]] id get_id() const noexcept { return v; }
 
 			// Get the position in the mesh's local space of the vertex
-			[[nodiscard]] math::point3d get_position() const;
+			[[nodiscard]] math::point3f get_position() const;
 
 			// Returns a range of the half-edges around the given vertex
 			[[nodiscard]] auto get_half_edges() const -> detail::half_edge_range<detail::vertex_half_edge_iteration>;
@@ -239,7 +239,7 @@ namespace ot::egfx
 			//   - 'point' must be on the edge
 			// 
 			// Returns: The new edge after the input one
-			ref split_at(math::point3d point) const;
+			ref split_at(math::point3f point) const;
 
 			[[nodiscard]] friend bool operator==(ref lhs, ref rhs) noexcept
 			{
@@ -275,7 +275,7 @@ namespace ot::egfx
 			[[nodiscard]] id get_id() const noexcept { return f; }
 
 			// Returns the normal vector of the face
-			[[nodiscard]] math::vector3d get_normal() const;
+			[[nodiscard]] math::vector3f get_normal() const;
 
 			// Returns a range of the half-edges around the given face
 			[[nodiscard]] auto get_half_edges() const -> detail::const_half_edge_range<detail::face_half_edge_iteration>;
@@ -291,7 +291,7 @@ namespace ot::egfx
 
 			// Returns whether the point is on the face. 
 			// The point must be in the local coordinates of the mesh definition
-			[[nodiscard]] bool is_on_face(math::point3d p) const;
+			[[nodiscard]] bool is_on_face(math::point3f p) const;
 
 			[[nodiscard]] friend bool operator==(cref lhs, cref rhs) noexcept
 			{
@@ -327,7 +327,7 @@ namespace ot::egfx
 			[[nodiscard]] id get_id() const noexcept { return f; }
 
 			// Returns the normal vector of the face
-			[[nodiscard]] math::vector3d get_normal() const { return as_const().get_normal(); }
+			[[nodiscard]] math::vector3f get_normal() const { return as_const().get_normal(); }
 
 			// Returns a range of the half-edges around the given face
 			[[nodiscard]] auto get_half_edges() const -> detail::half_edge_range<detail::face_half_edge_iteration>;
@@ -343,7 +343,7 @@ namespace ot::egfx
 
 			// Returns whether the point is on the face. 
 			// The point must be in the local coordinates of the mesh definition
-			[[nodiscard]] bool is_on_face(math::point3d p) const { return as_const().is_on_face(p); }
+			[[nodiscard]] bool is_on_face(math::point3f p) const { return as_const().is_on_face(p); }
 
 			[[nodiscard]] friend bool operator==(ref lhs, ref rhs) noexcept
 			{
@@ -363,7 +363,7 @@ namespace ot::egfx
 	{
 		struct vertex_data
 		{
-			math::point3d position;
+			math::point3f position;
 			half_edge::id first_edge;
 		};
 		
@@ -378,7 +378,7 @@ namespace ot::egfx
 		struct face_data
 		{
 			half_edge::id first_edge; // arbitrary half-edge along the face
-			math::vector3d normal;
+			math::vector3f normal;
 		};
 
 		std::vector<vertex_data> vertices;
@@ -871,7 +871,7 @@ namespace ot::egfx
 
 	namespace vertex
 	{
-		inline math::point3d cref::get_position() const
+		inline math::point3f cref::get_position() const
 		{
 			return m->get_vertex_data(v).position;
 		}
@@ -881,7 +881,7 @@ namespace ot::egfx
 			return { *m, m->get_vertex_data(v).first_edge };
 		}
 
-		inline math::point3d ref::get_position() const
+		inline math::point3f ref::get_position() const
 		{
 			return as_const().get_position();
 		}

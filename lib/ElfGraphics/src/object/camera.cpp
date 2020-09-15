@@ -44,28 +44,28 @@ namespace ot::egfx::object
 		}
 
 		template<typename Derived>
-		math::ray camera_const_impl<Derived>::get_world_ray(double x_norm, double y_norm) const
+		math::ray camera_const_impl<Derived>::get_world_ray(float x_norm, float y_norm) const
 		{
 			auto const& camera = get_camera(static_cast<derived const&>(*this));
 			return to_math_ray(camera.getCameraToViewportRay(static_cast<Ogre::Real>(x_norm), static_cast<Ogre::Real>(y_norm)));
 		}
 
 		template<typename Derived>
-		math::point3d camera_const_impl<Derived>::get_position() const
+		math::point3f camera_const_impl<Derived>::get_position() const
 		{
 			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
 			return to_math_point(camera.getPosition());
 		}
 
 		template<typename Derived>
-		double camera_const_impl<Derived>::get_rad_fov_x() const
+		float camera_const_impl<Derived>::get_rad_fov_x() const
 		{
 			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
 			return camera.getFOVy().valueRadians() * camera.getAspectRatio();
 		}
 
 		template<typename Derived>
-		double camera_const_impl<Derived>::get_rad_fov_y() const
+		float camera_const_impl<Derived>::get_rad_fov_y() const
 		{
 			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
 			return camera.getFOVy().valueRadians();
@@ -101,22 +101,22 @@ namespace ot::egfx::object
 		return *static_cast<Ogre::Camera*>(detail::get_camera_impl(r));
 	}
 
-	void camera_ref::set_position(math::point3d position) const
+	void camera_ref::set_position(math::point3f position) const
 	{
 		get_camera(*this).setPosition(to_ogre_vector(position));
 	}
 
-	void camera_ref::move(math::vector3d displacement) const
+	void camera_ref::move(math::vector3f displacement) const
 	{
 		get_camera(*this).moveRelative(to_ogre_vector(displacement));
 	}
 
-	void camera_ref::local_pitch(double rad) const
+	void camera_ref::local_pitch(float rad) const
 	{
 		get_camera(*this).pitch(Ogre::Radian(rad));
 	}
 
-	void camera_ref::world_yaw(double rad) const
+	void camera_ref::world_yaw(float rad) const
 	{
 		// We keep "fixed yaw" to true, which is set to +Y
 		get_camera(*this).yaw(Ogre::Radian(rad));
@@ -127,7 +127,7 @@ namespace ot::egfx::object
 		get_camera(*this).rotate(to_ogre_quaternion(rotation));
 	}
 
-	void camera_ref::look_at(math::point3d position) const
+	void camera_ref::look_at(math::point3f position) const
 	{
 		get_camera(*this).lookAt(to_ogre_vector(position));
 	}
@@ -170,22 +170,22 @@ namespace ot::egfx::object
 		scene_manager->destroyCamera(&c);
 	}
 
-	void camera::set_position(math::point3d position)
+	void camera::set_position(math::point3f position)
 	{
 		static_cast<camera_ref>(*this).set_position(position);
 	}
 
-	void camera::move(math::vector3d displacement)
+	void camera::move(math::vector3f displacement)
 	{
 		static_cast<camera_ref>(*this).move(displacement);
 	}
 
-	void camera::local_pitch(double rad)
+	void camera::local_pitch(float rad)
 	{
 		static_cast<camera_ref>(*this).local_pitch(rad);
 	}
 
-	void camera::world_yaw(double rad)
+	void camera::world_yaw(float rad)
 	{
 		static_cast<camera_ref>(*this).world_yaw(rad);
 	}
@@ -195,7 +195,7 @@ namespace ot::egfx::object
 		static_cast<camera_ref>(*this).rotate(rotation);
 	}
 
-	void camera::look_at(math::point3d position)
+	void camera::look_at(math::point3f position)
 	{
 		static_cast<camera_ref>(*this).look_at(position);
 	}

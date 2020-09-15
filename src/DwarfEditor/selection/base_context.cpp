@@ -29,8 +29,8 @@ namespace ot::dedit::selection
 			int const width = get_width(*main_window);
 			int const height = get_height(*main_window);
 
-			double const viewport_x = static_cast<double>(mouse.x) / width;
-			double const viewport_y = static_cast<double>(mouse.y) / height;
+			float const viewport_x = static_cast<float>(mouse.x) / width;
+			float const viewport_y = static_cast<float>(mouse.y) / height;
 
 			math::ray const r = current_scene->get_camera().get_world_ray(viewport_x, viewport_y);
 			auto const result = current_scene->raycast_objects(r);

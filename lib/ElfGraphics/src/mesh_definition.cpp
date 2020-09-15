@@ -11,7 +11,7 @@ namespace ot::egfx
 		//   A --------------------------------> B    A ----------------> C ----------------> B
 		//   A <-------------------------------- B    A <---------------- C <---------------- B
 		//     Current Twin                             New Twin                 Current Twin
-		auto ref::split_at(math::point3d point) const -> ref
+		auto ref::split_at(math::point3f point) const -> ref
 		{
 			m->half_edges.reserve(m->half_edges.size() + 2);
 
@@ -57,7 +57,7 @@ namespace ot::egfx
 
 	namespace face
 	{
-		math::vector3d cref::get_normal() const
+		math::vector3f cref::get_normal() const
 		{
 			return m->get_face_data(f).normal;
 		}
@@ -66,24 +66,24 @@ namespace ot::egfx
 		{
 			mesh_definition::face_data const& data = m->get_face_data(f);
 			mesh_definition::half_edge_data const& h = m->get_half_edge_data(data.first_edge);
-			math::point3d const p = vertex::cref{ *m, h.vertex }.get_position();
-			math::vector3d const n = get_normal();
-			double const d = dot_product(vector_from_origin(p), n);
+			math::point3f const p = vertex::cref{ *m, h.vertex }.get_position();
+			math::vector3f const n = get_normal();
+			float const d = dot_product(vector_from_origin(p), n);
 			return { n, d };
 		}
 
-		bool cref::is_on_face(math::point3d p) const
+		bool cref::is_on_face(math::point3f p) const
 		{
-			math::vector3d const face_normal = get_normal();
+			math::vector3f const face_normal = get_normal();
 
 			for (half_edge::cref const he : get_half_edges())
 			{
 				math::line const l = he.get_line();
 
-				math::vector3d const v1 = l.b - l.a;
-				math::vector3d const v2 = l.a - p;
+				math::vector3f const v1 = l.b - l.a;
+				math::vector3f const v2 = l.a - p;
 
-				math::vector3d const vr = cross_product(v1, v2);
+				math::vector3f const vr = cross_product(v1, v2);
 
 				// If the cross product is in the same direction as the face normal, the point is outside the face
 				if (dot_product(vr, face_normal) > 0)
@@ -98,9 +98,9 @@ namespace ot::egfx
 
 	namespace
 	{
-		math::vector3d get_average_normal(std::span<math::plane const> planes)
+		math::vector3f get_average_normal(std::span<math::plane const> planes)
 		{
-			return normalized(std::accumulate(planes.begin(), planes.end(), math::vector3d{}, [](math::vector3d value, math::plane plane) { return value + plane.normal; }));
+			return normalized(std::accumulate(planes.begin(), planes.end(), math::vector3f{}, [](math::vector3f value, math::plane plane) { return value + plane.normal; }));
 		}
 
 		struct edge_intersection
@@ -300,7 +300,7 @@ namespace ot::egfx
 					math::plane const edge1_plane = planes[static_cast<size_t>(other_plane1)];
 					math::plane const edge2_plane = planes[static_cast<size_t>(other_plane2)];
 
-					math::vector3d const direction = cross_product(shared_plane.normal, edge1_plane.normal);
+					math::vector3f const direction = cross_product(shared_plane.normal, edge1_plane.normal);
 
 					// Determine which edge is "ingoing" and which one is "outgoing"
 					auto const [ingoing, outgoing, outgoing_id] = [&]

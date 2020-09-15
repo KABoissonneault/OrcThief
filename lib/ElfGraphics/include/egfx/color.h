@@ -4,7 +4,7 @@ namespace ot::egfx
 {
 	struct color
 	{
-		double r, g, b, a;
+		float r, g, b, a;
 
 		static constexpr color white() noexcept
 		{

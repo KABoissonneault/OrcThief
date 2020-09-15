@@ -38,8 +38,8 @@ namespace ot::dedit::selection
 		int mouse_x, mouse_y;
 		input::mouse::get_position(mouse_x, mouse_y);
 
-		double const viewport_x = static_cast<double>(mouse_x) / get_width(*main_window);
-		double const viewport_y = static_cast<double>(mouse_y) / get_height(*main_window);
+		float const viewport_x = static_cast<float>(mouse_x) / get_width(*main_window);
+		float const viewport_y = static_cast<float>(mouse_y) / get_height(*main_window);
 		math::ray const mouse_ray = current_scene->get_camera().get_world_ray(viewport_x, viewport_y);
 
 		brush const& brush = current_map->get_brushes()[selected_brush];
@@ -58,16 +58,16 @@ namespace ot::dedit::selection
 			return;
 		}
 
-		math::point3d const& intersection_point = *intersection_result;
-		math::point3d const local_point = detransform(intersection_point, invert(t));
+		math::point3f const& intersection_point = *intersection_result;
+		math::point3f const local_point = detransform(intersection_point, invert(t));
 
 		// Pick the closest edge
-		double current_distance_sq = DBL_MAX;
+		float current_distance_sq = FLT_MAX;
 		for (egfx::half_edge::cref const he : face.get_half_edges())
 		{
 			math::line const edge = he.get_line();
-			math::point3d const center = midpoint(edge.a, edge.b);
-			double const distance_sq = (local_point - center).norm_squared();
+			math::point3f const center = midpoint(edge.a, edge.b);
+			float const distance_sq = (local_point - center).norm_squared();
 			if (float_cmp(distance_sq, current_distance_sq) < 0)
 			{
 				current_distance_sq = distance_sq;

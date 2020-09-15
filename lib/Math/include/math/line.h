@@ -7,22 +7,22 @@ namespace ot::math
 {
 	struct line
 	{
-		point3d a;
-		point3d b;
+		point3f a;
+		point3f b;
 	};
 
 	// Returns only a positive distance
-	double distance(line const& l, point3d p);
+	float distance(line const& l, point3f p);
 
-	point3d lerp(line const& l, double f);
-	double inv_lerp(line const& l, point3d p);
-	point3d clamp(line const& l, point3d p);
+	point3f lerp(line const& l, float f);
+	float inv_lerp(line const& l, point3f p);
+	point3f clamp(line const& l, point3f p);
 
 	// Returns a point on the line
-	point3d project(line const& l, point3d p);
+	point3f project(line const& l, point3f p);
 
 	// Returns a point on the line between the two points
-	point3d clamped_project(line const& l, point3d p);
+	point3f clamped_project(line const& l, point3f p);
 
 	line transform(line const& l, transformation const& t);
 }

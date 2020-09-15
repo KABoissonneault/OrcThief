@@ -8,15 +8,15 @@ namespace ot::math
 {
 	struct quaternion
 	{
-		double w, x, y, z;
+		float w, x, y, z;
 
 		[[nodiscard]] static quaternion identity() noexcept;
-		[[nodiscard]] static quaternion x_rad_rotation(double angle) noexcept;
-		[[nodiscard]] static quaternion y_rad_rotation(double angle) noexcept;
-		[[nodiscard]] static quaternion z_rad_rotation(double angle) noexcept;
-		[[nodiscard]] static quaternion x_deg_rotation(double angle) noexcept;
-		[[nodiscard]] static quaternion y_deg_rotation(double angle) noexcept;
-		[[nodiscard]] static quaternion z_deg_rotation(double angle) noexcept;
+		[[nodiscard]] static quaternion x_rad_rotation(float angle) noexcept;
+		[[nodiscard]] static quaternion y_rad_rotation(float angle) noexcept;
+		[[nodiscard]] static quaternion z_rad_rotation(float angle) noexcept;
+		[[nodiscard]] static quaternion x_deg_rotation(float angle) noexcept;
+		[[nodiscard]] static quaternion y_deg_rotation(float angle) noexcept;
+		[[nodiscard]] static quaternion z_deg_rotation(float angle) noexcept;
 	};
 
 	[[nodiscard]] quaternion invert(quaternion const& q) noexcept;
@@ -29,7 +29,7 @@ namespace ot::math
 
 	[[nodiscard]] quaternion operator*(quaternion const& q, double m) noexcept;
 
-	[[nodiscard]] vector3d rotate(vector3d v, quaternion q) noexcept;
+	[[nodiscard]] vector3f rotate(vector3f v, quaternion q) noexcept;
 
 	using ot::float_eq;
 	[[nodiscard]] bool float_eq(quaternion const& lhs, quaternion const& rhs);

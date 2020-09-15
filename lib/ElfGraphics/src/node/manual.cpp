@@ -18,7 +18,7 @@ namespace ot::egfx::node
 			return current_index + 2;
 		}
 		
-		Ogre::uint32 add_triangle(Ogre::ManualObject& manual_object, math::point3d v1, math::point3d v2, math::point3d v3, Ogre::uint32 current_index)
+		Ogre::uint32 add_triangle(Ogre::ManualObject& manual_object, math::point3f v1, math::point3f v2, math::point3f v3, Ogre::uint32 current_index)
 		{
 			manual_object.position(to_ogre_vector(v1));
 			manual_object.position(to_ogre_vector(v2));
@@ -76,14 +76,14 @@ namespace ot::egfx::node
 		manual_object.end();
 	}
 
-	void manual::add_points(std::string const& datablock, std::span<math::point3d const> points)
+	void manual::add_points(std::string const& datablock, std::span<math::point3f const> points)
 	{
 		Ogre::ManualObject& manual_object = get_manual(*this);
 
 		manual_object.begin(datablock, Ogre::OT_POINT_LIST);
 		
 		Ogre::uint32 current_index = 0;
-		for (math::point3d const p : points)
+		for (math::point3f const p : points)
 		{
 			manual_object.position(to_ogre_vector(p));
 			manual_object.index(current_index++);
@@ -101,9 +101,9 @@ namespace ot::egfx::node
 		Ogre::uint32 current_index = 0;
 		for_each_triangle(mesh, [&current_index, &manual_object, &t](vertex::cref first_vertex, vertex::cref second_vertex, vertex::cref third_vertex)
 		{
-			math::point3d const p1 = transform(first_vertex.get_position(), t);
-			math::point3d const p2 = transform(second_vertex.get_position(), t);
-			math::point3d const p3 = transform(third_vertex.get_position(), t);
+			math::point3f const p1 = transform(first_vertex.get_position(), t);
+			math::point3f const p2 = transform(second_vertex.get_position(), t);
+			math::point3f const p3 = transform(third_vertex.get_position(), t);
 			current_index = add_triangle(manual_object, p1, p2, p3, current_index);
 		});
 
@@ -137,9 +137,9 @@ namespace ot::egfx::node
 
 		for_each_triangle(face, [&current_index, &manual_object, &t](vertex::cref first_vertex, vertex::cref second_vertex, vertex::cref third_vertex)
 		{
-			math::point3d const p1 = transform(first_vertex.get_position(), t);
-			math::point3d const p2 = transform(second_vertex.get_position(), t);
-			math::point3d const p3 = transform(third_vertex.get_position(), t);
+			math::point3f const p1 = transform(first_vertex.get_position(), t);
+			math::point3f const p2 = transform(second_vertex.get_position(), t);
+			math::point3f const p3 = transform(third_vertex.get_position(), t);
 			current_index = add_triangle(manual_object, p1, p2, p3, current_index);
 		});
 

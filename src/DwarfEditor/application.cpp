@@ -33,7 +33,7 @@ namespace ot::dedit
 			{{0, 0, -1}, 0.5},
 		};
 
-		auto const sqrt_half = 0.70710678118654752440084436210485;
+		auto const sqrt_half = 0.70710678118654752440084436210485f;
 		math::plane const octagon_planes[] = {
 			{{0, 1, 0}, 0.5},
 			{{0, -1, 0}, 0.5},
@@ -112,17 +112,17 @@ namespace ot::dedit
 	 
 	void application::setup_default_scene()
 	{
-		current_map.add_brush(make_brush(cube_planes, "Cube", { 2.5, 0.0, 0.0 }));
-		current_map.add_brush(make_brush(octagon_planes, "Octagon", { 0, 0.0, 0.0 }));
-		current_map.add_brush(make_brush(pyramid_planes, "Pyramid", { -2.5, 0.0, 0.0 }));
+		current_map.add_brush(make_brush(cube_planes, "Cube", { 2.5f, 0.0f, 0.0f }));
+		current_map.add_brush(make_brush(octagon_planes, "Octagon", { 0.0f, 0.0f, 0.0f }));
+		current_map.add_brush(make_brush(pyramid_planes, "Pyramid", { -2.5f, 0.0f, 0.0f }));
 
 		egfx::object::camera_ref const camera = main_scene.get_camera();
-		camera.set_position({ 0.0, 2.0, -5.5 });
-		camera.look_at({ 0.0, 0.0, 0.0 });
+		camera.set_position({ 0.0f, 2.0f, -5.5f });
+		camera.look_at({ 0.0f, 0.0f, 0.0f });
 
 		light = egfx::node::create_directional_light(main_scene.get_root_node());
-		light.set_position({ 10.0, 10.0, -10.0 });
-		light.set_direction(normalized(math::vector3d{ -1.0, -1.0, 1.0 }));
+		light.set_position({ 10.0f, 10.0f, -10.0f });
+		light.set_direction(normalized(math::vector3f{ -1.0f, -1.0f, 1.0f }));
 
 		debug_surface = egfx::overlay::create_surface("DebugSurface");
 		debug_text.emplace(debug_surface, "DebugText");
@@ -134,7 +134,7 @@ namespace ot::dedit
 		selection_render = egfx::node::create_manual(main_scene.get_root_node());
 	}
 
-	brush application::make_brush(std::span<math::plane const> planes, std::string const& name, math::point3d position)
+	brush application::make_brush(std::span<math::plane const> planes, std::string const& name, math::point3f position)
 	{
 		auto mesh = std::make_shared<egfx::mesh_definition const>(egfx::mesh_definition::make_from_planes(planes));
 		auto node = egfx::node::create_mesh(main_scene.get_root_node(), name, *mesh);
@@ -271,7 +271,7 @@ namespace ot::dedit
 		{
 			if (!selection_context->is_selected(brush.get_id()))
 			{
-				brush.node.rotate_around(math::vector3d{ 0.0, 1.0, 0.0 }, dt.count());
+				brush.node.rotate_around(math::vector3f{ 0.0f, 1.0f, 0.0f }, dt.count());
 			}
 		}		
 	}

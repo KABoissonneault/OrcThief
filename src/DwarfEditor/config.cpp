@@ -7,7 +7,7 @@ namespace ot::dedit
 {
 	namespace
 	{
-		std::error_code parse_double(double& value, std::string_view& line)
+		std::error_code parse_float(float& value, std::string_view& line)
 		{
 			while (std::isspace(line.front())) line.remove_prefix(1);
 			std::from_chars_result const result = std::from_chars(std::to_address(line.begin()), std::to_address(line.end()), value);
@@ -25,9 +25,9 @@ namespace ot::dedit
 				return std::make_error_code(std::errc::invalid_argument);
 			line.remove_prefix(1);
 
-			auto const parse_component = [&line] (double& value) -> std::error_code
+			auto const parse_component = [&line] (float& value) -> std::error_code
 			{
-				return parse_double(value, line);
+				return parse_float(value, line);
 			};
 
 			std::error_code error;
@@ -54,16 +54,16 @@ namespace ot::dedit
 			return {};
 		}
 
-		std::error_code parse_vector3(math::vector3d& vector, std::string_view& line)
+		std::error_code parse_vector3(math::vector3f& vector, std::string_view& line)
 		{
 			while (std::isspace(line.front())) line.remove_prefix(1);
 			if (!line.starts_with('('))
 				return std::make_error_code(std::errc::invalid_argument);
 			line.remove_prefix(1);
 
-			auto const parse_component = [&line](double& value) -> std::error_code
+			auto const parse_component = [&line](float& value) -> std::error_code
 			{
-				return parse_double(value, line);
+				return parse_float(value, line);
 			};
 
 			std::error_code error;

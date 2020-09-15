@@ -18,7 +18,7 @@ namespace ot::dedit::selection
 		egfx::face::id selected_face;
 		egfx::half_edge::id selected_edge;
 
-		std::optional<math::point3d> local_split;
+		std::optional<math::point3f> local_split;
 
 		void preview_edge_split();
 

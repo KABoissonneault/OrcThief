@@ -29,7 +29,7 @@ namespace ot::egfx::node
 		void add_lines(std::string const& datablock, std::span<math::line const> lines);
 
 		// Add a section of points
-		void add_points(std::string const& datablock, std::span<math::point3d const> points);
+		void add_points(std::string const& datablock, std::span<math::point3f const> points);
 
 		// Add section of triangles for the entire mesh
 		void add_mesh(std::string const& datablock, mesh_definition const& mesh, math::transformation const& t);

@@ -57,7 +57,7 @@ namespace ot::egfx::node
 		}
 
 		template<typename Derived>
-		math::point3d object_const_impl<Derived>::get_position() const noexcept
+		math::point3f object_const_impl<Derived>::get_position() const noexcept
 		{
 			return to_math_point(get_scene_node(static_cast<derived const&>(*this)).getPosition());
 		}
@@ -69,7 +69,7 @@ namespace ot::egfx::node
 		}
 
 		template<typename Derived>
-		double object_const_impl<Derived>::get_scale() const noexcept
+		float object_const_impl<Derived>::get_scale() const noexcept
 		{
 			return get_scene_node(static_cast<derived const&>(*this)).getScale()[0]; // we only do uniform scaling here
 		}
@@ -167,27 +167,27 @@ namespace ot::egfx::node
 		pimpl = detail::get_object_impl(r);
 	}
 
-	void object_ref::set_position(math::point3d p) const noexcept
+	void object_ref::set_position(math::point3f p) const noexcept
 	{
 		get_scene_node(*this).setPosition(to_ogre_vector(p));
 	}
 
-	void object::set_position(math::point3d p) noexcept
+	void object::set_position(math::point3f p) noexcept
 	{
 		static_cast<object_ref>(*this).set_position(p);
 	}
 
-	void object_ref::set_direction(math::vector3d direction) const noexcept
+	void object_ref::set_direction(math::vector3f direction) const noexcept
 	{
 		get_scene_node(*this).setDirection(to_ogre_vector(direction));
 	}
 
-	void object::set_direction(math::vector3d direction) noexcept
+	void object::set_direction(math::vector3f direction) noexcept
 	{
 		static_cast<object_ref>(*this).set_direction(direction);
 	}
 
-	void object_ref::rotate_around(math::vector3d axis, double rad) const noexcept
+	void object_ref::rotate_around(math::vector3f axis, float rad) const noexcept
 	{
 		get_scene_node(*this).rotate(
 			Ogre::Vector3(static_cast<Ogre::Real>(axis.x), static_cast<Ogre::Real>(axis.y), static_cast<Ogre::Real>(axis.z)),
@@ -195,7 +195,7 @@ namespace ot::egfx::node
 		);
 	}
 
-	void object::rotate_around(math::vector3d axis, double rad) noexcept
+	void object::rotate_around(math::vector3f axis, float rad) noexcept
 	{
 		static_cast<object_ref>(*this).rotate_around(axis, rad);
 	}

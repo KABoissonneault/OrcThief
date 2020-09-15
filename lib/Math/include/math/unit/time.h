@@ -4,8 +4,8 @@
 
 namespace ot::math
 {
-	using seconds = std::chrono::duration<double>;
-	using milliseconds = std::chrono::duration<double, std::ratio<1, 1000>>;
+	using seconds = std::chrono::duration<float>;
+	using milliseconds = std::chrono::duration<float, std::ratio<1, 1000>>;
 
 	namespace literals
 	{

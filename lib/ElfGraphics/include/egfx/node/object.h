@@ -29,13 +29,13 @@ namespace ot::egfx::node
 			[[nodiscard]] bool contains(object_id id) const noexcept;
 
 			// Gets the local position of the node relative to its parent
-			[[nodiscard]] math::point3d get_position() const noexcept;
+			[[nodiscard]] math::point3f get_position() const noexcept;
 
 			// Gets the local rotation of the node
 			[[nodiscard]] math::quaternion get_rotation() const noexcept;
 
 			// Gets the local scale of the node
-			[[nodiscard]] double get_scale() const noexcept;
+			[[nodiscard]] float get_scale() const noexcept;
 		};
 	}
 
@@ -64,12 +64,12 @@ namespace ot::egfx::node
 		operator object_cref() const noexcept { return detail::make_object_cref(pimpl); }
 
 		// Sets the local position of the node relative to its parent
-		void set_position(math::point3d position) const noexcept;
+		void set_position(math::point3f position) const noexcept;
 
 		// Sets the rotation of the node so that it faces in the direction of the vector
-		void set_direction(math::vector3d direction) const noexcept;
+		void set_direction(math::vector3f direction) const noexcept;
 		// Changes the rotation of the node by 'rad' radians around the given vector
-		void rotate_around(math::vector3d axis, double rad) const noexcept;
+		void rotate_around(math::vector3f axis, float rad) const noexcept;
 
 		// Sets the input node as a child of this node.
 		void attach_child(object_ref child) const noexcept;
@@ -98,12 +98,12 @@ namespace ot::egfx::node
 		operator object_ref() noexcept { return detail::make_object_ref(pimpl); }
 
 		// Sets the local position of the node relative to its parent
-		void set_position(math::point3d position) noexcept;
+		void set_position(math::point3f position) noexcept;
 
 		// Sets the rotation of the node so that it faces in the direction of the vector
-		void set_direction(math::vector3d direction) noexcept;
+		void set_direction(math::vector3f direction) noexcept;
 		// Changes the rotation of the node by 'rad' radians around the given vector
-		void rotate_around(math::vector3d axis, double rad) noexcept;
+		void rotate_around(math::vector3f axis, float rad) noexcept;
 
 		// Sets the input node as a child of this node.
 		void attach_child(object_ref child) noexcept;

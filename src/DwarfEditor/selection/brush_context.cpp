@@ -12,10 +12,10 @@ namespace ot::dedit::selection
 {
 	namespace
 	{
-		egfx::face::id get_closest_face(math::point3d camera_wpos, math::ray const& mouse_ray, math::transformation const& brush_transform, egfx::mesh_definition const& mesh)
+		egfx::face::id get_closest_face(math::point3f camera_wpos, math::ray const& mouse_ray, math::transformation const& brush_transform, egfx::mesh_definition const& mesh)
 		{
 			egfx::face::id current_face = egfx::face::id::none;
-			double current_distance_sq = DBL_MAX;
+			float current_distance_sq = FLT_MAX;
 			for (egfx::face::cref const face : mesh.get_faces())
 			{
 				math::plane const local_plane = face.get_plane();
@@ -24,11 +24,11 @@ namespace ot::dedit::selection
 				auto const result = mouse_ray.intersects(world_plane);
 				if (result)
 				{
-					math::point3d const intersection = *result;
-					math::point3d const local_intersection = detransform(intersection, invert(brush_transform));
+					math::point3f const intersection = *result;
+					math::point3f const local_intersection = detransform(intersection, invert(brush_transform));
 					if (face.is_on_face(local_intersection))
 					{
-						double const intersection_distance_sq = (camera_wpos - intersection).norm_squared();
+						float const intersection_distance_sq = (camera_wpos - intersection).norm_squared();
 						if (float_cmp(intersection_distance_sq, current_distance_sq) < 0)
 						{
 							current_distance_sq = intersection_distance_sq;
@@ -67,8 +67,8 @@ namespace ot::dedit::selection
 		int mouse_x, mouse_y;
 		input::mouse::get_position(mouse_x, mouse_y);
 
-		double const viewport_x = static_cast<double>(mouse_x) / get_width(*main_window);
-		double const viewport_y = static_cast<double>(mouse_y) / get_height(*main_window);
+		float const viewport_x = static_cast<float>(mouse_x) / get_width(*main_window);
+		float const viewport_y = static_cast<float>(mouse_y) / get_height(*main_window);
 		egfx::object::camera_cref const camera = current_scene->get_camera();
 		math::ray const mouse_ray = camera.get_world_ray(viewport_x, viewport_y);
 
@@ -96,8 +96,8 @@ namespace ot::dedit::selection
 		auto const vertices = b.mesh_def->get_vertices();
 		for (egfx::vertex::cref const vertex : vertices)
 		{
-			math::point3d const vertex_pos = transform(vertex.get_position(), t);
-			math::transformation const vt{ vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04 };
+			math::point3f const vertex_pos = transform(vertex.get_position(), t);
+			math::transformation const vt{ vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04f };
 			m.add_mesh(datablock::overlay_unlit_vertex, egfx::mesh_definition::get_cube(), vt);
 		}
 	}

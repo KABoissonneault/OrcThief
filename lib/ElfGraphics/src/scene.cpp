@@ -68,7 +68,7 @@ namespace ot::egfx
 		scene_manager->updateSceneGraph();
 	}
 
-	void scene_impl::set_ambiant_light(color upper_hemisphere, color lower_hemisphere, math::vector3d direction)
+	void scene_impl::set_ambiant_light(color upper_hemisphere, color lower_hemisphere, math::vector3f direction)
 	{
 		scene_manager->setAmbientLight(to_ogre_colour(upper_hemisphere), to_ogre_colour(lower_hemisphere), to_ogre_vector(direction));
 	}
@@ -115,7 +115,7 @@ namespace ot::egfx
 		get_impl(*this).update(dt);
 	}
 
-	void scene::set_ambiant_light(color upper_hemisphere, color lower_hemisphere, math::vector3d direction)
+	void scene::set_ambiant_light(color upper_hemisphere, color lower_hemisphere, math::vector3f direction)
 	{
 		get_impl(*this).set_ambiant_light(upper_hemisphere, lower_hemisphere, direction);
 	}

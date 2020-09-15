@@ -66,7 +66,7 @@ namespace ot::dedit
 		[[nodiscard]] bool initialize(config const& program_config);
 		void setup_default_scene();
 
-		[[nodiscard]] brush make_brush(std::span<math::plane const> planes, std::string const& name, math::point3d position);
+		[[nodiscard]] brush make_brush(std::span<math::plane const> planes, std::string const& name, math::point3f position);
 
 		void run();
 

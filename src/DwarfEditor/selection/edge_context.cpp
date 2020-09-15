@@ -41,8 +41,8 @@ namespace ot::dedit::selection
 		int mouse_x, mouse_y;
 		input::mouse::get_position(mouse_x, mouse_y);
 
-		double const viewport_x = static_cast<double>(mouse_x) / get_width(*main_window);
-		double const viewport_y = static_cast<double>(mouse_y) / get_height(*main_window);
+		float const viewport_x = static_cast<float>(mouse_x) / get_width(*main_window);
+		float const viewport_y = static_cast<float>(mouse_y) / get_height(*main_window);
 		math::ray const mouse_ray = current_scene->get_camera().get_world_ray(viewport_x, viewport_y);
 
 		brush const& brush = current_map->get_brushes()[selected_brush];
@@ -58,8 +58,8 @@ namespace ot::dedit::selection
 		if (!intersection_result)
 			return;
 
-		math::point3d const& intersection_point = *intersection_result;
-		math::point3d const local_point = detransform(intersection_point, invert(t));
+		math::point3f const& intersection_point = *intersection_result;
+		math::point3f const local_point = detransform(intersection_point, invert(t));
 
 		auto const half_edge = mesh.get_half_edge(selected_edge);
 		math::line const line = half_edge.get_line();
@@ -76,8 +76,8 @@ namespace ot::dedit::selection
 
 		if (local_split)
 		{
-			math::point3d const vertex_pos = transform(*local_split, t);
-			math::transformation const cube_transform{ vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04 };
+			math::point3f const vertex_pos = transform(*local_split, t);
+			math::transformation const cube_transform{ vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04f };
 			m.add_mesh(datablock::overlay_unlit_vertex_transparent, egfx::mesh_definition::get_cube(), cube_transform);
 		}
 	}
@@ -93,7 +93,7 @@ namespace ot::dedit::selection
 			egfx::half_edge::cref const edge = b.mesh_def->get_half_edge(selected_edge);
 			math::line const local_line = edge.get_line();
 
-			math::point3d const p = *local_split;
+			math::point3f const p = *local_split;
 			if (float_eq(p, local_line.a) || float_eq(p, local_line.b)) // If the point is at the extremities, don't split
 				return false;
 						

@@ -32,7 +32,7 @@ namespace ot::egfx
 
 		void update(math::seconds dt);
 
-		void set_ambiant_light(color upper_hemisphere, color lower_hemisphere, math::vector3d direction);
+		void set_ambiant_light(color upper_hemisphere, color lower_hemisphere, math::vector3f direction);
 
 		// Casts the ray in the scene, and detects the nearest object
 		std::vector<node::object_id> raycast_objects(math::ray r) const;

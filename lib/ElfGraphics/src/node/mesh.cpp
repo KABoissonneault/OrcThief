@@ -101,12 +101,11 @@ namespace ot::egfx::node
 	{
 		struct render_vertex
 		{
-			Ogre::Vector3 position;
-			Ogre::Vector3 normal;
+			math::point3f position;
+			math::vector3f normal;
 
 			[[nodiscard]] static Ogre::VertexElement2Vec get_vertex_buffer_elements()
 			{
-				// Vertex buffers seem to only support floats, not doubles
 				return {
 					Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_POSITION)
 					, Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_NORMAL)
@@ -187,14 +186,14 @@ namespace ot::egfx::node
 			{
 				auto const vertices = face.get_vertices();
 				auto const face_vertex_count = face.get_vertex_count();
-				auto const normal = to_ogre_vector(face.get_normal());
+				auto const normal = face.get_normal();
 
 				auto const base_index = static_cast<Ogre::uint16>(std::distance(vertex_mem_begin, vertex_it));
 
 				// push vertices
 				for (auto const vertex : vertices)
 				{
-					new(vertex_it++) render_vertex{ to_ogre_vector(vertex.get_position()), normal };
+					new(vertex_it++) render_vertex{ vertex.get_position(), normal };
 				}
 
 				// push indices
@@ -234,8 +233,8 @@ namespace ot::egfx::node
 
 		void set_mesh_bounds(Ogre::Mesh& render_mesh, math::aabb const& mesh_bounds)
 		{
-			math::point3d const bounds_center = mesh_bounds.position;
-			math::vector3d const bounds_half_size = mesh_bounds.half_size;
+			math::point3f const bounds_center = mesh_bounds.position;
+			math::vector3f const bounds_half_size = mesh_bounds.half_size;
 			render_mesh._setBounds(Ogre::Aabb(to_ogre_vector(bounds_center), to_ogre_vector(bounds_half_size)), false);
 			render_mesh._setBoundingSphereRadius(bounds_half_size.norm());
 		}

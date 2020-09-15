@@ -12,25 +12,7 @@
 
 namespace ot::egfx
 {
-	[[nodiscard]] inline Ogre::Vector3 to_ogre_vector(math::point3d v) noexcept
-	{
-		return {
-			static_cast<Ogre::Real>(v.x),
-			static_cast<Ogre::Real>(v.y),
-			static_cast<Ogre::Real>(v.z)
-		};
-	}
-
-	[[nodiscard]] inline Ogre::Vector3 to_ogre_vector(math::vector3d v) noexcept
-	{
-		return {
-			static_cast<Ogre::Real>(v.x),
-			static_cast<Ogre::Real>(v.y),
-			static_cast<Ogre::Real>(v.z)
-		};
-	}
-
-	[[nodiscard]] inline math::point3d to_math_point(Ogre::Vector3 v) noexcept
+	[[nodiscard]] inline Ogre::Vector3 to_ogre_vector(math::point3f v) noexcept
 	{
 		return {
 			v.x,
@@ -39,7 +21,25 @@ namespace ot::egfx
 		};
 	}
 
-	[[nodiscard]] inline math::vector3d to_math_vector(Ogre::Vector3 v) noexcept
+	[[nodiscard]] inline Ogre::Vector3 to_ogre_vector(math::vector3f v) noexcept
+	{
+		return {
+			v.x,
+			v.y,
+			v.z
+		};
+	}
+
+	[[nodiscard]] inline math::point3f to_math_point(Ogre::Vector3 v) noexcept
+	{
+		return {
+			v.x,
+			v.y,
+			v.z
+		};
+	}
+
+	[[nodiscard]] inline math::vector3f to_math_vector(Ogre::Vector3 v) noexcept
 	{
 		return {
 			v.x,
@@ -55,7 +55,7 @@ namespace ot::egfx
 
 	[[nodiscard]] inline Ogre::Quaternion to_ogre_quaternion(math::quaternion q) noexcept
 	{
-		return { static_cast<Ogre::Real>(q.w), static_cast<Ogre::Real>(q.x), static_cast<Ogre::Real>(q.y), static_cast<Ogre::Real>(q.z) };
+		return { q.w, q.x, q.y, q.z };
 	}
 
 	[[nodiscard]] inline math::ray to_math_ray(Ogre::Ray r) noexcept
@@ -87,10 +87,10 @@ namespace ot::egfx
 	[[nodiscard]] inline Ogre::ColourValue to_ogre_colour(color c) noexcept
 	{
 		return Ogre::ColourValue {
-			static_cast<float>(c.r),
-			static_cast<float>(c.g),
-			static_cast<float>(c.b),
-			static_cast<float>(c.a)
+			c.r,
+			c.g,
+			c.b,
+			c.a
 		};
 	}
 }
