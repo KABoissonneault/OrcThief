@@ -219,9 +219,23 @@ namespace ot::math
 	}
 
 	// Returns the distance between the point p0 and the line represented by p1 and p2
+	[[nodiscard]] inline double distance_point_to_line(point3f p0, point3f p1, point3f p2)
+	{
+		return cross_product(p2 - p1, p1 - p0).norm() / (p2 - p1).norm();
+	}
+
+	// Returns the distance between the point p0 and the line represented by p1 and p2
 	[[nodiscard]] inline double distance_point_to_line(point3d p0, point3d p1, point3d p2)
 	{
 		return cross_product(p2 - p1, p1 - p0).norm() / (p2 - p1).norm();
+	}
+
+	// Returns the 'inverse' of the input vector
+	//
+	// This is the logical equivalent of v^-1, not -v. Useful for "dividing" vectors
+	[[nodiscard]] inline vector3f inverse(vector3f v)
+	{
+		return v / v.norm_squared();
 	}
 
 	// Returns the 'inverse' of the input vector
