@@ -3,6 +3,7 @@
 #include "input.h"
 #include "selection/base_context.h"
 #include "action/brush.h"
+#include "imgui.h"
 
 #include "egfx/scene.h"
 #include "egfx/object/camera.h"
@@ -280,8 +281,8 @@ namespace ot::dedit
 	{
 		// Start frame
 		graphics.start_frame();
-		ImGui_ImplSDL2_NewFrame(main_window.get());
-		ImGui::NewFrame();
+		imgui::new_frame(*main_window);
+
 		std::string s;
 		selection_context->get_debug_string(s);
 		debug_text->set_text(s);
@@ -291,7 +292,7 @@ namespace ot::dedit
 		selection_context->render(selection_render);
 
 		// Render
-		ImGui::Render();		
+		imgui::render();
 
 		// End frame
 		if (!graphics.render())
@@ -299,14 +300,7 @@ namespace ot::dedit
 			return false;
 		}
 
-		ImGuiIO& io = ImGui::GetIO();
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-		}
-
-		ImGui::EndFrame();
+		imgui::end_frame();
 
 		return true;
 	}

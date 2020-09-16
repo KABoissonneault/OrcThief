@@ -3,12 +3,13 @@
 #include <imgui.h>
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_dx11.h>
+#include <ImGuizmo.h>
 
 #include "Ogre/Root.h"
 
-namespace ot::dedit
+namespace ot::dedit::imgui
 {
-	bool initialize_imgui(SDL_Window& window)
+	bool initialize(SDL_Window& window)
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -27,7 +28,31 @@ namespace ot::dedit
 		return true;
 	}
 
-	void shutdown_imgui()
+	void new_frame(SDL_Window& window)
+	{
+		ImGui_ImplSDL2_NewFrame(&window);
+		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
+	}
+
+	void render()
+	{
+		ImGui::Render();
+	}
+	
+	void end_frame()
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
+
+		ImGui::EndFrame();
+	}
+
+	void shutdown()
 	{
 		ImGui_ImplSDL2_Shutdown();
 		ImGui::DestroyContext();

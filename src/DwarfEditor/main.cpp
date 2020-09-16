@@ -148,7 +148,7 @@ extern "C" int main(int argc, char** argv)
 
 	ot::sdl::unique_window main_window = ot::dedit::create_window(k_window_title);
 	
-	if (!ot::dedit::initialize_imgui(*main_window))
+	if (!ot::dedit::imgui::initialize(*main_window))
 	{
 		std::fprintf(stderr, "Cannot initialize ImGui\n");
 		return -1;
@@ -181,7 +181,7 @@ extern "C" int main(int argc, char** argv)
 	}
 
 	// Exit
-	ot::dedit::shutdown_imgui();
+	ot::dedit::imgui::shutdown();
 
 	SDL_Quit();
 

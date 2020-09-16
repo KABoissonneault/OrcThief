@@ -2,8 +2,11 @@
 
 struct SDL_Window;
 
-namespace ot::dedit
+namespace ot::dedit::imgui
 {
-	bool initialize_imgui(SDL_Window& window);
-	void shutdown_imgui();
+	bool initialize(SDL_Window& window);
+	void new_frame(SDL_Window& window);
+	void render();
+	void end_frame();
+	void shutdown();
 }

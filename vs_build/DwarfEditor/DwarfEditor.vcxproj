@@ -72,6 +72,7 @@
     <Import Project="..\ElfGraphics\elf_graphics.props" />
     <Import Project="..\Math\Math.props" />
     <Import Project="..\ImGui\ImGui.props" />
+    <Import Project="..\ImGuizmo\ImGuizmo.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -81,6 +82,7 @@
     <Import Project="..\ElfGraphics\elf_graphics.props" />
     <Import Project="..\Math\Math.props" />
     <Import Project="..\ImGui\ImGui.props" />
+    <Import Project="..\ImGuizmo\ImGuizmo.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -203,6 +205,9 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     </ProjectReference>
     <ProjectReference Include="..\ElfGraphics\ElfGraphics.vcxproj">
       <Project>{808fa609-f742-469c-bc5d-895d9e45cbee}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ImGuizmo\ImGuizmo.vcxproj">
+      <Project>{bb471cf5-d6cb-43f2-9ec0-25c922951e3b}</Project>
     </ProjectReference>
     <ProjectReference Include="..\ImGui\ImGui.vcxproj">
       <Project>{4be66e88-82e8-4293-862a-cd2b15a927aa}</Project>
