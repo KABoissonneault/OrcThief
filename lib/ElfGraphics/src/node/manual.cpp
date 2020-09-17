@@ -92,7 +92,7 @@ namespace ot::egfx::node
 		manual_object.end();
 	}
 
-	void manual::add_mesh(std::string const& datablock, mesh_definition const& mesh, math::transformation const& t)
+	void manual::add_mesh(std::string const& datablock, mesh_definition const& mesh, math::transform_matrix const& t)
 	{
 		Ogre::ManualObject& manual_object = get_manual(*this);
 
@@ -110,7 +110,7 @@ namespace ot::egfx::node
 		manual_object.end();
 	}
 
-	void manual::add_wiremesh(std::string const& datablock, mesh_definition const& mesh, math::transformation const& t)
+	void manual::add_wiremesh(std::string const& datablock, mesh_definition const& mesh, math::transform_matrix const& t)
 	{
 		Ogre::ManualObject& manual_object = get_manual(*this);
 
@@ -127,7 +127,7 @@ namespace ot::egfx::node
 		manual_object.end();
 	}
 
-	void manual::add_face(std::string const& datablock, face::cref face, math::transformation const& t)
+	void manual::add_face(std::string const& datablock, face::cref face, math::transform_matrix const& t)
 	{
 		Ogre::ManualObject& manual_object = get_manual(*this);
 

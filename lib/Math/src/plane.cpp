@@ -48,11 +48,11 @@ namespace ot::math
 		};
 	}
 
-	plane transform(plane p, transformation const& t)
+	plane transform(plane p, transform_matrix const& t)
 	{
-		p.distance *= t.scale;
-		p.normal = rotate(p.normal, t.rotation);
-		p.distance += dot_product(p.normal, t.displacement);
+		p.distance *= t.get_scale();
+		p.normal = rotate(p.normal, t.get_rotation());
+		p.distance += dot_product(p.normal, t.get_displacement());
 		return p;
 	}
 }

@@ -147,6 +147,7 @@
     <ClCompile Include="..\..\src\egfx\mesh_definition.test.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\math\plane.test.cpp" />
+    <ClCompile Include="..\..\src\math\transform_matrix.test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\vs_build\Core\Core.vcxproj">

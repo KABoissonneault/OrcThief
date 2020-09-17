@@ -12,7 +12,7 @@ namespace ot::math
 		return vr.norm() / v1.norm();
 	}
 
-	line transform(line const& l, transformation const& t)
+	line transform(line const& l, transform_matrix const& t)
 	{
 		return {
 			transform(l.a, t),

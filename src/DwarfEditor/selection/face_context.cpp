@@ -45,7 +45,7 @@ namespace ot::dedit::selection
 		brush const& brush = current_map->get_brushes()[selected_brush];
 		auto const& mesh = *brush.mesh_def;
 
-		math::transformation const t = brush.get_world_transform(math::transformation::identity());
+		math::transform_matrix const t = brush.get_world_transform(math::transform_matrix::identity());
 
 		auto const face = mesh.get_face(selected_face);
 		math::plane const local_plane = face.get_plane();
@@ -59,7 +59,7 @@ namespace ot::dedit::selection
 		}
 
 		math::point3f const& intersection_point = *intersection_result;
-		math::point3f const local_point = detransform(intersection_point, invert(t));
+		math::point3f const local_point = transform(intersection_point, invert(t));
 
 		// Pick the closest edge
 		float current_distance_sq = FLT_MAX;
@@ -79,7 +79,7 @@ namespace ot::dedit::selection
 	void face_context::render(egfx::node::manual& m)
 	{
 		brush const& b = current_map->get_brushes()[selected_brush];
-		math::transformation const t = b.get_world_transform(math::transformation::identity());
+		math::transform_matrix const t = b.get_world_transform(math::transform_matrix::identity());
 
 		m.add_face(datablock::overlay_unlit_transparent_heavy, b.mesh_def->get_face(selected_face), t);
 

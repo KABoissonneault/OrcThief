@@ -3,7 +3,7 @@
 #include "egfx/mesh_definition.h"
 #include "egfx/node/mesh.h"
 
-#include "math/transformation.h"
+#include "math/transform_matrix.h"
 
 #include <vector>
 #include <span>
@@ -18,8 +18,8 @@ namespace ot::dedit
 		std::shared_ptr<egfx::mesh_definition const> mesh_def;
 		egfx::node::mesh node;
 
-		math::transformation get_local_transform() const noexcept;
-		math::transformation get_world_transform(math::transformation const& parent) const noexcept;
+		math::transform_matrix get_local_transform() const noexcept;
+		math::transform_matrix get_world_transform(math::transform_matrix const& parent) const noexcept;
 		entity_id get_id() const noexcept;
 
 		void reload_node();

@@ -12,7 +12,7 @@ namespace ot::dedit::selection
 {
 	namespace
 	{
-		egfx::face::id get_closest_face(math::point3f camera_wpos, math::ray const& mouse_ray, math::transformation const& brush_transform, egfx::mesh_definition const& mesh)
+		egfx::face::id get_closest_face(math::point3f camera_wpos, math::ray const& mouse_ray, math::transform_matrix const& brush_transform, egfx::mesh_definition const& mesh)
 		{
 			egfx::face::id current_face = egfx::face::id::none;
 			float current_distance_sq = FLT_MAX;
@@ -25,7 +25,7 @@ namespace ot::dedit::selection
 				if (result)
 				{
 					math::point3f const intersection = *result;
-					math::point3f const local_intersection = detransform(intersection, invert(brush_transform));
+					math::point3f const local_intersection = transform(intersection, invert(brush_transform));
 					if (face.is_on_face(local_intersection))
 					{
 						float const intersection_distance_sq = (camera_wpos - intersection).norm_squared();
@@ -75,14 +75,14 @@ namespace ot::dedit::selection
 		brush const& brush = current_map->get_brushes()[selected_brush];
 		auto const& mesh = *brush.mesh_def;
 
-		math::transformation const t = brush.get_world_transform(math::transformation::identity());
+		math::transform_matrix const t = brush.get_world_transform(math::transform_matrix::identity());
 		hovered_face = get_closest_face(camera.get_position(), mouse_ray, t, mesh);
 	}
 
 	void brush_context::render(egfx::node::manual& m)
 	{
 		brush const& b = current_map->get_brushes()[selected_brush];
-		math::transformation const t = b.get_world_transform(math::transformation::identity());
+		math::transform_matrix const t = b.get_world_transform(math::transform_matrix::identity());
 
 		m.add_wiremesh(datablock::overlay_unlit, *b.mesh_def, t);
 
@@ -97,7 +97,7 @@ namespace ot::dedit::selection
 		for (egfx::vertex::cref const vertex : vertices)
 		{
 			math::point3f const vertex_pos = transform(vertex.get_position(), t);
-			math::transformation const vt{ vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04f };
+			auto const vt = math::transform_matrix::from_components(vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04f);
 			m.add_mesh(datablock::overlay_unlit_vertex, egfx::mesh_definition::get_cube(), vt);
 		}
 	}

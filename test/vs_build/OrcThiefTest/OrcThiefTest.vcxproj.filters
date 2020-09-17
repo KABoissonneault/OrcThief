@@ -36,5 +36,8 @@
     <ClCompile Include="..\..\src\egfx\mesh_definition.test.cpp">
       <Filter>Source Files\egfx</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\math\transform_matrix.test.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

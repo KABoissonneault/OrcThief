@@ -5,7 +5,7 @@
 #include "egfx/mesh_definition.fwd.h"
 
 #include "math/line.h"
-#include "math/transformation.h"
+#include "math/transform_matrix.h"
 
 #include <span>
 #include <string>
@@ -32,13 +32,13 @@ namespace ot::egfx::node
 		void add_points(std::string const& datablock, std::span<math::point3f const> points);
 
 		// Add section of triangles for the entire mesh
-		void add_mesh(std::string const& datablock, mesh_definition const& mesh, math::transformation const& t);
+		void add_mesh(std::string const& datablock, mesh_definition const& mesh, math::transform_matrix const& t);
 
 		// Add section of lines for the entire mesh
-		void add_wiremesh(std::string const& datablock, mesh_definition const& mesh, math::transformation const& t);
+		void add_wiremesh(std::string const& datablock, mesh_definition const& mesh, math::transform_matrix const& t);
 
 		// Add a section consisting of a single face of a mesh
-		void add_face(std::string const& datablock, face::cref face, math::transformation const& t);
+		void add_face(std::string const& datablock, face::cref face, math::transform_matrix const& t);
 	};
 
 	[[nodiscard]] manual create_manual(object_ref parent);

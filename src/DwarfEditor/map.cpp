@@ -4,14 +4,14 @@
 
 namespace ot::dedit
 {
-	math::transformation brush::get_local_transform() const noexcept
+	math::transform_matrix brush::get_local_transform() const noexcept
 	{
-		return { vector_from_origin(node.get_position()), node.get_rotation(), node.get_scale() };
+		return math::transform_matrix::from_components(vector_from_origin(node.get_position()), node.get_rotation(), node.get_scale());
 	}
 
-	math::transformation brush::get_world_transform(math::transformation const& parent) const noexcept
+	math::transform_matrix brush::get_world_transform(math::transform_matrix const& parent) const noexcept
 	{
-		return concatenate(parent, get_local_transform());
+		return parent * get_local_transform();
 	}
 
 	entity_id brush::get_id() const noexcept

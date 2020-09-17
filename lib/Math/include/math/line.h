@@ -1,7 +1,7 @@
 #pragma once
 
 #include "math/vector3.h"
-#include "math/transformation.h"
+#include "math/transform_matrix.h"
 
 namespace ot::math
 {
@@ -24,5 +24,5 @@ namespace ot::math
 	// Returns a point on the line between the two points
 	point3f clamped_project(line const& l, point3f p);
 
-	line transform(line const& l, transformation const& t);
+	line transform(line const& l, transform_matrix const& t);
 }

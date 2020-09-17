@@ -33,8 +33,17 @@
     <ClInclude Include="..\..\lib\math\include\math\line.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\lib\math\include\math\transformation.h">
+    <ClInclude Include="..\..\lib\Math\include\math\transform_matrix.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Math\src\vector_traits.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Math\src\boost.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Math\src\quaternion_traits.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -48,6 +57,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\lib\math\src\line.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\Math\src\transform_matrix.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

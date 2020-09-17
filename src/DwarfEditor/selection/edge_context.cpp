@@ -48,7 +48,7 @@ namespace ot::dedit::selection
 		brush const& brush = current_map->get_brushes()[selected_brush];
 		auto const& mesh = *brush.mesh_def;
 
-		math::transformation const t = brush.get_world_transform(math::transformation::identity());
+		math::transform_matrix const t = brush.get_world_transform(math::transform_matrix::identity());
 
 		auto const face = mesh.get_face(selected_face);
 		math::plane const local_plane = face.get_plane();
@@ -59,7 +59,7 @@ namespace ot::dedit::selection
 			return;
 
 		math::point3f const& intersection_point = *intersection_result;
-		math::point3f const local_point = detransform(intersection_point, invert(t));
+		math::point3f const local_point = transform(intersection_point, invert(t));
 
 		auto const half_edge = mesh.get_half_edge(selected_edge);
 		math::line const line = half_edge.get_line();
@@ -69,7 +69,7 @@ namespace ot::dedit::selection
 	void edge_context::render(egfx::node::manual& m)
 	{
 		brush const& b = current_map->get_brushes()[selected_brush];
-		math::transformation const t = b.get_world_transform(math::transformation::identity());
+		math::transform_matrix const t = b.get_world_transform(math::transform_matrix::identity());
 
 		math::line const local_line = b.mesh_def->get_half_edge(selected_edge).get_line();
 		m.add_line(datablock::overlay_unlit_edge, transform(local_line, t));
@@ -77,7 +77,7 @@ namespace ot::dedit::selection
 		if (local_split)
 		{
 			math::point3f const vertex_pos = transform(*local_split, t);
-			math::transformation const cube_transform{ vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04f };
+			auto const cube_transform = math::transform_matrix::from_components(vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04f);
 			m.add_mesh(datablock::overlay_unlit_vertex_transparent, egfx::mesh_definition::get_cube(), cube_transform);
 		}
 	}

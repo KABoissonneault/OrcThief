@@ -2,7 +2,7 @@
 
 #include "math/vector3.h"
 #include "math/quaternion.h"
-#include "math/transformation.h"
+#include "math/transform_matrix.h"
 
 #include <optional>
 #include <cfloat>
@@ -37,7 +37,7 @@ namespace ot::math
 	[[nodiscard]] plane_side_result get_plane_side(plane p, point3f v);
 	[[nodiscard]] std::optional<point3f> find_intersection(plane p1, plane p2, plane p3);
 
-	[[nodiscard]] plane transform(plane p, transformation const& t);
+	[[nodiscard]] plane transform(plane p, transform_matrix const& t);
 
 	using ot::float_eq;
 	[[nodiscard]] inline bool float_eq(plane const& lhs, plane const& rhs)

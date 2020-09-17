@@ -27,7 +27,7 @@ namespace ot::math
 		return concatenate(concatenate(lhs, rhs), args...);
 	}
 
-	[[nodiscard]] quaternion operator*(quaternion const& q, double m) noexcept;
+	[[nodiscard]] quaternion operator*(quaternion const& q, float m) noexcept;
 
 	[[nodiscard]] vector3f rotate(vector3f v, quaternion q) noexcept;
 
