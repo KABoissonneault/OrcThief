@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\ext\Catch2\include;$(SolutionDir)..\..\lib\Math\include;$(SolutionDir)..\..\lib\Core\include;$(SolutionDir)..\..\lib\Graphics\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\ext\Catch2\include;$(SolutionDir)..\..\lib\Math\include;$(SolutionDir)..\..\lib\Core\include;$(SolutionDir)..\..\lib\ElfGraphics\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -132,7 +132,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\ext\Catch2\include;$(SolutionDir)..\..\lib\Math\include;$(SolutionDir)..\..\lib\Core\include;$(SolutionDir)..\..\lib\Graphics\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\ext\Catch2\include;$(SolutionDir)..\..\lib\Math\include;$(SolutionDir)..\..\lib\Core\include;$(SolutionDir)..\..\lib\ElfGraphics\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -144,7 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\core\float.test.cpp" />
-    <ClCompile Include="..\..\src\graphics\mesh_definition.test.cpp" />
+    <ClCompile Include="..\..\src\egfx\mesh_definition.test.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\math\plane.test.cpp" />
   </ItemGroup>
@@ -152,7 +152,7 @@
     <ProjectReference Include="..\..\..\vs_build\Core\Core.vcxproj">
       <Project>{d53df004-1a22-4158-a426-c3a1c677abd3}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\vs_build\Graphics\Graphics.vcxproj">
+    <ProjectReference Include="..\..\..\vs_build\ElfGraphics\ElfGraphics.vcxproj">
       <Project>{808fa609-f742-469c-bc5d-895d9e45cbee}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\vs_build\Math\Math.vcxproj">

@@ -19,7 +19,7 @@
     <Filter Include="Source Files\core">
       <UniqueIdentifier>{b04a101f-53e5-4630-a64c-701c90139aaa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\graphics">
+    <Filter Include="Source Files\egfx">
       <UniqueIdentifier>{338136ea-9933-412d-8c3d-32abe72b5621}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -33,8 +33,8 @@
     <ClCompile Include="..\..\src\core\float.test.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\graphics\mesh_definition.test.cpp">
-      <Filter>Source Files\graphics</Filter>
+    <ClCompile Include="..\..\src\egfx\mesh_definition.test.cpp">
+      <Filter>Source Files\egfx</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

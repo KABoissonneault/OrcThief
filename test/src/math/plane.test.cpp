@@ -5,15 +5,15 @@
 TEST_CASE("plane::distance_to identity", "[math]")
 {
 	ot::math::plane p{ {1, 0, 0}, 1 };
-	ot::math::point3d v{ 1, 0, 0 };
-	REQUIRE(ot::float_eq(p.distance_to(v), 0.));
+	ot::math::point3f v{ 1, 0, 0 };
+	REQUIRE(ot::float_eq(p.distance_to(v), 0.f));
 }
 
 TEST_CASE("plane::distance_to simple", "[math]")
 {
 	ot::math::plane p{ {1, 0, 0}, 0 };
-	ot::math::point3d v{ 1, 0, 0 };
-	REQUIRE(ot::float_eq(p.distance_to(v), 1.));
+	ot::math::point3f v{ 1, 0, 0 };
+	REQUIRE(ot::float_eq(p.distance_to(v), 1.f));
 }
 
 TEST_CASE("find_intersection origin", "[math]")

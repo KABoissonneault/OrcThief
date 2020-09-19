@@ -9,7 +9,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Math", "..\..\vs_build\Math
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "..\..\vs_build\Core\Core.vcxproj", "{D53DF004-1A22-4158-A426-C3A1C677ABD3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graphics", "..\..\vs_build\Graphics\Graphics.vcxproj", "{808FA609-F742-469C-BC5D-895D9E45CBEE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ElfGraphics", "..\..\vs_build\ElfGraphics\ElfGraphics.vcxproj", "{808FA609-F742-469C-BC5D-895D9E45CBEE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
