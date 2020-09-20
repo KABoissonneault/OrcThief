@@ -186,6 +186,9 @@
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Compositor\PassProvider.h">
       <Filter>include\Compositor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\Matrix4.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\Ogre\src\RenderSystem.cpp">

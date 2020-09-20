@@ -173,6 +173,7 @@
     <ClInclude Include="..\..\lib\Ogre\include\ogre\HlmsManager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Item.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ManualObject2.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\Matrix4.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\MemoryAllocatorConfig.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Mesh2.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\MeshManager2.h" />
