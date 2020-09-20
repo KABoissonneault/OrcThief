@@ -1,15 +1,15 @@
 #include "math/quaternion.h"
 
-#include "boost.h"
-#include "vector_traits.h"
-#include "quaternion_traits.h"
+#include "math/boost/detail/common.h"
+#include "math/boost/vector_traits.h"
+#include "math/boost/quaternion_traits.h"
 
-OT_BOOST_INCLUDE_BEGIN
+OT_MATH_DETAIL_BOOST_INCLUDE_BEGIN
 #include <boost/qvm/quat_operations.hpp>
 #include <boost/qvm/quat_vec_operations.hpp>
 
 #include <boost/qvm/quat_vec_operations.hpp>
-OT_BOOST_INCLUDE_END
+OT_MATH_DETAIL_BOOST_INCLUDE_END
 
 #include <numbers>
 

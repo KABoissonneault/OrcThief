@@ -148,6 +148,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Math\include\math\aabb.h" />
+    <ClInclude Include="..\..\lib\Math\include\math\boost\detail\common.h" />
+    <ClInclude Include="..\..\lib\Math\include\math\boost\quaternion_traits.h" />
+    <ClInclude Include="..\..\lib\Math\include\math\boost\transform_matrix_traits.h" />
+    <ClInclude Include="..\..\lib\Math\include\math\boost\vector_traits.h" />
     <ClInclude Include="..\..\lib\math\include\math\line.h" />
     <ClInclude Include="..\..\lib\Math\include\math\plane.h" />
     <ClInclude Include="..\..\lib\math\include\math\quaternion.h" />
@@ -155,9 +159,6 @@
     <ClInclude Include="..\..\lib\Math\include\math\transform_matrix.h" />
     <ClInclude Include="..\..\lib\Math\include\math\unit\time.h" />
     <ClInclude Include="..\..\lib\Math\include\Math\vector3.h" />
-    <ClInclude Include="..\..\lib\Math\src\boost.h" />
-    <ClInclude Include="..\..\lib\Math\src\quaternion_traits.h" />
-    <ClInclude Include="..\..\lib\Math\src\vector_traits.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\math\src\line.cpp" />

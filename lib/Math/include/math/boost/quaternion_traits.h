@@ -1,13 +1,13 @@
 #pragma once
 
 #include "math/quaternion.h"
-#include "boost.h"
+#include "math/boost/detail/common.h"
 
-OT_BOOST_INCLUDE_BEGIN
+OT_MATH_DETAIL_BOOST_INCLUDE_BEGIN
 #include <boost/qvm/quat_traits.hpp>
 #include <boost/qvm/quat_traits_defaults.hpp>
 #include <boost/qvm/deduce_vec.hpp>
-OT_BOOST_INCLUDE_END
+OT_MATH_DETAIL_BOOST_INCLUDE_END
 
 template<>
 struct boost::qvm::is_quat<ot::math::quaternion>
@@ -28,7 +28,7 @@ struct boost::qvm::quat_traits<ot::math::quaternion> : boost::qvm::quat_traits_d
 		else if constexpr (I == 1)
 		{
 			return q.x;
-		} 
+		}
 		else if constexpr (I == 2)
 		{
 			return q.y;

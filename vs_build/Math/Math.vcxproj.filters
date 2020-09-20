@@ -10,6 +10,12 @@
     <Filter Include="src">
       <UniqueIdentifier>{67930f7f-84d2-4d3c-8832-08bf051e48df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\boost">
+      <UniqueIdentifier>{b1a4f2b2-78f7-49d0-abd2-457fce066906}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\boost\detail">
+      <UniqueIdentifier>{966d9e0f-4db9-4ebe-ab3a-a5224acd3502}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Math\include\Math\vector3.h">
@@ -36,14 +42,17 @@
     <ClInclude Include="..\..\lib\Math\include\math\transform_matrix.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\lib\Math\src\vector_traits.h">
-      <Filter>src</Filter>
+    <ClInclude Include="..\..\lib\Math\include\math\boost\detail\common.h">
+      <Filter>include\boost\detail</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\lib\Math\src\boost.h">
-      <Filter>src</Filter>
+    <ClInclude Include="..\..\lib\Math\include\math\boost\quaternion_traits.h">
+      <Filter>include\boost</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\lib\Math\src\quaternion_traits.h">
-      <Filter>src</Filter>
+    <ClInclude Include="..\..\lib\Math\include\math\boost\vector_traits.h">
+      <Filter>include\boost</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Math\include\math\boost\transform_matrix_traits.h">
+      <Filter>include\boost</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "math/vector3.h"
-#include "boost.h"
+#include "math/boost/detail/common.h"
 
-OT_BOOST_INCLUDE_BEGIN
+OT_MATH_DETAIL_BOOST_INCLUDE_BEGIN
 #include <boost/qvm/vec_traits.hpp>
 #include <boost/qvm/vec_traits_defaults.hpp>
-OT_BOOST_INCLUDE_END
+OT_MATH_DETAIL_BOOST_INCLUDE_END
 
 template<>
 struct boost::qvm::is_vec<ot::math::point3f>
