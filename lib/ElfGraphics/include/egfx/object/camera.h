@@ -3,6 +3,7 @@
 #include "egfx/object/camera.fwd.h"
 
 #include "math/vector3.h"
+#include "math/transform_matrix.h"
 
 #include "math/ray.h"
 
@@ -37,6 +38,16 @@ namespace ot::egfx::object
 			[[nodiscard]] float get_rad_fov_x() const;
 			// Get the radians of the field of view on the vertical axis
 			[[nodiscard]] float get_rad_fov_y() const;
+			// Get the ratio between the x FoV and the y FoV
+			[[nodiscard]] float get_aspect_ratio() const;
+
+			// Get the 4x4 matrix representing the camera view
+			[[nodiscard]] math::transform_matrix get_view_matrix() const;
+			
+			// Get the distance of the far plane along the Z axis
+			[[nodiscard]] float get_z_near() const;
+			// Get the distance of the near place along the Z axis
+			[[nodiscard]] float get_z_far() const;
 		};
 	}
 

@@ -4,11 +4,13 @@
 #include "Ogre/Quaternion.h"
 #include "Ogre/Ray.h"
 #include "Ogre/ColourValue.h"
+#include "Ogre/Matrix4.h"
 
 #include "math/vector3.h"
 #include "math/quaternion.h"
 #include "math/ray.h"
 #include "egfx/color.h"
+#include "math/transform_matrix.h"
 
 namespace ot::egfx
 {
@@ -92,5 +94,20 @@ namespace ot::egfx
 			c.b,
 			c.a
 		};
+	}
+
+	[[nodiscard]] inline math::transform_matrix to_math_matrix(Ogre::Matrix4 const& m) noexcept
+	{
+		// assume both are column-major
+		static_assert(sizeof(math::transform_matrix) == sizeof(Ogre::Matrix4));
+		math::transform_matrix ret;
+		memcpy(&ret, &m[0][0], sizeof(float) * 16);
+		return ret;
+	}
+
+	[[nodiscard]] inline Ogre::Matrix4 to_ogre_matrix(math::transform_matrix const& m) noexcept
+	{
+		static_assert(sizeof(math::transform_matrix) == 16 * sizeof(Ogre::Real));
+		return Ogre::Matrix4(m.elements);
 	}
 }

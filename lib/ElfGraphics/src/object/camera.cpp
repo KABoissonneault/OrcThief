@@ -71,6 +71,34 @@ namespace ot::egfx::object
 			return camera.getFOVy().valueRadians();
 		}
 
+		template<typename Derived>
+		float camera_const_impl<Derived>::get_aspect_ratio() const
+		{
+			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
+			return camera.getAspectRatio();
+		}
+
+		template<typename Derived>
+		math::transform_matrix camera_const_impl<Derived>::get_view_matrix() const
+		{
+			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
+			return to_math_matrix(camera.getViewMatrix());
+		}
+
+		template<typename Derived>
+		float camera_const_impl<Derived>::get_z_near() const
+		{
+			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
+			return camera.getNearClipDistance();
+		}
+		
+		template<typename Derived>
+		float camera_const_impl<Derived>::get_z_far() const
+		{
+			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
+			return camera.getFarClipDistance();
+		}
+
 		template class camera_const_impl<camera_cref>;
 		template class camera_const_impl<camera_ref>;
 		template class camera_const_impl<camera>;
