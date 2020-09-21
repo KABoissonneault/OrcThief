@@ -1,13 +1,14 @@
 #include "selection/brush_context.h"
 
+#include "selection/face_context.h"
+#include "selection/brush_common.h"
+
 #include "datablock.h"
 #include "input.h"
 #include "imgui/projection.h"
 
 #include "egfx/object/camera.h"
 #include "egfx/window.h"
-
-#include "selection/face_context.h"
 
 #include <imgui.h>
 #include <ImGuizmo.h>
@@ -44,6 +45,37 @@ namespace ot::dedit::selection
 
 			return current_face;
 		}
+
+		void add_manual_scene(egfx::node::manual& m, egfx::mesh_definition const& mesh_def, math::transform_matrix const& t, egfx::face::id hovered_face)
+		{
+			m.add_wiremesh(datablock::overlay_unlit, mesh_def, t);
+
+			if (hovered_face != egfx::face::id::none)
+			{
+				m.add_face(datablock::overlay_unlit_transparent_light, mesh_def.get_face(hovered_face), t);
+			}
+
+			for (egfx::vertex::cref const vertex : mesh_def.get_vertices())
+			{
+				math::point3f const vertex_pos = transform(vertex.get_position(), t);
+				auto const vt = math::transform_matrix::from_components(vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04f);
+				m.add_mesh(datablock::overlay_unlit_vertex, egfx::mesh_definition::get_cube(), vt);
+			}
+		}
+
+		void add_guizmo(egfx::object::camera_cref camera, math::transform_matrix const& t)
+		{
+			imgui::matrix const view = to_imgui(camera.get_view_matrix());
+			imgui::matrix const projection = imgui::make_perspective_projection(camera.get_rad_fov_y(), camera.get_aspect_ratio(), camera.get_z_near(), camera.get_z_far());
+
+			{
+				imgui::matrix const grid_transform = imgui::matrix::identity();
+				ImGuizmo::DrawGrid(view.elements, projection.elements, grid_transform.elements, 10.f);
+			}
+
+			imgui::matrix object_transform = to_imgui(t);
+			ImGuizmo::Manipulate(view.elements, projection.elements, ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, object_transform.elements);
+		}
 	}
 
 	brush_context::brush_context(map const& current_map, egfx::scene const& current_scene, egfx::window const& main_window, size_t selected_brush) noexcept
@@ -54,69 +86,29 @@ namespace ot::dedit::selection
 		select(selected_brush);
 	}
 
-	void brush_context::update()
+	void brush_context::update(egfx::node::manual& m, action::accumulator& acc)
 	{
 		hovered_face = egfx::face::id::none;
 
-		if (next_context == nullptr && has_focus(*main_window))
-		{
-			detect_hovered_face();
-		}
-
-		composite_context::update();
-	}
-
-	void brush_context::detect_hovered_face()
-	{
-		int mouse_x, mouse_y;
-		input::mouse::get_position(mouse_x, mouse_y);
-
-		float const viewport_x = static_cast<float>(mouse_x) / get_width(*main_window);
-		float const viewport_y = static_cast<float>(mouse_y) / get_height(*main_window);
 		egfx::object::camera_cref const camera = current_scene->get_camera();
-		math::ray const mouse_ray = camera.get_world_ray(viewport_x, viewport_y);
 
-		brush const& brush = current_map->get_brushes()[selected_brush];
-		auto const& mesh = *brush.mesh_def;
-
-		math::transform_matrix const t = brush.get_world_transform(math::transform_matrix::identity());
-		hovered_face = get_closest_face(camera.get_position(), mouse_ray, t, mesh);
-	}
-
-	void brush_context::render(egfx::node::manual& m)
-	{
 		brush const& b = current_map->get_brushes()[selected_brush];
+		egfx::mesh_definition const& mesh_def = *b.mesh_def;
 		math::transform_matrix const t = b.get_world_transform(math::transform_matrix::identity());
 
-		m.add_wiremesh(datablock::overlay_unlit, *b.mesh_def, t);
-
-		if (hovered_face != egfx::face::id::none && next_context == nullptr)
+		if (next_context == nullptr)
 		{
-			m.add_face(datablock::overlay_unlit_transparent_light, { *b.mesh_def, hovered_face }, t);
-		}
+			if (has_focus(*main_window))
+			{
+				hovered_face = get_closest_face(camera.get_position(), get_mouse_ray(*main_window, camera), t, mesh_def);
+			}
 
-		composite_context::render(m);
+			add_guizmo(camera, t);
+		}		
 
-		auto const vertices = b.mesh_def->get_vertices();
-		for (egfx::vertex::cref const vertex : vertices)
-		{
-			math::point3f const vertex_pos = transform(vertex.get_position(), t);
-			auto const vt = math::transform_matrix::from_components(vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04f);
-			m.add_mesh(datablock::overlay_unlit_vertex, egfx::mesh_definition::get_cube(), vt);
-		}
-
-		// Guizmo
-		egfx::object::camera_cref const camera = current_scene->get_camera();
-		imgui::matrix const view = to_imgui(camera.get_view_matrix());
-		imgui::matrix const projection = imgui::make_perspective_projection(camera.get_rad_fov_y(), camera.get_aspect_ratio(), camera.get_z_near(), camera.get_z_far());
-
-		{
-			imgui::matrix const grid_transform = imgui::matrix::identity();
-			ImGuizmo::DrawGrid(view.elements, projection.elements, grid_transform.elements, 10.f);
-		}
-
-		imgui::matrix object_transform = to_imgui(b.get_world_transform(math::transform_matrix::identity()));
-		ImGuizmo::Manipulate(view.elements, projection.elements, ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, object_transform.elements);
+		add_manual_scene(m, mesh_def, t, hovered_face);
+		
+		composite_context::update(m, acc);
 	}
 
 	bool brush_context::handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc)
@@ -196,10 +188,6 @@ namespace ot::dedit::selection
 			s += "Left-click on a face to select it\n";
 			s += "Right-click to deselect the brush\n";
 			s += "Selected brush: " + std::to_string(selected_brush) + "\n";
-			if (hovered_face != egfx::face::id::none)
-			{
-				s += "Hovered face: " + std::to_string(static_cast<size_t>(hovered_face)) + "\n";
-			}
 		}
 	}
 }

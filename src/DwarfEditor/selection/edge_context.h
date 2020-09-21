@@ -20,8 +20,6 @@ namespace ot::dedit::selection
 
 		std::optional<math::point3f> local_split;
 
-		void preview_edge_split();
-
 	public:
 		edge_context(map const& current_map
 			, egfx::scene const& current_scene
@@ -31,8 +29,7 @@ namespace ot::dedit::selection
 			, egfx::half_edge::id selected_edge
 		);
 
-		virtual void update() override;
-		virtual void render(egfx::node::manual& m) override;
+		virtual void update(egfx::node::manual& m, action::accumulator& acc) override;
 		virtual bool handle_mouse_button_event(SDL_MouseButtonEvent const& e, action::accumulator& acc) override;
 		virtual void get_debug_string(std::string& s) const override;
 	};

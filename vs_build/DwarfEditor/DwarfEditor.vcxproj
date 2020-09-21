@@ -195,6 +195,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClCompile Include="..\..\src\DwarfEditor\main.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\map.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\selection\base_context.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\selection\brush_common.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\selection\brush_context.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\selection\context.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\selection\edge_context.cpp" />
@@ -241,6 +242,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClInclude Include="..\..\src\DwarfEditor\input.h" />
     <ClInclude Include="..\..\src\DwarfEditor\map.h" />
     <ClInclude Include="..\..\src\DwarfEditor\selection\base_context.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\selection\brush_common.h" />
     <ClInclude Include="..\..\src\DwarfEditor\selection\brush_context.h" />
     <ClInclude Include="..\..\src\DwarfEditor\selection\context.h" />
     <ClInclude Include="..\..\src\DwarfEditor\selection\edge_context.h" />

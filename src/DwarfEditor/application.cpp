@@ -279,9 +279,8 @@ namespace ot::dedit
 		selection_context->get_debug_string(s);
 		debug_text->set_text(s);
 
-		selection_context->update();
 		selection_render.clear();
-		selection_context->render(selection_render);
+		selection_context->update(selection_render, selection_actions);
 
 		// Render
 		imgui::render();

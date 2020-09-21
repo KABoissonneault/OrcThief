@@ -21,16 +21,13 @@ namespace ot::dedit::selection
 		void select_next();
 		void select_previous();
 
-		void detect_hovered_face();
-
 	public:
 		brush_context(map const& current_map, egfx::scene const& current_scene, egfx::window const& main_window, size_t selected_brush) noexcept;
 
-		virtual void update() override;
-		virtual void render(egfx::node::manual& m) override;
-
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) override;
 		virtual bool handle_mouse_button_event(SDL_MouseButtonEvent const& mouse, action::accumulator& acc) override;
+
+		virtual void update(egfx::node::manual& m, action::accumulator& acc) override;
 
 		virtual bool is_selected(entity_id id) const noexcept override { return current_map->get_brushes()[selected_brush].get_id() == id; }
 

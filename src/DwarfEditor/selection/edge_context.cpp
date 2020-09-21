@@ -1,5 +1,7 @@
 #include "selection/edge_context.h"
 
+#include "selection/brush_common.h"
+
 #include "datablock.h"
 #include "input.h"
 #include "action/brush.h"
@@ -27,51 +29,35 @@ namespace ot::dedit::selection
 
 	}
 
-	void edge_context::update()
+	void edge_context::update(egfx::node::manual& m, action::accumulator& acc)
 	{
-		local_split = std::nullopt;
-		preview_edge_split();
-	}
+		(void)acc;
 
-	void edge_context::preview_edge_split()
-	{
+		local_split = std::nullopt;
+
 		if (!has_focus(*main_window))
 			return;
 
-		int mouse_x, mouse_y;
-		input::mouse::get_position(mouse_x, mouse_y);
-
-		float const viewport_x = static_cast<float>(mouse_x) / get_width(*main_window);
-		float const viewport_y = static_cast<float>(mouse_y) / get_height(*main_window);
-		math::ray const mouse_ray = current_scene->get_camera().get_world_ray(viewport_x, viewport_y);
-
-		brush const& brush = current_map->get_brushes()[selected_brush];
-		auto const& mesh = *brush.mesh_def;
-
-		math::transform_matrix const t = brush.get_world_transform(math::transform_matrix::identity());
-
-		auto const face = mesh.get_face(selected_face);
-		math::plane const local_plane = face.get_plane();
-		math::plane const world_plane = transform(local_plane, t);
-
-		auto const intersection_result = mouse_ray.intersects(world_plane);
-		if (!intersection_result)
-			return;
-
-		math::point3f const& intersection_point = *intersection_result;
-		math::point3f const local_point = transform(intersection_point, invert(t));
-
-		auto const half_edge = mesh.get_half_edge(selected_edge);
-		math::line const line = half_edge.get_line();
-		local_split = clamped_project(line, local_point);
-	}
-
-	void edge_context::render(egfx::node::manual& m)
-	{
 		brush const& b = current_map->get_brushes()[selected_brush];
+		egfx::mesh_definition const& mesh_def = *b.mesh_def;
 		math::transform_matrix const t = b.get_world_transform(math::transform_matrix::identity());
+		egfx::object::camera_cref camera = current_scene->get_camera();
 
-		math::line const local_line = b.mesh_def->get_half_edge(selected_edge).get_line();
+		egfx::half_edge::cref const edge = mesh_def.get_half_edge(selected_edge);
+		math::line const local_line = edge.get_line();
+
+		// Find the local split
+		{
+			egfx::face::cref const face = mesh_def.get_face(selected_face);
+			math::plane const face_plane = transform(face.get_plane(), t);
+			if (auto const intersection_result = get_mouse_ray(*main_window, camera).intersects(face_plane))
+			{
+				math::point3f const local_point = transform(*intersection_result, invert(t));				
+				local_split = clamped_project(local_line, local_point);
+			}
+		}		
+
+		// Add overlays
 		m.add_line(datablock::overlay_unlit_edge, transform(local_line, t));
 
 		if (local_split)

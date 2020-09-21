@@ -4,18 +4,12 @@ namespace ot::dedit::selection
 {
 	context::~context() = default;
 
-	void composite_context::update()
+	void composite_context::update(egfx::node::manual& m, action::accumulator& acc)
 	{
 		if (next_context != nullptr)
-			next_context->update();
+			next_context->update(m, acc);
 	}
 	
-	void composite_context::render(egfx::node::manual& m)
-	{
-		if (next_context != nullptr)
-			next_context->render(m);
-	}
-
 	bool composite_context::handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc)
 	{
 		if (next_context != nullptr)
