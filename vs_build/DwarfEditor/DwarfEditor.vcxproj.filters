@@ -14,6 +14,12 @@
     <Filter Include="src\action">
       <UniqueIdentifier>{e898fe48-1eab-45b1-ab03-110c2c9a9bc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\imgui">
+      <UniqueIdentifier>{24eb8ad8-0628-4953-8bf9-9d528123788c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\imgui\boost">
+      <UniqueIdentifier>{186c4b40-2139-4ef9-ae6d-42036d01c688}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\DwarfEditor\main.cpp">
@@ -55,14 +61,20 @@
     <ClCompile Include="..\..\src\DwarfEditor\window.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\DwarfEditor\ImGui.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\DwarfEditor\camera_controller.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\DwarfEditor\config.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\imgui\module.cpp">
+      <Filter>src\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\imgui\projection.cpp">
+      <Filter>src\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\imgui\matrix.cpp">
+      <Filter>src\imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -108,14 +120,26 @@
     <ClInclude Include="..\..\src\DwarfEditor\window.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\DwarfEditor\ImGui.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\camera_controller.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\config.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\imgui\module.h">
+      <Filter>src\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\imgui\projection.h">
+      <Filter>src\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\imgui\boost\common.h">
+      <Filter>src\imgui\boost</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\imgui\boost\matrix_traits.h">
+      <Filter>src\imgui\boost</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\imgui\matrix.h">
+      <Filter>src\imgui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

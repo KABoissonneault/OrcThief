@@ -1,4 +1,4 @@
-#include "ImGui.h"
+#include "module.h"
 
 #include <imgui.h>
 #include <imgui_impl_sdl.h>
@@ -33,23 +33,26 @@ namespace ot::dedit::imgui
 		ImGui_ImplSDL2_NewFrame(&window);
 		ImGui::NewFrame();
 		ImGuizmo::BeginFrame();
+
+		ImGuiIO& io = ImGui::GetIO();
+		ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 	}
 
 	void render()
 	{
 		ImGui::Render();
-	}
-	
-	void end_frame()
-	{
+
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 		}
+	}
 
-		ImGui::EndFrame();
+	void end_frame()
+	{
+		ImGui::EndFrame();		
 	}
 
 	void shutdown()

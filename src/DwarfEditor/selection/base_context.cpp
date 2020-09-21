@@ -52,13 +52,6 @@ namespace ot::dedit::selection
 			return true;
 		}
 
-		// Right-click removes the current selection, if not handled by a sub-context first
-		if (mouse.button == 3 && mouse.state == SDL_RELEASED)
-		{
-			next_context.reset();
-			return true;
-		}
-
 		return false;
 	}
 

@@ -2,11 +2,15 @@
 
 #include "datablock.h"
 #include "input.h"
+#include "imgui/projection.h"
 
 #include "egfx/object/camera.h"
 #include "egfx/window.h"
 
 #include "selection/face_context.h"
+
+#include <imgui.h>
+#include <ImGuizmo.h>
 
 namespace ot::dedit::selection
 {
@@ -100,6 +104,19 @@ namespace ot::dedit::selection
 			auto const vt = math::transform_matrix::from_components(vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04f);
 			m.add_mesh(datablock::overlay_unlit_vertex, egfx::mesh_definition::get_cube(), vt);
 		}
+
+		// Guizmo
+		egfx::object::camera_cref const camera = current_scene->get_camera();
+		imgui::matrix const view = to_imgui(camera.get_view_matrix());
+		imgui::matrix const projection = imgui::make_perspective_projection(camera.get_rad_fov_y(), camera.get_aspect_ratio(), camera.get_z_near(), camera.get_z_far());
+
+		{
+			imgui::matrix const grid_transform = imgui::matrix::identity();
+			ImGuizmo::DrawGrid(view.elements, projection.elements, grid_transform.elements, 10.f);
+		}
+
+		imgui::matrix object_transform = to_imgui(b.get_world_transform(math::transform_matrix::identity()));
+		ImGuizmo::Manipulate(view.elements, projection.elements, ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, object_transform.elements);
 	}
 
 	bool brush_context::handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc)
@@ -133,12 +150,6 @@ namespace ot::dedit::selection
 		if (mouse.button == 1 && mouse.state == SDL_RELEASED && hovered_face != egfx::face::id::none)
 		{
 			next_context.reset(new face_context(*current_map, *current_scene, *main_window, selected_brush, hovered_face));
-			return true;
-		}
-
-		if (mouse.button == 3 && mouse.state == SDL_RELEASED && next_context != nullptr)
-		{
-			next_context.reset();
 			return true;
 		}
 

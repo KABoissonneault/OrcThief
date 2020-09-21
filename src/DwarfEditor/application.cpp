@@ -3,7 +3,7 @@
 #include "input.h"
 #include "selection/base_context.h"
 #include "action/brush.h"
-#include "imgui.h"
+#include "imgui/module.h"
 
 #include "egfx/scene.h"
 #include "egfx/object/camera.h"
@@ -267,14 +267,6 @@ namespace ot::dedit
 	void application::update(math::seconds dt)
 	{
 		camera_controller::update(dt);
-
-		for (auto& brush : current_map.get_brushes())
-		{
-			if (!selection_context->is_selected(brush.get_id()))
-			{
-				brush.node.rotate_around(math::vector3f{ 0.0f, 1.0f, 0.0f }, dt.count());
-			}
-		}		
 	}
 
 	bool application::render()

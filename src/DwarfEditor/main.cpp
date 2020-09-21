@@ -1,8 +1,8 @@
 #include "application.h"
 #include "datablock.h"
 #include "window.h"
-#include "ImGui.h"
 #include "config.h"
+#include "imgui/module.h"
 
 #include "Ogre/Root.h"
 #include "Ogre/ConfigFile.h"

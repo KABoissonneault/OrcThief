@@ -103,12 +103,6 @@ namespace ot::dedit::selection
 			return true;
 		}
 
-		if (e.button == 3 && e.state == SDL_RELEASED && next_context != nullptr)
-		{
-			next_context.reset();
-			return true;
-		}
-
 		return false;
 	}
 

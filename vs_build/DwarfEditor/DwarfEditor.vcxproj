@@ -131,7 +131,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\src\DwarfEditor;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\DwarfEditor;$(ProjectDir)..\..\ext\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -159,7 +159,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\src\DwarfEditor;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\DwarfEditor;$(ProjectDir)..\..\ext\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -188,7 +188,9 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClCompile Include="..\..\src\DwarfEditor\config.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\datablock.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\hud\shadowed_text.cpp" />
-    <ClCompile Include="..\..\src\DwarfEditor\ImGui.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\imgui\matrix.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\imgui\module.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\imgui\projection.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\input.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\main.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\map.cpp" />
@@ -231,7 +233,11 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClInclude Include="..\..\src\DwarfEditor\config.h" />
     <ClInclude Include="..\..\src\DwarfEditor\datablock.h" />
     <ClInclude Include="..\..\src\DwarfEditor\hud\shadowed_text.h" />
-    <ClInclude Include="..\..\src\DwarfEditor\ImGui.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\imgui\boost\common.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\imgui\boost\matrix_traits.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\imgui\matrix.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\imgui\module.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\imgui\projection.h" />
     <ClInclude Include="..\..\src\DwarfEditor\input.h" />
     <ClInclude Include="..\..\src\DwarfEditor\map.h" />
     <ClInclude Include="..\..\src\DwarfEditor\selection\base_context.h" />
