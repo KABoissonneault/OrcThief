@@ -147,34 +147,24 @@ namespace ot::dedit
 	{
 		using namespace ot::math::literals;
 		auto last_frame = std::chrono::steady_clock::now();
-		auto const frame_time = 0.02_s;
-		auto frame_accumulator = frame_time;
+		auto current_frame = last_frame;
 
 		while (!wants_quit) 
 		{
 			start_frame();
-
-			// Events
+		
 			handle_events();
 
-			// Update
-			while (frame_accumulator >= frame_time)
-			{
-				update(frame_time);
-				frame_accumulator -= frame_time;
-			}
+			update(current_frame - last_frame);
 
-			// Rendering
 			if (!render())
 			{
-				break;
+				wants_quit = true;
 			}
 
 			end_frame();
 
-			auto const current_frame = std::chrono::steady_clock::now();
-			frame_accumulator += std::min(1._s, std::chrono::duration_cast<ot::math::seconds>(current_frame - last_frame));
-			last_frame = current_frame;
+			last_frame = std::exchange(current_frame, std::chrono::steady_clock::now());
 		}
 	}
 
@@ -183,7 +173,6 @@ namespace ot::dedit
 		mouse_controller::start_frame();
 
 		graphics.start_frame();
-		imgui::new_frame(*main_window);
 	}
 
 	void application::handle_events()
@@ -204,10 +193,10 @@ namespace ot::dedit
 				SDL_KeyboardEvent const& key = e.key;
 				auto const modifiers = input::keyboard::get_modifiers();
 
+				ImGui_ImplSDL2_ProcessEvent(&e);
+
 				if (imgui_io.WantCaptureKeyboard)
 				{
-					ImGui_ImplSDL2_ProcessEvent(&e);
-
 					if (key.state == SDL_PRESSED && key.keysym.scancode == SDL_SCANCODE_F4 && modifiers == input::keyboard::mod::lalt)
 						wants_quit = true;
 
@@ -231,13 +220,16 @@ namespace ot::dedit
 
 				break;
 			}
+			case SDL_TEXTINPUT:
+				ImGui_ImplSDL2_ProcessEvent(&e);
+				break;
+
 			case SDL_MOUSEBUTTONUP:
 			case SDL_MOUSEBUTTONDOWN:
-				if (imgui::has_mouse())
-				{
-					ImGui_ImplSDL2_ProcessEvent(&e);
+				ImGui_ImplSDL2_ProcessEvent(&e);
+
+				if (imgui::has_mouse())	
 					break;
-				}
 
 				if (mouse_controller::handle_mouse_button_event(e.button))
 					break;
@@ -281,16 +273,13 @@ namespace ot::dedit
 
 		graphics.on_window_events(window_events);
 
-		selection_actions.apply_actions(current_map);
+		imgui::new_frame(*main_window);
 	}
 
 	void application::update(math::seconds dt)
 	{
 		camera_controller::update(dt);
-	}
 
-	bool application::render()
-	{
 		std::string s;
 		selection_context->get_debug_string(s);
 		debug_text->set_text(s);
@@ -301,6 +290,11 @@ namespace ot::dedit
 		selection_render.clear();
 		selection_context->update(selection_render, selection_actions, input);
 
+		selection_actions.apply_actions(current_map);
+	}
+
+	bool application::render()
+	{
 		// Render
 		imgui::render();
 

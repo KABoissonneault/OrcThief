@@ -59,8 +59,8 @@ namespace ot::dedit
 
 		bool wants_quit = false;
 
-		void start_frame();
 		void handle_events();
+		void start_frame();
 		void update(math::seconds dt);
 		[[nodiscard]] bool render();
 		void end_frame();
