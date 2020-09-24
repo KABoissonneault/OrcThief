@@ -203,6 +203,9 @@ namespace ot::dedit
 					break;
 				}
 
+				if (camera_controller::handle_keyboard_event(e.key))
+					break;
+
 				if (key.keysym.scancode == SDL_SCANCODE_Z 
 					&& key.state == SDL_PRESSED
 					&& key.repeat == 0

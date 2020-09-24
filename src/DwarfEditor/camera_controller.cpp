@@ -30,6 +30,16 @@ namespace ot::dedit
 	}
 
 	template<typename Application>
+	bool camera_controller<Application>::handle_keyboard_event(SDL_KeyboardEvent const& key)
+	{
+		// Just swallow keyboard input events while controlling the camera
+		if (input::mouse::get_buttons() == input::mouse::button_type::right)
+			return true;
+
+		return false;
+	}
+
+	template<typename Application>
 	bool camera_controller<Application>::handle_mouse_motion_event(SDL_MouseMotionEvent const& e)
 	{
 		// Only move the camera while the right-click is pressed
