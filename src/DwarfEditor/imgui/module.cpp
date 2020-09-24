@@ -60,4 +60,9 @@ namespace ot::dedit::imgui
 		ImGui_ImplSDL2_Shutdown();
 		ImGui::DestroyContext();
 	}
+
+	bool has_mouse()
+	{
+		return ImGui::GetIO().WantCaptureMouse;
+	}
 }

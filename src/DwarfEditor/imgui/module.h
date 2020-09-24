@@ -9,4 +9,6 @@ namespace ot::dedit::imgui
 	void render();
 	void end_frame();
 	void shutdown();
+
+	bool has_mouse();
 }

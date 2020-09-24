@@ -33,7 +33,7 @@ namespace ot::dedit
 	bool camera_controller<Application>::handle_mouse_motion_event(SDL_MouseMotionEvent const& e)
 	{
 		// Only move the camera while the right-click is pressed
-		if (input::mouse::get_buttons() != input::mouse::button::right)
+		if (input::mouse::get_buttons() != input::mouse::button_type::right)
 			return false;
 
 		egfx::object::camera_ref const camera = get_camera();
@@ -90,7 +90,7 @@ namespace ot::dedit
 	void camera_controller<Application>::update(math::seconds dt)
 	{
 		// Only move the camera while the right-click is pressed
-		if (input::mouse::get_buttons() != input::mouse::button::right)
+		if (input::mouse::get_buttons() != input::mouse::button_type::right)
 			return;
 
 		rotate(dt);

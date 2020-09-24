@@ -59,19 +59,23 @@ namespace ot::dedit::selection
 
 	}
 
-	void face_context::update(egfx::node::manual& m, action::accumulator& acc)
+	void face_context::update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input)
 	{
 		hovered_edge = egfx::half_edge::id::none;
 
 		brush const& b = current_map->get_brushes()[selected_brush];
 		math::transform_matrix const t = b.get_world_transform(math::transform_matrix::identity());
 
-		if (next_context == nullptr && has_focus(*main_window))
+		// Find the hovered edge
+		if (next_context == nullptr)
 		{
-			math::ray const mouse_ray = get_mouse_ray(*main_window, current_scene->get_camera());
-			hovered_edge = detect_hovered_edge(mouse_ray, b.mesh_def->get_face(selected_face), t);
-		}		
-
+			if (has_focus(*main_window))
+			{
+				math::ray const mouse_ray = get_mouse_ray(*main_window, current_scene->get_camera());
+				hovered_edge = detect_hovered_edge(mouse_ray, b.mesh_def->get_face(selected_face), t);
+			}
+		}	
+		
 		// Add overlays
 		m.add_face(datablock::overlay_unlit_transparent_heavy, b.mesh_def->get_face(selected_face), t);
 
@@ -81,21 +85,20 @@ namespace ot::dedit::selection
 			m.add_line(datablock::overlay_unlit_edge, transform(local_line, t));
 		}
 
-		composite_context::update(m, acc);
-	}
+		composite_context::update(m, acc, input);
 
-	bool face_context::handle_mouse_button_event(SDL_MouseButtonEvent const& e, action::accumulator& acc)
-	{
-		if (composite_context::handle_mouse_button_event(e, acc))
-			return true;
-
-		if (e.button == 1 && e.state == SDL_RELEASED && hovered_edge != egfx::half_edge::id::none)
+		// Handle input
+		if(next_context == nullptr)
 		{
-			next_context.reset(new edge_context(*current_map, *current_scene, *main_window, selected_brush, selected_face, hovered_edge));
-			return true;
+			if (hovered_edge != egfx::half_edge::id::none && input.consume_left_click())
+			{
+				next_context.reset(new edge_context(*current_map, *current_scene, *main_window, selected_brush, selected_face, hovered_edge));
+			}
 		}
-
-		return false;
+		else if (input.consume_right_click())
+		{
+			next_context.reset();
+		}
 	}
 
 	void face_context::get_debug_string(std::string& s) const

@@ -25,8 +25,7 @@ namespace ot::dedit::selection
 		}
 
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) override;
-		virtual bool handle_mouse_button_event(SDL_MouseButtonEvent const& mouse, action::accumulator& acc) override;
-
+		virtual void update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input) override;
 		virtual void get_debug_string(std::string& s) const override;
 	};
 }

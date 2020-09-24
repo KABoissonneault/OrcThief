@@ -5,9 +5,10 @@
 
 #include "egfx/node/manual.h"
 
-#include "action/accumulator.h"
-
 #include "map.h"
+#include "input.h"
+
+#include "action/accumulator.h"
 
 #include <SDL_events.h>
 
@@ -22,10 +23,8 @@ namespace ot::dedit::selection
 
 		// Returns true if the input was handled
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) { (void)key, (void) acc; return false; }
-		virtual bool handle_mouse_button_event(SDL_MouseButtonEvent const& mouse, action::accumulator& acc) { (void)mouse, (void) acc; return false; }
-		virtual bool handle_mouse_motion_event(SDL_MouseMotionEvent const& mouse, action::accumulator& acc) { (void)mouse, (void) acc; return false; }
-
-		virtual void update(egfx::node::manual& m, action::accumulator& acc) { (void)m, (void)acc; }
+		
+		virtual void update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input) { (void)m, (void)acc, (void) input; }
 
 		virtual bool is_selected(entity_id id) const noexcept { (void)id; return false; }
 
@@ -40,10 +39,8 @@ namespace ot::dedit::selection
 	public:
 		// Returns true if the input was handled
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) override;
-		virtual bool handle_mouse_button_event(SDL_MouseButtonEvent const& mouse, action::accumulator& acc) override;
-		virtual bool handle_mouse_motion_event(SDL_MouseMotionEvent const& mouse, action::accumulator& acc) override;
-
-		virtual void update(egfx::node::manual& m, action::accumulator& acc) override;
+		
+		virtual void update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input) override;
 
 		virtual bool is_selected(entity_id id) const noexcept { return next_context != nullptr ? next_context->is_selected(id) : false; }
 

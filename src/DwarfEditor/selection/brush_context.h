@@ -25,9 +25,8 @@ namespace ot::dedit::selection
 		brush_context(map const& current_map, egfx::scene const& current_scene, egfx::window const& main_window, size_t selected_brush) noexcept;
 
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) override;
-		virtual bool handle_mouse_button_event(SDL_MouseButtonEvent const& mouse, action::accumulator& acc) override;
 
-		virtual void update(egfx::node::manual& m, action::accumulator& acc) override;
+		virtual void update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input) override;
 
 		virtual bool is_selected(entity_id id) const noexcept override { return current_map->get_brushes()[selected_brush].get_id() == id; }
 

@@ -152,6 +152,8 @@ namespace ot::dedit
 
 		while (!wants_quit) 
 		{
+			start_frame();
+
 			// Events
 			handle_events();
 
@@ -168,10 +170,20 @@ namespace ot::dedit
 				break;
 			}
 
+			end_frame();
+
 			auto const current_frame = std::chrono::steady_clock::now();
 			frame_accumulator += std::min(1._s, std::chrono::duration_cast<ot::math::seconds>(current_frame - last_frame));
 			last_frame = current_frame;
 		}
+	}
+
+	void application::start_frame()
+	{
+		mouse_controller::start_frame();
+
+		graphics.start_frame();
+		imgui::new_frame(*main_window);
 	}
 
 	void application::handle_events()
@@ -202,7 +214,6 @@ namespace ot::dedit
 					break;
 				}
 
-
 				if (key.keysym.scancode == SDL_SCANCODE_Z 
 					&& key.state == SDL_PRESSED
 					&& key.repeat == 0
@@ -222,14 +233,23 @@ namespace ot::dedit
 			}
 			case SDL_MOUSEBUTTONUP:
 			case SDL_MOUSEBUTTONDOWN:
-				if (imgui_io.WantCaptureMouse)
+				if (imgui::has_mouse())
 				{
 					ImGui_ImplSDL2_ProcessEvent(&e);
 					break;
 				}
 
-				if (selection_context != nullptr && selection_context->handle_mouse_button_event(e.button, selection_actions))
+				if (mouse_controller::handle_mouse_button_event(e.button))
 					break;
+
+				break;
+
+			case SDL_MOUSEWHEEL:
+				if (imgui::has_mouse())
+				{
+					ImGui_ImplSDL2_ProcessEvent(&e);
+					break;
+				}
 
 				break;
 
@@ -237,7 +257,7 @@ namespace ot::dedit
 				if (camera_controller::handle_mouse_motion_event(e.motion))
 					break;
 
-				if (selection_context != nullptr && selection_context->handle_mouse_motion_event(e.motion, selection_actions))
+				if (mouse_controller::handle_mouse_motion_event(e.motion))
 					break;
 
 				break;
@@ -271,16 +291,15 @@ namespace ot::dedit
 
 	bool application::render()
 	{
-		// Start frame
-		graphics.start_frame();
-		imgui::new_frame(*main_window);
-
 		std::string s;
 		selection_context->get_debug_string(s);
 		debug_text->set_text(s);
 
+		input::frame_input input;
+		input.mouse_action = mouse_controller::get_action();
+
 		selection_render.clear();
-		selection_context->update(selection_render, selection_actions);
+		selection_context->update(selection_render, selection_actions, input);
 
 		// Render
 		imgui::render();
@@ -289,11 +308,14 @@ namespace ot::dedit
 		if (!graphics.render())
 		{
 			return false;
-		}
-
-		imgui::end_frame();
+		}		
 
 		return true;
+	}
+
+	void application::end_frame()
+	{
+		imgui::end_frame();
 	}
 
 	void application::actions::push_brush_action(uptr<action::brush_base, fwd_delete<action::brush_base>> action)

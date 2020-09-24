@@ -29,5 +29,5 @@ namespace ot::dedit
 		void update(math::seconds dt);
 	};
 
-	extern template camera_controller<application>;
+	extern template class camera_controller<application>;
 }

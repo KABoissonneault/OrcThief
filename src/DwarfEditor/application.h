@@ -5,6 +5,7 @@
 #include "map.h"
 #include "config.h"
 #include "camera_controller.h"
+#include "mouse_controller.h"
 #include "hud/shadowed_text.h"
 
 #include "core/uptr.h"
@@ -23,7 +24,9 @@
 
 namespace ot::dedit
 {
-	class application : private camera_controller<application>
+	class application 
+		: private camera_controller<application>
+		, private mouse_controller<application>
 	{
 		friend class camera_controller<application>;
 
@@ -56,9 +59,11 @@ namespace ot::dedit
 
 		bool wants_quit = false;
 
+		void start_frame();
 		void handle_events();
 		void update(math::seconds dt);
 		[[nodiscard]] bool render();
+		void end_frame();
 
 	public:
 		application(sdl::unique_window window, egfx::module& graphics);

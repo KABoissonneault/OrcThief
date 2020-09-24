@@ -79,6 +79,9 @@
     <ClCompile Include="..\..\src\DwarfEditor\selection\brush_common.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\mouse_controller.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\DwarfEditor\application.h">
@@ -146,6 +149,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\selection\brush_common.h">
       <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\mouse_controller.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@
 #include "datablock.h"
 #include "input.h"
 #include "imgui/projection.h"
+#include "imgui/module.h"
 
 #include "egfx/object/camera.h"
 #include "egfx/window.h"
@@ -63,7 +64,7 @@ namespace ot::dedit::selection
 			}
 		}
 
-		void add_guizmo(egfx::object::camera_cref camera, math::transform_matrix const& t)
+		[[nodiscard]] bool add_guizmo(egfx::object::camera_cref camera, imgui::matrix& object_transform)
 		{
 			imgui::matrix const view = to_imgui(camera.get_view_matrix());
 			imgui::matrix const projection = imgui::make_perspective_projection(camera.get_rad_fov_y(), camera.get_aspect_ratio(), camera.get_z_near(), camera.get_z_far());
@@ -73,8 +74,7 @@ namespace ot::dedit::selection
 				ImGuizmo::DrawGrid(view.elements, projection.elements, grid_transform.elements, 10.f);
 			}
 
-			imgui::matrix object_transform = to_imgui(t);
-			ImGuizmo::Manipulate(view.elements, projection.elements, ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, object_transform.elements);
+			return ImGuizmo::Manipulate(view.elements, projection.elements, ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, object_transform.elements);
 		}
 	}
 
@@ -86,7 +86,7 @@ namespace ot::dedit::selection
 		select(selected_brush);
 	}
 
-	void brush_context::update(egfx::node::manual& m, action::accumulator& acc)
+	void brush_context::update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input)
 	{
 		hovered_face = egfx::face::id::none;
 
@@ -98,17 +98,30 @@ namespace ot::dedit::selection
 
 		if (next_context == nullptr)
 		{
-			if (has_focus(*main_window))
+			if (has_focus(*main_window) && !imgui::has_mouse())
 			{
 				hovered_face = get_closest_face(camera.get_position(), get_mouse_ray(*main_window, camera), t, mesh_def);
 			}
 
-			add_guizmo(camera, t);
-		}		
+			imgui::matrix object_matrix = to_imgui(t);
+			(void)add_guizmo(camera, object_matrix); // TODO
+		}	
 
 		add_manual_scene(m, mesh_def, t, hovered_face);
-		
-		composite_context::update(m, acc);
+
+		composite_context::update(m, acc, input);
+
+		if (next_context == nullptr)
+		{
+			if (hovered_face != egfx::face::id::none && input.consume_left_click())
+			{
+				next_context.reset(new face_context(*current_map, *current_scene, *main_window, selected_brush, hovered_face));
+			}
+		}
+		else if(input.consume_right_click())
+		{
+			next_context.reset();
+		}
 	}
 
 	bool brush_context::handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc)
@@ -128,20 +141,6 @@ namespace ot::dedit::selection
 				select_next();
 			}
 			
-			return true;
-		}
-
-		return false;
-	}
-
-	bool brush_context::handle_mouse_button_event(SDL_MouseButtonEvent const& mouse, action::accumulator& acc)
-	{
-		if (composite_context::handle_mouse_button_event(mouse, acc))
-			return true;
-
-		if (mouse.button == 1 && mouse.state == SDL_RELEASED && hovered_face != egfx::face::id::none)
-		{
-			next_context.reset(new face_context(*current_map, *current_scene, *main_window, selected_brush, hovered_face));
 			return true;
 		}
 
