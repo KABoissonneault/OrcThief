@@ -64,7 +64,7 @@ namespace ot::dedit::selection
 			}
 		}
 
-		[[nodiscard]] bool add_guizmo(egfx::object::camera_cref camera, imgui::matrix& object_transform)
+		[[nodiscard]] bool add_guizmo(egfx::object::camera_cref camera, imgui::matrix& object_transform, ImGuizmo::OPERATION operation)
 		{
 			imgui::matrix const view = to_imgui(camera.get_view_matrix());
 			imgui::matrix const projection = imgui::make_perspective_projection(camera.get_rad_fov_y(), camera.get_aspect_ratio(), camera.get_z_near(), camera.get_z_far());
@@ -74,7 +74,7 @@ namespace ot::dedit::selection
 				ImGuizmo::DrawGrid(view.elements, projection.elements, grid_transform.elements, 10.f);
 			}
 
-			return ImGuizmo::Manipulate(view.elements, projection.elements, ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, object_transform.elements);
+			return ImGuizmo::Manipulate(view.elements, projection.elements, operation, ImGuizmo::LOCAL, object_transform.elements);
 		}
 	}
 
@@ -98,13 +98,20 @@ namespace ot::dedit::selection
 
 		if (next_context == nullptr)
 		{
-			if (has_focus(*main_window) && !imgui::has_mouse())
-			{
-				hovered_face = get_closest_face(camera.get_position(), get_mouse_ray(*main_window, camera), t, mesh_def);
-			}
+			operation_window();
 
-			imgui::matrix object_matrix = to_imgui(t);
-			(void)add_guizmo(camera, object_matrix); // TODO
+			if (operation == operation_type::face_selection)
+			{
+				if (has_focus(*main_window) && !imgui::has_mouse())
+				{
+					hovered_face = get_closest_face(camera.get_position(), get_mouse_ray(*main_window, camera), t, mesh_def);
+				}
+			}
+			else
+			{
+				imgui::matrix object_matrix = to_imgui(t);
+				(void)add_guizmo(camera, object_matrix, static_cast<ImGuizmo::OPERATION>(operation)); // TODO
+			}
 		}	
 
 		add_manual_scene(m, mesh_def, t, hovered_face);
@@ -124,24 +131,47 @@ namespace ot::dedit::selection
 		}
 	}
 
+	void brush_context::operation_window()
+	{
+		ImGui::Begin("Brush Context");
+
+		if (ImGui::RadioButton("(T)ranslate", operation == operation_type::translate)) operation = operation_type::translate;
+		if (ImGui::RadioButton("(R)otation", operation == operation_type::rotation)) operation = operation_type::rotation;
+		if (ImGui::RadioButton("(S)cale", operation == operation_type::scale)) operation = operation_type::scale;
+		if (ImGui::RadioButton("(F)ace Selection", operation == operation_type::face_selection)) operation = operation_type::face_selection;
+
+		ImGui::End();
+	}
+
 	bool brush_context::handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc)
 	{
 		if (composite_context::handle_keyboard_event(key, acc))
 			return true;
 
 		SDL_Keysym const& keysym = key.keysym;
-		if (keysym.scancode == SDL_SCANCODE_TAB && key.state == SDL_RELEASED)
+		if (key.state == SDL_PRESSED)
 		{
-			if (keysym.mod & KMOD_LSHIFT)
+			switch (key.keysym.scancode)
 			{
-				select_previous();
-			}
-			else
-			{
-				select_next();
+			case SDL_SCANCODE_TAB:
+				if (keysym.mod & KMOD_LSHIFT)
+				{
+					select_previous();
+				} else
+				{
+					select_next();
+				}
+
+				return true;
 			}
 			
-			return true;
+			switch (key.keysym.sym)
+			{
+			case SDLK_t: operation = operation_type::translate; return true;
+			case SDLK_r: operation = operation_type::rotation; return true;
+			case SDLK_s: operation = operation_type::scale; return true;
+			case SDLK_f: operation = operation_type::face_selection; return true;
+			}
 		}
 
 		return false;

@@ -6,6 +6,8 @@
 #include "egfx/scene.h"
 #include "egfx/window.h"
 
+#include <optional>
+
 namespace ot::dedit::selection
 {
 	class brush_context : public composite_context
@@ -17,9 +19,22 @@ namespace ot::dedit::selection
 		size_t selected_brush;
 		egfx::face::id hovered_face = egfx::face::id::none;
 
+		enum class operation_type
+		{
+			translate,
+			rotation,
+			scale,
+			bounds,
+			face_selection,
+		};
+
+		operation_type operation = operation_type::translate;
+
 		void select(size_t brush_idx);
 		void select_next();
 		void select_previous();
+
+		void operation_window();
 
 	public:
 		brush_context(map const& current_map, egfx::scene const& current_scene, egfx::window const& main_window, size_t selected_brush) noexcept;
