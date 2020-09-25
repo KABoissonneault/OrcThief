@@ -6,6 +6,8 @@
 #include "egfx/scene.h"
 #include "egfx/window.h"
 
+#include <optional>
+
 namespace ot::dedit::selection
 {
 	// The context at the root of the application. Handles object selection and global events
@@ -14,6 +16,12 @@ namespace ot::dedit::selection
 		map const* current_map;
 		egfx::scene const* current_scene;
 		egfx::window const* main_window;
+		std::optional<size_t> selected_brush;
+
+		void do_selection();
+
+		void select_brush(size_t brush);
+		void deselect_brush();
 
 	public:
 		base_context(map const& current_map, egfx::scene const& current_scene, egfx::window const& main_window) noexcept
