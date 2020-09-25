@@ -3,6 +3,8 @@
 #include "selection/face_context.h"
 #include "selection/brush_common.h"
 
+#include "action/brush.h"
+
 #include "datablock.h"
 #include "input.h"
 #include "imgui/projection.h"
@@ -64,7 +66,7 @@ namespace ot::dedit::selection
 			}
 		}
 
-		[[nodiscard]] bool add_guizmo(egfx::object::camera_cref camera, imgui::matrix& object_transform, ImGuizmo::OPERATION operation)
+		bool add_guizmo(egfx::object::camera_cref camera, imgui::matrix& object_transform, ImGuizmo::OPERATION operation)
 		{
 			imgui::matrix const view = to_imgui(camera.get_view_matrix());
 			imgui::matrix const projection = imgui::make_perspective_projection(camera.get_rad_fov_y(), camera.get_aspect_ratio(), camera.get_z_near(), camera.get_z_far());
@@ -82,6 +84,7 @@ namespace ot::dedit::selection
 		: current_map(&current_map)
 		, current_scene(&current_scene)
 		, main_window(&main_window)
+		, object_matrix(to_imgui(current_map.get_brush(selected_brush).get_world_transform(math::transform_matrix::identity())))
 	{
 		select(selected_brush);
 	}
@@ -109,8 +112,37 @@ namespace ot::dedit::selection
 			}
 			else
 			{
-				imgui::matrix object_matrix = to_imgui(t);
-				(void)add_guizmo(camera, object_matrix, static_cast<ImGuizmo::OPERATION>(operation)); // TODO
+				// Ensure the base transform stays up-to-date
+				if (!is_editing)
+					object_matrix = to_imgui(t);
+
+				add_guizmo(camera, object_matrix, static_cast<ImGuizmo::OPERATION>(operation));
+				
+				// If we're using ImGuizmo, we're in the middle of editing
+				if (ImGuizmo::IsUsing())
+				{
+					is_editing = true;
+				}
+				// If we just stopped using ImGuizmo, then we need to commit the edit if any
+				else if (is_editing)
+				{
+					if (!float_eq(object_matrix, t))
+					{
+						switch (operation)
+						{
+						case operation_type::translate:
+							acc.emplace_brush_action<action::set_position>(b, destination_from_origin(object_matrix.get_displacement()));
+							break;
+						case operation_type::rotation:
+							acc.emplace_brush_action<action::set_rotation>(b, object_matrix.get_rotation());
+							break;
+						case operation_type::scale:
+							acc.emplace_brush_action<action::set_scale>(b, object_matrix.get_scale());
+							break;
+						}
+					}
+					is_editing = false;
+				}
 			}
 		}	
 
@@ -133,7 +165,9 @@ namespace ot::dedit::selection
 
 	void brush_context::operation_window()
 	{
-		ImGui::Begin("Brush Context");
+		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImGui::GetStyleColorVec4(ImGuiCol_TitleBg));
+		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoResize;
+		ImGui::Begin("Brush Context", nullptr, flags);
 
 		if (ImGui::RadioButton("(T)ranslate", operation == operation_type::translate)) operation = operation_type::translate;
 		if (ImGui::RadioButton("(R)otation", operation == operation_type::rotation)) operation = operation_type::rotation;
@@ -141,6 +175,7 @@ namespace ot::dedit::selection
 		if (ImGui::RadioButton("(F)ace Selection", operation == operation_type::face_selection)) operation = operation_type::face_selection;
 
 		ImGui::End();
+		ImGui::PopStyleColor();
 	}
 
 	bool brush_context::handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc)
@@ -157,7 +192,8 @@ namespace ot::dedit::selection
 				if (keysym.mod & KMOD_LSHIFT)
 				{
 					select_previous();
-				} else
+				} 
+				else
 				{
 					select_next();
 				}

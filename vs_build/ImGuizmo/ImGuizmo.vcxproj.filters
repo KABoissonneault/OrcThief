@@ -18,7 +18,4 @@
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\ImGui\ImGui.props" />
-  </ItemGroup>
 </Project>

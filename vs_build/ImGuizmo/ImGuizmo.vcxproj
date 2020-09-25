@@ -152,9 +152,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\ext\ImGuizmo\src\ImGuizmo.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\ImGui\ImGui.props" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

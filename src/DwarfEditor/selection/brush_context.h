@@ -2,6 +2,7 @@
 
 #include "selection/context.h"
 #include "map.h"
+#include "imgui/matrix.h"
 
 #include "egfx/scene.h"
 #include "egfx/window.h"
@@ -18,6 +19,8 @@ namespace ot::dedit::selection
 
 		size_t selected_brush;
 		egfx::face::id hovered_face = egfx::face::id::none;
+		imgui::matrix object_matrix;
+		bool is_editing = false;
 
 		enum class operation_type
 		{

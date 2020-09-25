@@ -18,6 +18,7 @@
 #include <SDL_video.h>
 
 #include <imgui_impl_sdl.h>
+#include <ImGuizmo.h>
 
 #include <iterator>
 
@@ -203,6 +204,10 @@ namespace ot::dedit
 					break;
 				}
 
+				// Ignore keyboard while using ImGuizmo
+				if (ImGuizmo::IsUsing())
+					break;
+
 				if (camera_controller::handle_keyboard_event(e.key))
 					break;
 
@@ -240,11 +245,10 @@ namespace ot::dedit
 				break;
 
 			case SDL_MOUSEWHEEL:
+				ImGui_ImplSDL2_ProcessEvent(&e);
+				
 				if (imgui::has_mouse())
-				{
-					ImGui_ImplSDL2_ProcessEvent(&e);
 					break;
-				}
 
 				break;
 

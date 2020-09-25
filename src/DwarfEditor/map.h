@@ -20,6 +20,7 @@ namespace ot::dedit
 
 		math::transform_matrix get_local_transform() const noexcept;
 		math::transform_matrix get_world_transform(math::transform_matrix const& parent) const noexcept;
+		
 		entity_id get_id() const noexcept;
 
 		void reload_node();
@@ -35,6 +36,7 @@ namespace ot::dedit
 
 		std::span<brush> get_brushes() noexcept { return brushes; }
 		std::span<brush const> get_brushes() const noexcept { return brushes; }
+		brush const& get_brush(size_t i) const { return brushes[i]; }
 		brush const* find_brush(entity_id id) const noexcept;
 		brush* find_brush(entity_id id) noexcept;
 	};
