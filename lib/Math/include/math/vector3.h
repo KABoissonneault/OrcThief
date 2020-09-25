@@ -33,6 +33,10 @@ namespace ot::math
 		{
 			return x * x + y * y + z * z;
 		}
+
+		[[nodiscard]] static vector3 unit_x() noexcept { return { 1, 0, 0 }; }
+		[[nodiscard]] static vector3 unit_y() noexcept { return { 0, 1, 0 }; }
+		[[nodiscard]] static vector3 unit_z() noexcept { return { 0, 0, 1 }; }
 	};
 
 	template<typename T>

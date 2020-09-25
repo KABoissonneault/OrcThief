@@ -4,6 +4,7 @@
 #include "math/boost/vector_traits.h"
 #include "math/boost/quaternion_traits.h"
 #include "math/boost/transform_matrix_traits.h"
+#include "math/boost/transform_matrix_ops.h"
 
 OT_MATH_DETAIL_BOOST_INCLUDE_BEGIN
 #include <boost/qvm/mat_operations.hpp>
@@ -13,7 +14,9 @@ OT_MATH_DETAIL_BOOST_INCLUDE_BEGIN
 
 #include <boost/qvm/vec_operations.hpp>
 #include <boost/qvm/map_mat_vec.hpp>
+#include <boost/qvm/map_vec_mat.hpp>
 #include <boost/qvm/vec_mat_operations.hpp>
+#include <boost/qvm/swizzle.hpp>
 
 #include <boost/qvm/quat_operations.hpp>
 #include <boost/qvm/quat_access.hpp>
@@ -84,26 +87,33 @@ namespace ot::math
 
 	transform_matrix transform_matrix::from_components(vector3f const& displacement, quaternion const& rotation, float scale)
 	{
+		return from_components(displacement, rotation, { scale, scale, scale });
+	}
+
+	transform_matrix transform_matrix::from_components(vector3f const& displacement, quaternion const& rotation, math::scales const& scale)
+	{
 		using boost::qvm::operator*=;
 
 		auto mat = boost::qvm::convert_to<transform_matrix>(rotation);
-		boost::qvm::del_row_col<3, 3>(mat) *= scale;
-		boost::qvm::translation(mat) = displacement;		
+		boost::qvm::del_row_col<3, 3>(mat) *= boost::qvm::diag_mat(scale);
+		boost::qvm::translation(mat) = displacement;
 
 		return mat;
 	}
 
 	transform_matrix transform_matrix::from_components(vector3f const& displacement, rotation_matrix const& rotation, float scale)
 	{
+		return from_components(displacement, rotation, { scale, scale, scale });
+	}
+
+	transform_matrix transform_matrix::from_components(vector3f const& displacement, rotation_matrix const& rotation, math::scales const& scale)
+	{
 		using boost::qvm::operator*=;
-		using boost::qvm::operator*;
 
 		transform_matrix mat = boost::qvm::identity_mat<float, 4>();
 		auto& mat_rotation = boost::qvm::del_row_col<3, 3>(mat);
 		mat_rotation = rotation;
-
-		rotation_matrix const identity = boost::qvm::identity_mat<float, 3>();
-		mat_rotation *= identity * scale;
+		mat_rotation *= boost::qvm::diag_mat(scale);
 
 		boost::qvm::translation(mat) = displacement;
 
@@ -115,22 +125,20 @@ namespace ot::math
 		return boost::qvm::translation(*this);
 	}
 
-	float transform_matrix::get_scale() const noexcept
+		
+	scales transform_matrix::get_scale() const noexcept
 	{
-		auto const& rotation_mat = boost::qvm::del_row_col<3, 3>(*this);
-		assert(
-			float_eq(boost::qvm::mag(boost::qvm::col<0>(rotation_mat)), boost::qvm::mag(boost::qvm::col<1>(rotation_mat)), 4)
-			&& float_eq(boost::qvm::mag(boost::qvm::col<0>(rotation_mat)), boost::qvm::mag(boost::qvm::col<2>(rotation_mat)), 4)
-			&& "Scaling is not uniform!"
-		);
-		return boost::qvm::mag(boost::qvm::col<0>(rotation_mat));
+		return ops::get_scale(*this);
 	}
 
 	rotation_matrix transform_matrix::get_rotation() const noexcept
 	{
 		using boost::qvm::operator*;
-		float const scale = get_scale();
-		return boost::qvm::convert_to<rotation_matrix>(boost::qvm::del_row_col<3, 3>(*this) * (1.0f / scale));
+
+		scales const scale = get_scale();
+		scales const invert_scale{ 1.f / scale.x, 1.f / scale.y, 1.f / scale.z };
+
+		return boost::qvm::del_row_col<3, 3>(*this) * boost::qvm::diag_mat(invert_scale);
 	}
 
 	transform_matrix invert(transform_matrix const& i)

@@ -1,5 +1,11 @@
 #include "math/plane.h"
 
+#include "math/boost/transform_matrix_traits.h"
+
+OT_MATH_DETAIL_BOOST_INCLUDE_BEGIN
+#include <boost/qvm/vec_operations.hpp>
+OT_MATH_DETAIL_BOOST_INCLUDE_END
+
 namespace ot::math
 {
 	plane_side_result get_plane_side(plane p, point3f v)
@@ -49,8 +55,12 @@ namespace ot::math
 	}
 
 	plane transform(plane p, transform_matrix const& t)
-	{
-		p.distance *= t.get_scale();
+	{		
+		scales scale = t.get_scale();
+		scale.x *= dot_product(p.normal, vector3f::unit_x());
+		scale.y *= dot_product(p.normal, vector3f::unit_y());
+		scale.z *= dot_product(p.normal, vector3f::unit_z());
+		p.distance *= boost::qvm::mag(scale);
 		p.normal = rotate(p.normal, t.get_rotation());
 		p.distance += dot_product(p.normal, t.get_displacement());
 		return p;

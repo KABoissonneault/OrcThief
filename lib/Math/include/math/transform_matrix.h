@@ -26,17 +26,24 @@ namespace ot::math
 
 	[[nodiscard]] vector3f rotate(vector3f v, rotation_matrix const& r) noexcept;
 
+	struct scales
+	{
+		float x, y, z;
+	};
+
 	struct transform_matrix
 	{
 		float elements[16];
 
 		[[nodiscard]] vector3f get_displacement() const noexcept;
 		[[nodiscard]] rotation_matrix get_rotation() const noexcept;
-		[[nodiscard]] float get_scale() const noexcept;
+		[[nodiscard]] scales get_scale() const noexcept;
 
 		[[nodiscard]] static transform_matrix identity();
-		[[nodiscard]] static transform_matrix from_components(vector3f const& displacement, quaternion const& rotation, float scale = 1.0f);
-		[[nodiscard]] static transform_matrix from_components(vector3f const& displacement, rotation_matrix const& rotation, float scale = 1.0f);
+		[[nodiscard]] static transform_matrix from_components(vector3f const& displacement, quaternion const& rotation, float uniform_scale = 1.0f);
+		[[nodiscard]] static transform_matrix from_components(vector3f const& displacement, quaternion const& rotation, math::scales const& scale);
+		[[nodiscard]] static transform_matrix from_components(vector3f const& displacement, rotation_matrix const& rotation, float uniform_scale = 1.0f);
+		[[nodiscard]] static transform_matrix from_components(vector3f const& displacement, rotation_matrix const& rotation, math::scales const& scale);
 	};
 
 	[[nodiscard]] transform_matrix invert(transform_matrix const& t);

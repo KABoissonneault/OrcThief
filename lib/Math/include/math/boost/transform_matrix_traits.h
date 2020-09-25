@@ -6,6 +6,8 @@
 OT_MATH_DETAIL_BOOST_INCLUDE_BEGIN
 #include <boost/qvm/mat_traits.hpp>
 #include <boost/qvm/mat_traits_defaults.hpp>
+#include <boost/qvm/vec_traits.hpp>
+#include <boost/qvm/vec_traits_defaults.hpp>
 #include <boost/qvm/deduce_vec.hpp>
 OT_MATH_DETAIL_BOOST_INCLUDE_END
 
@@ -29,6 +31,33 @@ struct boost::qvm::mat_traits<ot::math::rotation_matrix> : boost::qvm::mat_trait
 	{
 		assert(r < 3 && c < 3);
 		return m.elements[r * 3 + c];
+	}
+};
+
+template<>
+struct boost::qvm::is_vec<ot::math::scales>
+{
+	static bool const value = true;
+};
+
+template<>
+struct boost::qvm::vec_traits<ot::math::scales> : boost::qvm::vec_traits_defaults<ot::math::scales, float, 3>
+{
+	template<int I>
+	static inline float& write_element(ot::math::scales& s)
+	{
+		if constexpr (I == 0)
+		{
+			return s.x;
+		}
+		else if constexpr (I == 1)
+		{
+			return s.y;
+		}
+		else if constexpr (I == 2)
+		{
+			return s.z;
+		}
 	}
 };
 

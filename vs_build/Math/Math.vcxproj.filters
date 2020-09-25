@@ -54,6 +54,9 @@
     <ClInclude Include="..\..\lib\Math\include\math\boost\transform_matrix_traits.h">
       <Filter>include\boost</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Math\include\math\boost\transform_matrix_ops.h">
+      <Filter>include\boost</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\math\src\ray.cpp">

@@ -70,6 +70,8 @@ TEST_CASE("transform_matrix", "[math]")
 
 	REQUIRE(float_eq(mat.get_displacement(), dis));
 	REQUIRE(float_eq(mat.get_rotation(), rot));
-	REQUIRE(float_eq(mat.get_scale(), 1.f));
+	REQUIRE(float_eq(mat.get_scale_x(), 1.f));
+	REQUIRE(float_eq(mat.get_scale_y(), 1.f));
+	REQUIRE(float_eq(mat.get_scale_z(), 1.f));
 	REQUIRE(float_eq(mat * inv, ot::math::transform_matrix::identity()));
 }
