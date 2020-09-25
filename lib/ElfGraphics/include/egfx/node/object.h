@@ -66,10 +66,15 @@ namespace ot::egfx::node
 		// Sets the local position of the node relative to its parent
 		void set_position(math::point3f position) const noexcept;
 
+		// Sets the rotation of the node
+		void set_rotation(math::quaternion rot) const noexcept;
 		// Sets the rotation of the node so that it faces in the direction of the vector
 		void set_direction(math::vector3f direction) const noexcept;
 		// Changes the rotation of the node by 'rad' radians around the given vector
 		void rotate_around(math::vector3f axis, float rad) const noexcept;
+
+		// Set the scale of the node
+		void set_scale(float s) const noexcept;
 
 		// Sets the input node as a child of this node.
 		void attach_child(object_ref child) const noexcept;
@@ -100,10 +105,15 @@ namespace ot::egfx::node
 		// Sets the local position of the node relative to its parent
 		void set_position(math::point3f position) noexcept;
 
+		// Sets the rotation of the node
+		void set_rotation(math::quaternion rot) noexcept;
 		// Sets the rotation of the node so that it faces in the direction of the vector
 		void set_direction(math::vector3f direction) noexcept;
 		// Changes the rotation of the node by 'rad' radians around the given vector
 		void rotate_around(math::vector3f axis, float rad) noexcept;
+
+		// Set the scale of the node
+		void set_scale(float s) noexcept;
 
 		// Sets the input node as a child of this node.
 		void attach_child(object_ref child) noexcept;

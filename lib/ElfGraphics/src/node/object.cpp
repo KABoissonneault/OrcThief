@@ -177,6 +177,16 @@ namespace ot::egfx::node
 		static_cast<object_ref>(*this).set_position(p);
 	}
 
+	void object_ref::set_rotation(math::quaternion rot) const noexcept
+	{
+		get_scene_node(*this).setOrientation(to_ogre_quaternion(rot));
+	}
+
+	void object::set_rotation(math::quaternion rot) noexcept
+	{
+		static_cast<object_ref>(*this).set_rotation(rot);
+	}
+
 	void object_ref::set_direction(math::vector3f direction) const noexcept
 	{
 		get_scene_node(*this).setDirection(to_ogre_vector(direction));
@@ -198,6 +208,16 @@ namespace ot::egfx::node
 	void object::rotate_around(math::vector3f axis, float rad) noexcept
 	{
 		static_cast<object_ref>(*this).rotate_around(axis, rad);
+	}
+
+	void object_ref::set_scale(float s) const noexcept
+	{
+		get_scene_node(*this).setScale(s, s, s);
+	}
+
+	void object::set_scale(float s) noexcept
+	{
+		static_cast<object_ref>(*this).set_scale(s);
 	}
 
 	void object_ref::attach_child(object_ref child) const noexcept
