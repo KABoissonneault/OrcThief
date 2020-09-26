@@ -71,11 +71,6 @@ namespace ot::dedit::selection
 			imgui::matrix const view = to_imgui(camera.get_view_matrix());
 			imgui::matrix const projection = imgui::make_perspective_projection(camera.get_rad_fov_y(), camera.get_aspect_ratio(), camera.get_z_near(), camera.get_z_far());
 
-			{
-				imgui::matrix const grid_transform = imgui::matrix::identity();
-				ImGuizmo::DrawGrid(view.elements, projection.elements, grid_transform.elements, 10.f);
-			}
-
 			return ImGuizmo::Manipulate(view.elements, projection.elements, operation, ImGuizmo::LOCAL, object_transform.elements);
 		}
 	}
