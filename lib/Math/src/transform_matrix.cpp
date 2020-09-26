@@ -80,6 +80,13 @@ namespace ot::math
 		return r * v;
 	}
 
+	bool float_eq(scales const& lhs, scales const& rhs)
+	{
+		return float_eq(lhs.x, rhs.x)
+			&& float_eq(lhs.y, rhs.y)
+			&& float_eq(lhs.z, rhs.z);
+	}
+
 	transform_matrix transform_matrix::identity()
 	{
 		return boost::qvm::identity_mat<float, 4>();
@@ -124,8 +131,7 @@ namespace ot::math
 	{
 		return boost::qvm::translation(*this);
 	}
-
-		
+			
 	scales transform_matrix::get_scale() const noexcept
 	{
 		return ops::get_scale(*this);

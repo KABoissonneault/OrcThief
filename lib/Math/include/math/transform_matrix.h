@@ -6,6 +6,8 @@
 
 namespace ot::math
 {
+	using ot::float_eq;
+
 	struct rotation_matrix
 	{
 		float elements[9];
@@ -30,6 +32,8 @@ namespace ot::math
 	{
 		float x, y, z;
 	};
+
+	[[nodiscard]] bool float_eq(scales const& lhs, scales const& rhs);
 
 	struct transform_matrix
 	{
