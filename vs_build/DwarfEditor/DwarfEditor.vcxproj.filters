@@ -85,6 +85,9 @@
     <ClCompile Include="..\..\src\DwarfEditor\application\mouse_controller.cpp">
       <Filter>src\application</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\application\action_handler.cpp">
+      <Filter>src\application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\DwarfEditor\selection\context.h">
@@ -154,6 +157,9 @@
       <Filter>src\application</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\application\mouse_controller.h">
+      <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\application\action_handler.h">
       <Filter>src\application</Filter>
     </ClInclude>
   </ItemGroup>

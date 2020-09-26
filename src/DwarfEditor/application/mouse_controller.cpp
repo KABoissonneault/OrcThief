@@ -6,29 +6,25 @@
 
 namespace ot::dedit
 {
-	template<typename Application>
-	void mouse_controller<Application>::reset() noexcept
+	void mouse_controller::reset() noexcept
 	{
 		current_state.reset();
 		current_action.reset();
 	}
 
-	template<typename Application>
-	bool mouse_controller<Application>::is_in_click_range(int x, int y) const
+	bool mouse_controller::is_in_click_range(int x, int y) const
 	{
 		mouse_state const& state = *current_state;
 		return std::abs(state.start_x - x) <= 3 && std::abs(state.start_y - y) <= 3;
 	}
 
-	template<typename Application>
-	void mouse_controller<Application>::start_frame()
+	void mouse_controller::start_frame()
 	{
 		if (current_action == input::mouse::action_type::click || current_action == input::mouse::action_type::drag_end)
 			reset();
 	}
 
-	template<typename Application>
-	bool mouse_controller<Application>::handle_mouse_button_event(SDL_MouseButtonEvent const& e)
+	bool mouse_controller::handle_mouse_button_event(SDL_MouseButtonEvent const& e)
 	{
 		if (e.state == SDL_PRESSED)
 		{
@@ -91,8 +87,7 @@ namespace ot::dedit
 		}
 	}
 
-	template<typename Application>
-	bool mouse_controller<Application>::handle_mouse_motion_event(SDL_MouseMotionEvent const& e)
+	bool mouse_controller::handle_mouse_motion_event(SDL_MouseMotionEvent const& e)
 	{
 		if (!current_state)
 			return false;
@@ -125,8 +120,7 @@ namespace ot::dedit
 		return false;
 	}
 
-	template<typename Application>
-	std::optional<input::mouse::action> mouse_controller<Application>::get_action() const noexcept
+	std::optional<input::mouse::action> mouse_controller::get_action() const noexcept
 	{
 		if (!current_action)
 			return std::nullopt;
@@ -134,6 +128,4 @@ namespace ot::dedit
 		mouse_state const& state = *current_state;
 		return input::mouse::action{ state.button, state.current_x, state.current_y, *current_action };
 	}
-
-	template class mouse_controller<application>;
 }

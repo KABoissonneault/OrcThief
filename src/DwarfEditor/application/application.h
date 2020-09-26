@@ -1,11 +1,12 @@
 #pragma once
 
-#include "selection/context.h"
-#include "action/accumulator.h"
-#include "map.h"
+#include "application/camera_controller.h"
+#include "application/mouse_controller.h"
+#include "application/action_handler.h"
+
 #include "config.h"
-#include "camera_controller.h"
-#include "mouse_controller.h"
+#include "map.h"
+#include "selection/context.h"
 #include "hud/shadowed_text.h"
 
 #include "core/uptr.h"
@@ -26,20 +27,8 @@ namespace ot::dedit
 {
 	class application 
 		: private camera_controller<application>
-		, private mouse_controller<application>
 	{
 		friend class camera_controller<application>;
-
-		class actions : public action::accumulator
-		{
-			std::vector<uptr<action::brush_base, fwd_delete<action::brush_base>>> current_brush;
-			std::vector<uptr<action::brush_base, fwd_delete<action::brush_base>>> previous_brush;
-
-		public:
-			virtual void push_brush_action(uptr<action::brush_base, fwd_delete<action::brush_base>> action);
-			void apply_actions(map& current_map);
-			void undo_latest(map& current_map);
-		};
 
 		sdl::unique_window main_window;
 		egfx::module& graphics;
@@ -55,7 +44,8 @@ namespace ot::dedit
 		egfx::overlay::surface debug_surface;
 		std::optional<hud::shadowed_text> debug_text;
 		
-		actions selection_actions;
+		action_handler selection_actions;
+		mouse_controller mouse;
 
 		bool wants_quit = false;
 

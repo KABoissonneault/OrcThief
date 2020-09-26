@@ -8,13 +8,8 @@
 
 namespace ot::dedit
 {
-	class application;
-
-	template<typename Application>
 	class mouse_controller
 	{
-		using derived = Application;
-
 		struct mouse_state
 		{
 			input::mouse::button_type button;
@@ -36,6 +31,4 @@ namespace ot::dedit
 
 		std::optional<input::mouse::action> get_action() const noexcept;
 	};
-
-	extern template class mouse_controller<application>;
 }

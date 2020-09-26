@@ -183,6 +183,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\DwarfEditor\action\brush.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\application\action_handler.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\application\application.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\application\camera_controller.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\application\mouse_controller.cpp" />
@@ -230,6 +231,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClInclude Include="..\..\src\DwarfEditor\action\accumulator.h" />
     <ClInclude Include="..\..\src\DwarfEditor\action\brush.fwd.h" />
     <ClInclude Include="..\..\src\DwarfEditor\action\brush.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\application\action_handler.h" />
     <ClInclude Include="..\..\src\DwarfEditor\application\application.h" />
     <ClInclude Include="..\..\src\DwarfEditor\application\camera_controller.h" />
     <ClInclude Include="..\..\src\DwarfEditor\application\mouse_controller.h" />

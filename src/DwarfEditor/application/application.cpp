@@ -2,7 +2,6 @@
 
 #include "input.h"
 #include "selection/base_context.h"
-#include "action/brush.h"
 #include "imgui/module.h"
 
 #include "egfx/scene.h"
@@ -171,7 +170,7 @@ namespace ot::dedit
 
 	void application::start_frame()
 	{
-		mouse_controller::start_frame();
+		mouse.start_frame();
 
 		graphics.start_frame();
 	}
@@ -211,20 +210,11 @@ namespace ot::dedit
 				if (camera_controller::handle_keyboard_event(e.key))
 					break;
 
-				if (key.keysym.scancode == SDL_SCANCODE_Z 
-					&& key.state == SDL_PRESSED
-					&& key.repeat == 0
-					&& modifiers == input::keyboard::mod_group::ctrl
-					)
-				{
-					selection_actions.undo_latest(current_map);
+				if (selection_actions.handle_keyboard_event(e.key, current_map))
 					break;
-				}
 
 				if (selection_context != nullptr && selection_context->handle_keyboard_event(key, selection_actions))
-				{
 					break;
-				}
 
 				break;
 			}
@@ -239,7 +229,7 @@ namespace ot::dedit
 				if (imgui::has_mouse())	
 					break;
 
-				if (mouse_controller::handle_mouse_button_event(e.button))
+				if (mouse.handle_mouse_button_event(e.button))
 					break;
 
 				break;
@@ -256,7 +246,7 @@ namespace ot::dedit
 				if (camera_controller::handle_mouse_motion_event(e.motion))
 					break;
 
-				if (mouse_controller::handle_mouse_motion_event(e.motion))
+				if (mouse.handle_mouse_motion_event(e.motion))
 					break;
 
 				break;
@@ -292,7 +282,7 @@ namespace ot::dedit
 		debug_text->set_text(s);
 
 		input::frame_input input;
-		input.mouse_action = mouse_controller::get_action();
+		input.mouse_action = mouse.get_action();
 
 		selection_render.clear();
 		selection_context->update(selection_render, selection_actions, input);
@@ -317,33 +307,5 @@ namespace ot::dedit
 	void application::end_frame()
 	{
 		imgui::end_frame();
-	}
-
-	void application::actions::push_brush_action(uptr<action::brush_base, fwd_delete<action::brush_base>> action)
-	{ 
-		current_brush.push_back(std::move(action)); 
-	}
-
-	void application::actions::apply_actions(map& current_map)
-	{
-		if (current_brush.empty())
-			return;
-
-		for (auto& action : current_brush)
-		{
-			action->apply(current_map);
-		}
-
-		previous_brush.insert(previous_brush.end(), std::make_move_iterator(current_brush.begin()), std::make_move_iterator(current_brush.end()));
-		current_brush.clear();		
-	}
-	
-	void application::actions::undo_latest(map& current_map)
-	{
-		if (previous_brush.empty())
-			return;
-
-		previous_brush.back()->undo(current_map);
-		previous_brush.pop_back();
 	}
 }
