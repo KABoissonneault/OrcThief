@@ -4,6 +4,7 @@
 #include "math/transform_matrix.h"
 #include "math/boost/vector_traits.h"
 #include "math/boost/transform_matrix_traits.h"
+#include "math/boost/transform_matrix_ops.h"
 #include "math/boost/quaternion_traits.h"
 
 OT_IMGUI_DETAIL_BOOST_INCLUDE_BEGIN
@@ -31,27 +32,12 @@ namespace ot::dedit::imgui
 
 	math::quaternion matrix::get_rotation() const noexcept
 	{
-		using boost::qvm::operator*;
-		float const scale = get_scale();
-		return boost::qvm::convert_to<math::quaternion>(boost::qvm::del_row_col<3, 3>(*this) * (1.0f / scale));
+		return ot::math::ops::get_rotation(*this).to_quaternion();
 	}
 
-	float matrix::get_scale() const noexcept
+	math::scales matrix::get_scale() const noexcept
 	{
-		auto const& rotation_mat = boost::qvm::del_row_col<3, 3>(*this);
-
-		float const scale_x = boost::qvm::mag(boost::qvm::col<0>(rotation_mat));
-
-#if !defined(NDEBUG) || !NDEBUG
-		float const scale_y = boost::qvm::mag(boost::qvm::col<1>(rotation_mat));
-		float const scale_z = boost::qvm::mag(boost::qvm::col<2>(rotation_mat));
-		assert(
-			float_eq(scale_x, scale_y, 4) && float_eq(scale_x, scale_z, 4)
-			&& "Scaling is not uniform!"
-		);
-#endif
-
-		return scale_x;
+		return ot::math::ops::get_scale(*this);
 	}
 
 	bool float_eq(matrix const& lhs, matrix const& rhs)

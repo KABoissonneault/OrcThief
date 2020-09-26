@@ -104,7 +104,7 @@ namespace ot::dedit::action
 		b.node.set_rotation(previous_state);
 	}
 
-	set_scale::set_scale(brush const& b, float s)
+	set_scale::set_scale(brush const& b, math::scales s)
 		: single_brush(b)
 		, previous_state(b.node.get_scale())
 		, new_s(s)

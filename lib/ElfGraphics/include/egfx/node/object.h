@@ -4,6 +4,7 @@
 
 #include "math/vector3.h"
 #include "math/quaternion.h"
+#include "math/transform_matrix.h"
 
 namespace ot::egfx::node
 {
@@ -35,7 +36,7 @@ namespace ot::egfx::node
 			[[nodiscard]] math::quaternion get_rotation() const noexcept;
 
 			// Gets the local scale of the node
-			[[nodiscard]] float get_scale() const noexcept;
+			[[nodiscard]] math::scales get_scale() const noexcept;
 		};
 	}
 
@@ -75,6 +76,7 @@ namespace ot::egfx::node
 
 		// Set the scale of the node
 		void set_scale(float s) const noexcept;
+		void set_scale(math::scales s) const noexcept;
 
 		// Sets the input node as a child of this node.
 		void attach_child(object_ref child) const noexcept;
@@ -114,6 +116,7 @@ namespace ot::egfx::node
 
 		// Set the scale of the node
 		void set_scale(float s) noexcept;
+		void set_scale(math::scales s) noexcept;
 
 		// Sets the input node as a child of this node.
 		void attach_child(object_ref child) noexcept;

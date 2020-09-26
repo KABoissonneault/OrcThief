@@ -69,9 +69,9 @@ namespace ot::egfx::node
 		}
 
 		template<typename Derived>
-		float object_const_impl<Derived>::get_scale() const noexcept
+		math::scales object_const_impl<Derived>::get_scale() const noexcept
 		{
-			return get_scene_node(static_cast<derived const&>(*this)).getScale()[0]; // we only do uniform scaling here
+			return to_math_scales(get_scene_node(static_cast<derived const&>(*this)).getScale());
 		}
 
 		template class object_const_impl<object_cref>;
@@ -216,6 +216,16 @@ namespace ot::egfx::node
 	}
 
 	void object::set_scale(float s) noexcept
+	{
+		static_cast<object_ref>(*this).set_scale(s);
+	}
+
+	void object_ref::set_scale(math::scales s) const noexcept
+	{
+		get_scene_node(*this).setScale(s.x, s.y, s.z);
+	}
+
+	void object::set_scale(math::scales s) noexcept
 	{
 		static_cast<object_ref>(*this).set_scale(s);
 	}

@@ -4,11 +4,7 @@
 
 #include "math/vector3.h"
 #include "math/quaternion.h"
-
-namespace ot::math
-{
-	struct transform_matrix;
-}
+#include "math/transform_matrix.h"
 
 namespace ot::dedit::imgui
 {
@@ -21,7 +17,7 @@ namespace ot::dedit::imgui
 
 		math::vector3f get_displacement() const noexcept;
 		math::quaternion get_rotation() const noexcept;
-		float get_scale() const noexcept;
+		math::scales get_scale() const noexcept;
 	};
 
 	using ot::float_eq;

@@ -50,6 +50,15 @@ namespace ot::egfx
 		};
 	}
 
+	[[nodiscard]] inline math::scales to_math_scales(Ogre::Vector3 v) noexcept
+	{
+		return {
+			v.x,
+			v.y,
+			v.z
+		};
+	}
+
 	[[nodiscard]] inline math::quaternion to_math_quaternion(Ogre::Quaternion q) noexcept
 	{
 		return { q.w, q.x, q.y, q.z };

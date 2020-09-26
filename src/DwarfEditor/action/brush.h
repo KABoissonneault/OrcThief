@@ -84,14 +84,14 @@ namespace ot::dedit::action
 
 	class set_scale : public single_brush
 	{
-		float previous_state;
-		float new_s;
+		math::scales previous_state;
+		math::scales new_s;
 
 	protected:
 		virtual void do_apply(brush& b) override;
 		virtual void do_undo(brush& b) override;
 
 	public:
-		set_scale(brush const& b, float s);
+		set_scale(brush const& b, math::scales s);
 	};
 }
