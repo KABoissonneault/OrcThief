@@ -183,8 +183,9 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\DwarfEditor\action\brush.cpp" />
-    <ClCompile Include="..\..\src\DwarfEditor\application.cpp" />
-    <ClCompile Include="..\..\src\DwarfEditor\camera_controller.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\application\application.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\application\camera_controller.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\application\mouse_controller.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\config.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\datablock.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\hud\shadowed_text.cpp" />
@@ -194,7 +195,6 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClCompile Include="..\..\src\DwarfEditor\input.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\main.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\map.cpp" />
-    <ClCompile Include="..\..\src\DwarfEditor\mouse_controller.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\selection\base_context.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\selection\brush_common.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\selection\brush_context.cpp" />
@@ -230,8 +230,9 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClInclude Include="..\..\src\DwarfEditor\action\accumulator.h" />
     <ClInclude Include="..\..\src\DwarfEditor\action\brush.fwd.h" />
     <ClInclude Include="..\..\src\DwarfEditor\action\brush.h" />
-    <ClInclude Include="..\..\src\DwarfEditor\application.h" />
-    <ClInclude Include="..\..\src\DwarfEditor\camera_controller.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\application\application.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\application\camera_controller.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\application\mouse_controller.h" />
     <ClInclude Include="..\..\src\DwarfEditor\config.h" />
     <ClInclude Include="..\..\src\DwarfEditor\datablock.h" />
     <ClInclude Include="..\..\src\DwarfEditor\hud\shadowed_text.h" />
@@ -241,7 +242,6 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClInclude Include="..\..\src\DwarfEditor\imgui\module.h" />
     <ClInclude Include="..\..\src\DwarfEditor\imgui\projection.h" />
     <ClInclude Include="..\..\src\DwarfEditor\input.h" />
-    <ClInclude Include="..\..\src\DwarfEditor\mouse_controller.h" />
     <ClInclude Include="..\..\src\DwarfEditor\map.h" />
     <ClInclude Include="..\..\src\DwarfEditor\selection\base_context.h" />
     <ClInclude Include="..\..\src\DwarfEditor\selection\brush_common.h" />
