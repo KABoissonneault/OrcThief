@@ -1,6 +1,7 @@
 #include "datablock.h"
 #include "window.h"
 #include "config.h"
+#include "console.h"
 #include "imgui/module.h"
 #include "application/application.h"
 
@@ -165,6 +166,8 @@ extern "C" int main(int argc, char** argv)
 		ot::dedit::datablock::load_hlms(resource_folder_path / "Ogre");
 		ot::dedit::datablock::initialize();
 		Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups(true);
+
+		ot::dedit::console::initialize();
 
 		{
 			ot::dedit::application app(std::move(main_window), graphics);

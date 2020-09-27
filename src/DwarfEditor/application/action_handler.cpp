@@ -3,6 +3,9 @@
 #include "action/brush.h"
 
 #include "input.h"
+#include "console.h"
+
+#include <cassert>
 
 namespace ot::dedit
 {
@@ -21,7 +24,10 @@ namespace ot::dedit
 			&& modifiers == input::keyboard::mod_group::ctrl
 			)
 		{
-			undo_latest(current_map);
+			if (!has_undo())
+				console::error("Could not undo: no actions in stack");
+			else
+				undo_latest(current_map);
 			return true;
 		}
 
@@ -31,7 +37,11 @@ namespace ot::dedit
 			&& modifiers == input::keyboard::mod_group::ctrl
 			)
 		{
-			redo_latest(current_map);
+			if (!has_redo())
+				console::error("Could not redo: no actions in stack");
+			else
+				redo_latest(current_map);
+
 			return true;
 		}
 
@@ -62,8 +72,7 @@ namespace ot::dedit
 
 	void action_handler::redo_latest(map& current_map)
 	{
-		if (redo_brush.empty())
-			return;
+		assert(has_redo());
 
 		auto& brush = redo_brush.back();
 		brush->apply(current_map);
@@ -73,8 +82,7 @@ namespace ot::dedit
 
 	void action_handler::undo_latest(map& current_map)
 	{
-		if (previous_brush.empty())
-			return;
+		assert(has_undo());
 
 		auto& brush = previous_brush.back();
 		brush->undo(current_map);

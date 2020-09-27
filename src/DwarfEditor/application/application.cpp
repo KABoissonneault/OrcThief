@@ -213,6 +213,9 @@ namespace ot::dedit
 				if (selection_actions.handle_keyboard_event(e.key, current_map))
 					break;
 
+				if (menu::handle_keyboard_event(e.key))
+					break;
+
 				if (selection_context != nullptr && selection_context->handle_keyboard_event(key, selection_actions))
 					break;
 

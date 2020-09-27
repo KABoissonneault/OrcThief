@@ -1,15 +1,14 @@
 #include "action/brush.h"
 
+#include "console.h"
+
 #include "core/fwd_delete.h"
 
-#include <cstdio>
+#include <fmt/format.h>
 
 namespace ot::dedit::action
 {
-	brush_base::~brush_base()
-	{
-
-	}
+	brush_base::~brush_base() = default;
 
 	single_brush::single_brush(brush const& b)
 		: id(b.get_id())
@@ -22,7 +21,7 @@ namespace ot::dedit::action
 		brush* b = current_map.find_brush(get_id());
 		if (b == nullptr)
 		{
-			std::fprintf(stderr, "error: could not apply action, entity id '%u' not found\n", static_cast<uint32_t>(get_id()));
+			console::error(fmt::format("Could not apply action: entity '{}' not found", static_cast<uint32_t>(get_id())));
 			return;
 		}
 
@@ -34,7 +33,7 @@ namespace ot::dedit::action
 		brush* b = current_map.find_brush(get_id());
 		if (b == nullptr)
 		{
-			std::fprintf(stderr, "error: could not undo action, entity id '%u' not found\n", static_cast<uint32_t>(get_id()));
+			console::error(fmt::format("Could not undo action: entity '{}' not found", static_cast<uint32_t>(get_id())));
 			return;
 		}
 

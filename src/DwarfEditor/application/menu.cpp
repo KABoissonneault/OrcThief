@@ -3,13 +3,37 @@
 #include "application/application.h"
 #include "application/action_handler.h"
 
+#include "menu/console_window.h"
+#include "input.h"
+
 #include <imgui.h>
+
 
 namespace ot::dedit
 {
 	template<typename Application>
+	bool menu<Application>::handle_keyboard_event(SDL_KeyboardEvent const& e)
+	{
+		if (e.keysym.sym == SDLK_o
+			&& e.state == SDL_PRESSED
+			&& e.repeat == 0
+			&& input::keyboard::get_modifiers() == input::keyboard::mod_group::alt)
+		{
+			draw_console_window = !draw_console_window;
+			return true;
+		}
+
+		return false;
+	}
+
+	template<typename Application>
 	void menu<Application>::update()
 	{
+		if (draw_console_window)
+		{
+			console_window::draw(&draw_console_window);
+		}
+
 		if (!ImGui::BeginMainMenuBar())
 			return;
 
@@ -36,8 +60,15 @@ namespace ot::dedit
 
 			if (ImGui::MenuItem("Redo", "CTRL+Y", false, actions.has_redo()))
 			{
-				app.get_actions().redo_latest(app.get_current_map());
+				actions.redo_latest(app.get_current_map());
 			}
+
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Window"))
+		{
+			ImGui::MenuItem("Console", "Alt+O", &draw_console_window);
 
 			ImGui::EndMenu();
 		}
