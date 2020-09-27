@@ -3,6 +3,7 @@
 #include "application/camera_controller.h"
 #include "application/mouse_controller.h"
 #include "application/action_handler.h"
+#include "application/menu.h"
 
 #include "config.h"
 #include "map.h"
@@ -27,8 +28,10 @@ namespace ot::dedit
 {
 	class application 
 		: private camera_controller<application>
+		, private menu<application>
 	{
 		friend class camera_controller<application>;
+		friend class menu<application>;
 
 		sdl::unique_window main_window;
 		egfx::module& graphics;
@@ -55,6 +58,13 @@ namespace ot::dedit
 		[[nodiscard]] bool render();
 		void end_frame();
 
+		// Accessors for our friend classes
+		camera_controller& get_camera() noexcept { return *this; }
+		action_handler& get_actions() noexcept { return selection_actions; }
+		menu& get_menu() noexcept { return *this; }
+
+		map& get_current_map() noexcept { return current_map; }
+
 	public:
 		application(sdl::unique_window window, egfx::module& graphics);
 
@@ -64,6 +74,8 @@ namespace ot::dedit
 		[[nodiscard]] brush make_brush(std::span<math::plane const> planes, std::string const& name, math::point3f position);
 
 		void run();
+		// Called while "run" is executing. Tells the application to end the execution of "run"
+		void quit() { wants_quit = true; }
 
 		[[nodiscard]] egfx::scene& get_scene() noexcept { return main_scene; }
 		[[nodiscard]] egfx::window const& get_render_window() const noexcept { return graphics.get_window(egfx::window_id{ SDL_GetWindowID(main_window.get()) }); }

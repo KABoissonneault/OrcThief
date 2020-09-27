@@ -275,6 +275,8 @@ namespace ot::dedit
 
 	void application::update(math::seconds dt)
 	{
+		menu::update();
+
 		camera_controller::update(dt);
 
 		std::string s;
