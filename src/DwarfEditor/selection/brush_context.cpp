@@ -96,7 +96,11 @@ namespace ot::dedit::selection
 
 		if (next_context == nullptr)
 		{
-			operation_window();
+			// Ensure the base transform stays up-to-date
+			if (!is_editing)
+				object_matrix = to_imgui(t);
+
+			operation_window(acc);
 
 			if (operation == operation_type::face_selection)
 			{
@@ -107,10 +111,6 @@ namespace ot::dedit::selection
 			}
 			else
 			{
-				// Ensure the base transform stays up-to-date
-				if (!is_editing)
-					object_matrix = to_imgui(t);
-
 				add_guizmo(camera, object_matrix, static_cast<ImGuizmo::OPERATION>(operation));
 				
 				// If we're using ImGuizmo, we're in the middle of editing
@@ -158,19 +158,48 @@ namespace ot::dedit::selection
 		}
 	}
 
-	void brush_context::operation_window()
+	void brush_context::operation_window(action::accumulator& acc)
 	{
+		brush const& b = current_map->get_brush(selected_brush);
+
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImGui::GetStyleColorVec4(ImGuiCol_TitleBg));
-		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoResize;
-		ImGui::Begin("Brush Context", nullptr, flags);
+		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav;
+		if (!ImGui::Begin("Brush Context", nullptr, flags))
+		{
+			ImGui::End();
+			return;
+		}			
+
+		float translation[3], rotation[3], scale[3];
+		ImGuizmo::DecomposeMatrixToComponents(object_matrix.elements, translation, rotation, scale);
 
 		if (ImGui::RadioButton("(T)ranslate", operation == operation_type::translate)) operation = operation_type::translate;
-		if (ImGui::RadioButton("(R)otation", operation == operation_type::rotation)) operation = operation_type::rotation;
-		if (ImGui::RadioButton("(S)cale", operation == operation_type::scale)) operation = operation_type::scale;
+		ImGui::SameLine();
+		if (ImGui::InputFloat3("", translation))
+		{
+			acc.emplace_brush_action<action::set_position>(b, math::point3f{ translation[0], translation[1], translation[2] });
+		}
+
+		if (ImGui::RadioButton("(R)otation ", operation == operation_type::rotation)) operation = operation_type::rotation;
+		ImGui::SameLine();
+		if (ImGui::InputFloat3("", rotation))
+		{
+			acc.emplace_brush_action<action::set_position>(b, math::point3f{ rotation[0], rotation[1], rotation[2] });
+		}
+
+		if (ImGui::RadioButton("(S)cale    ", operation == operation_type::scale)) operation = operation_type::scale;
+		ImGui::SameLine();
+		if (ImGui::InputFloat3("", scale))
+		{
+			acc.emplace_brush_action<action::set_position>(b, math::point3f{ scale[0], scale[1], scale[2] });
+		}
+
 		if (ImGui::RadioButton("(F)ace Selection", operation == operation_type::face_selection)) operation = operation_type::face_selection;
 
 		ImGui::End();
 		ImGui::PopStyleColor();
+
+		ImGuizmo::RecomposeMatrixFromComponents(translation, rotation, scale, object_matrix.elements);
 	}
 
 	bool brush_context::handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc)

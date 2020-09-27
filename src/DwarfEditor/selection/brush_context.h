@@ -37,7 +37,7 @@ namespace ot::dedit::selection
 		void select_next();
 		void select_previous();
 
-		void operation_window();
+		void operation_window(action::accumulator& acc);
 
 	public:
 		brush_context(map const& current_map, egfx::scene const& current_scene, egfx::window const& main_window, size_t selected_brush) noexcept;
