@@ -46,3 +46,4 @@ ext/Ogre
 *.CopyComplete
 /ext/boost
 *.recipe
+/ext/fmt

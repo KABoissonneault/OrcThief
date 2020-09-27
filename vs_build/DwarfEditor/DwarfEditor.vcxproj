@@ -131,13 +131,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\DwarfEditor;$(ProjectDir)..\..\ext\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\DwarfEditor;$(ProjectDir)..\..\ext\boost;$(ProjectDir)..\..\ext\fmt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OgreMain_d.lib;OgreHlmsUnlit_d.lib;OgreHlmsPbs_d.lib;OgreOverlay_d.lib;RenderSystem_Direct3D11_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OgreMain_d.lib;OgreHlmsUnlit_d.lib;OgreHlmsPbs_d.lib;OgreOverlay_d.lib;RenderSystem_Direct3D11_d.lib;fmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\ext\fmt\build\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).dll RenderSystem_Direct3D11$(OgreLibExtension).dll RenderSystem_GL3Plus$(OgreLibExtension).dll RenderSystem_NULL$(OgreLibExtension).dll OgreOverlay$(OgreLibExtension).dll OgreHlmsPbs$(OgreLibExtension).dll OgreHlmsUnlit$(OgreLibExtension).dll FreeImage.dll zlib.dll
@@ -159,7 +160,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\DwarfEditor;$(ProjectDir)..\..\ext\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\DwarfEditor;$(ProjectDir)..\..\ext\boost;$(ProjectDir)..\..\ext\fmt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -167,7 +168,8 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OgreMain.lib;OgreHlmsUnlit.lib;OgreHlmsPbs.lib;OgreOverlay.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OgreMain.lib;OgreHlmsUnlit.lib;OgreHlmsPbs.lib;OgreOverlay.lib;fmt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\ext\fmt\build\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).dll RenderSystem_Direct3D11$(OgreLibExtension).dll RenderSystem_GL3Plus$(OgreLibExtension).dll RenderSystem_NULL$(OgreLibExtension).dll OgreOverlay$(OgreLibExtension).dll OgreHlmsPbs$(OgreLibExtension).dll OgreHlmsUnlit$(OgreLibExtension).dll FreeImage.dll zlib.dll

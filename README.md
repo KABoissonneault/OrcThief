@@ -46,7 +46,7 @@ The project depends on SDL2.
 
 The location of the installation must be under "/ext/SDL2" - symbolic links supported.
 
-The required components of the Ogre3d installation are:
+The required components of the SDL2 installation are:
 #### Headers
 - /include/...
 
@@ -72,11 +72,26 @@ The location of the installation must be under "/ext/boost" - symbolic links sup
 #### Headers
 - /boost/qvm/...
 
+### fmt
+The project depends on fmt. 
+
+The location of the installation must be under "/ext/fmt" - symbolic links supported.
+
+The required components of the installation are:
+
+#### Headers
+- /include/*.h
+
+#### Binaries
+- /build/Debug/fmtd.lib
+- /build/Release/fmt.lib
+
 ### TL;DR
 ```
 mklink /D %ORC_THIEF%\ext\Ogre %MY_LIRARIES%\Ogre
 mklink /D %ORC_THIEF%\ext\SDL2 %MY_LIRARIES%\SDL2
 mklink /D %ORC_THIEF%\ext\boost %MY_LIBRARIES%\boost
+mklink /D %ORC_THIEF%\ext\fmt %MY_LIBRARIES%\fmt
 ```
 
 ## Project
