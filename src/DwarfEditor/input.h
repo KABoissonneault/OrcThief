@@ -56,6 +56,8 @@ namespace ot::dedit::input
 
 		[[nodiscard]] inline bool is_left_click(action const& a) noexcept { return a.action_type == action_type::click && a.button == button_type::left; }
 		[[nodiscard]] inline bool is_right_click(action const& a) noexcept { return a.action_type == action_type::click && a.button == button_type::right; }
+
+		void set_relative_mode(bool value);
 	}
 
 	namespace keyboard

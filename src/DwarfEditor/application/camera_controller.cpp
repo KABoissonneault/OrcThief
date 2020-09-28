@@ -30,11 +30,48 @@ namespace ot::dedit
 	}
 
 	template<typename Application>
+	void camera_controller<Application>::start_control()
+	{
+		controlling_camera = true;
+		input::mouse::set_relative_mode(true);
+	}
+
+	template<typename Application>
+	void camera_controller<Application>::clear_control()
+	{
+		yaw = 0;
+		pitch = 0;
+		controlling_camera = false;
+		input::mouse::set_relative_mode(false);
+	}
+
+	template<typename Application>
 	bool camera_controller<Application>::handle_keyboard_event(SDL_KeyboardEvent const& key)
 	{
 		// Just swallow keyboard input events while controlling the camera
-		if (input::mouse::get_buttons() == input::mouse::button_type::right)
+		if (controlling_camera)
 			return true;
+
+		return false;
+	}
+
+	template<typename Application>
+	bool camera_controller<Application>::handle_mouse_button_event(SDL_MouseButtonEvent const& e)
+	{
+		auto const button = input::mouse::button_type_from_sdl(e.button);
+		if (button == input::mouse::button_type::right)
+		{
+			if (e.state == SDL_PRESSED)
+			{
+				start_control();
+			}
+			else
+			{
+				clear_control();
+			}
+
+			return true;
+		}
 
 		return false;
 	}
@@ -42,9 +79,15 @@ namespace ot::dedit
 	template<typename Application>
 	bool camera_controller<Application>::handle_mouse_motion_event(SDL_MouseMotionEvent const& e)
 	{
+		if (!controlling_camera)
+			return false;
+
 		// Only move the camera while the right-click is pressed
 		if (input::mouse::get_buttons() != input::mouse::button_type::right)
+		{
+			clear_control();
 			return false;
+		}
 
 		egfx::object::camera_ref const camera = get_camera();
 		egfx::window const& window = get_window();
@@ -99,9 +142,15 @@ namespace ot::dedit
 	template<typename Application>
 	void camera_controller<Application>::update(math::seconds dt)
 	{
+		if (!controlling_camera)
+			return;
+
 		// Only move the camera while the right-click is pressed
 		if (input::mouse::get_buttons() != input::mouse::button_type::right)
+		{
+			clear_control();
 			return;
+		}
 
 		rotate(dt);
 		translate(dt);

@@ -231,6 +231,9 @@ namespace ot::dedit
 
 				if (imgui::has_mouse())	
 					break;
+				
+				if (camera_controller::handle_mouse_button_event(e.button))
+					break;
 
 				if (mouse.handle_mouse_button_event(e.button))
 					break;

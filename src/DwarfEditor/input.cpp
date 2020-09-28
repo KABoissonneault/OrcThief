@@ -1,5 +1,7 @@
 #include "input.h"
 
+#include "SDL2/macro.h"
+
 #include <SDL_keyboard.h>
 
 #include <cassert>
@@ -16,6 +18,11 @@ namespace ot::dedit::input
 		button_type get_buttons()
 		{
 			return static_cast<button_type>(SDL_GetMouseState(nullptr, nullptr));
+		}
+
+		void set_relative_mode(bool value)
+		{
+			OT_SDL_ENSURE(SDL_SetRelativeMouseMode(value ? SDL_TRUE : SDL_FALSE));
 		}
 	}	
 
