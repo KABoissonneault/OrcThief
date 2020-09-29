@@ -4,6 +4,12 @@ namespace ot::dedit::selection
 {
 	context::~context() = default;
 
+	void composite_context::start_frame()
+	{
+		if (next_context != nullptr)
+			next_context->start_frame();
+	}
+
 	void composite_context::update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input)
 	{
 		if (next_context != nullptr)
@@ -15,11 +21,5 @@ namespace ot::dedit::selection
 		if (next_context != nullptr)
 			return next_context->handle_keyboard_event(key, acc);
 		return false;
-	}
-
-	void composite_context::get_debug_string(std::string& debug) const
-	{
-		if (next_context != nullptr)
-			next_context->get_debug_string(debug);
 	}
 }

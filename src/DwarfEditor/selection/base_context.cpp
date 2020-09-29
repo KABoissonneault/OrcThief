@@ -49,21 +49,21 @@ namespace ot::dedit::selection
 			if (found_brush == brushes.end())
 				continue;		
 
-			size_t const hit_brush_idx = std::distance(brushes.begin(), found_brush);
-			if (hit_brush_idx == selected_brush)
+			entity_id const hit_brush_id = found_brush->get_id();
+			if (hit_brush_id == selected_brush)
 				continue;
 			
 			brush const& b = *found_brush;
 
 			if (hits_brush(r, b.get_world_transform(math::transform_matrix::identity()), *b.mesh_def))
 			{
-				select_brush(hit_brush_idx);
+				select_brush(hit_brush_id);
 				break;
 			}
 		}
 	}
 
-	void base_context::select_brush(size_t brush)
+	void base_context::select_brush(entity_id brush)
 	{
 		next_context.reset(new brush_context(*current_map, *current_scene, *main_window, brush));
 		selected_brush = brush;
@@ -75,8 +75,21 @@ namespace ot::dedit::selection
 		selected_brush.reset();
 	}
 	
+	void base_context::start_frame()
+	{
+		// If the brush was externally deleted, go back to base context
+		if (current_map->find_brush(*selected_brush) == nullptr)
+			deselect_brush();
+
+		composite_context::start_frame();
+	}
+
 	void base_context::update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input)
 	{		
+		// If the brush was deleted during event handling, go back to base context
+		if (current_map->find_brush(*selected_brush) == nullptr)
+			deselect_brush();
+
 		composite_context::update(m, acc, input);
 
 		// Handle left-click selection
@@ -100,17 +113,5 @@ namespace ot::dedit::selection
 		}
 
 		return composite_context::handle_keyboard_event(key, acc);
-	}
-
-	void base_context::get_debug_string(std::string& s) const 
-	{ 
-		if (next_context != nullptr)
-		{
-			composite_context::get_debug_string(s);
-		}
-		else
-		{
-			s += "Left-click on a Brush to select it\n";
-		}
 	}
 }

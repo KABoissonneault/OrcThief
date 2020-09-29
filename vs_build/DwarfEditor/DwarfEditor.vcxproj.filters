@@ -8,9 +8,6 @@
     <Filter Include="src\selection">
       <UniqueIdentifier>{a72bd6fa-e7ca-459c-8dc4-faa317cdb88d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\hud">
-      <UniqueIdentifier>{672e3afc-732a-406a-9fae-edd616d5c228}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\action">
       <UniqueIdentifier>{e898fe48-1eab-45b1-ab03-110c2c9a9bc6}</UniqueIdentifier>
     </Filter>
@@ -42,9 +39,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\DwarfEditor\selection\context.cpp">
       <Filter>src\selection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\DwarfEditor\hud\shadowed_text.cpp">
-      <Filter>src\hud</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\DwarfEditor\datablock.cpp">
       <Filter>src</Filter>
@@ -100,6 +94,9 @@
     <ClCompile Include="..\..\src\DwarfEditor\menu\console_window.cpp">
       <Filter>src\menu</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\action\base.cpp">
+      <Filter>src\action</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\DwarfEditor\selection\context.h">
@@ -113,9 +110,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\selection\brush_context.h">
       <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\DwarfEditor\hud\shadowed_text.h">
-      <Filter>src\hud</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\datablock.h">
       <Filter>src</Filter>
@@ -133,9 +127,6 @@
       <Filter>src\action</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\action\accumulator.h">
-      <Filter>src\action</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\DwarfEditor\action\brush.fwd.h">
       <Filter>src\action</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\window.h">
@@ -182,6 +173,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\menu\console_window.h">
       <Filter>src\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\action\base.h">
+      <Filter>src\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\action\base.fwd.h">
+      <Filter>src\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\map.fwd.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

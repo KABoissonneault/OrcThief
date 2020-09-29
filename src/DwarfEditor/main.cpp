@@ -156,6 +156,7 @@ extern "C" int main(int argc, char** argv)
 	}
 
 	{
+		// Graphics init
 		ot::egfx::module graphics;
 		if (!initialize_graphics(graphics, *main_window))
 			return -1;
@@ -169,18 +170,9 @@ extern "C" int main(int argc, char** argv)
 
 		ot::dedit::console::initialize();
 
-		{
-			ot::dedit::application app(std::move(main_window), graphics);
-			if (!app.initialize(program_config))
-			{
-				return -1;
-			}
-
-			app.setup_default_scene();
-
-			// Run
-			app.run();
-		}
+		// Application
+		ot::dedit::application app(std::move(main_window), graphics, program_config);
+		app.run();
 	}
 
 	// Exit

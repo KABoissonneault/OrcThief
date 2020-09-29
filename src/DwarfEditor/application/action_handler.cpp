@@ -9,9 +9,9 @@
 
 namespace ot::dedit
 {
-	void action_handler::push_brush_action(uptr<action::brush_base, fwd_delete<action::brush_base>> action)
+	void action_handler::push_action(fwd_uptr<action::base> action)
 	{
-		current_brush.push_back(std::move(action));
+		current_actions.push_back(std::move(action));
 	}
 
 	bool action_handler::handle_keyboard_event(SDL_KeyboardEvent const& key, map& current_map)
@@ -50,43 +50,43 @@ namespace ot::dedit
 
 	void action_handler::apply_actions(map& current_map)
 	{
-		if (current_brush.empty())
+		if (current_actions.empty())
 			return;
 
-		for (auto& action : current_brush)
+		for (auto& action : current_actions)
 		{
 			action->apply(current_map);
 		}
 
-		previous_brush.insert(previous_brush.end(), std::make_move_iterator(current_brush.begin()), std::make_move_iterator(current_brush.end()));
-		current_brush.clear();
-		redo_brush.clear();
+		previous_actions.insert(previous_actions.end(), std::make_move_iterator(current_actions.begin()), std::make_move_iterator(current_actions.end()));
+		current_actions.clear();
+		redo_actions.clear();
 	}
 
 	void action_handler::clear()
 	{
-		current_brush.clear();
-		previous_brush.clear();
-		redo_brush.clear();
+		current_actions.clear();
+		previous_actions.clear();
+		redo_actions.clear();
 	}
 
 	void action_handler::redo_latest(map& current_map)
 	{
 		assert(has_redo());
 
-		auto& brush = redo_brush.back();
+		auto& brush = redo_actions.back();
 		brush->apply(current_map);
-		previous_brush.push_back(std::move(brush));
-		redo_brush.pop_back();
+		previous_actions.push_back(std::move(brush));
+		redo_actions.pop_back();
 	}
 
 	void action_handler::undo_latest(map& current_map)
 	{
 		assert(has_undo());
 
-		auto& brush = previous_brush.back();
+		auto& brush = previous_actions.back();
 		brush->undo(current_map);
-		redo_brush.push_back(std::move(brush));
-		previous_brush.pop_back();
+		redo_actions.push_back(std::move(brush));
+		previous_actions.pop_back();
 	}
 }

@@ -1,6 +1,10 @@
 #pragma once
 
+#include "egfx/mesh_definition.fwd.h"
+
 #include <SDL_events.h>
+
+#include <memory>
 
 namespace ot::dedit
 {
@@ -13,7 +17,13 @@ namespace ot::dedit
 
 		bool draw_console_window = false;
 
+		std::shared_ptr<egfx::mesh_definition const> cube;
+		std::shared_ptr<egfx::mesh_definition const> octagonal_prism;
+		std::shared_ptr<egfx::mesh_definition const> square_pyramid;
+
 	public:
+		menu();
+
 		bool handle_keyboard_event(SDL_KeyboardEvent const& e);
 
 		void update();

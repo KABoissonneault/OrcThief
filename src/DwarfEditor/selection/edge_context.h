@@ -14,7 +14,7 @@ namespace ot::dedit::selection
 		egfx::scene const* current_scene;
 		egfx::window const* main_window;
 
-		size_t selected_brush;
+		entity_id selected_brush;
 		egfx::face::id selected_face;
 		egfx::half_edge::id selected_edge;
 
@@ -24,12 +24,11 @@ namespace ot::dedit::selection
 		edge_context(map const& current_map
 			, egfx::scene const& current_scene
 			, egfx::window const& main_window
-			, size_t selected_brush
+			, entity_id selected_brush
 			, egfx::face::id selected_face
 			, egfx::half_edge::id selected_edge
 		);
 
 		virtual void update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input) override;
-		virtual void get_debug_string(std::string& s) const override;
 	};
 }

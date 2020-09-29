@@ -1,6 +1,6 @@
 #pragma once
 
-#include "action/brush.fwd.h"
+#include "action/base.fwd.h"
 
 #include "core/uptr.h"
 
@@ -11,12 +11,12 @@ namespace ot::dedit::action
 	class accumulator
 	{
 	public:
-		virtual void push_brush_action(fwd_uptr<brush_base> p) = 0;
+		virtual void push_action(fwd_uptr<base> p) = 0;
 
 		template<typename Action, typename... Args>
-		void emplace_brush_action(Args&&... args)
+		void emplace_action(Args&&... args)
 		{
-			push_brush_action(fwd_uptr<brush_base>(new Action(std::forward<Args>(args)...)));
+			push_action(fwd_uptr<base>(new Action(std::forward<Args>(args)...)));
 		}
 	};
 }

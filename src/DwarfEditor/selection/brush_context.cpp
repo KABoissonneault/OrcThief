@@ -75,13 +75,14 @@ namespace ot::dedit::selection
 		}
 	}
 
-	brush_context::brush_context(map const& current_map, egfx::scene const& current_scene, egfx::window const& main_window, size_t selected_brush) noexcept
+	brush_context::brush_context(map const& current_map, egfx::scene const& current_scene, egfx::window const& main_window, entity_id selected_brush) noexcept
 		: current_map(&current_map)
 		, current_scene(&current_scene)
 		, main_window(&main_window)
-		, object_matrix(to_imgui(current_map.get_brush(selected_brush).get_world_transform(math::transform_matrix::identity())))
+		, selected_brush(selected_brush)
+		, object_matrix(to_imgui(current_map.find_brush(selected_brush)->get_world_transform(math::transform_matrix::identity())))
 	{
-		select(selected_brush);
+		
 	}
 
 	void brush_context::update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input)
@@ -90,7 +91,7 @@ namespace ot::dedit::selection
 
 		egfx::object::camera_cref const camera = current_scene->get_camera();
 
-		brush const& b = current_map->get_brushes()[selected_brush];
+		brush const& b = get_brush();
 		egfx::mesh_definition const& mesh_def = *b.mesh_def;
 		math::transform_matrix const t = b.get_world_transform(math::transform_matrix::identity());
 
@@ -126,13 +127,13 @@ namespace ot::dedit::selection
 						switch (operation)
 						{
 						case operation_type::translate:
-							acc.emplace_brush_action<action::set_position>(b, destination_from_origin(object_matrix.get_displacement()));
+							acc.emplace_action<action::set_brush_position>(b, destination_from_origin(object_matrix.get_displacement()));
 							break;
 						case operation_type::rotation:
-							acc.emplace_brush_action<action::set_rotation>(b, object_matrix.get_rotation());
+							acc.emplace_action<action::set_brush_rotation>(b, object_matrix.get_rotation());
 							break;
 						case operation_type::scale:
-							acc.emplace_brush_action<action::set_scale>(b, object_matrix.get_scale());
+							acc.emplace_action<action::set_brush_scale>(b, object_matrix.get_scale());
 							break;
 						}
 					}
@@ -160,11 +161,12 @@ namespace ot::dedit::selection
 
 	void brush_context::operation_window(action::accumulator& acc)
 	{
-		brush const& b = current_map->get_brush(selected_brush);
+		brush const& b = get_brush();
 
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImGui::GetStyleColorVec4(ImGuiCol_TitleBg));
 		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav;
-		if (!ImGui::Begin("Brush Context", nullptr, flags))
+		std::string const text = "Brush " + std::to_string(static_cast<std::underlying_type_t<entity_id>>(b.get_id()));
+		if (!ImGui::Begin(text.c_str(), nullptr, flags))
 		{
 			ImGui::End();
 			return;
@@ -177,21 +179,21 @@ namespace ot::dedit::selection
 		ImGui::SameLine();
 		if (ImGui::InputFloat3("", translation))
 		{
-			acc.emplace_brush_action<action::set_position>(b, math::point3f{ translation[0], translation[1], translation[2] });
+			acc.emplace_action<action::set_brush_position>(b, math::point3f{ translation[0], translation[1], translation[2] });
 		}
 
 		if (ImGui::RadioButton("(R)otation ", operation == operation_type::rotation)) operation = operation_type::rotation;
 		ImGui::SameLine();
 		if (ImGui::InputFloat3("", rotation))
 		{
-			acc.emplace_brush_action<action::set_position>(b, math::point3f{ rotation[0], rotation[1], rotation[2] });
+			acc.emplace_action<action::set_brush_position>(b, math::point3f{ rotation[0], rotation[1], rotation[2] });
 		}
 
 		if (ImGui::RadioButton("(S)cale    ", operation == operation_type::scale)) operation = operation_type::scale;
 		ImGui::SameLine();
 		if (ImGui::InputFloat3("", scale))
 		{
-			acc.emplace_brush_action<action::set_position>(b, math::point3f{ scale[0], scale[1], scale[2] });
+			acc.emplace_action<action::set_brush_position>(b, math::point3f{ scale[0], scale[1], scale[2] });
 		}
 
 		if (ImGui::RadioButton("(F)ace Selection", operation == operation_type::face_selection)) operation = operation_type::face_selection;
@@ -202,29 +204,18 @@ namespace ot::dedit::selection
 		ImGuizmo::RecomposeMatrixFromComponents(translation, rotation, scale, object_matrix.elements);
 	}
 
+	brush const& brush_context::get_brush() const
+	{
+		return *current_map->find_brush(selected_brush);
+	}
+
 	bool brush_context::handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc)
 	{
 		if (composite_context::handle_keyboard_event(key, acc))
 			return true;
 
-		SDL_Keysym const& keysym = key.keysym;
 		if (key.state == SDL_PRESSED)
 		{
-			switch (key.keysym.scancode)
-			{
-			case SDL_SCANCODE_TAB:
-				if (keysym.mod & KMOD_LSHIFT)
-				{
-					select_previous();
-				} 
-				else
-				{
-					select_next();
-				}
-
-				return true;
-			}
-			
 			switch (key.keysym.sym)
 			{
 			case SDLK_t: operation = operation_type::translate; return true;
@@ -235,48 +226,5 @@ namespace ot::dedit::selection
 		}
 
 		return false;
-	}
-
-	void brush_context::select(size_t brush_idx)
-	{
-		selected_brush = brush_idx;
-	}
-
-	void brush_context::select_next()
-	{
-		if (selected_brush == current_map->get_brushes().size() - 1)
-		{
-			select(0);
-		}
-		else
-		{
-			select(selected_brush + 1);
-		}
-	}
-
-	void brush_context::select_previous()
-	{
-		if (selected_brush == 0)
-		{
-			select(current_map->get_brushes().size() - 1);
-		}
-		else
-		{
-			select(selected_brush - 1);
-		}
-	}
-
-	void brush_context::get_debug_string(std::string& s) const
-	{		
-		if (next_context != nullptr)
-		{
-			composite_context::get_debug_string(s);
-		}
-		else 
-		{			
-			s += "Left-click on a face to select it\n";
-			s += "Right-click to deselect the brush\n";
-			s += "Selected brush: " + std::to_string(selected_brush) + "\n";
-		}
 	}
 }

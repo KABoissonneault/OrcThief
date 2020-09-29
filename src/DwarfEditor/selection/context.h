@@ -21,14 +21,14 @@ namespace ot::dedit::selection
 	public:
 		virtual ~context() = 0;
 
+		virtual void start_frame() { }
+
 		// Returns true if the input was handled
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) { (void)key, (void) acc; return false; }
 		
 		virtual void update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input) { (void)m, (void)acc, (void) input; }
 
 		virtual bool is_selected(entity_id id) const noexcept { (void)id; return false; }
-
-		virtual void get_debug_string(std::string& debug) const { (void)debug; }
 	};
 
 	class composite_context : public context
@@ -37,13 +37,13 @@ namespace ot::dedit::selection
 		uptr<context> next_context;
 
 	public:
+		virtual void start_frame() override;
+
 		// Returns true if the input was handled
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) override;
 		
 		virtual void update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input) override;
 
 		virtual bool is_selected(entity_id id) const noexcept { return next_context != nullptr ? next_context->is_selected(id) : false; }
-
-		virtual void get_debug_string(std::string& debug) const override;
 	};
 }

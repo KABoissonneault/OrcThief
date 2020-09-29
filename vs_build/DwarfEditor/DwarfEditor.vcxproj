@@ -184,6 +184,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\DwarfEditor\action\base.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\action\brush.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\application\action_handler.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\application\application.cpp" />
@@ -193,7 +194,6 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClCompile Include="..\..\src\DwarfEditor\config.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\console.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\datablock.cpp" />
-    <ClCompile Include="..\..\src\DwarfEditor\hud\shadowed_text.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\imgui\matrix.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\imgui\module.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\imgui\projection.cpp" />
@@ -234,7 +234,8 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\DwarfEditor\action\accumulator.h" />
-    <ClInclude Include="..\..\src\DwarfEditor\action\brush.fwd.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\action\base.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\action\base.fwd.h" />
     <ClInclude Include="..\..\src\DwarfEditor\action\brush.h" />
     <ClInclude Include="..\..\src\DwarfEditor\application\action_handler.h" />
     <ClInclude Include="..\..\src\DwarfEditor\application\application.h" />
@@ -244,13 +245,13 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClInclude Include="..\..\src\DwarfEditor\config.h" />
     <ClInclude Include="..\..\src\DwarfEditor\console.h" />
     <ClInclude Include="..\..\src\DwarfEditor\datablock.h" />
-    <ClInclude Include="..\..\src\DwarfEditor\hud\shadowed_text.h" />
     <ClInclude Include="..\..\src\DwarfEditor\imgui\boost\common.h" />
     <ClInclude Include="..\..\src\DwarfEditor\imgui\boost\matrix_traits.h" />
     <ClInclude Include="..\..\src\DwarfEditor\imgui\matrix.h" />
     <ClInclude Include="..\..\src\DwarfEditor\imgui\module.h" />
     <ClInclude Include="..\..\src\DwarfEditor\imgui\projection.h" />
     <ClInclude Include="..\..\src\DwarfEditor\input.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\map.fwd.h" />
     <ClInclude Include="..\..\src\DwarfEditor\map.h" />
     <ClInclude Include="..\..\src\DwarfEditor\menu\console_window.h" />
     <ClInclude Include="..\..\src\DwarfEditor\selection\base_context.h" />

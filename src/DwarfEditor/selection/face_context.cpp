@@ -48,7 +48,7 @@ namespace ot::dedit::selection
 	face_context::face_context(map const& current_map
 		, egfx::scene const& current_scene
 		, egfx::window const& main_window
-		, size_t selected_brush
+		, entity_id selected_brush
 		, egfx::face::id selected_face)
 		: current_map(&current_map)
 		, current_scene(&current_scene)
@@ -63,7 +63,7 @@ namespace ot::dedit::selection
 	{
 		hovered_edge = egfx::half_edge::id::none;
 
-		brush const& b = current_map->get_brushes()[selected_brush];
+		brush const& b = *current_map->find_brush(selected_brush);
 		math::transform_matrix const t = b.get_world_transform(math::transform_matrix::identity());
 
 		// Find the hovered edge
@@ -98,25 +98,6 @@ namespace ot::dedit::selection
 		else if (input.consume_right_click())
 		{
 			next_context.reset();
-		}
-	}
-
-	void face_context::get_debug_string(std::string& s) const
-	{
-		if (next_context != nullptr)
-		{
-			composite_context::get_debug_string(s);
-		} 
-		else
-		{
-			s += "Left-click to select the edge\n";
-			s += "Right-click to deselect the face\n";
-			s += "Selected brush: " + std::to_string(selected_brush) + "\n";
-			s += "Selected face: " + std::to_string(static_cast<size_t>(selected_face)) + "\n";
-			if (hovered_edge != egfx::half_edge::id::none)
-			{
-				s += "Hovered edge: " + std::to_string(static_cast<size_t>(hovered_edge)) + "\n";
-			}
 		}
 	}
 }

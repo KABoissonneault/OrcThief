@@ -286,7 +286,7 @@ namespace ot::egfx
 					} else if (edge1.planes[1] == edge2.planes[0]) {
 						plane_index1 = 1; 
 						plane_index2 = 0;
-					} else if (edge1.planes[1] == edge2.planes[1]){
+					} else if (edge1.planes[1] == edge2.planes[1]) {
 						plane_index1 = 1; 
 						plane_index2 = 1;
 					} else {
@@ -331,9 +331,8 @@ namespace ot::egfx
 		}
 	}
 
-	mesh_definition mesh_definition::make_from_planes(std::span<const math::plane> planes)
-	{
-		mesh_definition m;		
+	void mesh_definition::init_from_planes(mesh_definition& m, std::span<const math::plane> planes)
+	{				
 		m.faces.resize(planes.size());
 		for (size_t i = 0; i < planes.size(); ++i)
 			m.faces[i].normal = planes[i].normal;
@@ -341,21 +340,25 @@ namespace ot::egfx
 		std::vector<point_intersection> const intersections = find_intersections(planes, m.vertices, m.half_edges);
 		resolve_edge_directions(planes, intersections, m.half_edges, m.faces);
 		update_bounds(m.bounds, m.vertices);
-
-		return m;
 	}
 
 	mesh_definition const& mesh_definition::get_cube()
 	{
 		using planes = ot::math::plane[6];
-		static mesh_definition const cube = make_from_planes(planes{
-			{{0, 0, 1}, 0.5},
-			{{1, 0, 0}, 0.5},
-			{{0, 1, 0}, 0.5},
-			{{-1, 0, 0}, 0.5},
-			{{0, -1, 0}, 0.5},
-			{{0, 0, -1}, 0.5},
-		});
+		static mesh_definition const cube = []()
+		{
+			mesh_definition def;
+			init_from_planes(def, planes{
+				{{0, 0, 1}, 0.5},
+				{{1, 0, 0}, 0.5},
+				{{0, 1, 0}, 0.5},
+				{{-1, 0, 0}, 0.5},
+				{{0, -1, 0}, 0.5},
+				{{0, 0, -1}, 0.5},
+			});
+			return def;
+		}();
+
 		return cube;
 	}
 }

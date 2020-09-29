@@ -6,7 +6,6 @@
 
 #include "egfx/scene.h"
 #include "egfx/object/camera.h"
-#include "egfx/node/mesh.h"
 #include "egfx/node/light.h"
 
 #include "Ogre/ConfigOptionMap.h"
@@ -25,37 +24,6 @@ namespace ot::dedit
 {
 	namespace
 	{
-		math::plane const cube_planes[6] = {
-			{{0, 0, 1}, 0.5},
-			{{1, 0, 0}, 0.5},
-			{{0, 1, 0}, 0.5},
-			{{-1, 0, 0}, 0.5},
-			{{0, -1, 0}, 0.5},
-			{{0, 0, -1}, 0.5},
-		};
-
-		auto const sqrt_half = 0.70710678118654752440084436210485f;
-		math::plane const octagon_planes[] = {
-			{{0, 1, 0}, 0.5},
-			{{0, -1, 0}, 0.5},
-			{{1, 0, 0}, 0.5},
-			{{-1, 0, 0}, 0.5},
-			{{0, 0, 1}, 0.5},
-			{{0, 0, -1}, 0.5},
-			{{sqrt_half, 0, sqrt_half}, 0.5},
-			{{sqrt_half, 0, -sqrt_half}, 0.5},
-			{{-sqrt_half, 0, sqrt_half}, 0.5},
-			{{-sqrt_half, 0, -sqrt_half}, 0.5},
-		};
-
-		math::plane const pyramid_planes[] = {
-			{{0, -1, 0}, 0.5},
-			{{sqrt_half, sqrt_half, 0}, 0.5},
-			{{-sqrt_half, sqrt_half, 0}, 0.5},
-			{{0, sqrt_half, sqrt_half}, 0.5},
-			{{0, sqrt_half, -sqrt_half}, 0.5},
-		};
-
 		size_t get_number_threads()
 		{
 			return Ogre::PlatformInformation::getNumLogicalCores();
@@ -88,34 +56,20 @@ namespace ot::dedit
 		}
 	}
 
-	application::application(sdl::unique_window window, egfx::module& graphics)
+	application::application(sdl::unique_window window, egfx::module& graphics, config const& program_config)
 		: main_window(std::move(window))
 		, graphics(graphics)
+		, main_scene(graphics.create_scene(std::string(program_config.get_scene().get_workspace()), get_number_threads() - 1))
+		, current_map(main_scene.get_root_node())
 	{
-
-	}
-
-	bool application::initialize(config const& program_config)
-	{
-		main_scene = graphics.create_scene(std::string(program_config.get_scene().get_workspace()), get_number_threads() - 1);
-		
 		if (auto const maybe_ambiant = program_config.get_scene().get_ambient_light())
 		{
-			auto const ambiant_light = *maybe_ambiant;
+			auto const& ambiant_light = *maybe_ambiant;
 			main_scene.set_ambiant_light(ambiant_light.upper_hemisphere, ambiant_light.upper_hemisphere, ambiant_light.hemisphere_direction);
 		}
 
 		auto const& render_window = graphics.get_window(egfx::window_id{ SDL_GetWindowID(main_window.get()) });
 		selection_context.reset(new selection::base_context(current_map, main_scene, render_window));
-
-		return true;
-	}
-	 
-	void application::setup_default_scene()
-	{
-		current_map.add_brush(make_brush(cube_planes, "Cube", { 2.5f, 0.0f, 0.0f }));
-		current_map.add_brush(make_brush(octagon_planes, "Octagon", { 0.0f, 0.0f, 0.0f }));
-		current_map.add_brush(make_brush(pyramid_planes, "Pyramid", { -2.5f, 0.0f, 0.0f }));
 
 		egfx::object::camera_ref const camera = main_scene.get_camera();
 		camera.set_position({ 0.0f, 2.0f, -5.5f });
@@ -125,22 +79,7 @@ namespace ot::dedit
 		light.set_position({ 10.0f, 10.0f, -10.0f });
 		light.set_direction(normalized(math::vector3f{ -1.0f, -1.0f, 1.0f }));
 
-		debug_surface = egfx::overlay::create_surface("DebugSurface");
-		debug_text.emplace(debug_surface, "DebugText");
-		debug_text->set_font("DebugFont");
-		debug_text->set_height(0.025);
-
-		debug_surface.show();
-
 		selection_render = egfx::node::create_manual(main_scene.get_root_node());
-	}
-
-	brush application::make_brush(std::span<math::plane const> planes, std::string const& name, math::point3f position)
-	{
-		auto mesh = std::make_shared<egfx::mesh_definition const>(egfx::mesh_definition::make_from_planes(planes));
-		auto node = egfx::node::create_mesh(main_scene.get_root_node(), name, *mesh);
-		node.set_position(position);
-		return { std::move(mesh), std::move(node) };
 	}
 
 	void application::run()
@@ -171,8 +110,8 @@ namespace ot::dedit
 	void application::start_frame()
 	{
 		mouse.start_frame();
-
 		graphics.start_frame();
+		selection_context->start_frame();
 	}
 
 	void application::handle_events()
@@ -284,10 +223,6 @@ namespace ot::dedit
 		menu::update();
 
 		camera_controller::update(dt);
-
-		std::string s;
-		selection_context->get_debug_string(s);
-		debug_text->set_text(s);
 
 		input::frame_input input;
 		input.mouse_action = mouse.get_action();

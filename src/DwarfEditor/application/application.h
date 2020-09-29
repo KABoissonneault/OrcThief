@@ -8,7 +8,6 @@
 #include "config.h"
 #include "map.h"
 #include "selection/context.h"
-#include "hud/shadowed_text.h"
 
 #include "core/uptr.h"
 
@@ -43,9 +42,6 @@ namespace ot::dedit
 
 		uptr<selection::context> selection_context;
 		egfx::node::manual selection_render;
-
-		egfx::overlay::surface debug_surface;
-		std::optional<hud::shadowed_text> debug_text;
 		
 		action_handler selection_actions;
 		mouse_controller mouse;
@@ -66,10 +62,7 @@ namespace ot::dedit
 		map& get_current_map() noexcept { return current_map; }
 
 	public:
-		application(sdl::unique_window window, egfx::module& graphics);
-
-		[[nodiscard]] bool initialize(config const& program_config);
-		void setup_default_scene();
+		application(sdl::unique_window window, egfx::module& graphics, config const& program_config);
 
 		[[nodiscard]] brush make_brush(std::span<math::plane const> planes, std::string const& name, math::point3f position);
 

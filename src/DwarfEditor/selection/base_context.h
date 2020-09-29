@@ -16,11 +16,11 @@ namespace ot::dedit::selection
 		map const* current_map;
 		egfx::scene const* current_scene;
 		egfx::window const* main_window;
-		std::optional<size_t> selected_brush;
+		std::optional<entity_id> selected_brush;
 
 		void do_selection();
 
-		void select_brush(size_t brush);
+		void select_brush(entity_id brush);
 		void deselect_brush();
 
 	public:
@@ -32,8 +32,8 @@ namespace ot::dedit::selection
 
 		}
 
+		virtual void start_frame() override;
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) override;
 		virtual void update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input) override;
-		virtual void get_debug_string(std::string& s) const override;
 	};
 }

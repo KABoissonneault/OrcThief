@@ -1,6 +1,6 @@
 #pragma once
 
-#include "action/brush.fwd.h"
+#include "action/base.h"
 #include "egfx/mesh_definition.fwd.h"
 #include "map.h"
 
@@ -8,16 +8,19 @@
 
 namespace ot::dedit::action
 {
-	class brush_base
+	class spawn_brush : public base
 	{
-	public:
-		virtual ~brush_base();
+		std::shared_ptr<egfx::mesh_definition const> mesh_def;
+		entity_id id;
 
-		virtual void apply(map& current_map) = 0;
-		virtual void undo(map& current_map) = 0;
+	public:
+		spawn_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id);
+
+		virtual void apply(map& current_map) override;
+		virtual void undo(map& current_map) override;
 	};
 
-	class single_brush : public brush_base
+	class single_brush : public base
 	{
 		entity_id id;
 
@@ -44,7 +47,7 @@ namespace ot::dedit::action
 		virtual void do_undo(brush& b) override;
 	};
 
-	class split_edge : public brush_definition_base
+	class split_brush_edge : public brush_definition_base
 	{
 		egfx::half_edge::id edge;
 		math::point3f point;
@@ -53,10 +56,10 @@ namespace ot::dedit::action
 		virtual void do_apply(brush& b) override;
 
 	public:
-		split_edge(brush const& b, egfx::half_edge::id edge, math::point3f point);
+		split_brush_edge(brush const& b, egfx::half_edge::id edge, math::point3f point);
 	};
 
-	class set_position : public single_brush
+	class set_brush_position : public single_brush
 	{
 		math::point3f previous_state;
 		math::point3f new_pos;
@@ -66,10 +69,10 @@ namespace ot::dedit::action
 		virtual void do_undo(brush& b) override;
 
 	public:
-		set_position(brush const& b, math::point3f point);
+		set_brush_position(brush const& b, math::point3f point);
 	};
 
-	class set_rotation : public single_brush
+	class set_brush_rotation : public single_brush
 	{
 		math::quaternion previous_state;
 		math::quaternion new_rot;
@@ -79,10 +82,10 @@ namespace ot::dedit::action
 		virtual void do_undo(brush& b) override;
 
 	public:
-		set_rotation(brush const& b, math::quaternion rot);
+		set_brush_rotation(brush const& b, math::quaternion rot);
 	};
 
-	class set_scale : public single_brush
+	class set_brush_scale : public single_brush
 	{
 		math::scales previous_state;
 		math::scales new_s;
@@ -92,6 +95,6 @@ namespace ot::dedit::action
 		virtual void do_undo(brush& b) override;
 
 	public:
-		set_scale(brush const& b, math::scales s);
+		set_brush_scale(brush const& b, math::scales s);
 	};
 }

@@ -2,13 +2,26 @@
 
 #include "console.h"
 
-#include "core/fwd_delete.h"
-
 #include <fmt/format.h>
 
 namespace ot::dedit::action
 {
-	brush_base::~brush_base() = default;
+	spawn_brush::spawn_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id)
+		: mesh_def(std::move(mesh_def))
+		, id(id)
+	{
+
+	}
+
+	void spawn_brush::apply(map& current_map)
+	{
+		current_map.make_brush(mesh_def, id);
+	}
+	
+	void spawn_brush::undo(map& current_map)
+	{
+		current_map.delete_brush(id);
+	}
 
 	single_brush::single_brush(brush const& b)
 		: id(b.get_id())
@@ -21,7 +34,7 @@ namespace ot::dedit::action
 		brush* b = current_map.find_brush(get_id());
 		if (b == nullptr)
 		{
-			console::error(fmt::format("Could not apply action: entity '{}' not found", static_cast<uint32_t>(get_id())));
+			console::error(fmt::format("Could not apply action: entity '{}' not found", static_cast<std::underlying_type_t<entity_id>>(get_id())));
 			return;
 		}
 
@@ -33,7 +46,7 @@ namespace ot::dedit::action
 		brush* b = current_map.find_brush(get_id());
 		if (b == nullptr)
 		{
-			console::error(fmt::format("Could not undo action: entity '{}' not found", static_cast<uint32_t>(get_id())));
+			console::error(fmt::format("Could not undo action: entity '{}' not found", static_cast<std::underlying_type_t<entity_id>>(get_id())));
 			return;
 		}
 
@@ -52,7 +65,7 @@ namespace ot::dedit::action
 		b.reload_node(std::move(previous_state));
 	}
 
-	split_edge::split_edge(brush const& b, egfx::half_edge::id edge, math::point3f point)
+	split_brush_edge::split_brush_edge(brush const& b, egfx::half_edge::id edge, math::point3f point)
 		: brush_definition_base(b)
 		, edge(edge)
 		, point(point)
@@ -60,14 +73,14 @@ namespace ot::dedit::action
 
 	}
 
-	void split_edge::do_apply(brush& b)
+	void split_brush_edge::do_apply(brush& b)
 	{
 		auto new_mesh = std::make_shared<egfx::mesh_definition>(*b.mesh_def);
 		new_mesh->get_half_edge(edge).split_at(point);
 		b.reload_node(std::move(new_mesh));
 	}
 
-	set_position::set_position(brush const& b, math::point3f point)
+	set_brush_position::set_brush_position(brush const& b, math::point3f point)
 		: single_brush(b)
 		, previous_state(b.node.get_position())
 		, new_pos(point)
@@ -75,17 +88,17 @@ namespace ot::dedit::action
 
 	}
 
-	void set_position::do_apply(brush& b)
+	void set_brush_position::do_apply(brush& b)
 	{
 		b.node.set_position(new_pos);
 	}
 
-	void set_position::do_undo(brush& b)
+	void set_brush_position::do_undo(brush& b)
 	{
 		b.node.set_position(previous_state);
 	}
 
-	set_rotation::set_rotation(brush const& b, math::quaternion rot)
+	set_brush_rotation::set_brush_rotation(brush const& b, math::quaternion rot)
 		: single_brush(b)
 		, previous_state(b.node.get_rotation())
 		, new_rot(rot)
@@ -93,17 +106,17 @@ namespace ot::dedit::action
 
 	}
 
-	void set_rotation::do_apply(brush& b)
+	void set_brush_rotation::do_apply(brush& b)
 	{
 		b.node.set_rotation(new_rot);
 	}
 
-	void set_rotation::do_undo(brush& b)
+	void set_brush_rotation::do_undo(brush& b)
 	{
 		b.node.set_rotation(previous_state);
 	}
 
-	set_scale::set_scale(brush const& b, math::scales s)
+	set_brush_scale::set_brush_scale(brush const& b, math::scales s)
 		: single_brush(b)
 		, previous_state(b.node.get_scale())
 		, new_s(s)
@@ -111,15 +124,13 @@ namespace ot::dedit::action
 
 	}
 
-	void set_scale::do_apply(brush& b)
+	void set_brush_scale::do_apply(brush& b)
 	{
 		b.node.set_scale(new_s);
 	}
 
-	void set_scale::do_undo(brush& b)
+	void set_brush_scale::do_undo(brush& b)
 	{
 		b.node.set_scale(previous_state);
 	}
 }
-
-template struct ot::fwd_delete<ot::dedit::action::brush_base>;

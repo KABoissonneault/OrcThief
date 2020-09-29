@@ -1,6 +1,7 @@
 #include "map.h"
 
 #include "egfx/node/object.h"
+#include "egfx/node/mesh.h"
 
 namespace ot::dedit
 {
@@ -14,12 +15,6 @@ namespace ot::dedit
 		return parent * get_local_transform();
 	}
 
-	entity_id brush::get_id() const noexcept
-	{
-		// can't be bothered to give it a separate id now
-		return static_cast<entity_id>(node.get_node_id());
-	}
-
 	void brush::reload_node()
 	{
 		node.reload_mesh(*mesh_def);
@@ -31,9 +26,34 @@ namespace ot::dedit
 		reload_node();
 	}
 
-	void map::add_brush(brush b)
+	map::map(egfx::node::object_ref root_node)
+		: root_node(root_node)
 	{
-		brushes.push_back(std::move(b));
+
+	}
+
+	entity_id map::allocate_entity_id()
+	{
+		return static_cast<entity_id>(next_entity_id++);
+	}
+
+	brush& map::make_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id)
+	{
+		brush& b = brushes.emplace_back();
+		b.id = id;
+		b.mesh_def = std::move(mesh_def);
+		std::string const mesh_name = "Brush" + std::to_string(static_cast<std::underlying_type_t<entity_id>>(b.id));
+		b.node = egfx::node::create_mesh(root_node, mesh_name, *b.mesh_def);
+		return b;
+	}
+
+	void map::delete_brush(entity_id id)
+	{
+		auto const it_found = std::find_if(brushes.begin(), brushes.end(), [id](brush const& b) { return b.get_id() == id; });
+		if (it_found != brushes.end())
+		{
+			brushes.erase(it_found);
+		}
 	}
 
 	brush const* map::find_brush(entity_id id) const noexcept

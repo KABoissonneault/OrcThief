@@ -13,12 +13,6 @@
     <Filter Include="src\node">
       <UniqueIdentifier>{57896196-5bfb-410f-8703-77280e0f68ae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\overlay">
-      <UniqueIdentifier>{9710f059-6b7d-47b1-beb5-8eb428f1e559}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\overlay">
-      <UniqueIdentifier>{64a90bcf-899e-40ef-a665-e124d882f003}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\imgui">
       <UniqueIdentifier>{aec4c0fc-0fdd-4b63-a597-527ed9d7d976}</UniqueIdentifier>
     </Filter>
@@ -75,38 +69,8 @@
     <ClInclude Include="..\..\lib\ElfGraphics\src\window.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\overlay\element.h">
-      <Filter>include\overlay</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\src\overlay\element.h">
-      <Filter>src\overlay</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\src\overlay\text.h">
-      <Filter>src\overlay</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\overlay\text.h">
-      <Filter>include\overlay</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\color.h">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\overlay\container.h">
-      <Filter>include\overlay</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\overlay\surface.h">
-      <Filter>include\overlay</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\overlay\panel.h">
-      <Filter>include\overlay</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\src\overlay\container.h">
-      <Filter>src\overlay</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\src\overlay\panel.h">
-      <Filter>src\overlay</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\src\overlay\surface.h">
-      <Filter>src\overlay</Filter>
     </ClInclude>
     <ClInclude Include="..\..\lib\ElfGraphics\src\ogre_conversion.h">
       <Filter>src</Filter>
@@ -169,21 +133,6 @@
     </ClCompile>
     <ClCompile Include="..\..\lib\ElfGraphics\src\window.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lib\ElfGraphics\src\overlay\element.cpp">
-      <Filter>src\overlay</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lib\ElfGraphics\src\overlay\text.cpp">
-      <Filter>src\overlay</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lib\ElfGraphics\src\overlay\container.cpp">
-      <Filter>src\overlay</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lib\ElfGraphics\src\overlay\panel.cpp">
-      <Filter>src\overlay</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lib\ElfGraphics\src\overlay\surface.cpp">
-      <Filter>src\overlay</Filter>
     </ClCompile>
     <ClCompile Include="..\..\lib\ElfGraphics\src\node\manual.cpp">
       <Filter>src\node</Filter>

@@ -16,7 +16,7 @@ namespace ot::dedit::selection
 	edge_context::edge_context(map const& current_map
 		, egfx::scene const& current_scene
 		, egfx::window const& main_window
-		, size_t selected_brush
+		, entity_id selected_brush
 		, egfx::face::id selected_face
 		, egfx::half_edge::id selected_edge)
 		: current_map(&current_map)
@@ -36,7 +36,7 @@ namespace ot::dedit::selection
 		if (!has_focus(*main_window))
 			return;
 
-		brush const& b = current_map->get_brushes()[selected_brush];
+		brush const& b = *current_map->find_brush(selected_brush);
 		egfx::mesh_definition const& mesh_def = *b.mesh_def;
 		math::transform_matrix const t = b.get_world_transform(math::transform_matrix::identity());
 		
@@ -71,18 +71,8 @@ namespace ot::dedit::selection
 			math::point3f const p = *local_split;
 			if (!float_eq(p, local_line.a) && !float_eq(p, local_line.b)) // If the point is at the extremities, don't split
 			{
-				acc.emplace_brush_action<action::split_edge>(b, selected_edge, p);
+				acc.emplace_action<action::split_brush_edge>(b, selected_edge, p);
 			}	
 		}
-	}
-
-	void edge_context::get_debug_string(std::string& s) const
-	{
-		s += "Left-click to split the edge\n";
-		s += "CTRL+Z to undo\n";
-		s += "Right-click to deselect the edge\n";
-		s += "Selected brush: " + std::to_string(selected_brush) + "\n";
-		s += "Selected face: " + std::to_string(static_cast<size_t>(selected_face)) + "\n";
-		s += "Selected edge: " + std::to_string(static_cast<size_t>(selected_edge)) + "\n";
 	}
 }
