@@ -21,6 +21,6 @@ namespace ot::dedit::selection
 	public:
 		face_context(map const& current_map, egfx::scene const& current_scene, egfx::window const& main_window, entity_id selected_brush, egfx::face::id selected_face);
 
-		virtual void update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input) override;
+		virtual void update(action::accumulator& acc, input::frame_input& input) override;
 	};
 }

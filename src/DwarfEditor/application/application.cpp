@@ -79,8 +79,6 @@ namespace ot::dedit
 		light = egfx::node::create_directional_light(main_scene.get_root_node());
 		light.set_position({ 10.0f, 10.0f, -10.0f });
 		light.set_direction(normalized(math::vector3f{ -1.0f, -1.0f, 1.0f }));
-
-		selection_render = egfx::node::create_manual(main_scene.get_root_node());
 	}
 
 	void application::run()
@@ -173,8 +171,7 @@ namespace ot::dedit
 				if (imgui::has_mouse())	
 					break;
 				
-				if (camera_controller::handle_mouse_button_event(e.button))
-					break;
+				camera_controller::handle_mouse_button_event(e.button);
 
 				if (mouse.handle_mouse_button_event(e.button))
 					break;
@@ -234,8 +231,7 @@ namespace ot::dedit
 		input::frame_input input;
 		input.mouse_action = mouse.get_action();
 
-		selection_render.clear();
-		selection_context->update(selection_render, selection_actions, input);
+		selection_context->update(selection_actions, input);
 
 		selection_actions.apply_actions(current_map);
 	}

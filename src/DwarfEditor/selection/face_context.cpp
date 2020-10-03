@@ -7,6 +7,9 @@
 #include "input.h"
 
 #include "egfx/object/camera.h"
+#include "egfx/immediate.h"
+
+#include <im3d.h>
 
 namespace ot::dedit::selection
 {
@@ -59,7 +62,7 @@ namespace ot::dedit::selection
 
 	}
 
-	void face_context::update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input)
+	void face_context::update(action::accumulator& acc, input::frame_input& input)
 	{
 		hovered_edge = egfx::half_edge::id::none;
 
@@ -77,15 +80,16 @@ namespace ot::dedit::selection
 		}	
 		
 		// Add overlays
-		m.add_face(datablock::overlay_unlit_transparent_heavy, b.mesh_def->get_face(selected_face), t);
+		egfx::im::draw_face(b.mesh_def->get_face(selected_face), t, egfx::color{ 1.0f, 1.0f, 1.0f, 0.6f });
 
 		if (hovered_edge != egfx::half_edge::id::none)
 		{
 			math::line const local_line = b.mesh_def->get_half_edge(hovered_edge).get_line();
-			m.add_line(datablock::overlay_unlit_edge, transform(local_line, t));
+			math::line const world_line = transform(local_line, t);
+			Im3d::DrawLine(world_line.a, world_line.b, 5.f, Im3d::Color_Red);
 		}
 
-		composite_context::update(m, acc, input);
+		composite_context::update(acc, input);
 
 		// Handle input
 		if(next_context == nullptr)

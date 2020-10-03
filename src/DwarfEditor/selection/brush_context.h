@@ -41,7 +41,7 @@ namespace ot::dedit::selection
 
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) override;
 
-		virtual void update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input) override;
+		virtual void update(action::accumulator& acc, input::frame_input& input) override;
 
 		virtual bool is_selected(entity_id id) const noexcept override { return selected_brush == id; }
 	};

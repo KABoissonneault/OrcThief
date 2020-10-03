@@ -84,13 +84,13 @@ namespace ot::dedit::selection
 		composite_context::start_frame();
 	}
 
-	void base_context::update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input)
+	void base_context::update(action::accumulator& acc, input::frame_input& input)
 	{		
 		// If the brush was deleted during event handling, go back to base context
 		if (current_map->find_brush(*selected_brush) == nullptr)
 			deselect_brush();
 
-		composite_context::update(m, acc, input);
+		composite_context::update(acc, input);
 
 		// Handle left-click selection
 		if (input.consume_left_click())

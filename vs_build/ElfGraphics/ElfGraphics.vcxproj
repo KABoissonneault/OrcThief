@@ -157,12 +157,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\color.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\immediate.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\mesh_definition.fwd.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\mesh_definition.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\module.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\light.fwd.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\light.h" />
-    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\manual.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\object.fwd.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\object.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\mesh.fwd.h" />
@@ -181,7 +181,6 @@
     <ClInclude Include="..\..\lib\ElfGraphics\src\mesh_definition.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\module.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\node\light.h" />
-    <ClInclude Include="..\..\lib\ElfGraphics\src\node\manual.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\node\mesh.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\node\object.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\ogre_boost_conversion.h" />
@@ -190,6 +189,7 @@
     <ClInclude Include="..\..\lib\ElfGraphics\src\window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\lib\ElfGraphics\src\immediate.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\object\camera.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\compositor.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\d3d11_renderer.cpp" />
@@ -198,7 +198,6 @@
     <ClCompile Include="..\..\lib\ElfGraphics\src\mesh_definition.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\module.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\node\light.cpp" />
-    <ClCompile Include="..\..\lib\ElfGraphics\src\node\manual.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\node\object.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\node\mesh.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\scene.cpp" />

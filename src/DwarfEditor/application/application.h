@@ -17,7 +17,6 @@
 #include "egfx/module.h"
 #include "egfx/scene.h"
 #include "egfx/node/light.h"
-#include "egfx/node/manual.h"
 
 #include <span>
 #include <optional>
@@ -40,7 +39,6 @@ namespace ot::dedit
 		map current_map;
 
 		uptr<selection::context> selection_context;
-		egfx::node::manual selection_render;
 		
 		action_handler selection_actions;
 		mouse_controller mouse;

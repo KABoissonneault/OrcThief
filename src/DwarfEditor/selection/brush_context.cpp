@@ -12,9 +12,11 @@
 
 #include "egfx/object/camera.h"
 #include "egfx/window.h"
+#include "egfx/immediate.h"
 
 #include <imgui.h>
 #include <ImGuizmo.h>
+#include <im3d.h>
 
 namespace ot::dedit::selection
 {
@@ -49,29 +51,28 @@ namespace ot::dedit::selection
 			return current_face;
 		}
 
-		void add_manual_scene(egfx::node::manual& m, egfx::mesh_definition const& mesh_def, math::transform_matrix const& t, egfx::face::id hovered_face)
+		void draw_immediate_scene(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t, egfx::face::id hovered_face)
 		{
-			m.add_wiremesh(datablock::overlay_unlit, mesh_def, t);
+			egfx::im::draw_wiremesh(mesh_def, t, 2.f);
 
 			if (hovered_face != egfx::face::id::none)
 			{
-				m.add_face(datablock::overlay_unlit_transparent_light, mesh_def.get_face(hovered_face), t);
+				egfx::im::draw_face(mesh_def.get_face(hovered_face), t, egfx::color{ 1.f, 1.f, 1.f, 0.2f });
 			}
 
 			for (egfx::vertex::cref const vertex : mesh_def.get_vertices())
 			{
 				math::point3f const vertex_pos = transform(vertex.get_position(), t);
-				auto const vt = math::transform_matrix::from_components(vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04f);
-				m.add_mesh(datablock::overlay_unlit_vertex, egfx::mesh_definition::get_cube(), vt);
+				Im3d::DrawPoint(vertex_pos, 10.f, Im3d::Color_Blue);
 			}
 		}
 
-		bool add_guizmo(egfx::object::camera_cref camera, imgui::matrix& object_transform, ImGuizmo::OPERATION operation)
+		void draw_guizmo(egfx::object::camera_cref camera, imgui::matrix& object_transform, ImGuizmo::OPERATION operation)
 		{
 			imgui::matrix const view = to_imgui(camera.get_view_matrix());
 			imgui::matrix const projection = imgui::make_perspective_projection(camera.get_rad_fov_y(), camera.get_aspect_ratio(), camera.get_z_near(), camera.get_z_far());
 
-			return ImGuizmo::Manipulate(view.elements, projection.elements, operation, ImGuizmo::LOCAL, object_transform.elements);
+			(void)ImGuizmo::Manipulate(view.elements, projection.elements, operation, ImGuizmo::LOCAL, object_transform.elements);
 		}
 	}
 
@@ -85,7 +86,7 @@ namespace ot::dedit::selection
 		
 	}
 
-	void brush_context::update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input)
+	void brush_context::update(action::accumulator& acc, input::frame_input& input)
 	{
 		hovered_face = egfx::face::id::none;
 
@@ -112,7 +113,7 @@ namespace ot::dedit::selection
 			}
 			else
 			{
-				add_guizmo(camera, object_matrix, static_cast<ImGuizmo::OPERATION>(operation));
+				draw_guizmo(camera, object_matrix, static_cast<ImGuizmo::OPERATION>(operation));
 				
 				// If we're using ImGuizmo, we're in the middle of editing
 				if (ImGuizmo::IsUsing())
@@ -142,9 +143,9 @@ namespace ot::dedit::selection
 			}
 		}	
 
-		add_manual_scene(m, mesh_def, t, hovered_face);
+		draw_immediate_scene(mesh_def, t, hovered_face);
 
-		composite_context::update(m, acc, input);
+		composite_context::update(acc, input);
 
 		if (next_context == nullptr)
 		{

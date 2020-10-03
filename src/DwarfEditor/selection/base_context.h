@@ -34,6 +34,6 @@ namespace ot::dedit::selection
 
 		virtual void start_frame() override;
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) override;
-		virtual void update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input) override;
+		virtual void update(action::accumulator& acc, input::frame_input& input) override;
 	};
 }

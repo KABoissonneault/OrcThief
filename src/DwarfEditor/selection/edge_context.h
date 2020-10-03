@@ -29,6 +29,6 @@ namespace ot::dedit::selection
 			, egfx::half_edge::id selected_edge
 		);
 
-		virtual void update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input) override;
+		virtual void update(action::accumulator& acc, input::frame_input& input) override;
 	};
 }

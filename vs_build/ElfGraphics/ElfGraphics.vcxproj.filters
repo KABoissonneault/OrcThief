@@ -75,12 +75,6 @@
     <ClInclude Include="..\..\lib\ElfGraphics\src\ogre_conversion.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\manual.h">
-      <Filter>include\node</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\src\node\manual.h">
-      <Filter>src\node</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\mesh_definition.fwd.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -120,6 +114,9 @@
     <ClInclude Include="..\..\lib\ElfGraphics\src\ogre_boost_conversion.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\immediate.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\ElfGraphics\src\module.cpp">
@@ -136,9 +133,6 @@
     </ClCompile>
     <ClCompile Include="..\..\lib\ElfGraphics\src\window.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lib\ElfGraphics\src\node\manual.cpp">
-      <Filter>src\node</Filter>
     </ClCompile>
     <ClCompile Include="..\..\lib\ElfGraphics\src\node\mesh.cpp">
       <Filter>src\node</Filter>
@@ -160,6 +154,9 @@
     </ClCompile>
     <ClCompile Include="..\..\lib\ElfGraphics\src\object\camera.cpp">
       <Filter>src\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\ElfGraphics\src\immediate.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

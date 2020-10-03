@@ -11,6 +11,8 @@
 #include "math/vector3.h"
 #include "math/quaternion.h"
 
+#include <im3d.h>
+
 namespace ot::dedit::selection
 {
 	edge_context::edge_context(map const& current_map
@@ -29,7 +31,7 @@ namespace ot::dedit::selection
 
 	}
 
-	void edge_context::update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input)
+	void edge_context::update(action::accumulator& acc, input::frame_input& input)
 	{
 		local_split = std::nullopt;
 
@@ -56,13 +58,13 @@ namespace ot::dedit::selection
 		}		
 
 		// Add overlays
-		m.add_line(datablock::overlay_unlit_edge, transform(local_line, t));
+		math::line const world_line = transform(local_line, t);
+		Im3d::DrawLine(world_line.a, world_line.b, 5.f, Im3d::Color_Red);
 
 		if (local_split)
 		{
 			math::point3f const vertex_pos = transform(*local_split, t);
-			auto const cube_transform = math::transform_matrix::from_components(vector_from_origin(vertex_pos), math::quaternion::identity(), 0.04f);
-			m.add_mesh(datablock::overlay_unlit_vertex_transparent, egfx::mesh_definition::get_cube(), cube_transform);
+			Im3d::DrawPoint(vertex_pos, 10.f, Im3d::Color_Blue);
 		}
 
 		// Handle click

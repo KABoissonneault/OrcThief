@@ -10,10 +10,10 @@ namespace ot::dedit::selection
 			next_context->start_frame();
 	}
 
-	void composite_context::update(egfx::node::manual& m, action::accumulator& acc, input::frame_input& input)
+	void composite_context::update(action::accumulator& acc, input::frame_input& input)
 	{
 		if (next_context != nullptr)
-			next_context->update(m, acc, input);
+			next_context->update(acc, input);
 	}
 	
 	bool composite_context::handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc)
