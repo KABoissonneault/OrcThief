@@ -3,8 +3,6 @@
 #include "core/uptr.h"
 #include "math/unit/time.h"
 
-#include "egfx/node/manual.h"
-
 #include "map.h"
 #include "input.h"
 

@@ -40,6 +40,11 @@ namespace ot::dedit::imgui
 		return ot::math::ops::get_scale(*this);
 	}
 
+	math::transform_matrix to_math_matrix(matrix const& m)
+	{
+		return boost::qvm::convert_to<math::transform_matrix>(m);
+	}
+
 	bool float_eq(matrix const& lhs, matrix const& rhs)
 	{
 		return boost::qvm::cmp(lhs, rhs, [](float l, float r)

@@ -18,6 +18,21 @@ namespace ot::egfx::im
 		context.end();
 	}
 
+	void draw_mesh(mesh_definition const& m, math::transform_matrix const& t, color col)
+	{
+		Im3d::Context& context = Im3d::GetContext();
+		context.begin(Im3d::PrimitiveMode_Triangles);
+
+		for_each_triangle(m, [&](vertex::cref a, vertex::cref b, vertex::cref c)
+		{
+			context.vertex(transform(a.get_position(), t), 1.f, Im3d::Color(col.r, col.g, col.b, col.a));
+			context.vertex(transform(b.get_position(), t), 1.f, Im3d::Color(col.r, col.g, col.b, col.a));
+			context.vertex(transform(c.get_position(), t), 1.f, Im3d::Color(col.r, col.g, col.b, col.a));
+		});
+
+		context.end();
+	}
+
 	void draw_face(face::cref face, math::transform_matrix const& t, color col)
 	{
 		Im3d::Context& context = Im3d::GetContext();

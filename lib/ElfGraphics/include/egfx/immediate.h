@@ -11,5 +11,6 @@
 namespace ot::egfx::im
 {
 	void draw_wiremesh(mesh_definition const& m, math::transform_matrix const& t, float size = 1.f, color c = color::white());
+	void draw_mesh(mesh_definition const& m, math::transform_matrix const& t, color c = color::white());
 	void draw_face(face::cref face, math::transform_matrix const& t, color c = color::white());
 }

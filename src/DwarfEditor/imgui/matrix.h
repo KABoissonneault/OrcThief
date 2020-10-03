@@ -20,6 +20,8 @@ namespace ot::dedit::imgui
 		math::scales get_scale() const noexcept;
 	};
 
+	[[nodiscard]] math::transform_matrix to_math_matrix(matrix const& m);
+
 	using ot::float_eq;
 	[[nodiscard]] bool float_eq(matrix const& lhs, matrix const& rhs);
 	[[nodiscard]] bool float_eq(math::transform_matrix const& lhs, matrix const& rhs);

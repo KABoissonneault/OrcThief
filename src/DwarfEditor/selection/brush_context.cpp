@@ -51,6 +51,19 @@ namespace ot::dedit::selection
 			return current_face;
 		}
 
+		void draw_operation_preview(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t)
+		{
+			egfx::im::draw_mesh(mesh_def, t, egfx::color{ 1.f, 1.f, 1.f, 0.2f });
+		}
+
+		void draw_guizmo(egfx::object::camera_cref camera, imgui::matrix& object_transform, ImGuizmo::OPERATION operation)
+		{
+			imgui::matrix const view = to_imgui(camera.get_view_matrix());
+			imgui::matrix const projection = imgui::make_perspective_projection(camera.get_rad_fov_y(), camera.get_aspect_ratio(), camera.get_z_near(), camera.get_z_far());
+
+			(void)ImGuizmo::Manipulate(view.elements, projection.elements, operation, ImGuizmo::LOCAL, object_transform.elements);
+		}
+
 		void draw_immediate_scene(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t, egfx::face::id hovered_face)
 		{
 			egfx::im::draw_wiremesh(mesh_def, t, 2.f);
@@ -65,14 +78,6 @@ namespace ot::dedit::selection
 				math::point3f const vertex_pos = transform(vertex.get_position(), t);
 				Im3d::DrawPoint(vertex_pos, 10.f, Im3d::Color_Blue);
 			}
-		}
-
-		void draw_guizmo(egfx::object::camera_cref camera, imgui::matrix& object_transform, ImGuizmo::OPERATION operation)
-		{
-			imgui::matrix const view = to_imgui(camera.get_view_matrix());
-			imgui::matrix const projection = imgui::make_perspective_projection(camera.get_rad_fov_y(), camera.get_aspect_ratio(), camera.get_z_near(), camera.get_z_far());
-
-			(void)ImGuizmo::Manipulate(view.elements, projection.elements, operation, ImGuizmo::LOCAL, object_transform.elements);
 		}
 	}
 
@@ -113,6 +118,11 @@ namespace ot::dedit::selection
 			}
 			else
 			{
+				if (ImGuizmo::IsUsing())
+				{
+					draw_operation_preview(mesh_def, to_math_matrix(object_matrix));
+				}
+
 				draw_guizmo(camera, object_matrix, static_cast<ImGuizmo::OPERATION>(operation));
 				
 				// If we're using ImGuizmo, we're in the middle of editing
