@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4181fa63-3eb0-4857-8da5-7120b35d1e71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{e4191964-727c-478d-8224-cc18decb1971}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\ext\Im3d\include\im3d.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ext\Im3d\include\im3d_config.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ext\Im3d\include\im3d_math.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ext\Im3d\include\im3d_impl_dx11.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ext\Im3d\src\im3d_impl_dx11_shader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ext\im3d\include\im3d_boost_traits.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\ext\Im3d\src\im3d.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ext\Im3d\src\im3d_impl_dx11.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
