@@ -17,6 +17,7 @@
 
 #include <imgui_impl_sdl.h>
 #include <ImGuizmo.h>
+#include <im3d.h>
 
 #include <iterator>
 
@@ -94,6 +95,8 @@ namespace ot::dedit
 		
 			handle_events();
 
+			pre_update();
+
 			update(current_frame - last_frame);
 
 			if (!render())
@@ -110,7 +113,6 @@ namespace ot::dedit
 	void application::start_frame()
 	{
 		mouse.start_frame();
-		graphics.start_frame();
 		selection_context->start_frame();
 	}
 
@@ -214,8 +216,13 @@ namespace ot::dedit
 		}
 
 		graphics.on_window_events(window_events);
+	}
 
-		imgui::new_frame(*main_window);
+	void application::pre_update()
+	{
+		imgui::pre_update(*main_window);
+		graphics.pre_update();
+		update_im3d();
 	}
 
 	void application::update(math::seconds dt)
@@ -233,12 +240,43 @@ namespace ot::dedit
 		selection_actions.apply_actions(current_map);
 	}
 
+	namespace
+	{
+		Im3d::Vec3 get_cursor_ray(egfx::object::camera_cref const camera, math::transform_matrix const& camera_projection)
+		{
+			Im3d::AppData& ad = Im3d::GetAppData();
+
+			int cursor_x, cursor_y;
+			input::mouse::get_position(cursor_x, cursor_y);
+
+			float const norm_x = (static_cast<float>(cursor_x) / ad.m_viewportSize.x) * 2.0f - 1.0f;
+			float const norm_y = -((static_cast<float>(cursor_y) / ad.m_viewportSize.x) * 2.0f - 1.0f);
+
+			math::transform_matrix const camera_transform = camera.get_transformation();
+
+			math::vector3f const ray_direction
+			{
+				norm_x / camera_projection[0][0]
+				, norm_y / camera_projection[1][1]
+				, -1.0f
+			};
+
+			return transform(ray_direction, camera_transform);
+		}
+	}
+
+	void application::update_im3d()
+	{
+		Im3d::AppData& ad = Im3d::GetAppData();
+		egfx::object::camera_cref const camera = main_scene.get_camera();
+		math::transform_matrix const camera_projection = camera.get_projection();
+		
+		ad.m_cursorRayOrigin = ad.m_viewOrigin;
+		ad.m_cursorRayDirection = get_cursor_ray(camera, camera_projection);
+	}
+
 	bool application::render()
 	{
-		// Render
-		imgui::render();
-
-		// End frame
 		if (!graphics.render())
 		{
 			return false;

@@ -2,6 +2,7 @@
 
 #include "module.h"
 #include "scene.h"
+#include "object/camera.h"
 
 #include "Ogre/RenderSystem.h"
 #include "Ogre/Compositor/Manager2.h"
@@ -51,8 +52,6 @@ namespace ot::egfx
 			return false;
 		}
 
-		overlay_system.reset(new Ogre::v1::OverlaySystem);
-
 		return true;
 	}
 
@@ -65,11 +64,16 @@ namespace ot::egfx
 	{
 		scene s;
 		init_scene(s, uptr<scene_impl, fwd_delete<scene_impl>>{ new scene_impl(num_threads, main_window.get_window().getTexture(), workspace) });
-		
-		Ogre::SceneManager& scene_manager = get_impl(s).get_scene_manager();
-		scene_manager.addRenderQueueListener(overlay_system.get());
-		scene_manager.getRenderQueue()->setSortRenderQueue(Ogre::v1::OverlayManager::getSingleton().mDefaultRenderQueueId, Ogre::RenderQueue::StableSort);
+		if (main_scene == nullptr)
+		{
+			set_main_scene(s);
+		}
 		return s;
+	}
+
+	void module::impl::set_main_scene(scene& s)
+	{
+		main_scene = &get_impl(s);
 	}
 
 	void module::impl::on_window_events(std::span<window_event const> events)
@@ -95,14 +99,10 @@ namespace ot::egfx
 		}
 	}
 
-	void module::impl::update(math::seconds dt)
+	void module::impl::pre_update()
 	{
-		(void)dt;
-	}
-
-	void module::impl::start_frame()
-	{
-		imgui->new_frame();
+		object::camera_cref const impl = main_scene->get_camera();
+		imgui->pre_update(get_camera(impl));
 	}
 
 	bool module::impl::render()
@@ -137,19 +137,19 @@ namespace ot::egfx
 		return pimpl->create_scene(workspace, number_threads);
 	}
 
+	void module::set_main_scene(scene& s)
+	{
+		pimpl->set_main_scene(s);
+	}
+
 	void module::on_window_events(std::span<window_event const> events)
 	{
 		pimpl->on_window_events(events);
 	}
 
-	void module::update(math::seconds dt)
+	void module::pre_update()
 	{
-		pimpl->update(dt);
-	}
-
-	void module::start_frame()
-	{
-		pimpl->start_frame();
+		pimpl->pre_update();
 	}
 
 	bool module::render()

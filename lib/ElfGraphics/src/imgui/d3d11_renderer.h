@@ -9,7 +9,6 @@ namespace ot::egfx::imgui
 	public:
 		virtual bool initialize() override;
 		virtual void shutdown() override;
-		virtual void new_frame() override;
-		virtual void render() override;
+		virtual void render(Ogre::Camera const* camera) override;
 	};
 }

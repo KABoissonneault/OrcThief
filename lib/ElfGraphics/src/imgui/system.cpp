@@ -17,18 +17,21 @@ namespace ot::egfx::imgui
 		class pass : public Ogre::CompositorPass
 		{
 			renderer* render;
+			Ogre::Camera* default_camera;
 		public:
-			pass(const Ogre::CompositorPassDef* definition, Ogre::CompositorNode* parentNode, renderer* render)
+			pass(const Ogre::CompositorPassDef* definition, Ogre::Camera* default_camera, Ogre::CompositorNode* parentNode, renderer* render)
 				: Ogre::CompositorPass(definition, parentNode)
 				, render(render)
+				, default_camera(default_camera)
 			{
 
 			}
 
-			virtual void execute(const Ogre::Camera* camera)
+			virtual void execute(const Ogre::Camera* lod_camera)
 			{
-				(void)camera;
-				render->render();
+				(void)lod_camera;
+
+				render->render(default_camera);
 			}
 		};
 
@@ -79,9 +82,9 @@ namespace ot::egfx::imgui
 		pass_reg->unregister_pass(this);
 	}
 
-	void system::new_frame()
+	void system::pre_update(Ogre::Camera const& scene_camera)
 	{
-		render->new_frame();
+		render->pre_update(&scene_camera);
 	}
 
 	Ogre::IdString const& system::get_id() const
@@ -101,6 +104,6 @@ namespace ot::egfx::imgui
 		, Ogre::SceneManager* scene_manager
 	)
 	{
-		return OGRE_NEW pass(definition, parent_node, render.get());
+		return OGRE_NEW pass(definition, default_camera, parent_node, render.get());
 	}
 }

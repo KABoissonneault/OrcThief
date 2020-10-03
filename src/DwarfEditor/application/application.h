@@ -18,7 +18,6 @@
 #include "egfx/scene.h"
 #include "egfx/node/light.h"
 #include "egfx/node/manual.h"
-#include "egfx/overlay/surface.h"
 
 #include <span>
 #include <optional>
@@ -48,8 +47,9 @@ namespace ot::dedit
 
 		bool wants_quit = false;
 
-		void handle_events();
 		void start_frame();
+		void handle_events();
+		void pre_update();
 		void update(math::seconds dt);
 		[[nodiscard]] bool render();
 		void end_frame();
@@ -60,6 +60,8 @@ namespace ot::dedit
 		menu& get_menu() noexcept { return *this; }
 
 		map& get_current_map() noexcept { return current_map; }
+
+		void update_im3d();
 
 	public:
 		application(sdl::unique_window window, egfx::module& graphics, config const& program_config);

@@ -37,14 +37,14 @@ namespace ot::egfx
 		[[nodiscard]] bool initialize(window_parameters const& window_params);
 
 		[[nodiscard]] scene create_scene(std::string const& workspace, size_t number_threads);
-		
+		// Sets the current main scene. If none is set, the first you create is considered the main one
+		void set_main_scene(scene& s);
+
 		void on_window_events(std::span<window_event const> events);
 		
-		void update(math::seconds dt);
-
 		// Clears the rendering state, preparing the system for this frame's rendering
 		// Must be called before all rendering
-		void start_frame();
+		void pre_update();
 
 		// Called at the end of the rendering process, to render all of the graphics elements on the viewport(s)
 		// Returns false if rendering has failed and graphics cannot continue

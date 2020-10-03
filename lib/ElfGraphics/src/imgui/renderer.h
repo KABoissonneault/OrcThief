@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Ogre/Prerequisites.h"
+
 namespace ot::egfx::imgui
 {
 	class renderer
@@ -9,7 +11,7 @@ namespace ot::egfx::imgui
 
 		virtual bool initialize() = 0;
 		virtual void shutdown() = 0;
-		virtual void new_frame() = 0;
-		virtual void render() = 0;
+		virtual void pre_update(Ogre::Camera const* camera);
+		virtual void render(Ogre::Camera const* camera);
 	};
 }

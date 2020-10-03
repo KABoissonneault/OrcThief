@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\ImGui\include;$(ProjectDir)..\..\lib\Math\include;$(ProjectDir)..\..\lib\Core\include;$(ProjectDir)..\..\ext\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\ImGui\include;$(ProjectDir)..\..\lib\Math\include;$(ProjectDir)..\..\lib\Core\include;$(ProjectDir)..\..\ext\boost;$(ProjectDir)..\..\lib\Ogre\include;$(ProjectDir)..\..\ext\Ogre\OgreMain\include;$(ProjectDir)..\..\ext\Ogre\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -132,7 +132,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\ImGui\include;$(ProjectDir)..\..\lib\Math\include;$(ProjectDir)..\..\lib\Core\include;$(ProjectDir)..\..\ext\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\ImGui\include;$(ProjectDir)..\..\lib\Math\include;$(ProjectDir)..\..\lib\Core\include;$(ProjectDir)..\..\ext\boost;$(ProjectDir)..\..\lib\Ogre\include;$(ProjectDir)..\..\ext\Ogre\OgreMain\include;$(ProjectDir)..\..\ext\Ogre\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>

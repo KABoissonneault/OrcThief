@@ -4,6 +4,7 @@
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_dx11.h>
 #include <ImGuizmo.h>
+#include <im3d.h>
 
 #include "Ogre/Root.h"
 
@@ -28,19 +29,14 @@ namespace ot::dedit::imgui
 		return true;
 	}
 
-	void new_frame(SDL_Window& window)
+	void pre_update(SDL_Window& window)
 	{
 		ImGui_ImplSDL2_NewFrame(&window);
-		ImGui::NewFrame();
-		ImGuizmo::BeginFrame();
-
-		ImGuiIO& io = ImGui::GetIO();
-		ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 	}
 
-	void render()
+	void end_frame()
 	{
-		ImGui::Render();
+		ImGui::EndFrame(); // in case rendering was skipped
 
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -48,11 +44,6 @@ namespace ot::dedit::imgui
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 		}
-	}
-
-	void end_frame()
-	{
-		ImGui::EndFrame();		
 	}
 
 	void shutdown()

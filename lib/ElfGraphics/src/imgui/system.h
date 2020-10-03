@@ -16,7 +16,7 @@ namespace ot::egfx::imgui
 	public:
 		bool initialize(pass_registry& r);
 		void shutdown();
-		void new_frame();
+		void pre_update(Ogre::Camera const& scene_camera);
 		
 		// pass_provider
 		virtual Ogre::IdString const& get_id() const override;

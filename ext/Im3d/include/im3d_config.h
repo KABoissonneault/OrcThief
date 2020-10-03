@@ -28,6 +28,7 @@
 // Conversion to/from application math types.
 #include <imgui.h>
 #include <math/vector3.h>
+#include <Ogre/Vector3.h>
 
 #define IM3D_VEC2_APP \
 	Vec2(const ImVec2& _v)             { x = _v.x; y = _v.y;     } \
@@ -39,7 +40,9 @@
 	Vec3(const ot::math::vector3f& _v) { x = _v.x; y = _v.y; z = _v.z; } \
 	operator ot::math::vector3f() const { return {x, y, z};    } \
 	Vec3(const ot::math::point3f& _v) { x = _v.x; y = _v.y; z = _v.z; } \
-	operator ot::math::point3f() const { return {x, y, z};    } 
+	operator ot::math::point3f() const { return {x, y, z};    } \
+	Vec3(const Ogre::Vector3& _v) { x = _v.x; y = _v.y; z = _v.z; } \
+	operator Ogre::Vector3() const { return {x, y, z}; }
 //#define IM3D_VEC4_APP \
 //	Vec4(const glm::vec4& _v)          { x = _v.x; y = _v.y; z = _v.z; w = _v.w; } \
 //	operator glm::vec4() const         { return glm::vec4(x, y, z, w);           }
