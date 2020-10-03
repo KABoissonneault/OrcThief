@@ -162,6 +162,11 @@ namespace ot::math
 		return boost::qvm::transform_point(t, p);
 	}
 
+	vector3f transform(vector3f p, transform_matrix const& t) noexcept
+	{
+		return boost::qvm::transform_vector(t, p);
+	}
+
 	bool float_eq(transform_matrix const& lhs, transform_matrix const& rhs) noexcept
 	{
 		return boost::qvm::cmp(lhs, rhs, [] (float l, float r)

@@ -39,6 +39,9 @@ namespace ot::math
 	{
 		float elements[16];
 
+		float* operator[](size_t row) { return elements + row * 4; }
+		float const* operator[](size_t row) const { return elements + row * 4; }
+
 		[[nodiscard]] vector3f get_displacement() const noexcept;
 		[[nodiscard]] rotation_matrix get_rotation() const noexcept;
 		[[nodiscard]] scales get_scale() const noexcept;
@@ -53,6 +56,7 @@ namespace ot::math
 	[[nodiscard]] transform_matrix invert(transform_matrix const& t);
 	[[nodiscard]] transform_matrix operator*(transform_matrix const& lhs, transform_matrix const& rhs);
 	[[nodiscard]] point3f transform(point3f p, transform_matrix const& t) noexcept;
+	[[nodiscard]] vector3f transform(vector3f p, transform_matrix const& t) noexcept;
 
 	[[nodiscard]] bool float_eq(transform_matrix const& lhs, transform_matrix const& rhs) noexcept;
 }

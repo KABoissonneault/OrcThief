@@ -95,3 +95,9 @@ struct boost::qvm::deduce_vec2<ot::math::transform_matrix, ot::math::point3f, 3>
 {
 	using type = ot::math::point3f;
 };
+
+template<>
+struct boost::qvm::deduce_vec2<ot::math::transform_matrix, ot::math::vector3f, 3>
+{
+	using type = ot::math::vector3f;
+};
