@@ -165,7 +165,6 @@ extern "C" int main(int argc, char** argv)
 		std::filesystem::path const resource_folder_path(resource_root);
 
 		ot::dedit::datablock::load_hlms(resource_folder_path / "Ogre");
-		ot::dedit::datablock::initialize();
 		Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups(true);
 
 		ot::dedit::console::initialize();
