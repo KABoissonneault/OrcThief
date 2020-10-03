@@ -121,6 +121,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\ext\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,6 +137,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\ext\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\lib\Ogre\include\ogre\ArchiveManager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\ArchiveType.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\boost\Matrix4Traits.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Camera.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ColourValue.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Components\Hlms\Pbs.h" />

@@ -37,6 +37,9 @@
     <Filter Include="include\Components\Overlay">
       <UniqueIdentifier>{0fe34d33-f8a5-4b3d-9a5c-dbd68b93d902}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\boost">
+      <UniqueIdentifier>{9934c874-163e-415f-a782-a886d6f63b67}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Root.h">
@@ -188,6 +191,9 @@
     </ClInclude>
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Matrix4.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\ogre\boost\Matrix4Traits.h">
+      <Filter>include\boost</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

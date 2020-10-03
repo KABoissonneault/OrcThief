@@ -33,6 +33,10 @@ namespace ot::egfx::object
 
 			// Gets the local position of the camera
 			[[nodiscard]] math::point3f get_position() const;
+			// Gets the direction of the camera
+			[[nodiscard]] math::vector3f get_direction() const;
+			// Gets the rotation of the camera
+			[[nodiscard]] math::quaternion get_rotation() const;
 
 			// Get the radians of the field of view on the horizontal axis
 			[[nodiscard]] float get_rad_fov_x() const;
@@ -41,7 +45,13 @@ namespace ot::egfx::object
 			// Get the ratio between the x FoV and the y FoV
 			[[nodiscard]] float get_aspect_ratio() const;
 
+			// Get the transformation of the camera
+			[[nodiscard]] math::transform_matrix get_transformation() const;
+			// Get the 4x4 matrix representing the camera projection
+			// This is not actually the transformation matrix of the camera
+			[[nodiscard]] math::transform_matrix get_projection() const;
 			// Get the 4x4 matrix representing the camera view
+			// This is not actually the transformation matrix of the camera
 			[[nodiscard]] math::transform_matrix get_view_matrix() const;
 			
 			// Get the distance of the far plane along the Z axis

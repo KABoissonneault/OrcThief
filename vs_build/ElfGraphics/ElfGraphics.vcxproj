@@ -130,6 +130,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,6 +146,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -182,6 +184,7 @@
     <ClInclude Include="..\..\lib\ElfGraphics\src\node\manual.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\node\mesh.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\node\object.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\ogre_boost_conversion.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\ogre_conversion.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\scene.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\window.h" />

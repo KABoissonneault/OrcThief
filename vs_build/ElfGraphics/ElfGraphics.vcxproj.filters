@@ -117,6 +117,9 @@
     <ClInclude Include="..\..\lib\ElfGraphics\src\object\camera.h">
       <Filter>src\object</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\src\ogre_boost_conversion.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\ElfGraphics\src\module.cpp">

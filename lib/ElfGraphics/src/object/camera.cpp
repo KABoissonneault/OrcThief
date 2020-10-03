@@ -5,6 +5,7 @@
 #include "Ogre/SceneManager.h"
 
 #include "ogre_conversion.h"
+#include "ogre_boost_conversion.h"
 
 #include <utility>
 
@@ -58,6 +59,20 @@ namespace ot::egfx::object
 		}
 
 		template<typename Derived>
+		math::vector3f camera_const_impl<Derived>::get_direction() const
+		{
+			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
+			return to_math_vector(camera.getDirection());
+		}
+
+		template<typename Derived>
+		math::quaternion camera_const_impl<Derived>::get_rotation() const
+		{
+			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
+			return to_math_quaternion(camera.getOrientation());
+		}
+
+		template<typename Derived>
 		float camera_const_impl<Derived>::get_rad_fov_x() const
 		{
 			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
@@ -76,6 +91,19 @@ namespace ot::egfx::object
 		{
 			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
 			return camera.getAspectRatio();
+		}
+
+		template<typename Derived>
+		math::transform_matrix camera_const_impl<Derived>::get_transformation() const
+		{
+			return math::transform_matrix::from_components(vector_from_origin(get_position()), get_rotation());
+		}
+
+		template<typename Derived>
+		math::transform_matrix camera_const_impl<Derived>::get_projection() const
+		{
+			Ogre::Camera const& camera = get_camera(static_cast<derived const&>(*this));
+			return to_math_matrix(camera.getProjectionMatrix());
 		}
 
 		template<typename Derived>
