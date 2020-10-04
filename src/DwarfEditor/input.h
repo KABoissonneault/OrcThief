@@ -5,6 +5,7 @@
 #include <SDL_mouse.h>
 #include <SDL_scancode.h>
 #include <SDL_keycode.h>
+#include <SDL_events.h>
 
 #include <optional>
 
@@ -86,6 +87,10 @@ namespace ot::dedit::input
 
 		[[nodiscard]] mod get_modifiers();
 		[[nodiscard]] bool is_pressed(SDL_Scancode key);
+
+		[[nodiscard]] bool is_key_press(SDL_KeyboardEvent const& e, SDL_Keycode key);
+		[[nodiscard]] bool is_key_press(SDL_KeyboardEvent const& e, SDL_Keycode key, mod mod);
+		[[nodiscard]] bool is_key_press(SDL_KeyboardEvent const& e, SDL_Keycode key, mod_group mod);
 	}
 
 	// Structure containing the user input that may have occured in a single frame

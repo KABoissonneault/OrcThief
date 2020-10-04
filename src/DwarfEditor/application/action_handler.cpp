@@ -7,6 +7,8 @@
 
 #include <cassert>
 
+#include <SDL_keycode.h>
+
 namespace ot::dedit
 {
 	void action_handler::push_action(fwd_uptr<action::base> action)
@@ -18,11 +20,7 @@ namespace ot::dedit
 	{
 		auto const modifiers = input::keyboard::get_modifiers();
 
-		if (key.keysym.scancode == SDL_SCANCODE_Z
-			&& key.state == SDL_PRESSED
-			&& key.repeat == 0
-			&& modifiers == input::keyboard::mod_group::ctrl
-			)
+		if (is_key_press(key, SDLK_z, input::keyboard::mod_group::ctrl))
 		{
 			if (!has_undo())
 				console::error("Could not undo: no actions in stack");
@@ -31,11 +29,7 @@ namespace ot::dedit
 			return true;
 		}
 
-		if (key.keysym.scancode == SDL_SCANCODE_Y
-			&& key.state == SDL_PRESSED
-			&& key.repeat == 0
-			&& modifiers == input::keyboard::mod_group::ctrl
-			)
+		if (is_key_press(key, SDLK_y, input::keyboard::mod_group::ctrl))
 		{
 			if (!has_redo())
 				console::error("Could not redo: no actions in stack");

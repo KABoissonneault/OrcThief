@@ -65,12 +65,19 @@ namespace ot::dedit
 	template<typename Application>
 	bool menu<Application>::handle_keyboard_event(SDL_KeyboardEvent const& e)
 	{
-		if (e.keysym.sym == SDLK_o
-			&& e.state == SDL_PRESSED
-			&& e.repeat == 0
-			&& input::keyboard::get_modifiers() == input::keyboard::mod_group::alt)
+		derived& app = static_cast<derived&>(*this);
+		action_handler& acc = app.get_actions();
+		map& m = app.get_current_map();
+
+		if (is_key_press(e, SDLK_o, input::keyboard::mod_group::alt))
 		{
 			draw_console_window = !draw_console_window;
+			return true;
+		}
+
+		if (is_key_press(e, SDLK_n, input::keyboard::mod_group::ctrl))
+		{
+			acc.emplace_action<action::spawn_brush>(cube, m.allocate_entity_id());
 			return true;
 		}
 
@@ -128,7 +135,7 @@ namespace ot::dedit
 		{
 			if (ImGui::BeginMenu("Spawn Primitive"))
 			{
-				if (ImGui::MenuItem("Cube"))
+				if (ImGui::MenuItem("Cube", "CTRL+N"))
 				{
 					acc.emplace_action<action::spawn_brush>(cube, m.allocate_entity_id());
 				}

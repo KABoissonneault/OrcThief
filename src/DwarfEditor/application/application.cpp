@@ -130,13 +130,13 @@ namespace ot::dedit
 			case SDL_KEYDOWN:
 			{
 				SDL_KeyboardEvent const& key = e.key;
-				auto const modifiers = input::keyboard::get_modifiers();
 
 				ImGui_ImplSDL2_ProcessEvent(&e);
 
+				// Handle alt+f4 pressed on a window other than the main one
 				if (imgui_io.WantCaptureKeyboard)
 				{
-					if (key.state == SDL_PRESSED && key.keysym.scancode == SDL_SCANCODE_F4 && modifiers == input::keyboard::mod::lalt)
+					if(is_key_press(key, SDLK_F4, input::keyboard::mod::lalt))
 						wants_quit = true;
 
 					break;

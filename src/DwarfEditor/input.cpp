@@ -28,9 +28,10 @@ namespace ot::dedit::input
 
 	namespace keyboard
 	{
+		constexpr auto k_modifiers = KMOD_CTRL | KMOD_SHIFT | KMOD_ALT;
+
 		mod get_modifiers()
-		{
-			constexpr auto k_modifiers = KMOD_CTRL | KMOD_SHIFT | KMOD_ALT;
+		{			
 			return mod{ SDL_GetModState() & k_modifiers };
 		}
 
@@ -40,6 +41,30 @@ namespace ot::dedit::input
 			Uint8 const* const keys = SDL_GetKeyboardState(&num_key);
 			assert(key < num_key);
 			return keys[key];
+		}
+
+		bool is_key_press(SDL_KeyboardEvent const& e, SDL_Keycode key)
+		{
+			return e.keysym.sym == key
+				&& e.state == SDL_PRESSED
+				&& e.repeat == 0
+				&& (e.keysym.mod & k_modifiers) == 0;
+		}
+
+		bool is_key_press(SDL_KeyboardEvent const& e, SDL_Keycode key, mod m)
+		{
+			return e.keysym.sym == key
+				&& e.state == SDL_PRESSED
+				&& e.repeat == 0
+				&& mod(e.keysym.mod & k_modifiers) == m;
+		}
+
+		bool is_key_press(SDL_KeyboardEvent const& e, SDL_Keycode key, mod_group mg)
+		{
+			return e.keysym.sym == key
+				&& e.state == SDL_PRESSED
+				&& e.repeat == 0
+				&& mod(e.keysym.mod & k_modifiers) == mg;
 		}
 	}
 
