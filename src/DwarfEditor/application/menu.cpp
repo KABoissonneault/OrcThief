@@ -44,20 +44,13 @@ namespace ot::dedit
 			{{0, sqrt_half, sqrt_half}, 0.5},
 			{{0, sqrt_half, -sqrt_half}, 0.5},
 		};
-
-		std::shared_ptr<egfx::mesh_definition const> make_mesh_def(std::span<math::plane const> planes)
-		{
-			auto mesh = std::make_shared<egfx::mesh_definition>();
-			egfx::mesh_definition::init_from_planes(*mesh, planes);
-			return mesh;
-		}
 	}
 
 	template<typename Application>
 	menu<Application>::menu()
-		: cube(make_mesh_def(cube_planes))
-		, octagonal_prism(make_mesh_def(octagon_planes))
-		, square_pyramid(make_mesh_def(pyramid_planes))
+		: cube(std::make_shared<egfx::mesh_definition>(cube_planes))
+		, octagonal_prism(std::make_shared<egfx::mesh_definition>(octagon_planes))
+		, square_pyramid(std::make_shared<egfx::mesh_definition>(pyramid_planes))
 	{
 
 	}

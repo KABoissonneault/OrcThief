@@ -23,6 +23,9 @@
     <Filter Include="src\menu">
       <UniqueIdentifier>{77d82ca5-bef7-4595-83cc-b8423d50bfb8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\serialize">
+      <UniqueIdentifier>{8670425b-df16-40cb-ad3c-05abfa42df88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\DwarfEditor\main.cpp">
@@ -96,6 +99,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\DwarfEditor\action\base.cpp">
       <Filter>src\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\serialize\serialize_map.cpp">
+      <Filter>src\serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\serialize\serialize_math.cpp">
+      <Filter>src\serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\serialize\serialize_mesh_definition.cpp">
+      <Filter>src\serialize</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +194,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\map.fwd.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\serialize\serialize_map.h">
+      <Filter>src\serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\serialize\serialize_math.h">
+      <Filter>src\serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\serialize\serialize_mesh_definition.h">
+      <Filter>src\serialize</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
