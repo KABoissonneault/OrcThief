@@ -23,8 +23,11 @@
     <Filter Include="src\menu">
       <UniqueIdentifier>{77d82ca5-bef7-4595-83cc-b8423d50bfb8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\serialize">
-      <UniqueIdentifier>{8670425b-df16-40cb-ad3c-05abfa42df88}</UniqueIdentifier>
+    <Filter Include="src\platform">
+      <UniqueIdentifier>{df5d3d90-2d88-4178-9189-4e5e74cee0f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\platform\windows">
+      <UniqueIdentifier>{538df09f-66fc-4c9f-a0f8-bcd0bd89facd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -100,14 +103,11 @@
     <ClCompile Include="..\..\src\DwarfEditor\action\base.cpp">
       <Filter>src\action</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\DwarfEditor\serialize\serialize_map.cpp">
-      <Filter>src\serialize</Filter>
+    <ClCompile Include="..\..\src\DwarfEditor\Platform\Windows\windows_main.cpp">
+      <Filter>src\platform\windows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\DwarfEditor\serialize\serialize_math.cpp">
-      <Filter>src\serialize</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\DwarfEditor\serialize\serialize_mesh_definition.cpp">
-      <Filter>src\serialize</Filter>
+    <ClCompile Include="..\..\src\DwarfEditor\platform\windows\windows_file_dialog.cpp">
+      <Filter>src\platform\windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -195,14 +195,17 @@
     <ClInclude Include="..\..\src\DwarfEditor\map.fwd.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\DwarfEditor\serialize\serialize_map.h">
-      <Filter>src\serialize</Filter>
+    <ClInclude Include="..\..\src\DwarfEditor\main.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\DwarfEditor\serialize\serialize_math.h">
-      <Filter>src\serialize</Filter>
+    <ClInclude Include="..\..\src\DwarfEditor\platform\windows\windows_main.h">
+      <Filter>src\platform\windows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\DwarfEditor\serialize\serialize_mesh_definition.h">
-      <Filter>src\serialize</Filter>
+    <ClInclude Include="..\..\src\DwarfEditor\platform\file_dialog.h">
+      <Filter>src\platform</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

@@ -56,6 +56,12 @@ namespace ot::dedit
 		}
 	}
 
+	void map::clear()
+	{
+		brushes.clear();
+		next_entity_id = 0;
+	}
+
 	brush const* map::find_brush(entity_id id) const noexcept
 	{
 		auto const it_found = std::find_if(brushes.begin(), brushes.end(), [id](brush const& b) { return b.get_id() == id; });

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.200921.6\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.200921.6\build\native\Microsoft.Windows.CppWinRT.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -201,6 +202,8 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClCompile Include="..\..\src\DwarfEditor\main.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\map.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\menu\console_window.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\platform\windows\windows_file_dialog.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\Platform\Windows\windows_main.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\selection\base_context.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\selection\brush_common.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\selection\brush_context.cpp" />
@@ -256,10 +259,13 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClInclude Include="..\..\src\DwarfEditor\imgui\matrix.h" />
     <ClInclude Include="..\..\src\DwarfEditor\imgui\module.h" />
     <ClInclude Include="..\..\src\DwarfEditor\imgui\projection.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\main.h" />
     <ClInclude Include="..\..\src\DwarfEditor\input.h" />
     <ClInclude Include="..\..\src\DwarfEditor\map.fwd.h" />
     <ClInclude Include="..\..\src\DwarfEditor\map.h" />
     <ClInclude Include="..\..\src\DwarfEditor\menu\console_window.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\platform\file_dialog.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\platform\windows\windows_main.h" />
     <ClInclude Include="..\..\src\DwarfEditor\selection\base_context.h" />
     <ClInclude Include="..\..\src\DwarfEditor\selection\brush_common.h" />
     <ClInclude Include="..\..\src\DwarfEditor\selection\brush_context.h" />
@@ -271,7 +277,18 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClInclude Include="..\..\src\DwarfEditor\serialize\serialize_mesh_definition.h" />
     <ClInclude Include="..\..\src\DwarfEditor\window.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.200921.6\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.200921.6\build\native\Microsoft.Windows.CppWinRT.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.200921.6\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.200921.6\build\native\Microsoft.Windows.CppWinRT.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.200921.6\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.200921.6\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+  </Target>
 </Project>

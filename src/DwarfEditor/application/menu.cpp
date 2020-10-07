@@ -3,12 +3,15 @@
 #include "application/application.h"
 #include "application/action_handler.h"
 
-#include "menu/console_window.h"
 #include "input.h"
+#include "console.h"
+#include "menu/console_window.h"
+#include "platform/file_dialog.h"
 
 #include "action/brush.h"
 
 #include <imgui.h>
+#include <fmt/format.h>
 
 namespace ot::dedit
 {
@@ -62,13 +65,37 @@ namespace ot::dedit
 		action_handler& acc = app.get_actions();
 		map& m = app.get_current_map();
 
+		if (is_key_press(e, SDLK_n, input::keyboard::mod_group::ctrl))
+		{
+			new_map();
+			return true;
+		}
+
+		if (is_key_press(e, SDLK_o, input::keyboard::mod_group::ctrl))
+		{
+			open_map();
+			return true;
+		}
+
+		if (is_key_press(e, SDLK_s, input::keyboard::mod_group::ctrl))
+		{
+			save_map();
+			return true;
+		}
+
+		if (is_key_press(e, SDLK_s, input::keyboard::mod_combo::ctrl_shift))
+		{
+			save_map_as();
+			return true;
+		}
+
 		if (is_key_press(e, SDLK_o, input::keyboard::mod_group::alt))
 		{
 			draw_console_window = !draw_console_window;
 			return true;
 		}
 
-		if (is_key_press(e, SDLK_n, input::keyboard::mod_group::ctrl))
+		if (is_key_press(e, SDLK_b, input::keyboard::mod_combo::ctrl_alt))
 		{
 			acc.emplace_action<action::spawn_brush>(cube, m.allocate_entity_id());
 			return true;
@@ -94,6 +121,26 @@ namespace ot::dedit
 
 		if (ImGui::BeginMenu("File"))
 		{
+			if (ImGui::MenuItem("New", "CTRL+N"))
+			{
+				new_map();
+			}
+
+			if (ImGui::MenuItem("Open", "CTRL+O"))
+			{
+				open_map();
+			}
+
+			if (ImGui::MenuItem("Save", "CTRL+S"))
+			{
+				save_map();
+			}
+
+			if (ImGui::MenuItem("Save As...", "CTRL+Shift+S"))
+			{
+				save_map_as();
+			}
+
 			if (ImGui::MenuItem("Quit", "Alt+F4"))
 			{
 				app.quit();
@@ -128,7 +175,7 @@ namespace ot::dedit
 		{
 			if (ImGui::BeginMenu("Spawn Primitive"))
 			{
-				if (ImGui::MenuItem("Cube", "CTRL+N"))
+				if (ImGui::MenuItem("Cube", "CTRL+Alt+B"))
 				{
 					acc.emplace_action<action::spawn_brush>(cube, m.allocate_entity_id());
 				}
@@ -151,6 +198,79 @@ namespace ot::dedit
 		}
 
 		ImGui::EndMainMenuBar();
+	}
+
+	template<typename Application>
+	void menu<Application>::new_map()
+	{
+		derived& app = static_cast<derived&>(*this);
+		map& m = app.get_current_map();
+
+		// TODO: confirmation on dirty map
+		m.clear();
+		app.map_path.clear();
+
+		console::log("Starting new map");
+	}
+
+	template<typename Application>
+	void menu<Application>::open_map()
+	{
+		derived& app = static_cast<derived&>(*this);
+
+		// TODO: confirmation on dirty map
+		platform::open_file_dialog(".dem", [&app](std::error_code ec, std::string file_path)
+		{
+			if (ec)
+			{
+				if (ec != std::errc::operation_canceled)
+					console::error(fmt::format("Open file failed ({})", ec.message()));
+				return;
+			}
+			// TODO: actually load map
+			app.map_path = std::move(file_path);
+
+			console::log(fmt::format("Opened map '{}'", app.map_path));
+		});
+	}
+
+	template<typename Application>
+	void menu<Application>::save_map()
+	{
+		derived& app = static_cast<derived&>(*this);
+
+		if (app.map_path.empty())
+		{
+			save_map_as();
+		}
+		else
+		{
+			// TODO: actually save
+		}
+	}
+
+	template<typename Application>
+	void menu<Application>::save_map_as()
+	{
+		derived& app = static_cast<derived&>(*this);
+
+		platform::file_type file_type;
+		file_type.name = "DwarfEditor Map";
+		std::string_view const extension = ".dem";
+		file_type.extensions = std::span<std::string_view const>(&extension, 1);
+		platform::save_file_dialog(file_type, [&app](std::error_code ec, std::string file_path)
+		{
+			if (ec)
+			{
+				if (ec != std::errc::operation_canceled)
+					console::error(fmt::format("Save file failed ({})", ec.message()));
+				return;
+			}
+			app.map_path = std::move(file_path);
+
+			console::log(fmt::format("Saved map as '{}'", app.map_path));
+			// TODO: actually save
+		});
 	}
 
 	template class menu<application>;

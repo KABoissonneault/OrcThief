@@ -40,7 +40,7 @@ namespace ot
 		uptr(T* ptr, Deleter deleter) noexcept : Deleter(deleter), ptr(ptr) {}
 		uptr(uptr const&) = delete;
 		uptr(uptr&& other) noexcept : Deleter(std::move(other).access_deleter()), ptr(other.ptr) { other.ptr = nullptr; }
-		constexpr uptr(nullptr_t) noexcept {}
+		constexpr uptr(nullptr_t) noexcept : ptr(nullptr) {}
 		uptr& operator=(uptr const&) = delete;
 		uptr& operator=(uptr&& other) noexcept
 		{
