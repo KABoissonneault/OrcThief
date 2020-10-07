@@ -5,52 +5,58 @@
 
 #include <iostream>
 
-namespace ot::dedit
+namespace ot::dedit::serialize
 {
-
-	std::ostream& operator<<(std::ostream& o, map const& m)
+	bool fwrite(map const& m, std::FILE* f)
 	{
 		std::span<brush const> const brushes = m.get_brushes();
-		
-		o << brushes.size();
+		size_t const brush_count = brushes.size();
+
+		if (!::fwrite(&brush_count, sizeof(brush_count), 1, f))
+			return false;
+
 		for (brush const& b : brushes)
 		{
-			o << *b.mesh_def;
+			if (!fwrite(*b.mesh_def, f))
+				return false;
+
 			egfx::node::object_cref const node = b.node;
-			o << node.get_position();
-			o << node.get_rotation();
-			auto const scales = node.get_scale();
-			o << scales.x << scales.y << scales.z;
+			if (
+				!fwrite(node.get_position(), f)
+				|| !fwrite(node.get_rotation(), f)
+				|| !fwrite(node.get_scale(), f)
+				)
+				return false;
 		}
 
-		return o;
+		return true;
 	}
 
-	std::istream& operator>>(std::istream& i, map& m)
+	bool fread(map& m, std::FILE* f)
 	{
 		size_t brush_count;
-		if (i >> brush_count)
+		if (!::fread(&brush_count, sizeof(brush_count), 1, f))
+			return false;
+
+		for (size_t n = 0; n < brush_count; ++n)
 		{
-			for (size_t n = 0; n < brush_count; ++n)
-			{
-				auto mesh_def = std::make_shared<egfx::mesh_definition>();
-				if (!(i >> *mesh_def))
-					break;
+			auto mesh_def = std::make_shared<egfx::mesh_definition>();
+			if (!fread(*mesh_def, f))
+				return false;
 
-				math::point3f position;
-				math::quaternion rotation;
-				math::scales scales;
+			math::point3f position;
+			math::quaternion rotation;
+			math::scales scales;
+			if (!fread(position, f) || !fread(rotation, f) || !fread(scales, f))
+				return false;
 
-				if (!((i >> position) && (i >> rotation) && (i >> scales.x) && (i >> scales.y) && (i >> scales.z)))
-					break;
-
-				brush& b = m.make_brush(std::move(mesh_def), m.allocate_entity_id());
-				egfx::node::object_ref const node = b.node;
-				node.set_position(position);
-				node.set_rotation(rotation);
-				node.set_scale(scales);
-			}
+			brush& b = m.make_brush(std::move(mesh_def), m.allocate_entity_id());
+			egfx::node::object_ref const node = b.node;
+			node.set_position(position);
+			node.set_rotation(rotation);
+			node.set_scale(scales);
 		}
-		return i;
+
+		return true;
 	}
 }

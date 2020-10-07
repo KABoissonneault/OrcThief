@@ -6,35 +6,37 @@
 
 #include <iostream>
 
-namespace ot::dedit
+namespace ot::dedit::serialize
 {
-	std::ostream& operator<<(std::ostream& o, egfx::mesh_definition const& m)
+	bool fwrite(egfx::mesh_definition const& m, std::FILE* f)
 	{
 		auto const faces = m.get_faces();
-		o << faces.size();
-		for (egfx::face::cref const f : faces)
+		size_t const face_count = faces.size();
+		if (::fwrite(&face_count, sizeof(face_count), 1, f) != 1)
+			return false;
+
+		std::vector<math::plane> v;
+		v.reserve(faces.size());
+		for (egfx::face::cref const fr : faces)
 		{
-			o << f.get_plane();
+			v.push_back(fr.get_plane());
 		}
-		return o;
+
+		return fwrite(v, f);
 	}
 
-	std::istream& operator>>(std::istream& i, egfx::mesh_definition& m)
+	bool fread(egfx::mesh_definition& m, std::FILE* f)
 	{
 		size_t face_count;
-		if (i >> face_count)
-		{
-			std::vector<math::plane> v(face_count);
-			for (math::plane& p : v)
-			{
-				i >> p;
-			}
+		if (::fread(&face_count, sizeof(face_count), 1, f) != 1)
+			return false;
 
-			if (i)
-			{
-				m = egfx::mesh_definition(v);
-			}
-		}
-		return i;
+		std::vector<math::plane> v(face_count);
+		if (!fread(v, f))
+			return false;
+
+		m = egfx::mesh_definition(v);
+
+		return true;
 	}
 }

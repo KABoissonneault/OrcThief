@@ -2,10 +2,10 @@
 
 #include "map.h"
 
-#include <iosfwd>
+#include <cstdio>
 
-namespace ot::dedit
+namespace ot::dedit::serialize
 {
-	std::ostream& operator<<(std::ostream& o, map const& m);
-	std::istream& operator>>(std::istream& i, map& m);
+	bool fwrite(map const& m, std::FILE* stream);
+	bool fread(map& m, std::FILE* stream);
 }

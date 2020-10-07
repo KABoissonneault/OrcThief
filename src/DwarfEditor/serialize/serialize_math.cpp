@@ -1,63 +1,111 @@
 #include "serialize_math.h"
 
-#include <iostream>
-
-namespace ot::dedit
+namespace ot::dedit::serialize
 {
-	std::ostream& operator<<(std::ostream& o, math::point3f const& p)
+	bool fwrite(math::point3f const& p, std::FILE* stream)
 	{
-		o << p.x;
-		o << p.y;
-		o << p.z;
-		return o;
+		static_assert(sizeof(math::point3f) == 3 * sizeof(float));
+		return ::fwrite(&p, sizeof(float), 3, stream) == 3;
 	}
 
-	std::istream& operator>>(std::istream& i, math::point3f& p)
+	bool fread(math::point3f& p, std::FILE* stream)
 	{
-		(i >> p.x) && (i >> p.y) && (i >> p.z);
-		return i;
+		return ::fread(&p, sizeof(float), 3, stream) == 3;
 	}
 
-	std::ostream& operator<<(std::ostream& o, math::vector3f const& p)
+	bool fwrite(std::span<math::point3f const> p, std::FILE* stream)
 	{
-		o << p.x;
-		o << p.y;
-		o << p.z;
-		return o;
+		return ::fwrite(p.data(), sizeof(math::point3f), p.size(), stream) == p.size();
 	}
 
-	std::istream& operator>>(std::istream& i, math::vector3f& p)
+	bool fread(std::span<math::point3f> p, std::FILE* stream)
 	{
-		(i >> p.x) && (i >> p.y) && (i >> p.z);
-		return i;
+		return ::fread(p.data(), sizeof(math::point3f), p.size(), stream) == p.size();
 	}
 
-	std::ostream& operator<<(std::ostream& o, math::plane const& p)
+	bool fwrite(math::vector3f const& v, std::FILE* stream)
 	{
-		o << p.distance;
-		o << p.normal;
-
-		return o;
+		static_assert(sizeof(math::vector3f) == 3 * sizeof(float));
+		return ::fwrite(&v, sizeof(float), 3, stream) == 3;
 	}
 
-	std::istream& operator>>(std::istream& i, math::plane& p)
+	bool fread(math::vector3f& v, std::FILE* stream)
 	{
-		(i >> p.distance) && (i >> p.normal);
-		return i;
+		return ::fread(&v, sizeof(float), 3, stream) == 3;
 	}
 
-	std::ostream& operator<<(std::ostream& o, math::quaternion const& p)
+	bool fwrite(std::span<math::vector3f const> v, std::FILE* stream)
 	{
-		o << p.w;
-		o << p.x;
-		o << p.y;
-		o << p.z;
-		return o;
+		return ::fwrite(v.data(), sizeof(math::vector3f), v.size(), stream) == v.size();
 	}
 
-	std::istream& operator>>(std::istream& i, math::quaternion& p)
+	bool fread(std::span<math::vector3f> v, std::FILE* stream)
 	{
-		(i >> p.w) && (i >> p.x) && (i >> p.y) && (i >> p.z);
-		return i;
+		return ::fread(v.data(), sizeof(math::vector3f), v.size(), stream) == v.size();
+	}
+
+	bool fwrite(math::plane const& m, std::FILE* stream)
+	{
+		static_assert(sizeof(math::plane) == 4 * sizeof(float));
+		return ::fwrite(&m, sizeof(float), 4, stream) == 4;
+	}
+
+	bool fread(math::plane& m, std::FILE* stream)
+	{
+		return ::fread(&m, sizeof(float), 4, stream) == 4;
+	}
+
+	bool fwrite(std::span<math::plane const> p, std::FILE* stream)
+	{
+		return ::fwrite(p.data(), sizeof(math::plane), p.size(), stream) == p.size();
+	}
+
+	bool fread(std::span<math::plane> p, std::FILE* stream)
+	{
+		return ::fread(p.data(), sizeof(math::plane), p.size(), stream) == p.size();
+	}
+
+	bool fwrite(math::quaternion const& q, std::FILE* stream)
+	{
+		static_assert(sizeof(math::quaternion) == 4 * sizeof(float));
+		return ::fwrite(&q, sizeof(float), 4, stream) == 4;
+	}
+
+	bool fread(math::quaternion& q, std::FILE* stream)
+	{
+		return ::fread(&q, sizeof(float), 4, stream) == 4;
+	}
+
+	bool fwrite(std::span<math::quaternion const> q, std::FILE* stream)
+	{
+		return ::fwrite(&q, sizeof(math::quaternion), q.size(), stream) == q.size();
+	}
+
+	bool fread(std::span<math::quaternion> q, std::FILE* stream)
+	{
+		return ::fread(&q, sizeof(math::quaternion), q.size(), stream) == q.size();
+	}
+
+	static_assert(sizeof(math::point3f) == 3 * sizeof(float));
+
+	bool fwrite(math::scales const& s, std::FILE* stream)
+	{
+		
+		return ::fwrite(&s, sizeof(float), 3, stream) == 3;
+	}
+
+	bool fread(math::scales& s, std::FILE* stream)
+	{
+		return ::fread(&s, sizeof(float), 3, stream) == 3;
+	}
+
+	bool fwrite(std::span<math::scales const> s, std::FILE* stream)
+	{
+		return ::fwrite(s.data(), sizeof(math::scales), s.size(), stream) == s.size();
+	}
+
+	bool fread(std::span<math::scales> s, std::FILE* stream)
+	{
+		return ::fread(s.data(), sizeof(math::scales), s.size(), stream) == s.size();
 	}
 }

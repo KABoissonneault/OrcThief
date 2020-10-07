@@ -1,10 +1,10 @@
 #pragma once
 
 #include "egfx/mesh_definition.fwd.h"
-#include <iosfwd>
+#include <cstdio>
 
-namespace ot::dedit
+namespace ot::dedit::serialize
 {
-	std::ostream& operator<<(std::ostream& o, egfx::mesh_definition const& m);
-	std::istream& operator>>(std::istream& i, egfx::mesh_definition& m);
+	bool fwrite(egfx::mesh_definition const& m, std::FILE* f);
+	bool fread(egfx::mesh_definition& m, std::FILE* f);
 }

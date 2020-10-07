@@ -29,6 +29,9 @@
     <Filter Include="src\platform\windows">
       <UniqueIdentifier>{538df09f-66fc-4c9f-a0f8-bcd0bd89facd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\serialize">
+      <UniqueIdentifier>{b1c59ee8-d795-43c6-8c93-20e60c167908}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\DwarfEditor\main.cpp">
@@ -108,6 +111,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\DwarfEditor\platform\windows\windows_file_dialog.cpp">
       <Filter>src\platform\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\serialize\serialize_map.cpp">
+      <Filter>src\serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\serialize\serialize_math.cpp">
+      <Filter>src\serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\serialize\serialize_mesh_definition.cpp">
+      <Filter>src\serialize</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -203,6 +215,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\platform\file_dialog.h">
       <Filter>src\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\serialize\serialize_map.h">
+      <Filter>src\serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\serialize\serialize_math.h">
+      <Filter>src\serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\serialize\serialize_mesh_definition.h">
+      <Filter>src\serialize</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
