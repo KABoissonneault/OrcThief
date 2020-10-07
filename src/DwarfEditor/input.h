@@ -75,8 +75,8 @@ namespace ot::dedit::input
 
 		enum class mod_group
 		{
-			shift = KMOD_SHIFT,
 			ctrl = KMOD_CTRL,
+			shift = KMOD_SHIFT,
 			alt = KMOD_ALT,
 		};
 
@@ -85,12 +85,22 @@ namespace ot::dedit::input
 			return (static_cast<int>(lhs) & static_cast<int>(rhs)) && !(static_cast<int>(lhs) & ~static_cast<int>(rhs));
 		}
 
+		enum class mod_combo
+		{
+			ctrl_shift,
+			ctrl_alt,
+			alt_shift,
+		};
+
+		[[nodiscard]] constexpr bool operator==(mod lhs, mod_combo rhs) noexcept;
+
 		[[nodiscard]] mod get_modifiers();
 		[[nodiscard]] bool is_pressed(SDL_Scancode key);
 
 		[[nodiscard]] bool is_key_press(SDL_KeyboardEvent const& e, SDL_Keycode key);
 		[[nodiscard]] bool is_key_press(SDL_KeyboardEvent const& e, SDL_Keycode key, mod mod);
 		[[nodiscard]] bool is_key_press(SDL_KeyboardEvent const& e, SDL_Keycode key, mod_group mod);
+		[[nodiscard]] bool is_key_press(SDL_KeyboardEvent const& e, SDL_Keycode key, mod_combo mod);
 	}
 
 	// Structure containing the user input that may have occured in a single frame
@@ -101,4 +111,27 @@ namespace ot::dedit::input
 		[[nodiscard]] bool consume_left_click() noexcept;
 		[[nodiscard]] bool consume_right_click() noexcept;
 	};
+}
+
+namespace ot::dedit::input::keyboard
+{
+	inline constexpr bool operator==(mod lhs, mod_combo rhs) noexcept
+	{
+		switch (rhs)
+		{
+		case mod_combo::ctrl_shift: return
+			(static_cast<int>(lhs) & static_cast<int>(mod_group::ctrl))
+			&& (static_cast<int>(lhs) & static_cast<int>(mod_group::shift))
+			&& !(static_cast<int>(lhs) & static_cast<int>(mod_group::alt));
+		case mod_combo::ctrl_alt: return
+			(static_cast<int>(lhs) & static_cast<int>(mod_group::ctrl))
+			&& !(static_cast<int>(lhs) & static_cast<int>(mod_group::shift))
+			&& (static_cast<int>(lhs) & static_cast<int>(mod_group::alt));
+		case mod_combo::alt_shift: return
+			!(static_cast<int>(lhs) & static_cast<int>(mod_group::ctrl))
+			&& (static_cast<int>(lhs) & static_cast<int>(mod_group::shift))
+			&& (static_cast<int>(lhs) & static_cast<int>(mod_group::alt));
+		}
+		OT_UNREACHABLE();
+	}
 }

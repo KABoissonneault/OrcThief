@@ -66,6 +66,14 @@ namespace ot::dedit::input
 				&& e.repeat == 0
 				&& mod(e.keysym.mod & k_modifiers) == mg;
 		}
+
+		bool is_key_press(SDL_KeyboardEvent const& e, SDL_Keycode key, mod_combo mg)
+		{
+			return e.keysym.sym == key
+				&& e.state == SDL_PRESSED
+				&& e.repeat == 0
+				&& mod(e.keysym.mod & k_modifiers) == mg;
+		}
 	}
 
 	bool frame_input::consume_left_click() noexcept
