@@ -37,6 +37,7 @@ namespace ot::dedit
 		egfx::node::directional_light light;
 
 		map current_map;
+		std::string map_path;
 
 		uptr<selection::context> selection_context;
 		

@@ -43,6 +43,8 @@ namespace ot::dedit
 		brush& make_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id);
 		void delete_brush(entity_id id);
 
+		void clear();
+
 		std::span<brush> get_brushes() noexcept { return brushes; }
 		std::span<brush const> get_brushes() const noexcept { return brushes; }
 		brush const& get_brush(size_t i) const { return brushes[i]; }

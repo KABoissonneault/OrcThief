@@ -47,3 +47,8 @@ ext/Ogre
 /ext/boost
 *.recipe
 /ext/fmt
+/vs_build/packages
+/vs_build/DwarfEditor/x64/Debug/
+/vs_build/DwarfEditor/x64/Release/
+/vs_build/Platform/x64/Debug/
+/vs_build/Platform/x64/Release/
