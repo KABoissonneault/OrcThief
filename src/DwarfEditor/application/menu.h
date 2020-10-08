@@ -21,11 +21,6 @@ namespace ot::dedit
 		std::shared_ptr<egfx::mesh_definition const> octagonal_prism;
 		std::shared_ptr<egfx::mesh_definition const> square_pyramid;
 
-		void new_map();
-		void open_map();
-		void save_map();
-		void save_map_as();
-
 	public:
 		menu();
 

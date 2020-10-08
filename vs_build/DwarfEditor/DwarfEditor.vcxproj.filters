@@ -121,6 +121,9 @@
     <ClCompile Include="..\..\src\DwarfEditor\serialize\serialize_mesh_definition.cpp">
       <Filter>src\serialize</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\application\map_handler.cpp">
+      <Filter>src\application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\DwarfEditor\selection\context.h">
@@ -224,6 +227,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\serialize\serialize_mesh_definition.h">
       <Filter>src\serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\application\map_handler.h">
+      <Filter>src\application</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@
 #include "application/mouse_controller.h"
 #include "application/action_handler.h"
 #include "application/menu.h"
+#include "application/map_handler.h"
 
 #include "config.h"
 #include "map.h"
@@ -26,9 +27,11 @@ namespace ot::dedit
 	class application 
 		: private camera_controller<application>
 		, private menu<application>
+		, private map_handler<application>
 	{
 		friend class camera_controller<application>;
 		friend class menu<application>;
+		friend class map_handler<application>;
 
 		sdl::unique_window main_window;
 		egfx::module& graphics;
@@ -37,7 +40,6 @@ namespace ot::dedit
 		egfx::node::directional_light light;
 
 		map current_map;
-		std::string map_path;
 
 		uptr<selection::context> selection_context;
 		
@@ -57,6 +59,7 @@ namespace ot::dedit
 		camera_controller& get_camera() noexcept { return *this; }
 		action_handler& get_actions() noexcept { return selection_actions; }
 		menu& get_menu() noexcept { return *this; }
+		map_handler& get_map_handler() noexcept { return *this; }
 
 		map& get_current_map() noexcept { return current_map; }
 
