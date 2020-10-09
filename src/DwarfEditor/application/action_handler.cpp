@@ -13,7 +13,7 @@ namespace ot::dedit
 {
 	void action_handler::push_action(fwd_uptr<action::base> action)
 	{
-		current_actions.push_back(std::move(action));
+		current_actions.push_back({ std::move(action), ++next_id });
 	}
 
 	bool action_handler::handle_keyboard_event(SDL_KeyboardEvent const& key, map& current_map)
@@ -47,40 +47,52 @@ namespace ot::dedit
 		if (current_actions.empty())
 			return;
 
-		for (auto& action : current_actions)
+		for (auto& data : current_actions)
 		{
-			action->apply(current_map);
+			data.action->apply(current_map);
 		}
 
-		previous_actions.insert(previous_actions.end(), std::make_move_iterator(current_actions.begin()), std::make_move_iterator(current_actions.end()));
+		applied_actions.insert(applied_actions.end(), std::make_move_iterator(current_actions.begin()), std::make_move_iterator(current_actions.end()));
 		current_actions.clear();
-		redo_actions.clear();
+		undone_actions.clear();
 	}
 
 	void action_handler::clear()
 	{
 		current_actions.clear();
-		previous_actions.clear();
-		redo_actions.clear();
+		applied_actions.clear();
+		undone_actions.clear();
 	}
 
 	void action_handler::redo_latest(map& current_map)
 	{
 		assert(has_redo());
 
-		auto& brush = redo_actions.back();
-		brush->apply(current_map);
-		previous_actions.push_back(std::move(brush));
-		redo_actions.pop_back();
+		auto& data = undone_actions.back();
+		data.action->apply(current_map);
+		applied_actions.push_back(std::move(data));
+		undone_actions.pop_back();
 	}
 
 	void action_handler::undo_latest(map& current_map)
 	{
 		assert(has_undo());
 
-		auto& brush = previous_actions.back();
-		brush->undo(current_map);
-		redo_actions.push_back(std::move(brush));
-		previous_actions.pop_back();
+		auto& data = applied_actions.back();
+		data.action->undo(current_map);
+		undone_actions.push_back(std::move(data));
+		applied_actions.pop_back();
+	}
+
+	int action_handler::get_last_action()
+	{
+		if (applied_actions.empty())
+		{
+			return 0;
+		}
+		else
+		{
+			return applied_actions.back().id;
+		}
 	}
 }

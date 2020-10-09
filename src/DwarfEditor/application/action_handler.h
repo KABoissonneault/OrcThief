@@ -13,9 +13,17 @@ namespace ot::dedit
 {
 	class action_handler : public action::accumulator
 	{
-		std::vector<fwd_uptr<action::base>> current_actions;
-		std::vector<fwd_uptr<action::base>> previous_actions;
-		std::vector<fwd_uptr<action::base>> redo_actions;
+		struct action_data
+		{
+			fwd_uptr<action::base> action;
+			int id;
+		};
+
+		std::vector<action_data> current_actions;
+		std::vector<action_data> applied_actions;
+		std::vector<action_data> undone_actions;
+
+		int next_id = 0;
 
 	public:
 		virtual void push_action(fwd_uptr<action::base> action) override;
@@ -26,8 +34,12 @@ namespace ot::dedit
 		void undo_latest(map& current_map);
 		void redo_latest(map& current_map);
 
-		[[nodiscard]] bool has_undo() const noexcept { return !previous_actions.empty(); }
-		[[nodiscard]] bool has_redo() const noexcept { return !redo_actions.empty(); }
+		// IDs representing a monotonically increasing counter of applied actions
+		// This is used by ex: the map handler to tell if actions were applied since the map was last saved
+		int get_last_action();
+
+		[[nodiscard]] bool has_undo() const noexcept { return !applied_actions.empty(); }
+		[[nodiscard]] bool has_redo() const noexcept { return !undone_actions.empty(); }
 
 		void clear();
 	};
