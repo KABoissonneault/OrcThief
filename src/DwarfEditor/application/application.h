@@ -57,7 +57,7 @@ namespace ot::dedit
 
 		// Accessors for our friend classes
 		camera_controller& get_camera() noexcept { return *this; }
-		action_handler& get_actions() noexcept { return selection_actions; }
+		action_handler& get_action_handler() noexcept { return selection_actions; }
 		menu& get_menu() noexcept { return *this; }
 		map_handler& get_map_handler() noexcept { return *this; }
 
@@ -68,11 +68,12 @@ namespace ot::dedit
 	public:
 		application(sdl::unique_window window, egfx::module& graphics, config const& program_config);
 
-		[[nodiscard]] brush make_brush(std::span<math::plane const> planes, std::string const& name, math::point3f position);
-
 		void run();
 		// Called while "run" is executing. Tells the application to end the execution of "run"
-		void quit() { wants_quit = true; }
+		void quit();
+		[[nodiscard]] bool is_quitting() const noexcept { return wants_quit; }
+		// Called while the application wants to quit. 
+		void cancel_quit() { wants_quit = false; }
 
 		[[nodiscard]] egfx::scene& get_scene() noexcept { return main_scene; }
 		[[nodiscard]] egfx::window const& get_render_window() const noexcept { return graphics.get_window(egfx::window_id{ SDL_GetWindowID(main_window.get()) }); }

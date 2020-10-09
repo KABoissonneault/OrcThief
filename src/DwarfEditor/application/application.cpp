@@ -87,7 +87,7 @@ namespace ot::dedit
 		auto last_frame = std::chrono::steady_clock::now();
 		auto current_frame = last_frame;
 
-		while (!wants_quit) 
+		while (!wants_quit || !map_handler::can_quit()) 
 		{
 			start_frame();
 		
@@ -99,13 +99,19 @@ namespace ot::dedit
 
 			if (!render())
 			{
-				wants_quit = true;
+				quit();
 			}
 
 			end_frame();
 
 			last_frame = std::exchange(current_frame, std::chrono::steady_clock::now());
 		}
+	}
+
+	void application::quit()
+	{
+		wants_quit = true;
+		map_handler::quit();
 	}
 
 	void application::start_frame()
@@ -136,8 +142,8 @@ namespace ot::dedit
 				// Handle alt+f4 pressed on a window other than the main one
 				if (imgui_io.WantCaptureKeyboard)
 				{
-					if(is_key_press(key, SDLK_F4, input::keyboard::mod::lalt))
-						wants_quit = true;
+					if (is_key_press(key, SDLK_F4, input::keyboard::mod::lalt))
+						quit();
 
 					break;
 				}
@@ -201,13 +207,13 @@ namespace ot::dedit
 
 				if (e.window.event == SDL_WINDOWEVENT_CLOSE && e.window.windowID == SDL_GetWindowID(main_window.get()))
 				{
-					wants_quit = true;
+					quit();
 				}
 
 				break;
 
 			case SDL_QUIT:
-				wants_quit = true;
+				quit();
 				break;
 			}
 		}
@@ -225,6 +231,8 @@ namespace ot::dedit
 	void application::update(math::seconds dt)
 	{
 		menu::update();
+
+		map_handler::update();
 
 		camera_controller::update(dt);
 

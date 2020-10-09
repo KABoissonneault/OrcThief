@@ -62,7 +62,7 @@ namespace ot::dedit
 	bool menu<Application>::handle_keyboard_event(SDL_KeyboardEvent const& e)
 	{
 		derived& app = static_cast<derived&>(*this);
-		action_handler& acc = app.get_actions();
+		action_handler& acc = app.get_action_handler();
 		auto& map_handler = app.get_map_handler();
 		map& m = app.get_current_map();
 
@@ -117,7 +117,7 @@ namespace ot::dedit
 			return;
 
 		derived& app = static_cast<derived&>(*this);
-		action_handler& acc = app.get_actions();
+		action_handler& acc = app.get_action_handler();
 		auto& map_handler = app.get_map_handler();
 		map& m = app.get_current_map();
 
@@ -194,7 +194,6 @@ namespace ot::dedit
 
 				ImGui::EndMenu();
 			}
-
 
 			ImGui::EndMenu();
 		}
