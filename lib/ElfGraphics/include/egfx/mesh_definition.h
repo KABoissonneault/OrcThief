@@ -58,6 +58,9 @@ namespace ot::egfx
 		template<typename Iterator>
 		class vertex_half_edge_iteration;
 
+		template<typename Iterator>
+		class edge_iteration;
+
 		class face_vertex_range;
 
 		class const_face_vertex_range;
@@ -177,6 +180,10 @@ namespace ot::egfx
 			// Returns the line from the source vertex to the target vertex
 			[[nodiscard]] math::line get_line() const;
 
+			// Returns whether the half-edge is the "primary" unit in the pair.
+			// Mostly useful for traversing each edge once
+			[[nodiscard]] bool is_primary() const;
+
 			[[nodiscard]] friend bool operator==(cref lhs, cref rhs) noexcept
 			{
 				return lhs.m == rhs.m && lhs.e == rhs.e;
@@ -224,6 +231,10 @@ namespace ot::egfx
 
 			// Returns the line from the source vertex to the target vertex
 			[[nodiscard]] math::line get_line() const;
+
+			// Returns whether the half-edge is the "primary" unit in the pair.
+			// Mostly useful for traversing each edge once
+			[[nodiscard]] bool is_primary() const;
 
 			// Splits the half-edge and its twin in two at the given point, creating two new half-edges 
 			// The input edge is modified to have the new edge as its "next", and the new half-edge is returned
@@ -414,9 +425,11 @@ namespace ot::egfx
 		[[nodiscard]] auto get_faces() noexcept -> detail::ref_range<face::ref>;
 		[[nodiscard]] math::aabb get_bounds() const noexcept { return bounds; }
 
-		// Factories
-
+		// Special range returning only a single half-edge per edge
+		// Useful for traversing each edge only once
+		[[nodiscard]] auto get_edges() const noexcept -> detail::const_half_edge_range<detail::edge_iteration>;
 		
+		// Get a basic mesh definition for a cube
 		[[nodiscard]] static mesh_definition const& get_cube();
 
 	private:
@@ -667,7 +680,8 @@ namespace ot::egfx
 				if (next == self.first)
 				{
 					self.current = half_edge::id::none;
-				} else
+				} 
+				else
 				{
 					self.current = next;
 				}
@@ -696,7 +710,45 @@ namespace ot::egfx
 				if (next == self.first)
 				{
 					self.current = half_edge::id::none;
-				} else
+				} 
+				else
+				{
+					self.current = next;
+				}
+
+				return self;
+			}
+
+			auto operator++(int) -> derived
+			{
+				auto copy = static_cast<derived&>(*this);
+				++(*this);
+				return copy;
+			}
+		};
+
+		template<typename Iterator>
+		class edge_iteration
+		{
+		public:
+			using derived = Iterator;
+			auto operator++() -> derived&
+			{
+				auto& self = static_cast<derived&>(*this);
+
+				auto const half_edges = self.m->get_half_edges();
+
+				half_edge::id next = self.current;
+				do
+				{
+					next = static_cast<half_edge::id>(static_cast<size_t>(next) + 1);
+				} while (static_cast<size_t>(next) != half_edges.size() && !self.m->get_half_edge(next).is_primary());
+				
+				if(static_cast<size_t>(next) == half_edges.size())
+				{
+					self.current = half_edge::id::none;
+				}
+				else
 				{
 					self.current = next;
 				}
@@ -871,6 +923,11 @@ namespace ot::egfx
 		return { *this, half_edge::id(0), half_edge::id(half_edges.size()) };
 	}
 
+	inline auto mesh_definition::get_edges() const noexcept -> detail::const_half_edge_range<detail::edge_iteration>
+	{
+		return { *this, half_edge::id(0) };
+	}
+
 	namespace vertex
 	{
 		inline math::point3f cref::get_position() const
@@ -921,6 +978,13 @@ namespace ot::egfx
 			return { get_source_vertex().get_position(), get_target_vertex().get_position() };
 		}
 
+		inline bool cref::is_primary() const
+		{
+			// As an arbitrary discriminator, the primary half-edge is the one with the smallest face id
+			half_edge::cref const twin = get_twin();
+			return m->get_half_edge_data(get_id()).face < m->get_half_edge_data(twin.get_id()).face;
+		}
+
 		inline vertex::ref ref::get_source_vertex() const
 		{
 			return { *m, m->get_half_edge_data(m->get_half_edge_data(e).twin).vertex };
@@ -944,6 +1008,11 @@ namespace ot::egfx
 		inline math::line ref::get_line() const
 		{
 			return as_const().get_line();
+		}
+
+		inline bool ref::is_primary() const
+		{
+			return as_const().is_primary();
 		}
 	}
 

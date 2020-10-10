@@ -10,10 +10,10 @@ namespace ot::egfx::im
 	{
 		Im3d::Context& context = Im3d::GetContext();
 		context.begin(Im3d::PrimitiveMode_Lines);
-		for (half_edge::cref he : m.get_half_edges())
+		for (half_edge::cref e : m.get_edges())
 		{
-			context.vertex(transform(he.get_source_vertex().get_position(), t), size, Im3d::Color(c.r, c.g, c.b, c.a));
-			context.vertex(transform(he.get_target_vertex().get_position(), t), size, Im3d::Color(c.r, c.g, c.b, c.a));
+			context.vertex(transform(e.get_source_vertex().get_position(), t), size, Im3d::Color(c.r, c.g, c.b, c.a));
+			context.vertex(transform(e.get_target_vertex().get_position(), t), size, Im3d::Color(c.r, c.g, c.b, c.a));
 		}
 		context.end();
 	}

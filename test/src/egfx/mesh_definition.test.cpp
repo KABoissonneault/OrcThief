@@ -13,10 +13,13 @@ ot::math::plane const cube_planes[6] = {
 
 TEST_CASE("mesh::make_cube", "[math]")
 {
-	ot::egfx::mesh_definition const cube = ot::egfx::mesh_definition::make_from_planes(cube_planes);
+	ot::egfx::mesh_definition const cube(cube_planes);
 	
 	auto const faces = cube.get_faces();
 	REQUIRE(faces.size() == 6);
+
+	auto const edges = cube.get_edges();
+	REQUIRE(std::distance(edges.begin(), edges.end()) == 12);
 
 	// For all faces, test its edges
 	for (ot::egfx::face::cref const face : faces)
@@ -71,7 +74,7 @@ TEST_CASE("mesh::make_cube", "[math]")
 
 TEST_CASE("mesh::split_edge", "[math­]")
 {
-	auto cube = ot::egfx::mesh_definition::make_from_planes(cube_planes);
+	ot::egfx::mesh_definition cube(cube_planes);
 	auto const top_face_edges = cube.get_faces()[0].get_half_edges();
 	
 	// Find the edge pointing at the {1, 1, 1} vertex
