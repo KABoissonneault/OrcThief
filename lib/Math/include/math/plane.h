@@ -35,7 +35,10 @@ namespace ot::math
 	};
 	
 	[[nodiscard]] plane_side_result get_plane_side(plane p, point3f v);
+	[[nodiscard]] plane_side_result distance_to_plane_side(float distance);
+
 	[[nodiscard]] std::optional<point3f> find_intersection(plane p1, plane p2, plane p3);
+	[[nodiscard]] point3f find_distance_ray_intersection(point3f v1, float d1, point3f v2, float d2);
 
 	[[nodiscard]] plane transform(plane p, transform_matrix const& t);
 

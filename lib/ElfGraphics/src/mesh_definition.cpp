@@ -57,16 +57,21 @@ namespace ot::egfx
 
 	namespace face
 	{
+		detail::face_data const& cref::get_face_data() const noexcept
+		{
+			return m->get_face_data(f);
+		}
+
 		math::vector3f cref::get_normal() const
 		{
-			return m->get_face_data(f).normal;
+			return get_face_data().normal;
 		}
 
 		math::plane cref::get_plane() const
 		{
-			mesh_definition::face_data const& data = m->get_face_data(f);
-			mesh_definition::half_edge_data const& h = m->get_half_edge_data(data.first_edge);
-			math::point3f const p = vertex::cref{ *m, h.vertex }.get_position();
+			detail::face_data const& data = get_face_data();
+			detail::half_edge_data const& h = m->get_half_edge_data(data.first_edge);
+			math::point3f const p = m->get_vertex(h.vertex).get_position();
 			math::vector3f const n = get_normal();
 			float const d = dot_product(vector_from_origin(p), n);
 			return { n, d };
@@ -94,6 +99,207 @@ namespace ot::egfx
 
 			return true;
 		}
+
+		half_edge::cref cref::get_first_half_edge() const
+		{
+			return m->get_half_edge(get_face_data().first_edge);
+		}
+
+		detail::face_data& ref::get_face_data() const noexcept
+		{
+			return m->get_face_data(f);
+		}
+
+		half_edge::ref ref::get_first_half_edge() const
+		{
+			return m->get_half_edge(get_face_data().first_edge);
+		}
+
+		expected<ref, split_fail> ref::split(math::plane const p) const
+		{
+			struct point_data
+			{
+				half_edge::ref half_edge; // half-edge before the point
+				math::point3f position; // position of the target vertex
+				float distance; // distance from plane
+				math::plane_side_result side; // side of the plane
+			};
+
+			auto make_data = [&p] (half_edge::ref half_edge) -> point_data
+			{
+				math::point3f const position = half_edge.get_target_vertex().get_position();
+				float const distance = p.distance_to(position);
+				return {
+					half_edge
+					, position
+					, distance
+					, math::distance_to_plane_side(distance)
+				};
+			};
+
+			auto make_next = [&p, make_data](point_data const& d)
+			{
+				return make_data(d.half_edge.get_next());
+			};
+
+			point_data first = make_data(get_first_half_edge());
+			point_data second = make_next(first);
+			point_data third = make_next(second);
+			half_edge::cref const last = third.half_edge;
+			half_edge::id enter_edge_id = half_edge::id::none;
+			half_edge::id exit_edge_id = half_edge::id::none;
+
+			do
+			{
+				if (first.side != second.side) // check if first to second crossed the plane
+				{
+					if (second.side != math::plane_side_result::on_plane) // if second is inside or outside
+					{
+						if (first.side != math::plane_side_result::on_plane) // if first is also inside or outside (and opposite of current)
+						{
+							// we need a new vertex at the actual intersection
+							math::point3f const new_vertex = math::find_distance_ray_intersection(first.position, first.distance, second.position, second.distance);
+							second.half_edge.split_at(new_vertex);
+
+							if (first.side == math::plane_side_result::inside) // if first is inside and second outside
+							{
+								// Then second exited the plane
+								exit_edge_id = second.half_edge.get_id();
+							}
+							else // if first is outside and second inside
+							{
+								// Then second entered the plane
+								enter_edge_id = second.half_edge.get_id();
+							}
+
+							// first now refers to second, whose target vertex has been changed to be the new split point on the plane
+							first.half_edge = second.half_edge;
+							first.position = new_vertex;
+							first.distance = 0.f;
+							first.side = math::plane_side_result::on_plane;
+
+							if (enter_edge_id != half_edge::id::none && exit_edge_id != half_edge::id::none)
+								break;
+
+							second = make_next(first);
+							third = make_next(second);
+						}
+					}
+					else // if second is on plane
+					{
+						if (
+							first.side == math::plane_side_result::on_plane // if first is on plane
+							|| third.side == math::plane_side_result::on_plane // or if third is on plane
+							|| first.side == third.side // or if both are on the same side
+							)
+						{
+							if (first.side == math::plane_side_result::inside
+								|| third.side == math::plane_side_result::inside)
+							{
+								// Then we have either an edge on the plane leading inside,
+								// an inside edge leading on the plane
+								// or two inside edges
+								// The face is inside the plane
+
+								first.side = math::plane_side_result::inside;
+								enter_edge_id = exit_edge_id = half_edge::id::none;
+								break;
+							}
+							else if(first.side == math::plane_side_result::outside
+								|| third.side == math::plane_side_result::outside)
+							{
+								// Then we have either an edge on the plane leading outside,
+								// an outside edge leading on the plane
+								// or two outside edges
+								// The face is outside the plane
+
+								first.side = math::plane_side_result::outside;
+								enter_edge_id = exit_edge_id = half_edge::id::none;
+								break;
+							}
+						}
+						else // if first is inside or outside, and second is on the plane, and third is inside or outside (but opposite to first)
+						{
+							if (first.side == math::plane_side_result::inside)
+							{
+								// Then second is exiting the plane
+								exit_edge_id = second.half_edge.get_id();
+							}
+							else // first is outside
+							{
+								// Then second is entering the plane
+								enter_edge_id = second.half_edge.get_id();
+							}
+
+							if (enter_edge_id != half_edge::id::none && exit_edge_id != half_edge::id::none)
+								break;
+						}
+					}
+				}
+
+				first = second;
+				second = third;
+				third = make_next(third);
+			} while (third.half_edge != last);
+
+			assert((enter_edge_id != half_edge::id::none) == (exit_edge_id != half_edge::id::none) && "Partial edge pair found - logic error");
+
+			if (enter_edge_id != half_edge::id::none && exit_edge_id != half_edge::id::none)
+			{
+				// The enter edge goes from outside the plane to inside
+				// The exit edge goes from inside to outside
+
+				// Insert a new face outside the plane, and a new half-edge pair for the new edge between the two faces
+				// We keep the current face as the "inside" face
+
+				face::id const new_face_id{ m->faces.size() };
+				detail::face_data& new_face = m->faces.emplace_back();
+
+				m->half_edges.reserve(m->half_edges.size() + 2);
+				half_edge::id const outside_edge_id{ m->half_edges.size() };
+				detail::half_edge_data& outside_edge = m->half_edges.emplace_back();
+
+				half_edge::id const inside_edge_id{ m->half_edges.size() };
+				detail::half_edge_data& inside_edge = m->half_edges.emplace_back();
+
+				detail::half_edge_data& enter_edge = m->get_half_edge_data(enter_edge_id);
+				detail::half_edge_data& exit_edge = m->get_half_edge_data(exit_edge_id);
+
+				// Initialize the new half-edges
+				outside_edge.twin = inside_edge_id;
+				inside_edge.twin = outside_edge_id;
+
+				outside_edge.face = new_face_id;
+				inside_edge.face = get_id();
+
+				outside_edge.vertex = exit_edge.vertex;
+				inside_edge.vertex = enter_edge.vertex;
+
+				outside_edge.next = exit_edge.next;
+				inside_edge.next = enter_edge.next;
+
+				exit_edge.next = inside_edge_id;
+				enter_edge.next = outside_edge_id;
+
+				new_face.first_edge = outside_edge_id;
+				new_face.normal = get_normal(); // new face has same normal
+
+				return face::ref{ *m, new_face_id };
+			}
+			else
+			{
+				switch (first.side)
+				{
+				case math::plane_side_result::inside: return make_unexpected(split_fail::inside);
+				case math::plane_side_result::outside: return make_unexpected(split_fail::outside);
+				}
+
+				if (float_cmp(dot_product(get_normal(), p.normal), 0.f) > 0)
+					return make_unexpected(split_fail::aligned);
+				else
+					return make_unexpected(split_fail::opposite_aligned);
+			}
+		} 
 	}
 
 	namespace

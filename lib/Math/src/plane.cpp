@@ -11,12 +11,17 @@ namespace ot::math
 	plane_side_result get_plane_side(plane p, point3f v)
 	{
 		float const distance = p.distance_to(v);
+		return distance_to_plane_side(distance);
+	}
+
+	plane_side_result distance_to_plane_side(float distance)
+	{
 		auto const cmp = float_cmp(distance, 0.0f);
 		if (cmp > 0)
 			return plane_side_result::outside;
 		else if (cmp < 0)
 			return plane_side_result::inside;
-		else 
+		else
 			return plane_side_result::on_plane;
 	}
 
@@ -52,6 +57,15 @@ namespace ot::math
 			(p1.normal.z * ad23 + p2.normal.z * ad31 + p3.normal.z * ad12) / w,
 			-(p1.normal.y * ad23 + p2.normal.y * ad31 + p3.normal.y * ad12) / w
 		};
+	}
+
+	point3f find_distance_ray_intersection(point3f v1, float d1, point3f v2, float d2)
+	{
+		math::vector3f const v = v2 - v1;
+		float const l = d2 - d1;
+		float const d = d2 / l;
+
+		return v2 - (v * d);
 	}
 
 	plane transform(plane p, transform_matrix const& t)

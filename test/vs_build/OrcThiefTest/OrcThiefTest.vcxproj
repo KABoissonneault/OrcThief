@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\ext\Catch2\include;$(SolutionDir)..\..\lib\Math\include;$(SolutionDir)..\..\lib\Core\include;$(SolutionDir)..\..\lib\ElfGraphics\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\ext\Catch2\include;$(SolutionDir)..\..\lib\Math\include;$(SolutionDir)..\..\lib\Core\include;$(SolutionDir)..\..\lib\ElfGraphics\include;$(SolutionDir)..\..\ext\expected\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -132,7 +132,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\ext\Catch2\include;$(SolutionDir)..\..\lib\Math\include;$(SolutionDir)..\..\lib\Core\include;$(SolutionDir)..\..\lib\ElfGraphics\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\ext\Catch2\include;$(SolutionDir)..\..\lib\Math\include;$(SolutionDir)..\..\lib\Core\include;$(SolutionDir)..\..\lib\ElfGraphics\include;$(SolutionDir)..\..\ext\expected\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>

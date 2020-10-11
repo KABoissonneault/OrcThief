@@ -11,7 +11,7 @@ ot::math::plane const cube_planes[6] = {
 	{{0, 0, -1}, 0.5},
 };
 
-TEST_CASE("mesh::make_cube", "[math]")
+TEST_CASE("mesh::make_cube", "[graphics]")
 {
 	ot::egfx::mesh_definition const cube(cube_planes);
 	
@@ -72,7 +72,7 @@ TEST_CASE("mesh::make_cube", "[math]")
 	REQUIRE(float_eq(bounds.min(), ot::math::point3f{ -0.5, -0.5, -0.5 }));
 }
 
-TEST_CASE("mesh::split_edge", "[math­]")
+TEST_CASE("half_edge::ref::split", "[graphics­]")
 {
 	ot::egfx::mesh_definition cube(cube_planes);
 	auto const top_face_edges = cube.get_faces()[0].get_half_edges();
@@ -102,4 +102,17 @@ TEST_CASE("mesh::split_edge", "[math­]")
 
 	auto const new_face_edges = cube.get_faces()[0].get_half_edges();
 	REQUIRE(std::distance(new_face_edges.begin(), new_face_edges.end()) == 5);
+}
+
+TEST_CASE("face::ref::split", "[graphics]")
+{
+	ot::egfx::mesh_definition cube(cube_planes);
+	ot::egfx::face::ref const top_face = cube.get_faces()[0];
+
+	ot::math::plane const cutting_plane{ {1, 0, 0}, 0.f };
+	top_face.split(cutting_plane);
+
+	REQUIRE(cube.get_faces().size() == 7);
+	REQUIRE(cube.get_half_edges().size() == 30);
+	REQUIRE(cube.get_vertices().size() == 10);
 }

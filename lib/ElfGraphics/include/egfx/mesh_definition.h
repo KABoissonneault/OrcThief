@@ -9,6 +9,7 @@
 #include "math/line.h"
 #include "core/size_t.h"
 #include "core/iterator/arrow_proxy.h"
+#include "core/expected.h"
 
 #include <vector>
 #include <span>
@@ -36,6 +37,14 @@ namespace ot::egfx
 	namespace face
 	{
 		enum class id : size_t { none = -1 };
+
+		enum class split_fail
+		{
+			inside, // the face was entirely inside of the half-space defined by the input plane
+			outside, // the face was entirely outside of the half-space defined by the input plane
+			aligned, // the face's plane and normal is aligned with the input plane
+			opposite_aligned, // the face's plane is aligned with the input plane, but the normals are opposite
+		};
 	}
 
 	namespace detail
@@ -64,6 +73,10 @@ namespace ot::egfx
 		class face_vertex_range;
 
 		class const_face_vertex_range;
+
+		struct vertex_data;
+		struct half_edge_data;
+		struct face_data;
 	}
 
 	namespace vertex
@@ -184,6 +197,10 @@ namespace ot::egfx
 			// Mostly useful for traversing each edge once
 			[[nodiscard]] bool is_primary() const;
 
+			// Returns the next half-edge along the face
+			// Useful for iterating
+			[[nodiscard]] half_edge::cref get_next() const;
+
 			[[nodiscard]] friend bool operator==(cref lhs, cref rhs) noexcept
 			{
 				return lhs.m == rhs.m && lhs.e == rhs.e;
@@ -236,6 +253,10 @@ namespace ot::egfx
 			// Mostly useful for traversing each edge once
 			[[nodiscard]] bool is_primary() const;
 
+			// Returns the next half-edge along the face
+			// Useful for iterating
+			[[nodiscard]] half_edge::ref get_next() const;
+
 			// Splits the half-edge and its twin in two at the given point, creating two new half-edges 
 			// The input edge is modified to have the new edge as its "next", and the new half-edge is returned
 			// The new half-edge will have the current twin as its twin, and the current half-edge will have the new twin as its twin
@@ -271,6 +292,8 @@ namespace ot::egfx
 			mesh_definition const* m;
 			id f;
 
+			detail::face_data const& get_face_data() const noexcept;
+
 		public:
 			using id_type = id;
 			using mesh_type = mesh_definition const;
@@ -304,6 +327,10 @@ namespace ot::egfx
 			// The point must be in the local coordinates of the mesh definition
 			[[nodiscard]] bool is_on_face(math::point3f p) const;
 
+			// Returns an arbitrary half-edge along the face
+			// Useful for iterating
+			[[nodiscard]] half_edge::cref get_first_half_edge() const;
+
 			[[nodiscard]] friend bool operator==(cref lhs, cref rhs) noexcept
 			{
 				return lhs.m == rhs.m && lhs.f == rhs.f;
@@ -319,6 +346,8 @@ namespace ot::egfx
 		{
 			mesh_definition* m;
 			id f;
+
+			detail::face_data& get_face_data() const noexcept;
 
 		public:
 			using id_type = id;
@@ -356,6 +385,15 @@ namespace ot::egfx
 			// The point must be in the local coordinates of the mesh definition
 			[[nodiscard]] bool is_on_face(math::point3f p) const { return as_const().is_on_face(p); }
 
+			// Returns an arbitrary half-edge along the face
+			// Useful for iterating
+			[[nodiscard]] half_edge::ref get_first_half_edge() const;
+
+			// Splits the face in two, between the two sides of the input plane, and returns the new face.
+			// If the face is entirely inside or outside the half-space of the plane, or aligned (or opposite-aligned) with the input plane,
+			// then no split happens
+			expected<ref, split_fail> split(math::plane p) const;
+
 			[[nodiscard]] friend bool operator==(ref lhs, ref rhs) noexcept
 			{
 				return lhs.m == rhs.m && lhs.f == rhs.f;
@@ -372,25 +410,9 @@ namespace ot::egfx
 	// 
 	class mesh_definition
 	{
-		struct vertex_data
-		{
-			math::point3f position;
-			half_edge::id first_edge;
-		};
-		
-		struct half_edge_data
-		{
-			vertex::id vertex; // vertex at the tip of the half edge
-			face::id face; // the face this half-edge borders
-			half_edge::id twin; // other half-edge in the pair
-			half_edge::id next; // the next half-edge along the face
-		};
-				
-		struct face_data
-		{
-			half_edge::id first_edge; // arbitrary half-edge along the face
-			math::vector3f normal;
-		};
+		using vertex_data = detail::vertex_data;
+		using half_edge_data = detail::half_edge_data;
+		using face_data = detail::face_data;
 
 		std::vector<vertex_data> vertices;
 		std::vector<half_edge_data> half_edges;
@@ -411,8 +433,8 @@ namespace ot::egfx
 		// The mesh will have as many faces as the number of input planes, and the faces will preserve the same order as the plane with the same normal
 		mesh_definition(std::span<const math::plane> planes);
 
-		[[nodiscard]] vertex::cref get_vertice(vertex::id id) const noexcept { return { *this, id }; }
-		[[nodiscard]] vertex::ref get_vertice(vertex::id id) noexcept { return { *this, id }; }
+		[[nodiscard]] vertex::cref get_vertex(vertex::id id) const noexcept { return { *this, id }; }
+		[[nodiscard]] vertex::ref get_vertex(vertex::id id) noexcept { return { *this, id }; }
 		[[nodiscard]] half_edge::cref get_half_edge(half_edge::id id) const noexcept { return { *this, id }; }
 		[[nodiscard]] half_edge::ref get_half_edge(half_edge::id id) noexcept { return { *this, id }; }
 		[[nodiscard]] face::cref get_face(face::id id) const noexcept { return { *this, id }; }
@@ -891,6 +913,26 @@ namespace ot::egfx
 			[[nodiscard]] iterator begin() const noexcept { return { *m, first, first }; }
 			[[nodiscard]] iterator end() const noexcept { return { *m, first, half_edge::id::none }; }
 		};
+
+		struct vertex_data
+		{
+			math::point3f position;
+			half_edge::id first_edge;
+		};
+
+		struct half_edge_data
+		{
+			vertex::id vertex; // vertex at the tip of the half edge
+			face::id face; // the face this half-edge borders
+			half_edge::id twin; // other half-edge in the pair
+			half_edge::id next; // the next half-edge along the face
+		};
+
+		struct face_data
+		{
+			half_edge::id first_edge; // arbitrary half-edge along the face
+			math::vector3f normal;
+		};
 	}
 
 	inline auto mesh_definition::get_vertices() const noexcept -> detail::ref_range<vertex::cref>
@@ -985,6 +1027,11 @@ namespace ot::egfx
 			return m->get_half_edge_data(get_id()).face < m->get_half_edge_data(twin.get_id()).face;
 		}
 
+		inline half_edge::cref cref::get_next() const
+		{
+			return m->get_half_edge(m->get_half_edge_data(e).next);
+		}
+
 		inline vertex::ref ref::get_source_vertex() const
 		{
 			return { *m, m->get_half_edge_data(m->get_half_edge_data(e).twin).vertex };
@@ -1002,7 +1049,7 @@ namespace ot::egfx
 
 		inline face::ref ref::get_face() const
 		{
-			return { *m, m->get_half_edge_data(e).face };
+			return m->get_face(m->get_half_edge_data(e).face);
 		}
 
 		inline math::line ref::get_line() const
@@ -1013,6 +1060,11 @@ namespace ot::egfx
 		inline bool ref::is_primary() const
 		{
 			return as_const().is_primary();
+		}
+
+		inline half_edge::ref ref::get_next() const
+		{
+			return m->get_half_edge(m->get_half_edge_data(e).next);
 		}
 	}
 
