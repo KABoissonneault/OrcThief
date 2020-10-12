@@ -151,6 +151,7 @@
     <ClInclude Include="..\..\ext\ImGui\include\imgui.h" />
     <ClInclude Include="..\..\ext\ImGui\include\imgui_impl_dx11.h" />
     <ClInclude Include="..\..\ext\ImGui\include\imgui_impl_sdl.h" />
+    <ClInclude Include="..\..\ext\ImGui\include\imgui_user.h" />
     <ClInclude Include="..\..\ext\ImGui\src\imgui_internal.h" />
     <ClInclude Include="..\..\ext\ImGui\src\imstb_rectpack.h" />
     <ClInclude Include="..\..\ext\ImGui\src\imstb_textedit.h" />
@@ -162,6 +163,7 @@
     <ClCompile Include="..\..\ext\ImGui\src\imgui_draw.cpp" />
     <ClCompile Include="..\..\ext\ImGui\src\imgui_impl_dx11.cpp" />
     <ClCompile Include="..\..\ext\ImGui\src\imgui_impl_sdl.cpp" />
+    <ClCompile Include="..\..\ext\ImGui\src\imgui_user.cpp" />
     <ClCompile Include="..\..\ext\ImGui\src\imgui_widgets.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

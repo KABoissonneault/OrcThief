@@ -33,6 +33,9 @@
     <ClInclude Include="..\..\ext\ImGui\include\imgui_impl_dx11.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\ext\ImGui\include\imgui_user.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ext\ImGui\src\imgui.cpp">
@@ -51,6 +54,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ext\ImGui\src\imgui_demo.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ext\ImGui\src\imgui_user.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
