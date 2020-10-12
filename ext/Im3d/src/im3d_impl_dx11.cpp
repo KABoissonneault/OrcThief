@@ -303,7 +303,7 @@ void Im3d_ImplDX11_RenderText(Im3d::Mat4 const& cameraViewProj, Im3d::Vec2 const
 {
 	// Invisible ImGui window which covers the screen.
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32_BLACK_TRANS);
-	ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+	ImGui::SetNextWindowPos(ImGui::GetMainViewport()->Pos);
 	ImGui::SetNextWindowSize(ImVec2((float)viewportSize.x, (float)viewportSize.y));
 	ImGui::Begin("Im3dText", nullptr, 0
 		| ImGuiWindowFlags_NoTitleBar

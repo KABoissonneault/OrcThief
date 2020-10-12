@@ -65,7 +65,7 @@ namespace ot::egfx::imgui
 			Im3d::Mat4 const view_proj_matrix = get_view_projection_matrix(camera);
 			Im3d::Vec2 const& viewport_size = Im3d::GetAppData().m_viewportSize;
 
-			// Im3d_ImplDX11_RenderText(view_proj_matrix, viewport_size); // TODO: fix me, issue #5
+			Im3d_ImplDX11_RenderText(view_proj_matrix, viewport_size);
 			Im3d_ImplDX11_RenderDrawList(view_proj_matrix, viewport_size);
 		}
 
