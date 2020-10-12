@@ -56,12 +56,12 @@ namespace ot::dedit::selection
 			egfx::im::draw_mesh(mesh_def, t, egfx::color{ 1.f, 1.f, 1.f, 0.2f });
 		}
 
-		void draw_guizmo(egfx::object::camera_cref camera, imgui::matrix& object_transform, ImGuizmo::OPERATION operation)
+		void draw_guizmo(egfx::object::camera_cref camera, imgui::matrix& object_transform, ImGuizmo::OPERATION operation, ImGuizmo::MODE mode)
 		{
 			imgui::matrix const view = to_imgui(camera.get_view_matrix());
 			imgui::matrix const projection = imgui::make_perspective_projection(camera.get_rad_fov_y(), camera.get_aspect_ratio(), camera.get_z_near(), camera.get_z_far());
 
-			(void)ImGuizmo::Manipulate(view.elements, projection.elements, operation, ImGuizmo::LOCAL, object_transform.elements);
+			(void)ImGuizmo::Manipulate(view.elements, projection.elements, operation, mode, object_transform.elements);
 		}
 
 		void draw_immediate_scene(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t, egfx::face::id hovered_face)
@@ -123,7 +123,10 @@ namespace ot::dedit::selection
 					draw_operation_preview(mesh_def, to_math_matrix(object_matrix));
 				}
 
-				draw_guizmo(camera, object_matrix, static_cast<ImGuizmo::OPERATION>(operation));
+				ImGuizmo::MODE const mode = (operation == operation_type::translate || operation == operation_type::rotation) && use_world_manipulation 
+					? ImGuizmo::WORLD 
+					: ImGuizmo::LOCAL;
+				draw_guizmo(camera, object_matrix, static_cast<ImGuizmo::OPERATION>(operation), mode);
 				
 				// If we're using ImGuizmo, we're in the middle of editing
 				if (ImGuizmo::IsUsing())
@@ -175,13 +178,25 @@ namespace ot::dedit::selection
 		brush const& b = get_brush();
 
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImGui::GetStyleColorVec4(ImGuiCol_TitleBg));
-		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav;
+		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav | ImGuiWindowFlags_AlwaysAutoResize;
 		std::string const text = "Brush " + std::to_string(static_cast<std::underlying_type_t<entity_id>>(b.get_id()));
 		if (!ImGui::Begin(text.c_str(), nullptr, flags))
 		{
 			ImGui::End();
 			return;
 		}			
+
+		if (!(operation == operation_type::translate || operation == operation_type::rotation))
+		{
+			ImGui::PushItemDisabled();
+		}
+
+		ImGui::Checkbox("(W)orld Manipulation", &use_world_manipulation);
+
+		if (!(operation == operation_type::translate || operation == operation_type::rotation))
+		{
+			ImGui::PopItemDisabled();
+		}
 
 		float translation[3], rotation[3], scale[3];
 		ImGuizmo::DecomposeMatrixToComponents(object_matrix.elements, translation, rotation, scale);
@@ -225,10 +240,16 @@ namespace ot::dedit::selection
 		if (composite_context::handle_keyboard_event(key, acc))
 			return true;
 
-		if (key.state == SDL_PRESSED)
+		if (key.state == SDL_PRESSED && key.repeat == 0)
 		{
 			switch (key.keysym.sym)
 			{
+			case SDLK_w: 
+				if (operation == operation_type::translate || operation == operation_type::rotation)
+				{
+					use_world_manipulation = !use_world_manipulation;
+				}
+				return true;
 			case SDLK_t: operation = operation_type::translate; return true;
 			case SDLK_r: operation = operation_type::rotation; return true;
 			case SDLK_s: operation = operation_type::scale; return true;

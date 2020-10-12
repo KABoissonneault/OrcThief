@@ -32,6 +32,7 @@ namespace ot::dedit::selection
 		};
 
 		operation_type operation = operation_type::translate;
+		bool use_world_manipulation = false;
 
 		void operation_window(action::accumulator& acc);
 		brush const& get_brush() const;
