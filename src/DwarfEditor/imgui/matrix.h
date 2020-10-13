@@ -6,6 +6,8 @@
 #include "math/quaternion.h"
 #include "math/transform_matrix.h"
 
+#include <span>
+
 namespace ot::dedit::imgui
 {
 	// Unlike math::transform_matrix, this is column-major
@@ -18,6 +20,9 @@ namespace ot::dedit::imgui
 		math::vector3f get_displacement() const noexcept;
 		math::quaternion get_rotation() const noexcept;
 		math::scales get_scale() const noexcept;
+
+		void decompose(std::span<float, 3> displacement, std::span<float, 3> euler_rotation, std::span<float, 3> scales) const;
+		void recompose(std::span<float const, 3> displacement, std::span<float const, 3> euler_rotation, std::span<float const, 3> scales);
 	};
 
 	[[nodiscard]] math::transform_matrix to_math_matrix(matrix const& m);

@@ -40,6 +40,41 @@ namespace ot::dedit::imgui
 		return ot::math::ops::get_scale(*this);
 	}
 
+	void matrix::decompose(std::span<float, 3> displacement, std::span<float, 3> euler_rotation, std::span<float, 3> scales) const
+	{
+		math::scales const s = get_scale();
+		scales[0] = s.x;
+		scales[1] = s.y;
+		scales[2] = s.z;
+
+		math::rotation_matrix const r = math::ops::get_rotation(*this, s);
+		euler_rotation[0] = math::ops::get_rotx(r);
+		euler_rotation[1] = math::ops::get_roty(r);
+		euler_rotation[2] = math::ops::get_rotz(r);
+
+		math::vector3f const d = get_displacement();
+		displacement[0] = d.x;
+		displacement[1] = d.y;
+		displacement[2] = d.z;
+	}
+
+	void matrix::recompose(std::span<float const, 3> displacement, std::span<float const, 3> euler_rotation, std::span<float const, 3> scales)
+	{
+		using namespace boost::qvm;
+		using boost::qvm::operator*;
+
+		math::vector3f const d{ displacement[0], displacement[1], displacement[2] };
+		auto const r = rot_mat_xyz<3>(euler_rotation[0], euler_rotation[1], euler_rotation[2]);
+		math::scales s{ scales[0], scales[1], scales[2] };
+				
+		assign(
+			del_row_col<3, 3>(*this), 
+			r * diag_mat(s)
+		);
+
+		assign(translation(*this), d);
+	}
+
 	math::transform_matrix to_math_matrix(matrix const& m)
 	{
 		return boost::qvm::convert_to<math::transform_matrix>(m);
