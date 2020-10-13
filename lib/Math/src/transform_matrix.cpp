@@ -139,12 +139,7 @@ namespace ot::math
 
 	rotation_matrix transform_matrix::get_rotation() const noexcept
 	{
-		using boost::qvm::operator*;
-
-		scales const scale = get_scale();
-		scales const invert_scale{ 1.f / scale.x, 1.f / scale.y, 1.f / scale.z };
-
-		return boost::qvm::del_row_col<3, 3>(*this) * boost::qvm::diag_mat(invert_scale);
+		return ops::get_rotation(*this);
 	}
 
 	transform_matrix invert(transform_matrix const& i)
