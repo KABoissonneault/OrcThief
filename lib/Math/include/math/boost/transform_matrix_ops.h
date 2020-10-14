@@ -41,25 +41,4 @@ namespace ot::math::ops
 	{
 		return get_rotation(m, get_scale(m));
 	}
-
-	template<typename RotationMatrix>
-	float get_rotx(RotationMatrix const& m)
-	{
-		using namespace boost::qvm;
-		return std::atan2(A21(m), A22(m));
-	}
-
-	template<typename RotationMatrix>
-	float get_roty(RotationMatrix const& m)
-	{
-		using namespace boost::qvm;
-		return std::asin(-A20(m));
-	}
-
-	template<typename RotationMatrix>
-	float get_rotz(RotationMatrix const& m)
-	{
-		using namespace boost::qvm;
-		return std::atan2(A10(m), A00(m));
-	}
 }

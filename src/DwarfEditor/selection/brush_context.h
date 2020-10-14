@@ -27,7 +27,6 @@ namespace ot::dedit::selection
 			translate,
 			rotation,
 			scale,
-			bounds,
 			face_selection,
 		};
 
@@ -35,6 +34,7 @@ namespace ot::dedit::selection
 		bool use_world_manipulation = false;
 
 		void operation_window(action::accumulator& acc);
+		bool draw_gizmo();
 		brush const& get_brush() const;
 
 	public:

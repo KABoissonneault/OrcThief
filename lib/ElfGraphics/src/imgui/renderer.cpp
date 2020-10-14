@@ -4,7 +4,6 @@
 #include "Ogre/boost/Matrix4Traits.h"
 
 #include <imgui.h>
-#include <ImGuizmo.h>
 #include <im3d.h>
 #include <im3d_boost_traits.h>
 
@@ -20,10 +19,8 @@ namespace ot::egfx::imgui
 	void renderer::pre_update(Ogre::Camera const* camera)
 	{
 		ImGui::NewFrame();
-		ImGuizmo::BeginFrame();
 
 		ImGuiIO& io = ImGui::GetIO();
-		ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 
 		Im3d::AppData& ad = Im3d::GetAppData();
 		ad.m_deltaTime = io.DeltaTime;

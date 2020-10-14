@@ -15,8 +15,9 @@
 #include "egfx/immediate.h"
 
 #include <imgui.h>
-#include <ImGuizmo.h>
 #include <im3d.h>
+
+#include <numbers>
 
 namespace ot::dedit::selection
 {
@@ -54,14 +55,6 @@ namespace ot::dedit::selection
 		void draw_operation_preview(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t)
 		{
 			egfx::im::draw_mesh(mesh_def, t, egfx::color{ 1.f, 1.f, 1.f, 0.2f });
-		}
-
-		void draw_guizmo(egfx::object::camera_cref camera, imgui::matrix& object_transform, ImGuizmo::OPERATION operation, ImGuizmo::MODE mode)
-		{
-			imgui::matrix const view = to_imgui(camera.get_view_matrix());
-			imgui::matrix const projection = imgui::make_perspective_projection(camera.get_rad_fov_y(), camera.get_aspect_ratio(), camera.get_z_near(), camera.get_z_far());
-
-			(void)ImGuizmo::Manipulate(view.elements, projection.elements, operation, mode, object_transform.elements);
 		}
 
 		void draw_immediate_scene(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t, egfx::face::id hovered_face)
@@ -118,23 +111,13 @@ namespace ot::dedit::selection
 			}
 			else
 			{
-				if (ImGuizmo::IsUsing())
+				if (draw_gizmo())
 				{
 					draw_operation_preview(mesh_def, to_math_matrix(object_matrix));
+					is_editing = true; 
 				}
-
-				ImGuizmo::MODE const mode = (operation == operation_type::translate || operation == operation_type::rotation) && use_world_manipulation 
-					? ImGuizmo::WORLD 
-					: ImGuizmo::LOCAL;
-				draw_guizmo(camera, object_matrix, static_cast<ImGuizmo::OPERATION>(operation), mode);
-				
-				// If we're using ImGuizmo, we're in the middle of editing
-				if (ImGuizmo::IsUsing())
-				{
-					is_editing = true;
-				}
-				// If we just stopped using ImGuizmo, then we need to commit the edit if any
-				else if (is_editing)
+				// If we just stopped using the gizmo, then we need to commit the edit if any
+				else if(is_editing)
 				{
 					if (!float_eq(object_matrix, t))
 					{
@@ -199,7 +182,10 @@ namespace ot::dedit::selection
 		}
 
 		float translation[3], rotation[3], scale[3];
-		ImGuizmo::DecomposeMatrixToComponents(object_matrix.elements, translation, rotation, scale);
+		object_matrix.decompose(translation, rotation, scale);
+		rotation[0] *= 180.f / std::numbers::pi_v<float>;
+		rotation[1] *= 180.f / std::numbers::pi_v<float>;
+		rotation[2] *= 180.f / std::numbers::pi_v<float>;
 
 		if (ImGui::RadioButton("(T)ranslate", operation == operation_type::translate)) operation = operation_type::translate;
 		ImGui::SameLine();
@@ -227,7 +213,31 @@ namespace ot::dedit::selection
 		ImGui::End();
 		ImGui::PopStyleColor();
 
-		ImGuizmo::RecomposeMatrixFromComponents(translation, rotation, scale, object_matrix.elements);
+		rotation[0] *= std::numbers::pi_v<float> / 180.f;
+		rotation[1] *= std::numbers::pi_v<float> / 180.f;
+		rotation[2] *= std::numbers::pi_v<float> / 180.f;
+		object_matrix.recompose(translation, rotation, scale);
+	}
+
+	bool brush_context::draw_gizmo()
+	{
+		Im3d::Context& im3d = Im3d::GetContext();
+		assert(operation != operation_type::face_selection);
+		switch (operation)
+		{
+		case operation_type::translate: 
+			im3d.m_gizmoMode = Im3d::GizmoMode_Translation;
+			im3d.m_gizmoLocal = !use_world_manipulation;
+			break;
+		case operation_type::rotation:
+			im3d.m_gizmoMode = Im3d::GizmoMode_Rotation;
+			im3d.m_gizmoLocal = !use_world_manipulation;
+			break;
+		case operation_type::scale:
+			im3d.m_gizmoMode = Im3d::GizmoMode_Scale;
+			break;
+		}
+		return Im3d::Gizmo("BrushGizmo", object_matrix.elements);
 	}
 
 	brush const& brush_context::get_brush() const

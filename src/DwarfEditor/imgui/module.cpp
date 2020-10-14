@@ -3,7 +3,6 @@
 #include <imgui.h>
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_dx11.h>
-#include <ImGuizmo.h>
 #include <im3d.h>
 
 #include "Ogre/Root.h"

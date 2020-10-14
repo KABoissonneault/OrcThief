@@ -16,7 +16,6 @@
 #include <SDL_video.h>
 
 #include <imgui_impl_sdl.h>
-#include <ImGuizmo.h>
 #include <im3d.h>
 
 #include <iterator>
@@ -73,12 +72,12 @@ namespace ot::dedit
 		selection_context.reset(new selection::base_context(current_map, main_scene, render_window));
 
 		egfx::object::camera_ref const camera = main_scene.get_camera();
-		camera.set_position({ 0.0f, 2.0f, -5.5f });
+		camera.set_position({ 0.0f, 2.0f, 5.5f });
 		camera.look_at({ 0.0f, 0.0f, 0.0f });
 
 		light = egfx::node::create_directional_light(main_scene.get_root_node());
-		light.set_position({ 10.0f, 10.0f, -10.0f });
-		light.set_direction(normalized(math::vector3f{ -1.0f, -1.0f, 1.0f }));
+		light.set_position({ 10.0f, 10.0f, 10.0f });
+		light.set_direction(normalized(math::vector3f{ -1.0f, -1.0f, -1.0f }));
 	}
 
 	void application::run()
@@ -147,10 +146,6 @@ namespace ot::dedit
 
 					break;
 				}
-
-				// Ignore keyboard while using ImGuizmo
-				if (ImGuizmo::IsUsing())
-					break;
 
 				if (camera_controller::handle_keyboard_event(e.key))
 					break;
@@ -254,7 +249,7 @@ namespace ot::dedit
 			input::mouse::get_position(cursor_x, cursor_y);
 
 			float const norm_x = (static_cast<float>(cursor_x) / ad.m_viewportSize.x) * 2.0f - 1.0f;
-			float const norm_y = -((static_cast<float>(cursor_y) / ad.m_viewportSize.x) * 2.0f - 1.0f);
+			float const norm_y = -((static_cast<float>(cursor_y) / ad.m_viewportSize.y) * 2.0f - 1.0f);
 
 			math::transform_matrix const camera_transform = camera.get_transformation();
 
@@ -265,7 +260,7 @@ namespace ot::dedit
 				, -1.0f
 			};
 
-			return transform(ray_direction, camera_transform);
+			return normalized(transform(ray_direction, camera_transform));
 		}
 	}
 
@@ -277,6 +272,7 @@ namespace ot::dedit
 		
 		ad.m_cursorRayOrigin = ad.m_viewOrigin;
 		ad.m_cursorRayDirection = get_cursor_ray(camera, camera_projection);
+		ad.m_keyDown[Im3d::Mouse_Left] = input::mouse::get_buttons() == input::mouse::button_type::left;
 	}
 
 	bool application::render()

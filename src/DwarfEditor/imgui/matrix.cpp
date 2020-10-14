@@ -18,6 +18,11 @@ OT_IMGUI_DETAIL_BOOST_INCLUDE_BEGIN
 #include <boost/qvm/quat_operations.hpp>
 OT_IMGUI_DETAIL_BOOST_INCLUDE_END
 
+#include <numbers>
+
+#include <im3d_math.h>
+#include <im3d_boost_traits.h>
+
 namespace ot::dedit::imgui
 {
 	matrix matrix::identity() noexcept
@@ -42,20 +47,45 @@ namespace ot::dedit::imgui
 
 	void matrix::decompose(std::span<float, 3> displacement, std::span<float, 3> euler_rotation, std::span<float, 3> scales) const
 	{
+		using namespace boost::qvm;
+
 		math::scales const s = get_scale();
 		scales[0] = s.x;
 		scales[1] = s.y;
 		scales[2] = s.z;
 
 		math::rotation_matrix const r = math::ops::get_rotation(*this, s);
-		euler_rotation[0] = math::ops::get_rotx(r);
-		euler_rotation[1] = math::ops::get_roty(r);
-		euler_rotation[2] = math::ops::get_rotz(r);
+		// https://www.geometrictools.com/Documentation/EulerAngles.pdf
+		// A20 is equal to -sin(y)
+		// Therefore, if A20 == 1.f, then sin(y) == -1.f, or y = -pi/2
+		if (float_eq(A20(r), 1.f))
+		{
+			euler_rotation[0] = std::atan2(-A12(r), A11(r));
+			euler_rotation[1] = -std::numbers::pi_v<float> / 2.f;
+			euler_rotation[2] = 0.f;
+		}
+		else if (float_eq(A20(r), -1.f))
+		{
+			euler_rotation[0] = std::atan2(-A12(r), A11(r));
+			euler_rotation[1] = std::numbers::pi_v<float> / 2.f;
+			euler_rotation[2] = 0.f;
+		}
+		else
+		{
+			euler_rotation[0] = std::atan2(A21(r), A22(r));
+			euler_rotation[1] = std::asin(-A20(r));
+			euler_rotation[2] = std::atan2(A10(r), A00(r));
+		}
 
 		math::vector3f const d = get_displacement();
 		displacement[0] = d.x;
 		displacement[1] = d.y;
 		displacement[2] = d.z;
+	}
+
+	static float clamp(float f)
+	{
+		return std::fmod(f + std::numbers::pi_v<float>, std::numbers::pi_v<float> * 2.f) - std::numbers::pi_v<float>;
 	}
 
 	void matrix::recompose(std::span<float const, 3> displacement, std::span<float const, 3> euler_rotation, std::span<float const, 3> scales)
@@ -64,14 +94,19 @@ namespace ot::dedit::imgui
 		using boost::qvm::operator*;
 
 		math::vector3f const d{ displacement[0], displacement[1], displacement[2] };
-		auto const r = rot_mat_xyz<3>(euler_rotation[0], euler_rotation[1], euler_rotation[2]);
-		math::scales s{ scales[0], scales[1], scales[2] };
+		auto const r = rot_mat_zyx<3>(
+			clamp(euler_rotation[2])
+			, clamp(euler_rotation[1])
+			, clamp(euler_rotation[0])
+			);
+		math::scales const s{ scales[0], scales[1], scales[2] };
 				
+		auto& rot_mat = del_row_col<3, 3>(*this);
 		assign(
-			del_row_col<3, 3>(*this), 
+			rot_mat,
 			r * diag_mat(s)
 		);
-
+	
 		assign(translation(*this), d);
 	}
 
