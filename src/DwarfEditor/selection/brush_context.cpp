@@ -52,9 +52,9 @@ namespace ot::dedit::selection
 			return current_face;
 		}
 
-		void draw_operation_preview(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t)
+		void draw_operation_preview(egfx::mesh_definition const& mesh_def, imgui::matrix const& m)
 		{
-			egfx::im::draw_mesh(mesh_def, t, egfx::color{ 1.f, 1.f, 1.f, 0.2f });
+			egfx::im::draw_mesh(mesh_def, to_math_matrix(m), egfx::color{ 1.f, 1.f, 1.f, 0.2f });
 		}
 
 		void draw_immediate_scene(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t, egfx::face::id hovered_face)
@@ -100,7 +100,7 @@ namespace ot::dedit::selection
 			if (!is_editing)
 				object_matrix = to_imgui(t);
 
-			operation_window(acc);
+			bool const text_editing = operation_window(acc);
 
 			if (operation == operation_type::face_selection)
 			{
@@ -108,13 +108,23 @@ namespace ot::dedit::selection
 				{
 					hovered_face = get_closest_face(camera.get_position(), get_mouse_ray(*main_window, camera), t, mesh_def);
 				}
+
+				if (text_editing)
+				{
+					draw_operation_preview(mesh_def, object_matrix);
+				}
 			}
 			else
 			{
-				if (draw_gizmo())
+				bool const gizmo_editing = draw_gizmo();
+				if (gizmo_editing || text_editing)
 				{
-					draw_operation_preview(mesh_def, to_math_matrix(object_matrix));
-					is_editing = true; 
+					draw_operation_preview(mesh_def, object_matrix);
+				}
+
+				if (gizmo_editing)
+				{
+					is_editing = true;
 				}
 				// If we just stopped using the gizmo, then we need to commit the edit if any
 				else if(is_editing)
@@ -156,7 +166,7 @@ namespace ot::dedit::selection
 		}
 	}
 
-	void brush_context::operation_window(action::accumulator& acc)
+	bool brush_context::operation_window(action::accumulator& acc)
 	{
 		brush const& b = get_brush();
 
@@ -166,7 +176,7 @@ namespace ot::dedit::selection
 		if (!ImGui::Begin(text.c_str(), nullptr, flags))
 		{
 			ImGui::End();
-			return;
+			return false;
 		}			
 
 		if (!(operation == operation_type::translate || operation == operation_type::rotation))
@@ -187,26 +197,27 @@ namespace ot::dedit::selection
 		rotation[1] *= 180.f / std::numbers::pi_v<float>;
 		rotation[2] *= 180.f / std::numbers::pi_v<float>;
 
+		math::vector3f const original_translation{ translation[0], translation[1], translation[2] };
+		math::vector3f const original_rotation{ rotation[0], rotation[1], rotation[2] };
+		math::vector3f const original_scale{ scale[0], scale[1], scale[2] };
+
 		if (ImGui::RadioButton("(T)ranslate", operation == operation_type::translate)) operation = operation_type::translate;
 		ImGui::SameLine();
-		if (ImGui::InputFloat3("", translation))
-		{
-			acc.emplace_action<action::set_brush_position>(b, math::point3f{ translation[0], translation[1], translation[2] });
-		}
+		ImGui::InputFloat3("##BrushTranslate", translation);
+		bool const translate_active = ImGui::IsItemActive();
+		bool const has_translated = !translate_active && !float_eq(math::vector3f{ translation[0], translation[1], translation[2] }, original_translation);
 
 		if (ImGui::RadioButton("(R)otation ", operation == operation_type::rotation)) operation = operation_type::rotation;
 		ImGui::SameLine();
-		if (ImGui::InputFloat3("", rotation))
-		{
-			acc.emplace_action<action::set_brush_position>(b, math::point3f{ rotation[0], rotation[1], rotation[2] });
-		}
+		ImGui::InputFloat3("##BrushRotation", rotation);
+		bool const rotation_active = ImGui::IsItemActive();
+		bool const has_rotated = !rotation_active && !float_eq(math::vector3f{ rotation[0], rotation[1], rotation[2] }, original_rotation);
 
 		if (ImGui::RadioButton("(S)cale    ", operation == operation_type::scale)) operation = operation_type::scale;
 		ImGui::SameLine();
-		if (ImGui::InputFloat3("", scale))
-		{
-			acc.emplace_action<action::set_brush_position>(b, math::point3f{ scale[0], scale[1], scale[2] });
-		}
+		ImGui::InputFloat3("##BrushScale", scale);
+		bool const scale_active = ImGui::IsItemActive();
+		bool const has_scaled = !scale_active && !float_eq(math::vector3f{ scale[0], scale[1], scale[2] }, original_scale);
 
 		if (ImGui::RadioButton("(F)ace Selection", operation == operation_type::face_selection)) operation = operation_type::face_selection;
 
@@ -217,6 +228,15 @@ namespace ot::dedit::selection
 		rotation[1] *= std::numbers::pi_v<float> / 180.f;
 		rotation[2] *= std::numbers::pi_v<float> / 180.f;
 		object_matrix.recompose(translation, rotation, scale);
+				
+		if(has_translated) 
+			acc.emplace_action<action::set_brush_position>(b, math::point3f{ translation[0], translation[1], translation[2] });
+		if(has_rotated) 
+			acc.emplace_action<action::set_brush_rotation>(b, object_matrix.get_rotation());
+		if(has_scaled) 
+			acc.emplace_action<action::set_brush_scale>(b, math::scales{ scale[0], scale[1], scale[2] });
+
+		return translate_active || rotation_active || scale_active;
 	}
 
 	bool brush_context::draw_gizmo()

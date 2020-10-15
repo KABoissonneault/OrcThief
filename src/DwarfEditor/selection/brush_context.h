@@ -33,7 +33,8 @@ namespace ot::dedit::selection
 		operation_type operation = operation_type::translate;
 		bool use_world_manipulation = false;
 
-		void operation_window(action::accumulator& acc);
+		// Returns whether any manipulation input is active
+		bool operation_window(action::accumulator& acc);
 		bool draw_gizmo();
 		brush const& get_brush() const;
 
