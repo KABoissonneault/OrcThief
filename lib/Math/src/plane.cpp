@@ -69,14 +69,10 @@ namespace ot::math
 	}
 
 	plane transform(plane p, transform_matrix const& t)
-	{		
-		scales scale = t.get_scale();
-		scale.x *= dot_product(p.normal, vector3f::unit_x());
-		scale.y *= dot_product(p.normal, vector3f::unit_y());
-		scale.z *= dot_product(p.normal, vector3f::unit_z());
-		p.distance *= boost::qvm::mag(scale);
-		p.normal = rotate(p.normal, t.get_rotation());
-		p.distance += dot_product(p.normal, t.get_displacement());
+	{	
+		math::point3f const transformed = transform(p.get_point(), t);
+		p.normal = normalized(transform(p.normal, t));
+		p.distance = dot_product(vector_from_origin(transformed), p.normal);
 		return p;
 	}
 }
