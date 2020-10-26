@@ -4,7 +4,7 @@
 #include "map.h"
 #include "imgui/matrix.h"
 
-#include "egfx/scene.h"
+#include "egfx/object/camera.h"
 #include "egfx/window.h"
 
 #include <optional>
@@ -14,7 +14,7 @@ namespace ot::dedit::selection
 	class brush_context : public composite_context
 	{
 		map const* current_map;
-		egfx::scene const* current_scene;
+		egfx::object::camera_cref main_camera;
 		egfx::window const* main_window;
 
 		entity_id selected_brush;
@@ -39,7 +39,7 @@ namespace ot::dedit::selection
 		brush const& get_brush() const;
 
 	public:
-		brush_context(map const& current_map, egfx::scene const& current_scene, egfx::window const& main_window, entity_id selected_brush) noexcept;
+		brush_context(map const& current_map, egfx::object::camera_cref main_camera, egfx::window const& main_window, entity_id selected_brush) noexcept;
 
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) override;
 

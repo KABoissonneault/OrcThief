@@ -19,6 +19,8 @@
 
 #include <numbers>
 
+#include <fmt/format.h>
+
 namespace ot::dedit::selection
 {
 	namespace
@@ -74,12 +76,12 @@ namespace ot::dedit::selection
 		}
 	}
 
-	brush_context::brush_context(map const& current_map, egfx::scene const& current_scene, egfx::window const& main_window, entity_id selected_brush) noexcept
+	brush_context::brush_context(map const& current_map, egfx::object::camera_cref main_camera, egfx::window const& main_window, entity_id selected_brush) noexcept
 		: current_map(&current_map)
-		, current_scene(&current_scene)
+		, main_camera(main_camera)
 		, main_window(&main_window)
 		, selected_brush(selected_brush)
-		, object_matrix(to_imgui(current_map.find_brush(selected_brush)->get_world_transform(math::transform_matrix::identity())))
+		, object_matrix(to_imgui(current_map.find_brush(selected_brush)->get_world_transform(current_map.get_brush_root_world_transform())))
 	{
 		
 	}
@@ -88,11 +90,9 @@ namespace ot::dedit::selection
 	{
 		hovered_face = egfx::face::id::none;
 
-		egfx::object::camera_cref const camera = current_scene->get_camera();
-
 		brush const& b = get_brush();
 		egfx::mesh_definition const& mesh_def = *b.mesh_def;
-		math::transform_matrix const t = b.get_world_transform(math::transform_matrix::identity());
+		math::transform_matrix const t = b.get_world_transform(current_map->get_brush_root_world_transform());
 
 		if (next_context == nullptr)
 		{
@@ -106,7 +106,7 @@ namespace ot::dedit::selection
 			{
 				if (has_focus(*main_window) && !imgui::has_mouse())
 				{
-					hovered_face = get_closest_face(camera.get_position(), get_mouse_ray(*main_window, camera), t, mesh_def);
+					hovered_face = get_closest_face(main_camera.get_position(), get_mouse_ray(*main_window, main_camera), t, mesh_def);
 				}
 
 				if (text_editing)
@@ -157,7 +157,7 @@ namespace ot::dedit::selection
 		{
 			if (hovered_face != egfx::face::id::none && input.consume_left_click())
 			{
-				next_context.reset(new face_context(*current_map, *current_scene, *main_window, selected_brush, hovered_face));
+				next_context.reset(new face_context(*current_map, main_camera, *main_window, selected_brush, hovered_face));
 			}
 		}
 		else if(input.consume_right_click())
@@ -171,9 +171,9 @@ namespace ot::dedit::selection
 		brush const& b = get_brush();
 
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImGui::GetStyleColorVec4(ImGuiCol_TitleBg));
-		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav | ImGuiWindowFlags_AlwaysAutoResize;
-		std::string const text = "Brush " + std::to_string(static_cast<std::underlying_type_t<entity_id>>(b.get_id()));
-		if (!ImGui::Begin(text.c_str(), nullptr, flags))
+		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav;
+		auto const id_value = static_cast<std::underlying_type_t<entity_id>>(b.get_id());
+		if (!ImGui::Begin(fmt::format("Brush {}", id_value).c_str(), nullptr, flags))
 		{
 			ImGui::End();
 			return false;
@@ -207,7 +207,7 @@ namespace ot::dedit::selection
 		bool const translate_active = ImGui::IsItemActive();
 		bool const has_translated = !translate_active && !float_eq(math::vector3f{ translation[0], translation[1], translation[2] }, original_translation);
 
-		if (ImGui::RadioButton("(R)otation ", operation == operation_type::rotation)) operation = operation_type::rotation;
+		if (ImGui::RadioButton("(R)otate   ", operation == operation_type::rotation)) operation = operation_type::rotation;
 		ImGui::SameLine();
 		ImGui::InputFloat3("##BrushRotation", rotation);
 		bool const rotation_active = ImGui::IsItemActive();

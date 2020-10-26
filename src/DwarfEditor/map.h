@@ -42,6 +42,8 @@ namespace ot::dedit
 		entity_id allocate_entity_id();
 		brush& make_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id);
 		void delete_brush(entity_id id);
+		// Returns the world transform of the root of the brushes (usually the origin of the map)
+		math::transform_matrix get_brush_root_world_transform() const;
 
 		void clear();
 

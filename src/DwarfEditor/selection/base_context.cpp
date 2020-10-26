@@ -55,7 +55,7 @@ namespace ot::dedit::selection
 			
 			brush const& b = *found_brush;
 
-			if (hits_brush(r, b.get_world_transform(math::transform_matrix::identity()), *b.mesh_def))
+			if (hits_brush(r, b.get_world_transform(current_map->get_brush_root_world_transform()), *b.mesh_def))
 			{
 				select_brush(hit_brush_id);
 				break;
@@ -65,7 +65,7 @@ namespace ot::dedit::selection
 
 	void base_context::select_brush(entity_id brush)
 	{
-		next_context.reset(new brush_context(*current_map, *current_scene, *main_window, brush));
+		next_context.reset(new brush_context(*current_map, current_scene->get_camera(), *main_window, brush));
 		selected_brush = brush;
 	}
 

@@ -16,13 +16,13 @@
 namespace ot::dedit::selection
 {
 	edge_context::edge_context(map const& current_map
-		, egfx::scene const& current_scene
+		, egfx::object::camera_cref main_camera
 		, egfx::window const& main_window
 		, entity_id selected_brush
 		, egfx::face::id selected_face
 		, egfx::half_edge::id selected_edge)
 		: current_map(&current_map)
-		, current_scene(&current_scene)
+		, main_camera(main_camera)
 		, main_window(&main_window)
 		, selected_brush(selected_brush)
 		, selected_face(selected_face)
@@ -40,17 +40,16 @@ namespace ot::dedit::selection
 
 		brush const& b = *current_map->find_brush(selected_brush);
 		egfx::mesh_definition const& mesh_def = *b.mesh_def;
-		math::transform_matrix const t = b.get_world_transform(math::transform_matrix::identity());
+		math::transform_matrix const t = b.get_world_transform(current_map->get_brush_root_world_transform());
 		
 		egfx::half_edge::cref const edge = mesh_def.get_half_edge(selected_edge);
 		math::line const local_line = edge.get_line();
 
 		// Find the local split
 		{
-			egfx::object::camera_cref camera = current_scene->get_camera();
 			egfx::face::cref const face = mesh_def.get_face(selected_face);
 			math::plane const face_plane = transform(face.get_plane(), t);
-			if (auto const intersection_result = get_mouse_ray(*main_window, camera).intersects(face_plane))
+			if (auto const intersection_result = get_mouse_ray(*main_window, main_camera).intersects(face_plane))
 			{
 				math::point3f const local_point = transform(*intersection_result, invert(t));				
 				local_split = clamped_project(local_line, local_point);

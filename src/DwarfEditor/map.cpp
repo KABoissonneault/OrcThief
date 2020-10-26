@@ -56,6 +56,12 @@ namespace ot::dedit
 		}
 	}
 
+	math::transform_matrix map::get_brush_root_world_transform() const
+	{
+		// TODO: support composed maps, with different roots!
+		return math::transform_matrix::identity();
+	}
+
 	void map::clear()
 	{
 		brushes.clear();
