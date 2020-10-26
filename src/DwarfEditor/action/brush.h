@@ -59,6 +59,18 @@ namespace ot::dedit::action
 		split_brush_edge(brush const& b, egfx::half_edge::id edge, math::point3f point);
 	};
 
+	class split_brush_face : public brush_definition_base
+	{
+		egfx::face::id face;
+		math::plane plane;
+
+	protected:
+		virtual void do_apply(brush& b) override;
+
+	public:
+		split_brush_face(brush const& b, egfx::face::id face, math::plane plane);
+	};
+
 	class set_brush_position : public single_brush
 	{
 		math::point3f previous_state;

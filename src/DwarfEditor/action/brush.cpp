@@ -80,6 +80,21 @@ namespace ot::dedit::action
 		b.reload_node(std::move(new_mesh));
 	}
 
+	split_brush_face::split_brush_face(brush const& b, egfx::face::id face, math::plane plane)
+		: brush_definition_base(b)
+		, face(face)
+		, plane(plane)
+	{
+
+	}
+
+	void split_brush_face::do_apply(brush& b)
+	{
+		auto new_mesh = std::make_shared<egfx::mesh_definition>(*b.mesh_def);
+		new_mesh->get_face(face).split(plane);
+		b.reload_node(std::move(new_mesh));
+	}
+
 	set_brush_position::set_brush_position(brush const& b, math::point3f point)
 		: single_brush(b)
 		, previous_state(b.node.get_position())
