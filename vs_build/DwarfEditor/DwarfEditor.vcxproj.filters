@@ -124,6 +124,9 @@
     <ClCompile Include="..\..\src\DwarfEditor\application\map_handler.cpp">
       <Filter>src\application</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\selection\face_split_context.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\DwarfEditor\selection\context.h">
@@ -230,6 +233,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\application\map_handler.h">
       <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\selection\face_split_context.h">
+      <Filter>src\selection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

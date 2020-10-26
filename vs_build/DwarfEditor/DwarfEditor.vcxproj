@@ -209,6 +209,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClCompile Include="..\..\src\DwarfEditor\selection\context.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\selection\edge_context.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\selection\face_context.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\selection\face_split_context.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\serialize\serialize_map.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\serialize\serialize_math.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\serialize\serialize_mesh_definition.cpp" />
@@ -269,6 +270,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClInclude Include="..\..\src\DwarfEditor\selection\context.h" />
     <ClInclude Include="..\..\src\DwarfEditor\selection\edge_context.h" />
     <ClInclude Include="..\..\src\DwarfEditor\selection\face_context.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\selection\face_split_context.h" />
     <ClInclude Include="..\..\src\DwarfEditor\serialize\serialize_map.h" />
     <ClInclude Include="..\..\src\DwarfEditor\serialize\serialize_math.h" />
     <ClInclude Include="..\..\src\DwarfEditor\serialize\serialize_mesh_definition.h" />
