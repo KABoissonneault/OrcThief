@@ -16,10 +16,11 @@ namespace ot::dedit::imgui
 		float elements[16];
 
 		[[nodiscard]] static matrix identity() noexcept;
+		[[nodiscard]] static matrix from_components(math::vector3f displacement, math::quaternion rotation, math::scales scales = { 1.f, 1.f, 1.f }) noexcept;
 
-		math::vector3f get_displacement() const noexcept;
-		math::quaternion get_rotation() const noexcept;
-		math::scales get_scale() const noexcept;
+		[[nodiscard]] math::vector3f get_displacement() const noexcept;
+		[[nodiscard]] math::quaternion get_rotation() const noexcept;
+		[[nodiscard]] math::scales get_scale() const noexcept;
 
 		void decompose(std::span<float, 3> displacement, std::span<float, 3> euler_rotation, std::span<float, 3> scales) const;
 		void recompose(std::span<float const, 3> displacement, std::span<float const, 3> euler_rotation, std::span<float const, 3> scales);

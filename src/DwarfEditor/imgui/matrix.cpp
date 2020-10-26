@@ -30,6 +30,17 @@ namespace ot::dedit::imgui
 		return boost::qvm::identity_mat<float, 4>();
 	}
 
+	matrix matrix::from_components(math::vector3f displacement, math::quaternion rotation, math::scales scales) noexcept
+	{
+		using boost::qvm::operator*=;
+
+		auto m = boost::qvm::convert_to<matrix>(rotation);
+		boost::qvm::del_row_col<3, 3>(m) *= boost::qvm::diag_mat(scales);
+		boost::qvm::translation(m) = displacement;
+
+		return m;
+	}
+
 	math::vector3f matrix::get_displacement() const noexcept
 	{
 		return boost::qvm::translation(*this);
