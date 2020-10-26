@@ -52,6 +52,11 @@ namespace ot::math
 		return z_rad_rotation(angle * deg_to_rad);
 	}
 
+	quaternion normalized(quaternion const& q) noexcept
+	{
+		return boost::qvm::normalized(q);
+	}
+
 	quaternion invert(quaternion const& q) noexcept
 	{
 		return boost::qvm::inverse(q);

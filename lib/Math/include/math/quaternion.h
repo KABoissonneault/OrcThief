@@ -19,6 +19,7 @@ namespace ot::math
 		[[nodiscard]] static quaternion z_deg_rotation(float angle) noexcept;
 	};
 
+	[[nodiscard]] quaternion normalized(quaternion const& q) noexcept;
 	[[nodiscard]] quaternion invert(quaternion const& q) noexcept;
 	[[nodiscard]] quaternion concatenate(quaternion const& lhs, quaternion const& rhs) noexcept;
 	template<typename... Args>
