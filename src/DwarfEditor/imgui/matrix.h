@@ -7,6 +7,7 @@
 #include "math/transform_matrix.h"
 
 #include <span>
+#include <string_view>
 
 namespace ot::dedit::imgui
 {
@@ -28,10 +29,16 @@ namespace ot::dedit::imgui
 
 	[[nodiscard]] math::transform_matrix to_math_matrix(matrix const& m);
 
+	[[nodiscard]] matrix invert(matrix const& t);
+	[[nodiscard]] matrix operator*(matrix const& lhs, matrix const& rhs);
+
 	using ot::float_eq;
 	[[nodiscard]] bool float_eq(matrix const& lhs, matrix const& rhs);
 	[[nodiscard]] bool float_eq(math::transform_matrix const& lhs, matrix const& rhs);
 	[[nodiscard]] bool float_eq(matrix const& lhs, math::transform_matrix const& rhs);
+
+	void text(matrix const& m);
+	void text(matrix const& m, std::string_view title);
 }
 
 namespace ot::math

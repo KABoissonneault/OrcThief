@@ -126,6 +126,16 @@ namespace ot::dedit::imgui
 		return boost::qvm::convert_to<math::transform_matrix>(m);
 	}
 
+	matrix invert(matrix const& t)
+	{
+		return boost::qvm::inverse(t);
+	}
+
+	matrix operator*(matrix const& lhs, matrix const& rhs)
+	{
+		return boost::qvm::operator*(lhs, rhs);
+	}
+
 	bool float_eq(matrix const& lhs, matrix const& rhs)
 	{
 		return boost::qvm::cmp(lhs, rhs, [](float l, float r)
@@ -148,6 +158,45 @@ namespace ot::dedit::imgui
 		{
 			return float_eq(l, r);
 		});
+	}
+
+	void text(matrix const& m)
+	{
+		float displacement[3];
+		float rotation[3];
+		float scales[3];
+
+		m.decompose(displacement, rotation, scales);
+
+		rotation[0] *= 180.f / std::numbers::pi_v<float>;
+		rotation[1] *= 180.f / std::numbers::pi_v<float>;
+		rotation[2] *= 180.f / std::numbers::pi_v<float>;
+
+		ImGui::Text("{%f %f %f} {%f %f %f} {%f %f %f}"
+			, displacement[0], displacement[1], displacement[2]
+			, rotation[0], rotation[1], rotation[2]
+			, scales[0], scales[1], scales[2]
+		);
+	}
+
+	void text(matrix const& m, std::string_view title)
+	{
+		float displacement[3];
+		float rotation[3];
+		float scales[3];
+
+		m.decompose(displacement, rotation, scales);
+
+		rotation[0] *= 180.f / std::numbers::pi_v<float>;
+		rotation[1] *= 180.f / std::numbers::pi_v<float>;
+		rotation[2] *= 180.f / std::numbers::pi_v<float>;
+
+		ImGui::Text("%.*s: {%f %f %f} {%f %f %f} {%f %f %f}"
+			, static_cast<int>(title.size()), title.data()
+			, displacement[0], displacement[1], displacement[2]
+			, rotation[0], rotation[1], rotation[2]
+			, scales[0], scales[1], scales[2]
+		);
 	}
 }
 
