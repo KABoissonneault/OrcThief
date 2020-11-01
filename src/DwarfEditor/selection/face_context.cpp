@@ -83,11 +83,11 @@ namespace ot::dedit::selection
 		math::transform_matrix const t = b.get_world_transform(current_map->get_brush_root_world_transform());
 		egfx::face::cref const current_face = b.mesh_def->get_face(selected_face);
 
+		// Transparent overlay
+		egfx::im::draw_face(current_face, t, egfx::color{ 1.0f, 1.0f, 1.0f, 0.6f });
+
 		if (next_context == nullptr)
 		{
-			// Transparent overlay
-			egfx::im::draw_face(current_face, t, egfx::color{ 1.0f, 1.0f, 1.0f, 0.6f });
-
 			// Operation window
 			operation_window();
 
