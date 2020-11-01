@@ -39,7 +39,7 @@ namespace ot::dedit::selection
 			}
 		}
 
-		imgui::matrix get_default_plane_transform(map const& current_map, entity_id selected_brush, egfx::face::id selected_face)
+		imgui::matrix get_current_plane_transform(map const& current_map, entity_id selected_brush, egfx::face::id selected_face)
 		{
 			brush const& b = *current_map.find_brush(selected_brush);
 			math::transform_matrix const t = b.get_world_transform(current_map.get_brush_root_world_transform());
@@ -62,7 +62,7 @@ namespace ot::dedit::selection
 		, main_window(&main_window)
 		, selected_brush(selected_brush)
 		, selected_face(selected_face)
-		, plane_transform(get_default_plane_transform(current_map, selected_brush, selected_face))
+		, plane_transform(imgui::matrix::identity())
 		, current_operation(Im3d::GizmoMode_Translation)
 	{
 		
@@ -84,16 +84,25 @@ namespace ot::dedit::selection
 		im3d.m_gizmoMode = static_cast<Im3d::GizmoMode>(current_operation);
 		im3d.m_gizmoLocal = true;
 
-		Im3d::Gizmo("SplitGizmo", plane_transform.elements);
-		
-		math::plane const base_plane{ {1,0,0}, 0 };
-		math::plane const world_plane = transform(base_plane, to_math_matrix(plane_transform));
+		imgui::matrix const face_world_transform = get_current_plane_transform(*current_map, selected_brush, selected_face);
+		imgui::matrix plane_world_transform = plane_transform * face_world_transform;
+		if (Im3d::Gizmo("SplitGizmo", plane_world_transform.elements))
+		{
+			plane_transform = plane_world_transform * invert(face_world_transform);
+		}
 
-		Im3d::PushColor(Im3d::Color_Blue);
+		math::plane const base_plane{ {1,0,0}, 0 };
+		math::plane const world_plane = transform(base_plane, to_math_matrix(plane_world_transform));
+
+		math::vector3f const world_plane_displacement = plane_world_transform.get_displacement();
+
 		Im3d::PushAlpha(0.5f);
-		Im3d::DrawQuadFilled(world_plane.get_point(), world_plane.normal, Im3d::Vec2(1.f, 1.f));		
-		Im3d::PopAlpha();
+		Im3d::PushColor(Im3d::Color_Blue);
+		Im3d::DrawQuadFilled(world_plane_displacement, world_plane.normal, Im3d::Vec2(1.f, 1.f));
 		Im3d::PopColor();
+		Im3d::PopAlpha();
+
+		Im3d::DrawArrow(world_plane_displacement, world_plane_displacement + world_plane.normal, 0.1f, 25.f);		
 	}
 
 	void face_split_context::operation_window(action::accumulator& acc)
