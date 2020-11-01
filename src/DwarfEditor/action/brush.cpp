@@ -17,6 +17,7 @@ namespace ot::dedit::action
 	void spawn_brush::apply(map& current_map)
 	{
 		current_map.make_brush(mesh_def, id);
+		console::log("Created brush {}", id);
 	}
 	
 	void spawn_brush::undo(map& current_map)
@@ -35,7 +36,7 @@ namespace ot::dedit::action
 		brush* b = current_map.find_brush(get_id());
 		if (b == nullptr)
 		{
-			console::error(fmt::format("Could not apply action: entity '{}' not found", static_cast<std::underlying_type_t<entity_id>>(get_id())));
+			console::error("Could not apply action: entity '{}' not found", get_id());
 			return;
 		}
 
@@ -45,12 +46,7 @@ namespace ot::dedit::action
 	void single_brush::undo(map& current_map)
 	{
 		brush* b = current_map.find_brush(get_id());
-		if (b == nullptr)
-		{
-			console::error(fmt::format("Could not undo action: entity '{}' not found", static_cast<std::underlying_type_t<entity_id>>(get_id())));
-			return;
-		}
-
+		assert(b != nullptr);
 		do_undo(*b);
 	}
 
@@ -96,7 +92,8 @@ namespace ot::dedit::action
 		if (result)
 		{
 			egfx::face::ref const new_face = *result;
-			console::log(fmt::format("Split brush {} face {} into new face {}", get_id(), face, new_face.get_id()));
+			console::log("Split brush {} face {} into new face {}", get_id(), face, new_face.get_id());
+			b.reload_node(std::move(new_mesh));
 		}
 		else
 		{
@@ -104,20 +101,19 @@ namespace ot::dedit::action
 			switch (fail)
 			{
 			case egfx::face::split_fail::inside: 
-				console::error(fmt::format("Could not split brush {} face {}: face was entirely inside the plane", get_id(), face));
+				console::error("Could not split brush {} face {}: face was entirely inside the plane", get_id(), face);
 				break;
 			case egfx::face::split_fail::outside:
-				console::error(fmt::format("Could not split brush {} face {}: face was entirely outside the plane", get_id(), face));
+				console::error("Could not split brush {} face {}: face was entirely outside the plane", get_id(), face);
 				break;
 			case egfx::face::split_fail::aligned:
-				console::error(fmt::format("Could not split brush {} face {}: face was aligned to the plane", get_id(), face));
+				console::error("Could not split brush {} face {}: face was aligned to the plane", get_id(), face);
 				break;
 			case egfx::face::split_fail::opposite_aligned:
-				console::error(fmt::format("Could not split brush {} face {}: face was opposite-aligned to the plane", get_id(), face));
+				console::error("Could not split brush {} face {}: face was opposite-aligned to the plane", get_id(), face);
 				break;
 			}
-		}
-		b.reload_node(std::move(new_mesh));
+		}		
 	}
 
 	set_brush_position::set_brush_position(brush const& b, math::point3f point)
