@@ -1,6 +1,7 @@
 #include "action/brush.h"
 
 #include "console.h"
+#include "egfx/mesh_definition.h"
 
 #include <fmt/format.h>
 
@@ -91,7 +92,31 @@ namespace ot::dedit::action
 	void split_brush_face::do_apply(brush& b)
 	{
 		auto new_mesh = std::make_shared<egfx::mesh_definition>(*b.mesh_def);
-		new_mesh->get_face(face).split(plane);
+		auto result = new_mesh->get_face(face).split(plane);
+		if (result)
+		{
+			egfx::face::ref const new_face = *result;
+			console::log(fmt::format("Split brush {} face {} into new face {}", get_id(), face, new_face.get_id()));
+		}
+		else
+		{
+			egfx::face::split_fail const fail = result.error();
+			switch (fail)
+			{
+			case egfx::face::split_fail::inside: 
+				console::error(fmt::format("Could not split brush {} face {}: face was entirely inside the plane", get_id(), face));
+				break;
+			case egfx::face::split_fail::outside:
+				console::error(fmt::format("Could not split brush {} face {}: face was entirely outside the plane", get_id(), face));
+				break;
+			case egfx::face::split_fail::aligned:
+				console::error(fmt::format("Could not split brush {} face {}: face was aligned to the plane", get_id(), face));
+				break;
+			case egfx::face::split_fail::opposite_aligned:
+				console::error(fmt::format("Could not split brush {} face {}: face was opposite-aligned to the plane", get_id(), face));
+				break;
+			}
+		}
 		b.reload_node(std::move(new_mesh));
 	}
 
