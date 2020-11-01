@@ -39,17 +39,33 @@ namespace ot::dedit::selection
 			}
 		}
 
-		imgui::matrix get_current_plane_transform(map const& current_map, entity_id selected_brush, egfx::face::id selected_face)
+		math::transform_matrix get_current_plane_math_transform(math::transform_matrix const& brush_transform, brush const& b, egfx::face::id selected_face)
 		{
-			brush const& b = *current_map.find_brush(selected_brush);
-			math::transform_matrix const t = b.get_world_transform(current_map.get_brush_root_world_transform());
+			egfx::face::cref const f = b.mesh_def->get_face(selected_face);
+			math::plane const p = f.get_plane();
+
+			return math::transform_matrix::from_components(
+				vector_from_origin(transform(p.get_point(), brush_transform))
+				, get_rotation(p)
+			);
+		}
+
+		imgui::matrix get_current_plane_imgui_transform(math::transform_matrix const& brush_transform, brush const& b, egfx::face::id selected_face)
+		{
 			egfx::face::cref const f = b.mesh_def->get_face(selected_face);
 			math::plane const p = f.get_plane();
 
 			return imgui::matrix::from_components(
-				vector_from_origin(transform(p.get_point(), t))
+				vector_from_origin(transform(p.get_point(), brush_transform))
 				, get_rotation(p)
 			);
+		}
+
+		imgui::matrix get_current_plane_imgui_transform(map const& current_map, entity_id selected_brush, egfx::face::id selected_face)
+		{
+			brush const& b = *current_map.find_brush(selected_brush);
+			math::transform_matrix const t = b.get_world_transform(current_map.get_brush_root_world_transform());
+			return get_current_plane_imgui_transform(t, b, selected_face);
 		}
 	}
 
@@ -84,7 +100,7 @@ namespace ot::dedit::selection
 		im3d.m_gizmoMode = static_cast<Im3d::GizmoMode>(current_operation);
 		im3d.m_gizmoLocal = true;
 
-		imgui::matrix const face_world_transform = get_current_plane_transform(*current_map, selected_brush, selected_face);
+		imgui::matrix const face_world_transform = get_current_plane_imgui_transform(*current_map, selected_brush, selected_face);
 		imgui::matrix plane_world_transform = plane_transform * face_world_transform;
 		if (Im3d::Gizmo("SplitGizmo", plane_world_transform.elements))
 		{
@@ -148,8 +164,11 @@ namespace ot::dedit::selection
 	{
 		brush const& b = get_brush();
 		math::transform_matrix const t = b.get_world_transform(current_map->get_brush_root_world_transform());
+
+		math::transform_matrix const face_world_transform = get_current_plane_math_transform(t, b, selected_face);
+		math::transform_matrix const plane_world_transform = to_math_matrix(plane_transform) * face_world_transform;
 		math::plane const base_plane{ {1,0,0}, 0 };
-		math::plane const world_plane = transform(base_plane, to_math_matrix(plane_transform));
+		math::plane const world_plane = transform(base_plane, plane_world_transform);
 		math::plane const local_plane = transform(world_plane, invert(t));
 		acc.emplace_action<action::split_brush_face>(b, selected_face, local_plane);
 	}
