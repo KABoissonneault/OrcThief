@@ -17,11 +17,11 @@ namespace ot::dedit::console
 		access_logs().clear();
 	}
 
-	void output(level_type level, std::string_view s)
+	void output(level_type level, std::string s)
 	{
 		log_data& data = access_logs().emplace_back();
 		data.level = level;
-		data.message = s;
+		data.message = std::move(s);
 	}
 
 	std::span<log_data const> get_logs()

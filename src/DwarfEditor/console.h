@@ -3,6 +3,7 @@
 #include <string>
 #include <string_view>
 #include <span>
+#include <fmt/format.h>
 
 namespace ot::dedit::console
 {
@@ -24,10 +25,40 @@ namespace ot::dedit::console
 		level_type level;
 	};
 
-	void output(level_type level, std::string_view s);
-	inline void log(std::string_view s) { output(level_type::log, s); }
-	inline void warning(std::string_view s) { output(level_type::warning, s); }
-	inline void error(std::string_view s) { output(level_type::error, s); }
+	void output(level_type level, std::string s);
+	
+	inline void log(std::string_view s) 
+	{ 
+		output(level_type::log, std::string(s)); 
+	}
+	
+	template<typename... T>
+	inline void log(std::string_view s, T const&... args)
+	{
+		output(level_type::log, fmt::format(s, args...));
+	}
+
+	inline void warning(std::string_view s) 
+	{ 
+		output(level_type::warning, std::string(s)); 
+	}
+
+	template<typename... T>
+	inline void warning(std::string_view s, T const&... args)
+	{
+		output(level_type::warning, fmt::format(s, args...));
+	}
+	
+	inline void error(std::string_view s) 
+	{ 
+		output(level_type::error, std::string(s)); 
+	}
+
+	template<typename... T>
+	inline void error(std::string_view s, T const&... args)
+	{
+		output(level_type::error, fmt::format(s, args...));
+	}
 
 	std::span<log_data const> get_logs();
 }
