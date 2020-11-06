@@ -41,6 +41,12 @@ namespace ot::dedit
 		void quit();
 
 		[[nodiscard]] bool can_quit() const noexcept { return current_state == state::none; }
+
+		[[nodiscard]] bool has_map_file() const noexcept { return !map_path.empty(); }
+		[[nodiscard]] std::string_view get_map_file() const noexcept { return map_path; }
+		
+		// Whether the map has been saved since the last applied action
+		[[nodiscard]] bool is_map_dirty() const noexcept;
 	};
 
 	extern template class map_handler<class application>;

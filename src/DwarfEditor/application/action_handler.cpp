@@ -84,7 +84,7 @@ namespace ot::dedit
 		applied_actions.pop_back();
 	}
 
-	int action_handler::get_last_action()
+	int action_handler::get_last_action() const noexcept
 	{
 		if (applied_actions.empty())
 		{

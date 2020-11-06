@@ -113,6 +113,13 @@ namespace ot::dedit
 			console_window::draw(&draw_console_window);
 		}
 
+		draw_main_menu();
+		draw_main_status();
+	}
+
+	template<typename Application>
+	void menu<Application>::draw_main_menu()
+	{
 		if (!ImGui::BeginMainMenuBar())
 			return;
 
@@ -199,6 +206,29 @@ namespace ot::dedit
 		}
 
 		ImGui::EndMainMenuBar();
+	}
+
+	template<typename Application>
+	void menu<Application>::draw_main_status()
+	{
+		if (!ImGui::BeginMainStatusBar())
+			return;
+
+		derived& app = static_cast<derived&>(*this);
+		auto& map_handler = app.get_map_handler();
+		map& m = app.get_current_map();
+		
+		if (map_handler.has_map_file())
+		{
+			std::string_view const map_file = map_handler.get_map_file();
+			ImGui::Text("%.*s%s", static_cast<int>(map_file.size()), map_file.data(), map_handler.is_map_dirty() ? " (*)" : "");
+		}
+		else
+		{
+			ImGui::Text("Unsaved map%s", map_handler.is_map_dirty() ? " (*)" : "");
+		}
+
+		ImGui::EndMainStatusBar();
 	}
 
 	template class menu<application>;

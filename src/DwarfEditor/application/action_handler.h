@@ -36,7 +36,7 @@ namespace ot::dedit
 
 		// IDs representing a monotonically increasing counter of applied actions
 		// This is used by ex: the map handler to tell if actions were applied since the map was last saved
-		int get_last_action();
+		[[nodiscard]] int get_last_action() const noexcept;
 
 		[[nodiscard]] bool has_undo() const noexcept { return !applied_actions.empty(); }
 		[[nodiscard]] bool has_redo() const noexcept { return !undone_actions.empty(); }

@@ -58,6 +58,7 @@ namespace ot::dedit
 		// Accessors for our friend classes
 		camera_controller& get_camera() noexcept { return *this; }
 		action_handler& get_action_handler() noexcept { return selection_actions; }
+		action_handler const& get_action_handler() const noexcept { return selection_actions; }
 		menu& get_menu() noexcept { return *this; }
 		map_handler& get_map_handler() noexcept { return *this; }
 

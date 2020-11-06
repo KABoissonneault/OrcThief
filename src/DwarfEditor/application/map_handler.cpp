@@ -76,11 +76,8 @@ namespace ot::dedit
 	template<typename Application>
 	void map_handler<Application>::new_map()
 	{
-		derived& app = static_cast<derived&>(*this);
-		action_handler& acc = app.get_action_handler();
-
 		// If map is dirty, confirm before changing
-		if (acc.get_last_action() != saved_action)
+		if (is_map_dirty())
 		{
 			current_state = state::confirming_for_new_map;
 		}
@@ -108,11 +105,8 @@ namespace ot::dedit
 	template<typename Application>
 	void map_handler<Application>::open_map()
 	{		
-		derived& app = static_cast<derived&>(*this);
-		action_handler& acc = app.get_action_handler();
-
 		// If map is dirty, confirm before changing
-		if (acc.get_last_action() != saved_action)
+		if (is_map_dirty())
 		{
 			current_state = state::confirming_for_open_map;
 		}
@@ -139,7 +133,7 @@ namespace ot::dedit
 			}
 
 			m.clear();
-			app.map_path.clear();
+			map_path.clear();
 			acc.clear();
 			saved_action = 0;
 
@@ -164,7 +158,7 @@ namespace ot::dedit
 	{
 		derived& app = static_cast<derived&>(*this);
 
-		if (app.map_path.empty())
+		if (!has_map_file())
 		{
 			save_map_as();
 		} 
@@ -255,13 +249,19 @@ namespace ot::dedit
 	template<typename Application>
 	void map_handler<Application>::quit()
 	{
-		derived& app = static_cast<derived&>(*this);
-		action_handler& acc = app.get_action_handler();
-
-		if (acc.get_last_action() != saved_action)
+		if (is_map_dirty())
 		{
 			current_state = state::confirming_for_quit;
 		}
+	}
+
+	template<typename Application>
+	bool map_handler<Application>::is_map_dirty() const noexcept
+	{
+		derived const& app = static_cast<derived const&>(*this);
+		action_handler const& acc = app.get_action_handler();
+
+		return acc.get_last_action() != saved_action;
 	}
 
 	template class map_handler<application>;
