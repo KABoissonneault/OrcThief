@@ -25,5 +25,8 @@ namespace ot::ogre
 
 		// Sets whether vsync should be used
 		auto set_vsync(bool value) -> render_window_misc_params&;
+
+		// Sets whether depth should be reversed (ie: 1.0 is close, 0.0 is far). It is true by default.
+		auto set_reverse_depth(bool value) -> render_window_misc_params&;
 	};
 }

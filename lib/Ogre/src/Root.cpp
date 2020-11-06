@@ -22,4 +22,11 @@ namespace ot::ogre
 		params.insert_or_assign(vsync, value ? "Yes" : "No");
 		return *this;
 	}
+
+	auto render_window_misc_params::set_reverse_depth(bool value) -> render_window_misc_params&
+	{
+		static const string reverse_depth("reverse_depth");
+		params.insert_or_assign(reverse_depth, value ? "Yes" : "No");
+		return *this;
+	}
 }
