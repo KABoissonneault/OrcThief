@@ -86,12 +86,26 @@ The required components of the installation are:
 - /build/Debug/fmtd.lib
 - /build/Release/fmt.lib
 
+### FreeType
+
+To get better results on Dear ImGui fonts, there is a dependency on FreeType.
+
+A "binary package" of FreeType is sufficient (ex: freetype-windows-binaries)
+
+#### Headers
+- /include/*.h
+
+#### Binaries
+- /win64/freetype.lib
+- /win64/freetype.dll
+
 ### TL;DR
 ```
 mklink /D %ORC_THIEF%\ext\Ogre %MY_LIRARIES%\Ogre
 mklink /D %ORC_THIEF%\ext\SDL2 %MY_LIRARIES%\SDL2
 mklink /D %ORC_THIEF%\ext\boost %MY_LIBRARIES%\boost
 mklink /D %ORC_THIEF%\ext\fmt %MY_LIBRARIES%\fmt
+mklink /D %ORC_THIEF%\ext\FreeType %MY_LIBRARIES%\FreeType
 ```
 
 ## Project

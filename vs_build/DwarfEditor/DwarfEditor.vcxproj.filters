@@ -32,6 +32,9 @@
     <Filter Include="src\serialize">
       <UniqueIdentifier>{b1c59ee8-d795-43c6-8c93-20e60c167908}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\selection\brush">
+      <UniqueIdentifier>{f1d5735e-3e31-406d-b894-2c7ae8af0b06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\DwarfEditor\main.cpp">

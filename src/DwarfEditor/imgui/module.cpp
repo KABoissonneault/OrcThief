@@ -1,6 +1,7 @@
 #include "module.h"
 
 #include <imgui.h>
+#include <imgui_freetype.h>
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_dx11.h>
 #include <im3d.h>
@@ -18,6 +19,11 @@ namespace ot::dedit::imgui
 		io.ConfigFlags = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_NavEnableGamepad | ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_ViewportsEnable;
 
 		ImGui::StyleColorsDark();
+
+		io.Fonts->AddFontDefault();
+		bool const build_result = ImGuiFreeType::BuildFontAtlas(io.Fonts, 0);
+		if (!build_result)
+			return false;
 
 		ImGuiStyle& style = ImGui::GetStyle();
 		style.WindowRounding = 1.0f;
