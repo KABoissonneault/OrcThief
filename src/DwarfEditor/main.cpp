@@ -155,7 +155,7 @@ namespace ot::dedit::main
 		std::string_view const resource_root = program_config.get_core().get_resource_root();
 		std::filesystem::path const resource_folder_path(resource_root);
 
-		if (!imgui::initialize(*main_window) || !imgui::build_fonts(resource_folder_path))
+		if (!imgui::initialize(*main_window, program_config) || !imgui::build_fonts())
 		{
 			std::fprintf(stderr, "Cannot initialize ImGui\n");
 			return -1;

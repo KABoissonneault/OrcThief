@@ -5,7 +5,9 @@
 
 #include "input.h"
 #include "console.h"
+
 #include "menu/console_window.h"
+#include "menu/about_window.h"
 
 #include "action/brush.h"
 
@@ -56,7 +58,7 @@ namespace ot::dedit
 		, octagonal_prism(std::make_shared<egfx::mesh_definition>(octagon_planes))
 		, square_pyramid(std::make_shared<egfx::mesh_definition>(pyramid_planes))
 	{
-
+		about_window::load_content();
 	}
 
 	template<typename Application>
@@ -112,6 +114,11 @@ namespace ot::dedit
 		if (draw_console_window)
 		{
 			console_window::draw(&draw_console_window);
+		}
+
+		if (draw_about_window)
+		{
+			about_window::draw(&draw_about_window);
 		}
 
 		draw_main_menu();
@@ -217,6 +224,13 @@ namespace ot::dedit
 
 			ImGui::EndMenu();
 		}
+
+		if (ImGui::BeginMenu("Help"))
+		{
+			ImGui::MenuItem("About", "", &draw_about_window, about_window::has_content());
+
+			ImGui::EndMenu();
+		}		
 
 		ImGui::EndMainMenuBar();
 	}

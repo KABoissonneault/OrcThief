@@ -41,7 +41,6 @@ ext/Ogre
 /ext/SDL2
 /vs_build/x64/Debug/
 /vs_build/x64/Release/
-/res/
 *.FileListAbsolute.txt
 *.CopyComplete
 /ext/boost
@@ -53,3 +52,4 @@ ext/Ogre
 /vs_build/Platform/x64/Debug/
 /vs_build/Platform/x64/Release/
 /ext/FreeType
+/res/Ogre/Hlms

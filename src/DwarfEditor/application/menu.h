@@ -16,6 +16,7 @@ namespace ot::dedit
 		using derived = Application;
 
 		bool draw_console_window = false;
+		bool draw_about_window = false;
 
 		std::shared_ptr<egfx::mesh_definition const> cube;
 		std::shared_ptr<egfx::mesh_definition const> octagonal_prism;

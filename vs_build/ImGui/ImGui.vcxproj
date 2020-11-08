@@ -157,6 +157,7 @@
     <ClInclude Include="..\..\ext\ImGui\src\imstb_rectpack.h" />
     <ClInclude Include="..\..\ext\ImGui\src\imstb_textedit.h" />
     <ClInclude Include="..\..\ext\ImGui\src\imstb_truetype.h" />
+    <ClInclude Include="..\..\ext\imgui_markdown\include\imgui_markdown.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ext\ImGui\src\imgui.cpp" />

@@ -202,6 +202,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClCompile Include="..\..\src\DwarfEditor\input.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\main.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\map.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\menu\about_window.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\menu\console_window.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\platform\windows\windows_file_dialog.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\Platform\Windows\windows_main.cpp" />
@@ -264,6 +265,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
     <ClInclude Include="..\..\src\DwarfEditor\map.fwd.h" />
     <ClInclude Include="..\..\src\DwarfEditor\map.h" />
     <ClInclude Include="..\..\src\DwarfEditor\menu\console_window.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\menu\about_window.h" />
     <ClInclude Include="..\..\src\DwarfEditor\platform\file_dialog.h" />
     <ClInclude Include="..\..\src\DwarfEditor\platform\windows\windows_main.h" />
     <ClInclude Include="..\..\src\DwarfEditor\selection\base_context.h" />
