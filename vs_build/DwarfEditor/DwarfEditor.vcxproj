@@ -130,7 +130,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\DwarfEditor;$(ProjectDir)..\..\ext\boost;$(ProjectDir)..\..\ext\fmt\include;$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\expected\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\DwarfEditor;$(ProjectDir)..\..\ext\boost;$(ProjectDir)..\..\ext\fmt\include;$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\expected\include;$(ProjectDir)..\..\ext\IconFontCppHeaders\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -160,7 +160,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\DwarfEditor;$(ProjectDir)..\..\ext\boost;$(ProjectDir)..\..\ext\fmt\include;$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\expected\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\DwarfEditor;$(ProjectDir)..\..\ext\boost;$(ProjectDir)..\..\ext\fmt\include;$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\expected\include;$(ProjectDir)..\..\ext\IconFontCppHeaders\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>

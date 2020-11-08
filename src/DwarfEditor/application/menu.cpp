@@ -12,6 +12,7 @@
 #include <imgui.h>
 #include <fmt/format.h>
 #include <fstream>
+#include <IconsFontAwesome5.h>
 
 namespace ot::dedit
 {
@@ -117,6 +118,16 @@ namespace ot::dedit
 		draw_main_status();
 	}
 
+	char const* const new_label = reinterpret_cast<char const*>(ICON_FA_FILE u8" New");
+	char const* const open_label = reinterpret_cast<char const*>(ICON_FA_FOLDER_OPEN u8" Open");
+	char const* const save_label = reinterpret_cast<char const*>(ICON_FA_FILE_EXPORT u8" Save");
+	char const* const save_as_label = reinterpret_cast<char const*>(ICON_FA_FILE_EXPORT u8" Save as...");
+
+	char const* const quit_label = reinterpret_cast<char const*>(ICON_FA_TIMES u8" Quit");
+
+	char const* const undo_label = reinterpret_cast<char const*>(ICON_FA_UNDO_ALT u8" Undo");
+	char const* const redo_label = reinterpret_cast<char const*>(ICON_FA_REDO_ALT u8" Redo");
+
 	template<typename Application>
 	void menu<Application>::draw_main_menu()
 	{
@@ -130,27 +141,29 @@ namespace ot::dedit
 
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("New", "CTRL+N"))
+			if (ImGui::MenuItem(new_label, "CTRL+N"))
 			{
 				map_handler.new_map();
 			}
 
-			if (ImGui::MenuItem("Open", "CTRL+O"))
+			if (ImGui::MenuItem(open_label, "CTRL+O"))
 			{
 				map_handler.open_map();
 			}
 
-			if (ImGui::MenuItem("Save", "CTRL+S"))
+			if (ImGui::MenuItem(save_label, "CTRL+S"))
 			{
 				map_handler.save_map();
 			}
 
-			if (ImGui::MenuItem("Save As...", "CTRL+Shift+S"))
+			if (ImGui::MenuItem(save_as_label, "CTRL+Shift+S"))
 			{
 				map_handler.save_map_as();
 			}
 
-			if (ImGui::MenuItem("Quit", "Alt+F4"))
+			ImGui::Separator();
+
+			if (ImGui::MenuItem(quit_label, "Alt+F4"))
 			{
 				app.quit();
 			}
@@ -160,12 +173,12 @@ namespace ot::dedit
 
 		if (ImGui::BeginMenu("Edit"))
 		{
-			if (ImGui::MenuItem("Undo", "CTRL+Z", false, acc.has_undo()))
+			if (ImGui::MenuItem(undo_label, "CTRL+Z", false, acc.has_undo()))
 			{
 				acc.undo_latest(m);
 			}
 
-			if (ImGui::MenuItem("Redo", "CTRL+Y", false, acc.has_redo()))
+			if (ImGui::MenuItem(redo_label, "CTRL+Y", false, acc.has_redo()))
 			{
 				acc.redo_latest(m);
 			}
@@ -216,7 +229,6 @@ namespace ot::dedit
 
 		derived& app = static_cast<derived&>(*this);
 		auto& map_handler = app.get_map_handler();
-		map& m = app.get_current_map();
 		
 		if (map_handler.has_map_file())
 		{

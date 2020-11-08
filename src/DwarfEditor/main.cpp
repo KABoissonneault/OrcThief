@@ -151,7 +151,11 @@ namespace ot::dedit::main
 
 	int run(int argc, char** argv, sdl::unique_window main_window)
 	{
-		if (!imgui::initialize(*main_window))
+		auto& program_config = g_state->program_config;
+		std::string_view const resource_root = program_config.get_core().get_resource_root();
+		std::filesystem::path const resource_folder_path(resource_root);
+
+		if (!imgui::initialize(*main_window) || !imgui::build_fonts(resource_folder_path))
 		{
 			std::fprintf(stderr, "Cannot initialize ImGui\n");
 			return -1;
@@ -161,11 +165,7 @@ namespace ot::dedit::main
 			// Graphics init
 			egfx::module graphics;
 			if (!initialize_graphics(graphics, *main_window))
-				return -1;
-
-			auto& program_config = g_state->program_config;
-			std::string_view const resource_root = program_config.get_core().get_resource_root();
-			std::filesystem::path const resource_folder_path(resource_root);
+				return -1;		
 
 			ot::dedit::datablock::load_hlms(resource_folder_path / "Ogre");
 			Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups(true);

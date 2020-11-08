@@ -5,6 +5,7 @@
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_dx11.h>
 #include <im3d.h>
+#include <IconsFontAwesome5.h>
 
 #include "Ogre/Root.h"
 
@@ -19,12 +20,7 @@ namespace ot::dedit::imgui
 		io.ConfigFlags = ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_NavEnableGamepad | ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_ViewportsEnable;
 
 		ImGui::StyleColorsDark();
-
-		io.Fonts->AddFontDefault();
-		bool const build_result = ImGuiFreeType::BuildFontAtlas(io.Fonts, 0);
-		if (!build_result)
-			return false;
-
+		
 		ImGuiStyle& style = ImGui::GetStyle();
 		style.WindowRounding = 1.0f;
 
@@ -32,6 +28,23 @@ namespace ot::dedit::imgui
 			return false;
 
 		return true;
+	}
+
+	bool build_fonts(std::filesystem::path const& resource_folder)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+
+		std::string const default_path = (resource_folder / "Font/ProggyClean.ttf").string();
+		io.Fonts->AddFontFromFileTTF(default_path.c_str(), 13.f);
+
+		std::string const icon_font_path = (resource_folder / "Font/fontawesome-free-5.15.1-desktop/otfs/Font Awesome 5 Free-Solid-900.otf").string();
+		ImFontConfig c;
+		c.GlyphMinAdvanceX = 13.f;
+		c.MergeMode = true; // Merge with default
+		static ImWchar const icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+		io.Fonts->AddFontFromFileTTF(icon_font_path.c_str(), 13.f, &c, icon_ranges);
+
+		return ImGuiFreeType::BuildFontAtlas(io.Fonts, 0);
 	}
 
 	void pre_update(SDL_Window& window)
