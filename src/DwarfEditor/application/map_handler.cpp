@@ -137,7 +137,7 @@ namespace ot::dedit
 			acc.clear();
 			saved_action = 0;
 
-			std::FILE* file = std::fopen(file_path.c_str(), "r");
+			std::FILE* file = std::fopen(file_path.c_str(), "rb");
 			assert(file != nullptr);
 			if (!serialize::fread(m, file))
 			{
@@ -171,7 +171,7 @@ namespace ot::dedit
 			if (acc.get_last_action() == saved_action)
 				return;
 
-			std::FILE* file = std::fopen(app.map_path.c_str(), "w");
+			std::FILE* file = std::fopen(app.map_path.c_str(), "wb");
 			if (file == nullptr)
 			{
 				console::error(fmt::format("Could not open '{}' for writing", app.map_path));
@@ -213,7 +213,7 @@ namespace ot::dedit
 				return;
 			}
 
-			std::FILE* file = std::fopen(file_path.c_str(), "w");
+			std::FILE* file = std::fopen(file_path.c_str(), "wb");
 			if (file == nullptr)
 			{
 				console::error(fmt::format("Could not open '{}' for writing", file_path));
