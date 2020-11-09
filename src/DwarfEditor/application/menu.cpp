@@ -125,16 +125,6 @@ namespace ot::dedit
 		draw_main_status();
 	}
 
-	char const* const new_label = reinterpret_cast<char const*>(ICON_FA_FILE u8" New");
-	char const* const open_label = reinterpret_cast<char const*>(ICON_FA_FOLDER_OPEN u8" Open");
-	char const* const save_label = reinterpret_cast<char const*>(ICON_FA_FILE_EXPORT u8" Save");
-	char const* const save_as_label = reinterpret_cast<char const*>(ICON_FA_FILE_EXPORT u8" Save as...");
-
-	char const* const quit_label = reinterpret_cast<char const*>(ICON_FA_TIMES u8" Quit");
-
-	char const* const undo_label = reinterpret_cast<char const*>(ICON_FA_UNDO_ALT u8" Undo");
-	char const* const redo_label = reinterpret_cast<char const*>(ICON_FA_REDO_ALT u8" Redo");
-
 	template<typename Application>
 	void menu<Application>::draw_main_menu()
 	{
@@ -148,29 +138,29 @@ namespace ot::dedit
 
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem(new_label, "CTRL+N"))
+			if (ImGui::MenuItem(ICON_FA_FILE " New", "CTRL+N"))
 			{
 				map_handler.new_map();
 			}
 
-			if (ImGui::MenuItem(open_label, "CTRL+O"))
+			if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN " Open", "CTRL+O"))
 			{
 				map_handler.open_map();
 			}
 
-			if (ImGui::MenuItem(save_label, "CTRL+S"))
+			if (ImGui::MenuItem(ICON_FA_FILE_EXPORT " Save", "CTRL+S"))
 			{
 				map_handler.save_map();
 			}
 
-			if (ImGui::MenuItem(save_as_label, "CTRL+Shift+S"))
+			if (ImGui::MenuItem(ICON_FA_FILE_EXPORT " Save as...", "CTRL+Shift+S"))
 			{
 				map_handler.save_map_as();
 			}
 
 			ImGui::Separator();
 
-			if (ImGui::MenuItem(quit_label, "Alt+F4"))
+			if (ImGui::MenuItem(ICON_FA_TIMES " Quit", "Alt+F4"))
 			{
 				app.quit();
 			}
@@ -180,12 +170,12 @@ namespace ot::dedit
 
 		if (ImGui::BeginMenu("Edit"))
 		{
-			if (ImGui::MenuItem(undo_label, "CTRL+Z", false, acc.has_undo()))
+			if (ImGui::MenuItem(ICON_FA_UNDO_ALT " Undo", "CTRL+Z", false, acc.has_undo()))
 			{
 				acc.undo_latest(m);
 			}
 
-			if (ImGui::MenuItem(redo_label, "CTRL+Y", false, acc.has_redo()))
+			if (ImGui::MenuItem(ICON_FA_REDO_ALT " Redo", "CTRL+Y", false, acc.has_redo()))
 			{
 				acc.redo_latest(m);
 			}
