@@ -61,4 +61,9 @@ namespace ot::dedit::platform
 	{
 		do_save_file_dialog(f, std::move(cb));
 	}
+
+	void open_resource(std::string_view uri)
+	{
+		ShellExecute(nullptr, TEXT("open"), winrt::to_hstring(uri).c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+	}
 }

@@ -28,4 +28,7 @@ namespace ot::dedit::platform
 	// Error conditions:
 	//   - std::errc::operation_canceled: User closed the dialog without selecting a file
 	void save_file_dialog(file_type const& f, path_callback cb);
+
+	// Opens the resource referred by the input URI with a native dialog
+	void open_resource(std::string_view uri);
 }

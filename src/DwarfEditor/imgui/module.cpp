@@ -2,6 +2,8 @@
 
 #include "config.h"
 
+#include "platform/file_dialog.h"
+
 #include <imgui.h>
 #include <imgui_freetype.h>
 #include <imgui_impl_sdl.h>
@@ -62,7 +64,7 @@ namespace ot::dedit::imgui
 		ImGuiIO& io = ImGui::GetIO();
 
 		std::string const default_path = get_font("Cousine-Regular.ttf");
-		ImFont* default_font = io.Fonts->AddFontFromFileTTF(default_path.c_str(), 13.f);
+		io.Fonts->AddFontFromFileTTF(default_path.c_str(), 13.f);
 
 		std::string const icon_font_path = get_font("fontawesome-free-5.15.1-desktop/otfs/Font Awesome 5 Free-Solid-900.otf");
 		ImFontConfig c;
@@ -107,8 +109,21 @@ namespace ot::dedit::imgui
 		return ImGui::GetIO().WantCaptureMouse;
 	}
 
+	static void link_callback(ImGui::MarkdownLinkCallbackData data)
+	{
+		if (!data.isImage)
+		{
+			std::string_view const url(data.link, data.linkLength);
+			platform::open_resource(url);
+		}
+	}
+
 	void initialize_markdown(ImGui::MarkdownConfig& config)
 	{
+		config.linkCallback = link_callback;
+
+		config.tooltipCallback = nullptr;
+
 		config.headingFormats[0] = { H1, true };
 		config.headingFormats[1] = { H2, true };
 		config.headingFormats[2] = { H3, false };
