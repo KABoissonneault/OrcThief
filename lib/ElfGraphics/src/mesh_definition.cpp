@@ -331,7 +331,6 @@ namespace ot::egfx
 		}
 
 		std::vector<point_intersection> intersections;
-		intersections.reserve(planes.size() * planes.size());
 
 		// Find the point intersections where 3 or more planes intersect
 		for (size_t i = 0; i < planes.size() - 2; ++i)
@@ -351,7 +350,6 @@ namespace ot::egfx
 					}
 
 					std::vector<face::id> intersecting_planes{ face::id(i), face::id(j), face::id(k) };
-					std::vector<math::plane> plane_values{ plane1, plane2, plane3 };
 
 					// check for extra planes
 					for (size_t l = 0; l < planes.size(); ++l)
@@ -367,13 +365,14 @@ namespace ot::egfx
 								goto skip_intersection; // we've already found this intersection
 
 							intersecting_planes.push_back(face::id(l));
-							plane_values.push_back(plane4);
-						} else if (result == math::plane_side_result::outside)
+						} 
+						else if (result == math::plane_side_result::outside)
 						{
 							goto skip_intersection; // intersection outside the mesh
 						}
 					}
 
+					// Create the new point intersection, and find the new edge intersections
 					{
 						auto const vertex_id = vertex::id(vertices.size());
 						mesh_definition::vertex_data& vertex = vertices.emplace_back();
