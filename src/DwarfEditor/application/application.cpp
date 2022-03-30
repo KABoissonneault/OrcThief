@@ -9,6 +9,7 @@
 #include "egfx/node/light.h"
 
 #include "Ogre/ConfigOptionMap.h"
+#include "Ogre/PlatformInformation.h"
 #include "Ogre/RenderSystem.h"
 
 #include "SDL2/window.h"

@@ -140,14 +140,7 @@
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\ext\fmt\build\$(Configuration);$(ProjectDir)..\..\ext\FreeType\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).dll RenderSystem_Direct3D11$(OgreLibExtension).dll RenderSystem_GL3Plus$(OgreLibExtension).dll RenderSystem_NULL$(OgreLibExtension).dll OgreHlmsPbs$(OgreLibExtension).dll OgreHlmsUnlit$(OgreLibExtension).dll FreeImage.dll zlib.dll
-if '$(Configuration)' == 'Debug' powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).pdb RenderSystem_Direct3D11$(OgreLibExtension).pdb RenderSystem_GL3Plus$(OgreLibExtension).pdb RenderSystem_NULL$(OgreLibExtension).pdb OgreHlmsPbs$(OgreLibExtension).pdb OgreHlmsUnlit$(OgreLibExtension).pdb
-if '$(Configuration)' == 'Debug' powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\SDL2\bin\$(Platform)\$(Configuration) SDL2d.dll SDL2d.pdb
-if '$(Configuration)' == 'Release' powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\SDL2\bin\$(Platform)\$(Configuration) SDL2.dll SDL2.pdb
-powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\FreeType\win64 freetype.dll
-powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Ogre\Hlms\Common $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Common Any GLSL HLSL
-powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Ogre\Hlms\Pbs $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Pbs Any GLSL HLSL
-powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Ogre\Hlms\Unlit $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Unlit Any GLSL HLSL</Command>
+      <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).dll RenderSystem_Direct3D11$(OgreLibExtension).dll RenderSystem_GL3Plus$(OgreLibExtension).dll RenderSystem_NULL$(OgreLibExtension).dll OgreHlmsPbs$(OgreLibExtension).dll OgreHlmsUnlit$(OgreLibExtension).dll FreeImage.dll zlib.dll</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copying project dependencies</Message>
@@ -173,14 +166,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(So
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\ext\fmt\build\$(Configuration);$(ProjectDir)..\..\ext\FreeType\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).dll RenderSystem_Direct3D11$(OgreLibExtension).dll RenderSystem_GL3Plus$(OgreLibExtension).dll RenderSystem_NULL$(OgreLibExtension).dll OgreHlmsPbs$(OgreLibExtension).dll OgreHlmsUnlit$(OgreLibExtension).dll FreeImage.dll zlib.dll
-if '$(Configuration)' == 'Debug' powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).pdb RenderSystem_Direct3D11$(OgreLibExtension).pdb RenderSystem_GL3Plus$(OgreLibExtension).pdb RenderSystem_NULL$(OgreLibExtension).pdb OgreHlmsPbs$(OgreLibExtension).pdb OgreHlmsUnlit$(OgreLibExtension).pdb
-if '$(Configuration)' == 'Debug' powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\SDL2\bin\$(Platform)\$(Configuration) SDL2d.dll SDL2d.pdb
-if '$(Configuration)' != 'Debug' powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\SDL2\bin\$(Platform)\$(Configuration) SDL2.dll SDL2.pdb
-powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\FreeType\win64 freetype.dll
-powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Ogre\Hlms\Common $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Common Any GLSL HLSL
-powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Ogre\Hlms\Pbs $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Pbs Any GLSL HLSL
-powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(SolutionDir)..\res\Ogre\Hlms\Unlit $(SolutionDir)..\ext\Ogre\Samples\Media\Hlms\Unlit Any GLSL HLSL</Command>
+      <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(SolutionDir)..\ext\Ogre\build\bin\$(Configuration) OgreMain$(OgreLibExtension).dll RenderSystem_Direct3D11$(OgreLibExtension).dll RenderSystem_GL3Plus$(OgreLibExtension).dll RenderSystem_NULL$(OgreLibExtension).dll OgreHlmsPbs$(OgreLibExtension).dll OgreHlmsUnlit$(OgreLibExtension).dll FreeImage.dll zlib.dll</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copying project dependencies</Message>
