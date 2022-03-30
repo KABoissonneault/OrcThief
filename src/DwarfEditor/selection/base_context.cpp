@@ -77,18 +77,24 @@ namespace ot::dedit::selection
 	
 	void base_context::start_frame()
 	{
-		// If the brush was externally deleted, go back to base context
-		if (current_map->find_brush(*selected_brush) == nullptr)
-			deselect_brush();
+		if (selected_brush)
+		{
+			// If the brush was externally deleted, go back to base context
+			if (current_map->find_brush(*selected_brush) == nullptr)
+				deselect_brush();
+		}
 
 		composite_context::start_frame();
 	}
 
 	void base_context::update(action::accumulator& acc, input::frame_input& input)
 	{		
-		// If the brush was deleted during event handling, go back to base context
-		if (current_map->find_brush(*selected_brush) == nullptr)
-			deselect_brush();
+		if (selected_brush)
+		{
+			// If the brush was deleted during event handling, go back to base context
+			if (current_map->find_brush(*selected_brush) == nullptr)
+				deselect_brush();
+		}
 
 		composite_context::update(acc, input);
 
