@@ -166,6 +166,7 @@
     <ClCompile Include="..\..\ext\ImGui\src\imgui_freetype.cpp" />
     <ClCompile Include="..\..\ext\ImGui\src\imgui_impl_dx11.cpp" />
     <ClCompile Include="..\..\ext\ImGui\src\imgui_impl_sdl.cpp" />
+    <ClCompile Include="..\..\ext\ImGui\src\imgui_tables.cpp" />
     <ClCompile Include="..\..\ext\ImGui\src\imgui_user.cpp" />
     <ClCompile Include="..\..\ext\ImGui\src\imgui_widgets.cpp" />
   </ItemGroup>

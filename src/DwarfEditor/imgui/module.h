@@ -23,7 +23,7 @@ namespace ot::dedit::imgui
 	bool build_fonts();
 
 	// Called after event handling, before update
-	void pre_update(SDL_Window& window);
+	void pre_update();
 	// Called after rendering, before the next frame
 	void end_frame();
 	

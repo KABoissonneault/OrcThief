@@ -5,11 +5,10 @@
 #include "platform/file_dialog.h"
 
 #include <imgui.h>
-#include <imgui_freetype.h>
+#include <misc/freetype/imgui_freetype.h>
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_dx11.h>
 #include <imgui_markdown.h>
-#include <im3d.h>
 #include <IconsFontAwesome5.h>
 
 #include <fmt/format.h>
@@ -77,12 +76,12 @@ namespace ot::dedit::imgui
 		H2 = io.Fonts->AddFontFromFileTTF(default_path.c_str(), 18.f);
 		H3 = io.Fonts->AddFontFromFileTTF(default_path.c_str(), 16.f);
 
-		return ImGuiFreeType::BuildFontAtlas(io.Fonts, 0);
+		return true;
 	}
 
-	void pre_update(SDL_Window& window)
+	void pre_update()
 	{
-		ImGui_ImplSDL2_NewFrame(&window);
+		ImGui_ImplSDL2_NewFrame();
 	}
 
 	void end_frame()

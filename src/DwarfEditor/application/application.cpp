@@ -219,7 +219,7 @@ namespace ot::dedit
 
 	void application::pre_update()
 	{
-		imgui::pre_update(*main_window);
+		imgui::pre_update();
 		graphics.pre_update();
 		update_im3d();
 	}

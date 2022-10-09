@@ -7,6 +7,12 @@
     <Filter Include="src">
       <UniqueIdentifier>{f9e39b40-9562-448e-a6d0-2e602208e899}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\misc">
+      <UniqueIdentifier>{3de38387-359e-48aa-8337-cd80d991b058}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\misc\freetype">
+      <UniqueIdentifier>{0a56b6d9-5a32-4250-9e66-924e432122b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ext\ImGui\src\imgui_internal.h">
@@ -36,11 +42,11 @@
     <ClInclude Include="..\..\ext\ImGui\include\imgui_user.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ext\ImGui\include\imgui_freetype.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ext\imgui_markdown\include\imgui_markdown.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ext\ImGui\include\imgui_freetype.h">
+      <Filter>include\misc\freetype</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -66,6 +72,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ext\ImGui\src\imgui_freetype.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ext\ImGui\src\imgui_tables.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
