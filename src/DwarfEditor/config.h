@@ -20,7 +20,7 @@ namespace ot::dedit
 		public:
 			[[nodiscard]] bool load(Ogre::ConfigFile const& config);
 
-			std::string_view get_resource_root() const noexcept 
+			[[nodiscard]] std::string_view get_resource_root() const noexcept
 			{
 				return resource_root;
 			}
@@ -43,19 +43,19 @@ namespace ot::dedit
 				[[nodiscard]] bool load(std::string_view value);
 			};
 
-			std::string_view get_workspace() const noexcept
+			[[nodiscard]] std::string_view get_workspace() const noexcept
 			{
 				return workspace;
 			}
-			std::optional<ambiant_light> get_ambient_light() const noexcept { return light; }
+			[[nodiscard]] std::optional<ambiant_light> get_ambient_light() const noexcept { return light; }
 
 		private:
 			std::string workspace;
 			std::optional<ambiant_light> light;
 		};
 
-		core_config const& get_core() const noexcept { return core; }
-		scene_config const& get_scene() const noexcept { return scene; }
+		[[nodiscard]] core_config const& get_core() const noexcept { return core; }
+		[[nodiscard]] scene_config const& get_scene() const noexcept { return scene; }
 
 		[[nodiscard]] bool load(Ogre::ConfigFile const& config);
 

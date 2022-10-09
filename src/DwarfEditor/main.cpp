@@ -45,7 +45,7 @@ namespace ot::dedit::main
 
 				if (!std::filesystem::exists(full_path))
 				{
-					std::printf("wrning: AlwaysLoad resource '%s' was requested but could not be found", full_path.string().c_str());
+					std::printf("warning: AlwaysLoad resource '%s' was requested but could not be found", full_path.string().c_str());
 					continue;
 				}
 				Ogre::ResourceGroupManager::getSingleton().addResourceLocation(full_path.string(), type_name);
