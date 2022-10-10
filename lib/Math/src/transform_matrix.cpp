@@ -142,6 +142,26 @@ namespace ot::math
 		return ops::get_rotation(*this);
 	}
 
+	void transform_matrix::set_displacement(vector3f const& dis)
+	{
+		boost::qvm::translation(*this) = dis;
+	}
+
+	void transform_matrix::rotate_x(float rad)
+	{
+		boost::qvm::rotate_x(*this, rad);
+	}
+
+	void transform_matrix::rotate_y(float rad)
+	{
+		boost::qvm::rotate_y(*this, rad);
+	}
+
+	void transform_matrix::rotate_z(float rad)
+	{
+		boost::qvm::rotate_z(*this, rad);
+	}
+
 	transform_matrix invert(transform_matrix const& i)
 	{
 		return boost::qvm::inverse(i);

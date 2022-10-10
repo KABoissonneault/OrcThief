@@ -46,6 +46,12 @@ namespace ot::math
 		[[nodiscard]] rotation_matrix get_rotation() const noexcept;
 		[[nodiscard]] scales get_scale() const noexcept;
 
+		void set_displacement(vector3f const& dis);
+
+		void rotate_x(float rad);
+		void rotate_y(float rad);
+		void rotate_z(float rad);
+
 		[[nodiscard]] static transform_matrix identity();
 		[[nodiscard]] static transform_matrix from_components(vector3f const& displacement, quaternion const& rotation, float uniform_scale = 1.0f);
 		[[nodiscard]] static transform_matrix from_components(vector3f const& displacement, quaternion const& rotation, math::scales const& scale);
