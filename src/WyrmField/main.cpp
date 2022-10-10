@@ -1,6 +1,7 @@
 #include "config.h"
 #include "window.h"
 #include "main_imgui.h"
+#include "scene/scene.h"
 
 #include "Ogre/ArchiveType.h"
 #include "Ogre/ArchiveManager.h"
@@ -9,16 +10,13 @@
 #include "Ogre/HlmsManager.h"
 #include "Ogre/Components/Hlms/Unlit.h"
 #include "Ogre/Components/Hlms/Pbs.h"
-#include "Ogre/PlatformInformation.h"
 
 #include "math/unit/time.h"
 
-#include "egfx/scene.h"
-#include "egfx/window_type.h"
 #include "egfx/module.h"
+#include "egfx/window_type.h"
 #include "egfx/object/camera.h"
 #include "egfx/node/light.h"
-#include "egfx/immediate.h"
 
 #include <filesystem>
 #include <SDL.h>
@@ -158,11 +156,6 @@ namespace ot::wf
 		}
 	}
 
-	size_t get_number_threads()
-	{
-		return Ogre::PlatformInformation::getNumLogicalCores();
-	}
-
 	void push_window_event(SDL_Event const& e, std::vector<egfx::window_event>& window_events)
 	{
 		using egfx::window_event;
@@ -210,44 +203,11 @@ namespace ot::wf
 
 		return normalized(transform(ray_direction, camera_transform));
 	}
-
-	egfx::mesh_definition make_cube()
-	{
-		math::plane const cube_planes[6] = 
-		{
-			{{0, 0, 1}, 0.5},
-			{{1, 0, 0}, 0.5},
-			{{0, 1, 0}, 0.5},
-			{{-1, 0, 0}, 0.5},
-			{{0, -1, 0}, 0.5},
-			{{0, 0, -1}, 0.5},
-		};
-
-		return egfx::mesh_definition(cube_planes);
-	}
-
-	egfx::mesh_definition const cube_definition = make_cube();
-
-	math::transform_matrix cube_transform = math::transform_matrix::identity();
-
+			
 	void run_scene(SDL_Window& window, egfx::module& graphics, config const& program_config)
 	{
-		egfx::scene main_scene = graphics.create_scene(std::string(program_config.get_scene().get_workspace()), get_number_threads() - 1);
-
-		if (auto const maybe_ambiant = program_config.get_scene().get_ambient_light())
-		{
-			auto const& ambiant_light = *maybe_ambiant;
-			main_scene.set_ambiant_light(ambiant_light.upper_hemisphere, ambiant_light.upper_hemisphere, ambiant_light.hemisphere_direction);
-		}
-
-		egfx::object::camera_ref const camera = main_scene.get_camera();
-		camera.set_position({ 0.0f, 2.0f, 5.5f });
-		camera.look_at({ 0.0f, 0.0f, 0.0f });
-
-		egfx::node::directional_light light = egfx::node::create_directional_light(main_scene.get_root_node());
-		light.set_position({ 10.0f, 10.0f, 10.0f });
-		light.set_direction(normalized(math::vector3f{ -1.0f, -1.0f, -1.0f }));
-
+		scene main_scene(graphics, program_config);
+		
 		using namespace ot::math::literals;
 		constexpr math::seconds fixed_step(0.02f);
 		std::chrono::time_point current_frame = std::chrono::steady_clock::now();
@@ -303,25 +263,13 @@ namespace ot::wf
 			// Fixed Update
 			while (time_buffer >= fixed_step)
 			{
-				constexpr float increment = 3.1415f * 0.5f * fixed_step.count();
-				cube_transform.rotate_y(increment);
-				
-				static float y_buffer = 0.0f;
-				y_buffer += fixed_step.count();
-
-				math::vector3f pos = cube_transform.get_displacement();
-				pos.y = std::sinf(y_buffer);
-				cube_transform.set_displacement(pos);
+				main_scene.update(fixed_step);
 
 				time_buffer -= fixed_step;
 			}
 
 			// Render
-			egfx::im::draw_mesh(cube_definition, cube_transform, egfx::color{0.5, 0.5, 0.5});
-			egfx::im::draw_wiremesh(cube_definition, cube_transform);
-
-			auto const text_position = cube_transform.get_displacement() + math::vector3f(0.0f, 1.0f, 0.0f);
-			Im3d::Text(text_position, 2.f, Im3d::Color_Green, Im3d::TextFlags_Default, "Hello, World!");
+			main_scene.render();
 
 			if (!graphics.render())
 				wants_quit = true;

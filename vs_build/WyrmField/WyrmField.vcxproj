@@ -129,7 +129,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\ext\Im3d\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\WyrmField;$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\entt\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,7 +147,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\ext\Im3d\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\WyrmField;$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\entt\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,11 +162,13 @@
     <ClCompile Include="..\..\src\WyrmField\config.cpp" />
     <ClCompile Include="..\..\src\WyrmField\main_imgui.cpp" />
     <ClCompile Include="..\..\src\WyrmField\main.cpp" />
+    <ClCompile Include="..\..\src\WyrmField\scene\scene.cpp" />
     <ClCompile Include="..\..\src\WyrmField\window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\WyrmField\config.h" />
     <ClInclude Include="..\..\src\WyrmField\main_imgui.h" />
+    <ClInclude Include="..\..\src\WyrmField\scene\scene.h" />
     <ClInclude Include="..\..\src\WyrmField\window.h" />
   </ItemGroup>
   <ItemGroup>
