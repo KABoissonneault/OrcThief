@@ -54,15 +54,15 @@ namespace ot::dedit::main
 
 		[[nodiscard]] bool load_program_config(ot::dedit::config& config)
 		{
-			if (!std::filesystem::exists("config.cfg"))
+			if (!std::filesystem::exists("config_de.cfg"))
 			{
-				std::printf("Program needs 'config.cfg' to run. Ensure a proper config file is in the current working directory\n");
+				std::printf("Program needs 'config_de.cfg' to run. Ensure a proper config file is in the current working directory\n");
 				return false;
 			}
 
 			// Handle program config
 			Ogre::ConfigFile program_config;
-			program_config.load("config.cfg");
+			program_config.load("config_de.cfg");
 
 			if (!config.load(program_config))
 				return false;
@@ -122,7 +122,7 @@ namespace ot::dedit::main
 
 	bool initialize()
 	{
-		g_state = new state{ {"Ogre/plugins" OGRE_BUILD_SUFFIX ".cfg", "Ogre/ogre.cfg", "Ogre/ogre.log"} };
+		g_state = new state{ {"DwarfEditor/Ogre/plugins" OGRE_BUILD_SUFFIX ".cfg", "DwarfEditor/Ogre/ogre.cfg", "DwarfEditor/Ogre/ogre.log"} };
 		if (!load_program_config(g_state->program_config))
 			return false;
 
