@@ -11,6 +11,8 @@
 #include "Ogre/Components/Hlms/Pbs.h"
 #include "Ogre/PlatformInformation.h"
 
+#include "math/unit/time.h"
+
 #include "egfx/scene.h"
 #include "egfx/window_type.h"
 #include "egfx/module.h"
@@ -246,6 +248,11 @@ namespace ot::wf
 		light.set_position({ 10.0f, 10.0f, 10.0f });
 		light.set_direction(normalized(math::vector3f{ -1.0f, -1.0f, -1.0f }));
 
+		using namespace ot::math::literals;
+		constexpr math::seconds fixed_step(0.02f);
+		std::chrono::time_point current_frame = std::chrono::steady_clock::now();
+		math::seconds time_buffer = fixed_step; // Start with one step
+
 		bool wants_quit = false;
 		while (!wants_quit)
 		{
@@ -293,14 +300,37 @@ namespace ot::wf
 				ad.m_keyDown[Im3d::Mouse_Left] = (mouse_state & SDL_BUTTON_LMASK) == SDL_BUTTON_LEFT;
 			}
 
+			// Fixed Update
+			while (time_buffer >= fixed_step)
+			{
+				constexpr float increment = 3.1415f * 0.5f * fixed_step.count();
+				cube_transform.rotate_y(increment);
+				
+				static float y_buffer = 0.0f;
+				y_buffer += fixed_step.count();
+
+				math::vector3f pos = cube_transform.get_displacement();
+				pos.y = std::sinf(y_buffer);
+				cube_transform.set_displacement(pos);
+
+				time_buffer -= fixed_step;
+			}
+
 			// Render
-			egfx::im::draw_mesh(cube_definition, cube_transform);
+			egfx::im::draw_mesh(cube_definition, cube_transform, egfx::color{0.5, 0.5, 0.5});
+			egfx::im::draw_wiremesh(cube_definition, cube_transform);
+
+			auto const text_position = cube_transform.get_displacement() + math::vector3f(0.0f, 1.0f, 0.0f);
+			Im3d::Text(text_position, 2.f, Im3d::Color_Green, Im3d::TextFlags_Default, "Hello, World!");
 
 			if (!graphics.render())
 				wants_quit = true;
 
 			// End frame
 			imgui::end_frame();
+
+			std::chrono::time_point const last_frame = std::exchange(current_frame, std::chrono::steady_clock::now());
+			time_buffer += current_frame - last_frame;
 		}
 	}
 
