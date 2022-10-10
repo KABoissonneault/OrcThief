@@ -1,0 +1,25 @@
+compositor_node RenderingNode
+{
+	in 0 render_window
+	
+	target render_window
+	{
+		pass clear
+		{
+			colour_value 1 0.65 0 1
+		}
+	
+		pass render_scene
+		{
+		}
+		
+		pass custom imgui
+		{
+		}
+	}
+}
+
+workspace OrcThiefWorkspace
+{
+	connect_output RenderingNode 0
+}
