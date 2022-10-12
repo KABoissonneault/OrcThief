@@ -5,8 +5,10 @@
 #include "math/unit/time.h"
 
 #include "egfx/scene.h"
-#include "egfx/node/light.h"
 #include "egfx/object/camera.fwd.h"
+
+#include <entt/entity/fwd.hpp>
+#include <entt/entity/registry.hpp>
 
 namespace ot
 {
@@ -24,10 +26,8 @@ namespace ot
 			egfx::module* gfx;
 			egfx::scene gfx_scene;
 
-			egfx::node::directional_light main_light;
-			math::transform_matrix cube_transform;
-			float y_buffer = 0.0f;
-
+			entt::registry scene_registry;
+			std::vector<entt::entity> scene_entities;
 		public:
 			scene(egfx::module& gfx_module, config const& program_config);
 
