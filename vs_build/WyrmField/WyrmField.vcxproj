@@ -159,14 +159,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\WyrmField\application\application.cpp" />
     <ClCompile Include="..\..\src\WyrmField\config.cpp" />
+    <ClCompile Include="..\..\src\WyrmField\debug\debug_menu.cpp" />
     <ClCompile Include="..\..\src\WyrmField\main_imgui.cpp" />
     <ClCompile Include="..\..\src\WyrmField\main.cpp" />
     <ClCompile Include="..\..\src\WyrmField\scene\scene.cpp" />
     <ClCompile Include="..\..\src\WyrmField\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\WyrmField\application\application.h" />
     <ClInclude Include="..\..\src\WyrmField\config.h" />
+    <ClInclude Include="..\..\src\WyrmField\debug\debug_menu.h" />
+    <ClInclude Include="..\..\src\WyrmField\m3\character.h" />
     <ClInclude Include="..\..\src\WyrmField\main_imgui.h" />
     <ClInclude Include="..\..\src\WyrmField\scene\scene.h" />
     <ClInclude Include="..\..\src\WyrmField\window.h" />

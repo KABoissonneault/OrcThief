@@ -16,6 +16,15 @@
     <Filter Include="Source Files\scene">
       <UniqueIdentifier>{5b684b9e-da6b-43a0-a810-0fb064a8466d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\m3">
+      <UniqueIdentifier>{9bd7e416-6e8e-463c-a9bb-7c8d4b3a767b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\debug">
+      <UniqueIdentifier>{5e9b9346-138b-4965-9bf0-d312c1160019}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\application">
+      <UniqueIdentifier>{62450609-4619-4d92-8e02-14783f68a85e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\WyrmField\main.cpp">
@@ -33,6 +42,12 @@
     <ClCompile Include="..\..\src\WyrmField\scene\scene.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\WyrmField\debug\debug_menu.cpp">
+      <Filter>Source Files\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\WyrmField\application\application.cpp">
+      <Filter>Source Files\application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\WyrmField\config.h">
@@ -46,6 +61,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\WyrmField\scene\scene.h">
       <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\WyrmField\m3\character.h">
+      <Filter>Source Files\m3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\WyrmField\debug\debug_menu.h">
+      <Filter>Source Files\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\WyrmField\application\application.h">
+      <Filter>Source Files\application</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

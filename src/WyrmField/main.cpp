@@ -1,6 +1,7 @@
 #include "config.h"
-#include "window.h"
 #include "main_imgui.h"
+#include "window.h"
+#include "application/application.h"
 #include "scene/scene.h"
 
 #include "Ogre/ArchiveType.h"
@@ -14,8 +15,6 @@
 #include "math/unit/time.h"
 
 #include "egfx/module.h"
-#include "egfx/window_type.h"
-#include "egfx/object/camera.h"
 #include "egfx/node/light.h"
 
 #include <filesystem>
@@ -25,7 +24,6 @@
 #include "SDL2/macro.h"
 
 #include <imgui_impl_sdl.h>
-#include <im3d.h>
 
 namespace ot::wf
 {
@@ -155,131 +153,31 @@ namespace ot::wf
 			hlms_manager->registerHlms(pbs_manager);
 		}
 	}
-
-	void push_window_event(SDL_Event const& e, std::vector<egfx::window_event>& window_events)
-	{
-		using egfx::window_event;
-		using egfx::window_id;
-		switch (e.type)
-		{
-		case SDL_WINDOWEVENT:
-			switch (e.window.event)
-			{
-			case SDL_WINDOWEVENT_MOVED:
-				window_events.push_back({ window_id(e.window.windowID), window_event::moved{e.window.data1, e.window.data2} });
-				break;
-			case SDL_WINDOWEVENT_RESIZED:
-				window_events.push_back({ window_id(e.window.windowID), window_event::resized{e.window.data1, e.window.data2} });
-				break;
-			case SDL_WINDOWEVENT_FOCUS_GAINED:
-				window_events.push_back({ window_id(e.window.windowID), window_event::focus_gained{} });
-				break;
-			case SDL_WINDOWEVENT_FOCUS_LOST:
-				window_events.push_back({ window_id(e.window.windowID), window_event::focus_lost{} });
-				break;
-			}
-			break;
-		}
-	}
-
-	Im3d::Vec3 get_cursor_ray(egfx::object::camera_cref const camera, math::transform_matrix const& camera_projection)
-	{
-		Im3d::AppData& ad = Im3d::GetAppData();
-
-		int cursor_x, cursor_y;
-		SDL_GetMouseState(&cursor_x, &cursor_y);
-
-		float const norm_x = (static_cast<float>(cursor_x) / ad.m_viewportSize.x) * 2.0f - 1.0f;
-		float const norm_y = -((static_cast<float>(cursor_y) / ad.m_viewportSize.y) * 2.0f - 1.0f);
-
-		math::transform_matrix const camera_transform = camera.get_transformation();
-
-		math::vector3f const ray_direction
-		{
-			norm_x / camera_projection[0][0]
-			, norm_y / camera_projection[1][1]
-			, -1.0f
-		};
-
-		return normalized(transform(ray_direction, camera_transform));
-	}
 			
 	void run_scene(SDL_Window& window, egfx::module& graphics, config const& program_config)
 	{
-		scene main_scene(graphics, program_config);
-		
-		using namespace ot::math::literals;
-		constexpr math::seconds fixed_step(0.02f);
-		std::chrono::time_point current_frame = std::chrono::steady_clock::now();
-		math::seconds time_buffer = fixed_step; // Start with one step
+		application& app = application::create_instance(window, graphics, program_config);
 
-		bool wants_quit = false;
-		while (!wants_quit)
+		try
 		{
-			// Events
-			{
-				std::vector<egfx::window_event> window_events;
-
-				SDL_Event e;
-				while (SDL_PollEvent(&e))
-				{
-					switch (e.type)
-					{
-					case SDL_WINDOWEVENT:
-						ImGui_ImplSDL2_ProcessEvent(&e);
-						push_window_event(e, window_events);
-
-						if (e.window.event == SDL_WINDOWEVENT_CLOSE && e.window.windowID == SDL_GetWindowID(&window))
-						{
-							wants_quit = true;
-						}
-
-						break;
-
-					case SDL_QUIT:
-						wants_quit = true;
-						break;
-					}
-				}
-
-				graphics.on_window_events(window_events);
-			}
-
-			// Pre-update
-			imgui::pre_update();
-			graphics.pre_update();
-			{
-				Im3d::AppData& ad = Im3d::GetAppData();
-				egfx::object::camera_cref const camera = main_scene.get_camera();
-				math::transform_matrix const camera_projection = camera.get_projection();
-
-				ad.m_cursorRayOrigin = ad.m_viewOrigin;
-				ad.m_cursorRayDirection = get_cursor_ray(camera, camera_projection);
-
-				Uint32 const mouse_state = SDL_GetMouseState(nullptr, nullptr);
-				ad.m_keyDown[Im3d::Mouse_Left] = (mouse_state & SDL_BUTTON_LMASK) == SDL_BUTTON_LEFT;
-			}
-
-			// Fixed Update
-			while (time_buffer >= fixed_step)
-			{
-				main_scene.update(fixed_step);
-
-				time_buffer -= fixed_step;
-			}
-
-			// Render
-			main_scene.render();
-
-			if (!graphics.render())
-				wants_quit = true;
-
-			// End frame
-			imgui::end_frame();
-
-			std::chrono::time_point const last_frame = std::exchange(current_frame, std::chrono::steady_clock::now());
-			time_buffer += current_frame - last_frame;
+			app.load_game_data();
 		}
+		catch (std::exception& e)
+		{
+			std::fprintf(stderr, "Failed to load game data: %s", e.what());
+		}
+
+		try
+		{
+			app.run();
+		}
+		catch (...)
+		{
+			application::destroy_instance();
+			throw;
+		}
+
+		application::destroy_instance();
 	}
 
 	int run_graphics(SDL_Window& main_window, config const& program_config)
