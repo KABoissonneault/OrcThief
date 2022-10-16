@@ -153,6 +153,7 @@
     <ClInclude Include="..\..\ext\ImGui\include\imgui_impl_dx11.h" />
     <ClInclude Include="..\..\ext\ImGui\include\imgui_impl_sdl.h" />
     <ClInclude Include="..\..\ext\ImGui\include\imgui_user.h" />
+    <ClInclude Include="..\..\ext\ImGui\include\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="..\..\ext\ImGui\src\imgui_internal.h" />
     <ClInclude Include="..\..\ext\ImGui\src\imstb_rectpack.h" />
     <ClInclude Include="..\..\ext\ImGui\src\imstb_textedit.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="..\..\ext\imgui_markdown\include\imgui_markdown.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\ext\ImGui\include\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="..\..\ext\ImGui\src\imgui.cpp" />
     <ClCompile Include="..\..\ext\ImGui\src\imgui_demo.cpp" />
     <ClCompile Include="..\..\ext\ImGui\src\imgui_draw.cpp" />
