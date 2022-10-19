@@ -10,6 +10,7 @@
 #include <span>
 
 struct SDL_Window;
+union SDL_Event;
 
 namespace ot
 {
@@ -35,6 +36,9 @@ namespace ot
 			bool wants_quit = false;
 			bool draw_debug = false;
 
+			int hud_state = 0;
+			int hud_param = 0;
+
 			application(SDL_Window& window, egfx::module& gfx_module, config const& program_config);
 		
 		public:
@@ -57,7 +61,11 @@ namespace ot
 		private:
 			void process_events();
 
+			bool handle_hud_input(SDL_Event const& e);
+
 			void draw_hud();
+			void draw_player_vitals();
+			void draw_player_sheet();
 		};
 	}
 }

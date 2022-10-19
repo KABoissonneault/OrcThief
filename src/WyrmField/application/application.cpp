@@ -170,6 +170,12 @@ namespace ot::wf
 			pc6.attributes.wisdom = 40;
 			pc6.vitals = m3::generate_initial_vitals(pc6.attributes);
 		}
+
+		enum hud_state
+		{
+			hud_state_play,
+			hud_state_character_data,
+		};
 	}
 
 	application::application(SDL_Window& window, egfx::module& gfx_module, config const& program_config)
@@ -269,7 +275,12 @@ namespace ot::wf
 				if (e.key.type == SDL_KEYUP && e.key.keysym.scancode == SDL_SCANCODE_F1)
 				{
 					draw_debug = !draw_debug;
+					break;
 				}
+
+				if (handle_hud_input(e))
+					break;
+
 				break;
 
 			case SDL_WINDOWEVENT:
@@ -403,7 +414,51 @@ namespace ot::wf
 		return player_data;
 	}
 
+	bool application::handle_hud_input(SDL_Event const& e)
+	{
+		if (e.type == SDL_KEYDOWN)
+		{
+			if (hud_state == hud_state_play || hud_state == hud_state_character_data)
+			{
+				if (e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_6)
+				{
+					hud_param = e.key.keysym.sym - SDLK_1;
+					hud_state = hud_state_character_data;
+					return true;
+				}
+			}
+		}
+		else if (e.type == SDL_KEYUP)
+		{
+			if (hud_state == hud_state_character_data)
+			{
+				if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+				{
+					hud_state = hud_state_play;
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	void application::draw_hud()
+	{
+		switch (hud_state)
+		{
+		case hud_state_play:
+			draw_player_vitals();
+			break;
+
+		case hud_state_character_data:
+			draw_player_sheet();
+			draw_player_vitals();
+			break;
+		}
+	}
+
+	void application::draw_player_vitals()
 	{
 		int window_width, window_height;
 		SDL_GetWindowSize(window, &window_width, &window_height);
@@ -519,6 +574,42 @@ namespace ot::wf
 					ImGui::TextColored(ImVec4(0.2f, 0.2f, 0.2f, 1.0f), "Dead");
 				}
 			}
+		}
+		ImGui::End();
+	}
+
+	void application::draw_player_sheet()
+	{
+		if (player_data.size() == 0)
+			return;
+
+		if (hud_param < 0)
+			hud_param = 0;
+
+		if (hud_param >= player_data.size())
+			hud_param = (int)player_data.size() - 1;
+
+		m3::player_character_data const& player = player_data[hud_param];
+
+		int window_width, window_height;
+		SDL_GetWindowSize(window, &window_width, &window_height);
+
+		ImGui::SetNextWindowSize(ImVec2(1024.f, 512.f));
+		ImGui::SetNextWindowPos(ImVec2(window_width / 2, window_height * 0.25f), ImGuiCond_None, ImVec2(0.5f, 0));
+		if (ImGui::Begin("##CharacterSheet", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
+		{
+			ImGui::Text("%s", player.name.c_str());
+			
+			ImGui::NewLine();
+			ImGui::Text("Cleverness: %d", player.attributes.cleverness);
+			ImGui::Text("Hardiness: %d", player.attributes.hardiness);
+			ImGui::Text("Focus: %d", player.attributes.focus);
+			ImGui::Text("Charisma: %d", player.attributes.charisma);
+			ImGui::Text("Will: %d", player.attributes.will);
+			ImGui::Text("Wisdom: %d", player.attributes.wisdom);
+			ImGui::Text("Strength: %d", player.attributes.strength);
+			ImGui::Text("Constitution: %d", player.attributes.constitution);
+			ImGui::Text("Agility: %d", player.attributes.agility);
 		}
 		ImGui::End();
 	}
