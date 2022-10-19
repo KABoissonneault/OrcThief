@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 // M3: Mind, Mettle, and Might
 // The three spheres of the "Mind, Spirit, Body" trialism.
 // The body represents the material aspects of an entity, anything observable and actionable in the physical world
@@ -18,8 +20,8 @@ namespace ot::wf::m3
 	struct character_attributes
 	{
 		// Mind
-		int cognition;
 		int cleverness;
+		int hardiness;
 		int focus;
 
 		// Mettle
@@ -38,4 +40,28 @@ namespace ot::wf::m3
 		std::string name;
 		character_attributes attributes;
 	};
+
+	struct character_vitals
+	{
+		int max_energy;
+		int current_energy;
+		float energy_buffer; // Value between 0 and 1. If it reaches 1, current energy should go down by one. If it goes below 0, current energy should go up
+
+		int max_resolve;
+		int current_resolve;
+		float resolve_buffer;
+
+		int max_health;
+		int current_health;
+		float health_buffer;
+	};
+
+	struct player_character_data
+	{
+		std::string name;
+		character_attributes attributes;
+		character_vitals vitals;
+	};
+
+	character_vitals generate_initial_vitals(character_attributes const& attributes);
 }

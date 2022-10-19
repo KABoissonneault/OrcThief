@@ -30,9 +30,13 @@ namespace ot
 			scene main_scene;
 
 			std::vector<m3::enemy_template> enemy_templates;
+			std::vector<m3::player_character_data> player_data;
+
+			bool wants_quit = false;
+			bool draw_debug = false;
 
 			application(SDL_Window& window, egfx::module& gfx_module, config const& program_config);
-
+		
 		public:
 			static constexpr math::seconds fixed_step{ 0.02f };
 
@@ -47,6 +51,13 @@ namespace ot
 
 			std::span<m3::enemy_template> get_enemy_templates() noexcept;
 			void add_enemy_template(m3::enemy_template const& t);
+
+			std::span<m3::player_character_data> get_player_data() noexcept;
+
+		private:
+			void process_events();
+
+			void draw_hud();
 		};
 	}
 }

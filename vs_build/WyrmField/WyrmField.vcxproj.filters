@@ -48,6 +48,9 @@
     <ClCompile Include="..\..\src\WyrmField\application\application.cpp">
       <Filter>Source Files\application</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\WyrmField\m3\character.cpp">
+      <Filter>Source Files\m3</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\WyrmField\config.h">
