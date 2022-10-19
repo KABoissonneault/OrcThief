@@ -154,6 +154,7 @@
     <ClInclude Include="..\..\lib\Math\include\math\boost\transform_matrix_traits.h" />
     <ClInclude Include="..\..\lib\Math\include\math\boost\vector_traits.h" />
     <ClInclude Include="..\..\lib\math\include\math\line.h" />
+    <ClInclude Include="..\..\lib\Math\include\math\ops.h" />
     <ClInclude Include="..\..\lib\Math\include\math\plane.h" />
     <ClInclude Include="..\..\lib\math\include\math\quaternion.h" />
     <ClInclude Include="..\..\lib\math\include\math\ray.h" />
