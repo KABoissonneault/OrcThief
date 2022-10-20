@@ -56,11 +56,30 @@ namespace ot::wf::m3
 		float health_buffer;
 	};
 
+	struct character_skills
+	{
+		int military;
+		int hunt;
+		int brawl;
+		int dueling;
+
+		int foresting;
+		int mountaineering;
+		int sailoring;
+		int urbanism;
+
+		int rhetoric;
+		int astrology;
+		int medecine;
+		int alchemy;
+	};
+
 	struct player_character_data
 	{
 		std::string name;
 		character_attributes attributes;
 		character_vitals vitals;
+		character_skills skills;
 	};
 
 	character_vitals generate_initial_vitals(character_attributes const& attributes);

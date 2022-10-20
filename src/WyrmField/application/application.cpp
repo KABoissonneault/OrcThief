@@ -104,6 +104,9 @@ namespace ot::wf
 			pc1.attributes.will = 60;
 			pc1.attributes.wisdom = 30;
 			pc1.vitals = m3::generate_initial_vitals(pc1.attributes);
+			pc1.skills.hunt = 5;
+			pc1.skills.brawl = 3;
+			pc1.skills.mountaineering = 5;
 
 			m3::player_character_data& pc2 = player_characters.emplace_back();
 			pc2.name = "Caladan";
@@ -117,6 +120,9 @@ namespace ot::wf
 			pc2.attributes.will = 50;
 			pc2.attributes.wisdom = 40;
 			pc2.vitals = m3::generate_initial_vitals(pc2.attributes);
+			pc2.skills.military = 5;
+			pc2.skills.dueling = 3;
+			pc2.skills.brawl = 3;
 
 			m3::player_character_data& pc3 = player_characters.emplace_back();
 			pc3.name = "Squint";
@@ -130,6 +136,9 @@ namespace ot::wf
 			pc3.attributes.will = 40;
 			pc3.attributes.wisdom = 40;
 			pc3.vitals = m3::generate_initial_vitals(pc3.attributes);
+			pc3.skills.foresting = 5;
+			pc3.skills.military = 3;
+			pc3.skills.urbanism = 3;
 
 			m3::player_character_data& pc4 = player_characters.emplace_back();
 			pc4.name = "Mallick";
@@ -143,6 +152,8 @@ namespace ot::wf
 			pc4.attributes.will = 60;
 			pc4.attributes.wisdom = 60;
 			pc4.vitals = m3::generate_initial_vitals(pc4.attributes);
+			pc4.skills.astrology = 5;
+			pc4.skills.rhetoric = 5;
 
 			m3::player_character_data& pc5 = player_characters.emplace_back();
 			pc5.name = "Crokus";
@@ -156,6 +167,9 @@ namespace ot::wf
 			pc5.attributes.will = 60;
 			pc5.attributes.wisdom = 50;
 			pc5.vitals = m3::generate_initial_vitals(pc5.attributes);
+			pc5.skills.urbanism = 5;
+			pc5.skills.hunt = 3;
+			pc5.skills.sailoring = 3;
 
 			m3::player_character_data& pc6 = player_characters.emplace_back();
 			pc6.name = "Kruppe";
@@ -169,6 +183,8 @@ namespace ot::wf
 			pc6.attributes.will = 60;
 			pc6.attributes.wisdom = 40;
 			pc6.vitals = m3::generate_initial_vitals(pc6.attributes);
+			pc6.skills.alchemy = 5;
+			pc6.skills.medecine = 5;
 		}
 
 		enum hud_state
@@ -610,6 +626,34 @@ namespace ot::wf
 			ImGui::Text("Strength: %d", player.attributes.strength);
 			ImGui::Text("Constitution: %d", player.attributes.constitution);
 			ImGui::Text("Agility: %d", player.attributes.agility);
+
+			ImGui::NewLine();
+			if (player.skills.military > 0)
+				ImGui::Text("Military: %d", player.skills.military);
+			if (player.skills.hunt > 0)
+				ImGui::Text("Hunt: %d", player.skills.hunt);
+			if (player.skills.brawl > 0)
+				ImGui::Text("Brawl: %d", player.skills.brawl);
+			if (player.skills.dueling > 0)
+				ImGui::Text("Dueling: %d", player.skills.dueling);
+
+			if (player.skills.foresting > 0)
+				ImGui::Text("Foresting: %d", player.skills.foresting);
+			if (player.skills.mountaineering > 0)
+				ImGui::Text("Mountaineering: %d", player.skills.mountaineering);
+			if (player.skills.sailoring > 0)
+				ImGui::Text("Sailoring: %d", player.skills.sailoring);
+			if (player.skills.urbanism > 0)
+				ImGui::Text("Urbanism: %d", player.skills.urbanism);
+
+			if (player.skills.rhetoric > 0)
+				ImGui::Text("Rhetoric: %d", player.skills.rhetoric);
+			if (player.skills.astrology > 0)
+				ImGui::Text("Astrology: %d", player.skills.astrology);
+			if (player.skills.medecine > 0)
+				ImGui::Text("Medicine: %d", player.skills.medecine);
+			if (player.skills.alchemy > 0)
+				ImGui::Text("Alchemy: %d", player.skills.alchemy);
 		}
 		ImGui::End();
 	}
