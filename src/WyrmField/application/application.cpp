@@ -1,4 +1,5 @@
 #include "application/application.h"
+#include "application/serialization.h"
 #include "config.h"
 #include "main_imgui.h"
 #include "debug/debug_menu.h"
@@ -88,7 +89,7 @@ namespace ot::wf
 			return std::filesystem::path(program_config.get_core().get_resource_root()) / "Game";
 		}
 
-		char const* const enemy_template_filename = "enemy_templates.bin";
+		char const* const enemy_template_filename = "enemy_templates.json";
 
 		void generate_player_characters(std::vector<m3::player_character_data>& player_characters)
 		{
@@ -348,71 +349,27 @@ namespace ot::wf
 		gfx_module->on_window_events(window_events);
 	}
 	
-	namespace
-	{
-		enum class enemy_template_versions : int
-		{
-			initial = 0
-		};
-
-		enemy_template_versions const enemy_template_version = enemy_template_versions::initial;
-	}
-
 	void application::save_game_data()
 	{
 		std::filesystem::path const game_data_path = get_game_data_path(*program_config);
 		std::filesystem::create_directory(game_data_path);
 
-		std::ofstream o(game_data_path / enemy_template_filename, std::ios::binary);
+		std::ofstream o(game_data_path / enemy_template_filename);
 		if (!o)
 			throw std::runtime_error(std::format("Could not save enemy template, '{}' could not be opened for write in game data folder", enemy_template_filename));
 
-		o.write((char const*)&enemy_template_version, sizeof(enemy_template_version));
-		
-		int const template_count = (int)enemy_templates.size();
-		o.write((char const*)&template_count, sizeof(template_count));
-		for (m3::enemy_template const& e : enemy_templates)
-		{
-			unsigned short const name_size = (unsigned short)e.name.size();
-			o.write((char const*)&name_size, sizeof(name_size));
-			o.write(e.name.c_str(), (std::streamsize)e.name.size());
-			
-			o.write((char const*)&e.attributes, sizeof(e.attributes));
-		}
+		save_enemy_template(o, enemy_templates);
 	}
 
 	void application::load_game_data()
 	{
 		enemy_templates.clear();
 
-		std::ifstream i(get_game_data_path(*program_config) / enemy_template_filename, std::ios::binary);
+		std::ifstream i(get_game_data_path(*program_config) / enemy_template_filename);
 		if (!i)
 			return;
 
-		enemy_template_versions version;
-		if (!(i.read((char*)&version, sizeof(version)))) throw std::runtime_error("Invalid enemy template format: expected version integer");
-		if (version > enemy_template_version) throw std::runtime_error("Invalid enemy template format: unsupported version");
-
-		int template_count;
-		if (!(i.read((char*)&template_count, sizeof(template_count)))) throw std::runtime_error("Invalid enemy template format: expected template count");
-		if (template_count < 0) throw std::runtime_error("Invalid enemy template format: negative template count");
-
-		enemy_templates.resize(template_count);
-		for (m3::enemy_template& e : enemy_templates)
-		{
-			unsigned short name_size;
-			if (!(i.read((char*)&name_size, sizeof(name_size))))
-			{
-				if (i.eof()) throw std::runtime_error(std::format("Invalid enemy template format: Missing templates, expected {}", template_count));
-				else throw std::runtime_error("Invalid enemy template format: expected integer name size");
-			}
-			if (name_size < 0) throw std::runtime_error("Invalid enemy template format: negative name size");
-			
-			e.name.resize(name_size);
-			if (!i.read(e.name.data(), name_size)) throw std::runtime_error("Invalid enemy template format: could not read template name");
-
-			if (!i.read((char*)&e.attributes, sizeof(e.attributes))) throw std::runtime_error("Invalid enemy template format: could not read enemy attributes");
-		}
+		enemy_templates = load_enemy_template(i);
 	}
 
 	std::span<m3::enemy_template> application::get_enemy_templates() noexcept

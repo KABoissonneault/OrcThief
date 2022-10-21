@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\WyrmField\application\application.cpp" />
+    <ClCompile Include="..\..\src\WyrmField\application\serialization.cpp" />
     <ClCompile Include="..\..\src\WyrmField\config.cpp" />
     <ClCompile Include="..\..\src\WyrmField\debug\debug_menu.cpp" />
     <ClCompile Include="..\..\src\WyrmField\m3\character.cpp" />
@@ -170,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\WyrmField\application\application.h" />
+    <ClInclude Include="..\..\src\WyrmField\application\serialization.h" />
     <ClInclude Include="..\..\src\WyrmField\config.h" />
     <ClInclude Include="..\..\src\WyrmField\debug\debug_menu.h" />
     <ClInclude Include="..\..\src\WyrmField\m3\character.h" />
