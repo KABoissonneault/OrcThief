@@ -1,15 +1,40 @@
 #pragma once
 
-#include <utility>
+#include <type_traits>
 #include "core/fwd_delete.fwd.h"
 
 namespace ot
 {
 	using nullptr_t = decltype(nullptr);
+	
+	template<typename T>
+	constexpr std::remove_reference_t<T>&& as_moveable(T&& t) noexcept
+	{
+		return static_cast<std::remove_reference_t<T>&&>(t);
+	}
+
+	template<typename T>
+	constexpr T&& forward(std::remove_reference_t<T>& t) noexcept
+	{
+		return static_cast<T&&>(t);
+	}
+
+	template<typename T>
+	constexpr T&& forward(std::remove_reference_t<T>&& t) noexcept
+	{
+		return static_cast<T&&>(t);
+	}
 
 	template<typename T>
 	struct default_delete
 	{
+		constexpr default_delete() noexcept = default;
+		template<typename U, typename = std::enable_if_t<std::is_convertible_v<U*, T*>>>
+		constexpr default_delete(default_delete<U> const& d) noexcept { (void)d; }
+		constexpr default_delete(fwd_delete<T> const& d) noexcept { (void)d; }
+
+		constexpr operator fwd_delete<T>() noexcept { return {}; }
+
 		void operator()(T* t) const noexcept
 		{
 			delete t;
@@ -19,6 +44,13 @@ namespace ot
 	template<typename T>
 	struct default_delete<T[]>
 	{
+		constexpr default_delete() noexcept = default;
+		template<typename U, typename = std::enable_if_t<std::is_convertible_v<U(*)[], T(*)[]>>>
+		constexpr default_delete(default_delete<U[]> const& d) noexcept { }
+		constexpr default_delete(fwd_delete<T[]> const& d) noexcept { }
+
+		constexpr operator fwd_delete<T[]>() noexcept { return {}; }
+
 		void operator()(T* t) const noexcept
 		{
 			delete[] t;
@@ -30,6 +62,8 @@ namespace ot
 	template<typename T, typename Deleter=default_delete<T>>
 	class uptr : Deleter
 	{
+		template<typename, typename> friend class uptr;
+
 		Deleter& access_deleter() & noexcept { return static_cast<Deleter&>(*this); }
 		Deleter&& access_deleter() && noexcept { return static_cast<Deleter&&>(*this); }
 
@@ -39,14 +73,26 @@ namespace ot
 		explicit uptr(T* ptr) noexcept : ptr(ptr) {}
 		uptr(T* ptr, Deleter deleter) noexcept : Deleter(deleter), ptr(ptr) {}
 		uptr(uptr const&) = delete;
-		uptr(uptr&& other) noexcept : Deleter(std::move(other).access_deleter()), ptr(other.ptr) { other.ptr = nullptr; }
+		uptr(uptr&& other) noexcept 
+			: Deleter(as_moveable(other).access_deleter())
+			, ptr(other.ptr) 
+		{ 
+			other.ptr = nullptr; 
+		}
+		template<typename U, typename E>
+		uptr(uptr<U, E>&& other) noexcept
+			: Deleter(as_moveable(other).access_deleter())
+			, ptr(other.ptr)
+		{
+			other.ptr = nullptr;
+		}
 		constexpr uptr(nullptr_t) noexcept : ptr(nullptr) {}
 		uptr& operator=(uptr const&) = delete;
 		uptr& operator=(uptr&& other) noexcept
 		{
 			access_deleter()(ptr);
 
-			access_deleter() = std::move(other).access_deleter();
+			access_deleter() = as_moveable(other).access_deleter();
 			ptr = other.ptr;
 			other.ptr = nullptr;
 			
@@ -116,9 +162,9 @@ namespace ot
 	}
 
 	template<typename T, typename... Args>
-	uptr<T> make_unique(Args... args)
+	uptr<T> make_unique(Args&&... args)
 	{
-		return uptr(new T(std::forward<Args>(args)...));
+		return uptr(new T(forward<Args>(args)...));
 	}
 
 	template<typename T>
