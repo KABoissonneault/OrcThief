@@ -129,7 +129,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\WyrmField;$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\entt\src;$(ProjectDir)..\..\ext\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\WyrmField;$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\entt\src;$(ProjectDir)..\..\ext\json\include;$(ProjectDir)..\..\ext\stb\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,7 +147,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\WyrmField;$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\entt\src;$(ProjectDir)..\..\ext\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\WyrmField;$(ProjectDir)..\..\ext\Im3d\include;$(ProjectDir)..\..\ext\entt\src;$(ProjectDir)..\..\ext\json\include;$(ProjectDir)..\..\ext\stb\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
