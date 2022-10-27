@@ -35,5 +35,8 @@ namespace ot::egfx
 		[[nodiscard]] bool render();
 
 		[[nodiscard]] window const& get_window(window_id id) const noexcept;
+
+		bool load_texture(std::span<unsigned char> image_rgba_data, int pitch, imgui::texture& t);
+		void free_texture(imgui::texture& t);
 	};
 }

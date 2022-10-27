@@ -119,6 +119,16 @@ namespace ot::egfx
 		return main_window;
 	}
 
+	bool module::impl::load_texture(std::span<unsigned char> image_rgba_data, int pitch, imgui::texture& t)
+	{
+		return imgui->load_texture(image_rgba_data, pitch, t);
+	}
+
+	void module::impl::free_texture(imgui::texture& t)
+	{
+		imgui->free_texture(t);
+	}
+
 	module::module()
 		: pimpl(new impl)
 	{
@@ -160,5 +170,15 @@ namespace ot::egfx
 	window const& module::get_window(window_id id) const noexcept
 	{
 		return pimpl->get_window(id);
+	}
+
+	bool module::load_texture(std::span<unsigned char> image_rgba_data, int pitch, imgui::texture& t)
+	{
+		return pimpl->load_texture(image_rgba_data, pitch, t);
+	}
+
+	void module::free_texture(imgui::texture& t)
+	{
+		pimpl->free_texture(t);
 	}
 }

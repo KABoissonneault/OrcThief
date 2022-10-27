@@ -22,6 +22,9 @@
     <Filter Include="src\object">
       <UniqueIdentifier>{42422ca9-b4c4-4cc1-9967-4092d4a9d3fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\imgui">
+      <UniqueIdentifier>{20b24c74-0473-45c0-9eab-5131819ba5c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\window_type.h">
@@ -117,6 +120,9 @@
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\immediate.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\imgui\texture.h">
+      <Filter>include\imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\ElfGraphics\src\module.cpp">
@@ -157,6 +163,9 @@
     </ClCompile>
     <ClCompile Include="..\..\lib\ElfGraphics\src\immediate.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\texture.cpp">
+      <Filter>src\imgui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

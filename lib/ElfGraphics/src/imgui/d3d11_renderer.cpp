@@ -30,20 +30,20 @@ namespace ot::egfx::imgui
 		auto& root = Ogre::Root::getSingleton();
 		Ogre::RenderSystem* const renderSystem = root.getRenderSystem();
 
-		ID3D11Device* d3dDevice = nullptr;
-		renderSystem->getCustomAttribute("D3DDEVICE", &d3dDevice);
-		if (d3dDevice == nullptr)
+		d3d_device = nullptr;
+		renderSystem->getCustomAttribute("D3DDEVICE", &d3d_device);
+		if (d3d_device == nullptr)
 			return false;
 
-		ID3D11DeviceContext* immediateContext;
-		d3dDevice->GetImmediateContext(&immediateContext);
+		ID3D11DeviceContext* immediate_context;
+		d3d_device->GetImmediateContext(&immediate_context);
 
-		if (!ImGui_ImplDX11_Init(d3dDevice, immediateContext))
+		if (!ImGui_ImplDX11_Init(d3d_device, immediate_context))
 			return false;
 
 		ImGui_ImplDX11_NewFrame(); // creates the font atlas
 
-		if (!Im3d_ImplDX11_Init(d3dDevice, immediateContext))
+		if (!Im3d_ImplDX11_Init(d3d_device, immediate_context))
 			return false;
 
 		return true;
@@ -72,5 +72,63 @@ namespace ot::egfx::imgui
 		ImGui::Render();
 
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	}
+
+	bool d3d11_renderer::load_texture(std::span<unsigned char> image_rgba_data, int pitch, texture& t)
+	{
+		t.width = pitch / 4;
+		t.height = (int)image_rgba_data.size_bytes() / pitch;
+
+		D3D11_TEXTURE2D_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Width = t.width;
+		desc.Height = t.height;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		desc.SampleDesc.Count = 1;
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		desc.CPUAccessFlags = 0;
+
+
+		D3D11_SUBRESOURCE_DATA sub_resource;
+		sub_resource.pSysMem = image_rgba_data.data();
+		sub_resource.SysMemPitch = pitch;
+		sub_resource.SysMemSlicePitch = 0;
+
+		ID3D11Texture2D* texture_ptr;
+		HRESULT result = d3d_device->CreateTexture2D(&desc, &sub_resource, &texture_ptr);
+		if (result != S_OK)
+		{
+			return false;
+		}
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srv_desc;
+		ZeroMemory(&srv_desc, sizeof(srv_desc));
+		srv_desc.Format = desc.Format;
+		srv_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srv_desc.Texture2D.MipLevels = desc.MipLevels;
+		srv_desc.Texture2D.MostDetailedMip = 0;
+
+		ID3D11ShaderResourceView* srv_ptr;
+		result = d3d_device->CreateShaderResourceView(texture_ptr, &srv_desc, &srv_ptr);
+		texture_ptr->Release();
+		if (result != S_OK)
+		{
+			return false;
+		}
+
+		t.texture_id = srv_ptr;
+		t.renderer_system = this;
+		return true;
+	}
+
+	void d3d11_renderer::free_texture(texture& t)
+	{
+		if (t.texture_id == nullptr)
+			return;
+
+		static_cast<ID3D11ShaderResourceView*>(t.texture_id)->Release();
 	}
 }

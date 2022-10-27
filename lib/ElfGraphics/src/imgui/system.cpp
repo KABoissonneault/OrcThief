@@ -106,4 +106,14 @@ namespace ot::egfx::imgui
 	{
 		return OGRE_NEW pass(definition, default_camera, parent_node, render.get());
 	}
+
+	bool system::load_texture(std::span<unsigned char> image_rgba_data, int pitch, texture& t)
+	{
+		return render->load_texture(image_rgba_data, pitch, t);
+	}
+
+	void system::free_texture(texture& t)
+	{
+		render->free_texture(t);
+	}
 }

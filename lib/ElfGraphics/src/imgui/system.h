@@ -27,6 +27,9 @@ namespace ot::egfx::imgui
 			, Ogre::RenderTargetViewDef const* rtvDef
 			, Ogre::SceneManager* sceneManager
 		) override;
+
+		bool load_texture(std::span<unsigned char> image_rgba_data, int pitch, texture& t);
+		void free_texture(texture& t);
 	};
 
 }

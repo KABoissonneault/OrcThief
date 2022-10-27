@@ -157,6 +157,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\color.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\imgui\texture.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\immediate.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\mesh_definition.fwd.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\mesh_definition.h" />
@@ -189,6 +190,7 @@
     <ClInclude Include="..\..\lib\ElfGraphics\src\window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\texture.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\immediate.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\object\camera.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\compositor.cpp" />

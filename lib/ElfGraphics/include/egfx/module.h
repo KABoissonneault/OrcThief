@@ -11,6 +11,11 @@
 
 namespace ot::egfx
 {
+	namespace imgui
+	{
+		class texture;
+	}
+
 	struct window_parameters
 	{
 		std::string window_handle; // string representation of the native window handle
@@ -51,5 +56,8 @@ namespace ot::egfx
 		[[nodiscard]] bool render();
 
 		[[nodiscard]] window const& get_window(window_id id) const noexcept;
+
+		bool load_texture(std::span<unsigned char> image_rgba_data, int pitch, imgui::texture& t);
+		void free_texture(imgui::texture& t);
 	};
 }
