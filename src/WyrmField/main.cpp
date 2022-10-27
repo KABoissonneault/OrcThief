@@ -29,6 +29,8 @@ namespace ot::wf
 {
 	void load_always_resources(Ogre::ConfigFile& program_config, std::filesystem::path const& resource_folder_path)
 	{
+		auto& resource_manager = Ogre::ResourceGroupManager::getSingleton();
+
 		// Load the resources under [AlwaysLoad]
 		auto load_it = program_config.getSettingsIterator("AlwaysLoad");
 		for (auto const& kv : load_it)
@@ -48,7 +50,16 @@ namespace ot::wf
 				std::printf("warning: AlwaysLoad resource '%s' was requested but could not be found", full_path.string().c_str());
 				continue;
 			}
-			Ogre::ResourceGroupManager::getSingleton().addResourceLocation(full_path.string(), type_name);
+
+			resource_manager.addResourceLocation(full_path.string(), type_name);
+		}
+
+		Ogre::StringVectorPtr const names = resource_manager.listResourceNames(Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+
+		std::printf("Always Loaded resources:\n");
+		for (Ogre::String const& resource : *names)
+		{
+			std::printf("- %s\n", resource.c_str());
 		}
 	}
 

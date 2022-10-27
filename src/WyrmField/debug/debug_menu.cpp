@@ -151,7 +151,22 @@ namespace ot::wf
 
 				if (selected_template != -1)
 				{
-					ImGui::Text("Name"); ImGui::SameLine(); ImGui::InputText("##NameInput", &enemy_templates[selected_template].name);
+					m3::enemy_template& et = enemy_templates[selected_template];
+					ImGui::Text("Name"); ImGui::SameLine(); ImGui::InputText("##NameInput", &et.name);
+					ImGui::Text("Portrait"); ImGui::SameLine();
+					if (ImGui::BeginCombo("##PortraitSelection", et.portrait.c_str()))
+					{
+						for (mp_portrait const& portrait : app.get_portraits())
+						{
+							bool const selected = portrait.name == et.portrait;
+							if (ImGui::Selectable(portrait.name.c_str(), selected))
+								et.portrait = portrait.name;
+
+							if (selected)
+								ImGui::SetItemDefaultFocus();
+						}
+						ImGui::EndCombo();
+					}
 
 					edit_attributes(enemy_templates[selected_template].attributes);
 				}

@@ -29,6 +29,8 @@ namespace ot::wf
 			{
 				nlohmann::json e_data;
 				e_data["name"] = e.name;
+				if(!e.portrait.empty())
+					e_data["portrait"] = e.portrait;
 
 				nlohmann::json& attributes = e_data["attributes"];
 				attributes.push_back(e.attributes.cleverness);
@@ -64,6 +66,11 @@ namespace ot::wf
 		{
 			m3::enemy_template& e = output.emplace_back();
 			e.name = template_data["name"].get<std::string>();
+			
+			if (template_data.contains("portrait"))
+			{
+				e.portrait = template_data["portrait"].get<std::string>();
+			}
 
 			nlohmann::json const& attributes = template_data["attributes"];
 			e.attributes.cleverness = attributes[0];

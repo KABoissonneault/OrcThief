@@ -1,4 +1,5 @@
 #include "application/application.h"
+#include "application/game_mode.h"
 #include "application/serialization.h"
 #include "config.h"
 #include "main_imgui.h"
@@ -17,6 +18,13 @@
 
 #include <filesystem>
 #include <fstream>
+
+#pragma warning(push)
+#pragma warning(disable:4505) /* unreferenced function with internal linkage has been removed */
+#define STB_IMAGE_IMPLEMENTATION
+#define STBI_ONLY_PNG
+#include <stb_image.h>
+#pragma warning(pop)
 
 namespace ot::wf
 {
@@ -142,7 +150,7 @@ namespace ot::wf
 			pc3.skills.urbanism = 3;
 
 			m3::player_character_data& pc4 = player_characters.emplace_back();
-			pc4.name = "Mallick";
+			pc4.name = "Heboric";
 			pc4.attributes.strength = 40;
 			pc4.attributes.constitution = 70;
 			pc4.attributes.agility = 20;
@@ -187,12 +195,6 @@ namespace ot::wf
 			pc6.skills.alchemy = 5;
 			pc6.skills.medecine = 5;
 		}
-
-		enum hud_state
-		{
-			hud_state_play,
-			hud_state_character_data,
-		};
 	}
 
 	application::application(SDL_Window& window, egfx::module& gfx_module, config const& program_config)
@@ -200,9 +202,12 @@ namespace ot::wf
 		, gfx_module(&gfx_module)
 		, program_config(&program_config)
 		, main_scene(gfx_module, program_config)
+		, game(get_play_mode(*this))
 	{
 
 	}
+
+	application::~application() = default;
 
 	application& application::create_instance(SDL_Window& window, egfx::module& gfx_module, config const& program_config)
 	{
@@ -223,6 +228,8 @@ namespace ot::wf
 
 	void application::run()
 	{
+		load_monster_pack();
+
 		generate_player_characters(player_data);
 
 		std::chrono::time_point current_frame = std::chrono::steady_clock::now();
@@ -241,6 +248,7 @@ namespace ot::wf
 			// Fixed Update
 			while (time_buffer >= fixed_step)
 			{
+				game->update(fixed_step);
 				main_scene.update(fixed_step);
 
 				time_buffer -= fixed_step;
@@ -249,12 +257,12 @@ namespace ot::wf
 			// Render
 			main_scene.render();
 
+			game->draw();
+
 			if (draw_debug)
 			{
 				draw_debug_menu();
 			}
-
-			draw_hud();
 
 			if (!gfx_module->render())
 				wants_quit = true;
@@ -295,7 +303,7 @@ namespace ot::wf
 					break;
 				}
 
-				if (handle_hud_input(e))
+				if (game->handle_hud_input(e))
 					break;
 
 				break;
@@ -387,231 +395,68 @@ namespace ot::wf
 		return player_data;
 	}
 
-	bool application::handle_hud_input(SDL_Event const& e)
+	void application::change_game_mode(uptr<game_mode> new_game_mode)
 	{
-		if (e.type == SDL_KEYDOWN)
-		{
-			if (hud_state == hud_state_play || hud_state == hud_state_character_data)
-			{
-				if (e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_6)
-				{
-					hud_param = e.key.keysym.sym - SDLK_1;
-					hud_state = hud_state_character_data;
-					return true;
-				}
-			}
-		}
-		else if (e.type == SDL_KEYUP)
-		{
-			if (hud_state == hud_state_character_data)
-			{
-				if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-				{
-					hud_state = hud_state_play;
-					return true;
-				}
-			}
-		}
-
-		return false;
+		game = as_moveable(new_game_mode);
 	}
 
-	void application::draw_hud()
+	void application::load_monster_pack()
 	{
-		switch (hud_state)
+		auto const pack_path = std::filesystem::path(program_config->get_core().get_resource_root()) / "MonsterPack";
+
+		auto const load_texture = [this, &pack_path](char const* sub_path)
 		{
-		case hud_state_play:
-			draw_player_vitals();
-			break;
+			auto const file_path = pack_path / sub_path;
 
-		case hud_state_character_data:
-			draw_player_sheet();
-			draw_player_vitals();
-			break;
-		}
-	}
+			int image_width, image_height;
+			int const component_count = 4;
+			unsigned char* load_result = stbi_load(file_path.string().c_str(), &image_width, &image_height, nullptr, component_count);
+			if (load_result == nullptr)
+				throw std::runtime_error(std::format("Could not load image '{}'", sub_path));
 
-	void application::draw_player_vitals()
-	{
-		int window_width, window_height;
-		SDL_GetWindowSize(window, &window_width, &window_height);
+			size_t const data_size = image_width * image_height * component_count;
 
-		size_t const player_count = math::min_value(player_data.size(), 6);
+			egfx::imgui::texture tex_result;
+			if (!gfx_module->load_texture({ load_result, data_size }, image_width * component_count, tex_result))
+				throw std::runtime_error(std::format("Could not load texture '{}'", sub_path));
+			return tex_result;
+		};
 
-		ImGui::SetNextWindowSize(ImVec2((player_count + 1) * 128.f, 256.f));
-		ImGui::SetNextWindowPos(ImVec2(window_width/2, window_height * 0.75f), ImGuiCond_None, ImVec2(0.5f, 0));
-		if (ImGui::Begin("##CharacterHud", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
-		{			
-			for (int i = 0; i < player_count; ++i)
-			{
-				ImGui::SameLine(128.f*(i+1));
-				ImGui::Text("%s", player_data[i].name.c_str());
-			}
-
-			ImGui::NewLine();
-
-			ImGui::Text("Energy");
-
-			for (int i = 0; i < player_count; ++i)
-			{
-				ImGui::SameLine(128.f * (i+1));
-				
-				int const energy_percent = player_data[i].vitals.current_energy * 100 / player_data[i].vitals.max_energy;
-				
-				if (energy_percent > 80)
-				{
-					ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.2f, 1.0f), "Full");
-				}
-				else if (energy_percent > 60)
-				{
-					ImGui::TextColored(ImVec4(0.6f, 1.0f, 0.2f, 1.0f), "Winded");
-				}
-				else if (energy_percent > 40)
-				{
-					ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.2f, 1.0f), "Sweated");
-				}				
-				else if (energy_percent > 20)
-				{
-					ImGui::TextColored(ImVec4(1.0f, 0.6f, 0.2f, 1.0f), "Exhausted");
-				}
-				else if(energy_percent > 0)
-				{
-					ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.2f, 1.0f), "Critical");
-				}
-				else
-				{
-					ImGui::TextColored(ImVec4(0.2f, 0.2f, 0.2f, 1.0f), "Knocked Out");
-				}
-			}
-
-			ImGui::Text("Resolve");
-			for (int i = 0; i < player_count; ++i)
-			{
-				ImGui::SameLine(128.f * (i + 1));
-
-				int const resolve_percent = player_data[i].vitals.current_resolve * 100 / player_data[i].vitals.max_resolve;
-				if (resolve_percent > 80)
-				{
-					ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.2f, 1.0f), "Confident");
-				}
-				else if (resolve_percent > 60)
-				{
-					ImGui::TextColored(ImVec4(0.6f, 1.0f, 0.2f, 1.0f), "Stressed");
-				}
-				else if (resolve_percent > 40)
-				{
-					ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.2f, 1.0f), "Nervous");
-				}
-				else if (resolve_percent > 20)
-				{
-					ImGui::TextColored(ImVec4(1.0f, 0.6f, 0.2f, 1.0f), "Panicking");
-				}
-				else if (resolve_percent > 0)
-				{
-					ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.2f, 1.0f), "Critical");
-				}
-				else
-				{
-					ImGui::TextColored(ImVec4(0.2f, 0.2f, 0.2f, 1.0f), "Surrendered");
-				}
-			}
-
-			ImGui::Text("Health");
-			for (int i = 0; i < player_count; ++i)
-			{
-				ImGui::SameLine(128.f * (i + 1));
-
-				int const health_percent = player_data[i].vitals.current_health * 100 / player_data[i].vitals.max_health;
-				if (health_percent > 80)
-				{
-					ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.2f, 1.0f), "Top Shape");
-				}
-				else if (health_percent > 60)
-				{
-					ImGui::TextColored(ImVec4(0.6f, 1.0f, 0.2f, 1.0f), "Scratched");
-				}
-				else if (health_percent > 40)
-				{
-					ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.2f, 1.0f), "Injured");
-				}
-				else if (health_percent > 20)
-				{
-					ImGui::TextColored(ImVec4(1.0f, 0.6f, 0.2f, 1.0f), "Wounded");
-				}
-				else if (health_percent > 0)
-				{
-					ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.2f, 1.0f), "Critical");
-				}
-				else
-				{
-					ImGui::TextColored(ImVec4(0.2f, 0.2f, 0.2f, 1.0f), "Dead");
-				}
-			}
-		}
-		ImGui::End();
-	}
-
-	void application::draw_player_sheet()
-	{
-		if (player_data.size() == 0)
-			return;
-
-		if (hud_param < 0)
-			hud_param = 0;
-
-		if (hud_param >= player_data.size())
-			hud_param = (int)player_data.size() - 1;
-
-		m3::player_character_data const& player = player_data[hud_param];
-
-		int window_width, window_height;
-		SDL_GetWindowSize(window, &window_width, &window_height);
-
-		ImGui::SetNextWindowSize(ImVec2(1024.f, 512.f));
-		ImGui::SetNextWindowPos(ImVec2(window_width / 2, window_height * 0.25f), ImGuiCond_None, ImVec2(0.5f, 0));
-		if (ImGui::Begin("##CharacterSheet", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
+		combat_background = load_texture("RPGMP_Plains.png");
+		
+		auto const load_sprite_bundle = [this, &pack_path, &load_texture] (char const* sprite_name)
 		{
-			ImGui::Text("%s", player.name.c_str());
+			mp_portrait& portrait = portraits.emplace_back();
+			portrait.name = sprite_name;
 			
-			ImGui::NewLine();
-			ImGui::Text("Cleverness: %d", player.attributes.cleverness);
-			ImGui::Text("Hardiness: %d", player.attributes.hardiness);
-			ImGui::Text("Focus: %d", player.attributes.focus);
-			ImGui::Text("Charisma: %d", player.attributes.charisma);
-			ImGui::Text("Will: %d", player.attributes.will);
-			ImGui::Text("Wisdom: %d", player.attributes.wisdom);
-			ImGui::Text("Strength: %d", player.attributes.strength);
-			ImGui::Text("Constitution: %d", player.attributes.constitution);
-			ImGui::Text("Agility: %d", player.attributes.agility);
+			try
+			{
+				portrait.tex_a = load_texture(std::format("Sprites/{}.png", sprite_name).c_str());
+				portrait.tex_b = load_texture(std::format("Sprites/{}B.png", sprite_name).c_str());
+				portrait.tex_shadow = load_texture(std::format("Sprites/{}Shadow.png", sprite_name).c_str());
+			}
+			catch (std::exception& e)
+			{
+				std::fprintf(stderr, "Failed to load sprite bundle '%s': %s", sprite_name, e.what());
+				portraits.pop_back();
+			}
+		};
 
-			ImGui::NewLine();
-			if (player.skills.military > 0)
-				ImGui::Text("Military: %d", player.skills.military);
-			if (player.skills.hunt > 0)
-				ImGui::Text("Hunt: %d", player.skills.hunt);
-			if (player.skills.brawl > 0)
-				ImGui::Text("Brawl: %d", player.skills.brawl);
-			if (player.skills.dueling > 0)
-				ImGui::Text("Dueling: %d", player.skills.dueling);
-
-			if (player.skills.foresting > 0)
-				ImGui::Text("Foresting: %d", player.skills.foresting);
-			if (player.skills.mountaineering > 0)
-				ImGui::Text("Mountaineering: %d", player.skills.mountaineering);
-			if (player.skills.sailoring > 0)
-				ImGui::Text("Sailoring: %d", player.skills.sailoring);
-			if (player.skills.urbanism > 0)
-				ImGui::Text("Urbanism: %d", player.skills.urbanism);
-
-			if (player.skills.rhetoric > 0)
-				ImGui::Text("Rhetoric: %d", player.skills.rhetoric);
-			if (player.skills.astrology > 0)
-				ImGui::Text("Astrology: %d", player.skills.astrology);
-			if (player.skills.medecine > 0)
-				ImGui::Text("Medicine: %d", player.skills.medecine);
-			if (player.skills.alchemy > 0)
-				ImGui::Text("Alchemy: %d", player.skills.alchemy);
-		}
-		ImGui::End();
+		load_sprite_bundle("AnimatedPlant");
+		load_sprite_bundle("Bandit");
+		load_sprite_bundle("Bat");
+		load_sprite_bundle("Fairy");
+		load_sprite_bundle("GelatinousCube");
+		load_sprite_bundle("GiantHornet");
+		load_sprite_bundle("GiantRat");
+		load_sprite_bundle("Goblin");
+		load_sprite_bundle("Merchant");
+		load_sprite_bundle("Ogre");
+		load_sprite_bundle("Orc");
+		load_sprite_bundle("Skeleton");
+		load_sprite_bundle("Slug");
+		load_sprite_bundle("Treant");
+		load_sprite_bundle("WildBoar");
+		load_sprite_bundle("Wizard");
 	}
 }

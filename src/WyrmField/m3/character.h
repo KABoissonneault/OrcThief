@@ -39,6 +39,7 @@ namespace ot::wf::m3
 	{
 		std::string name;
 		character_attributes attributes;
+		std::string portrait;
 	};
 
 	struct character_vitals
@@ -54,6 +55,13 @@ namespace ot::wf::m3
 		int max_health;
 		int current_health;
 		float health_buffer;
+	};
+
+	struct enemy_character_data
+	{
+		enemy_template base_template;
+		character_vitals vitals;
+		int count; // If above 1, the enemy is a swarm
 	};
 
 	struct character_skills

@@ -54,6 +54,12 @@
     <ClCompile Include="..\..\src\WyrmField\application\serialization.cpp">
       <Filter>Source Files\application</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\WyrmField\application\game_mode.cpp">
+      <Filter>Source Files\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\WyrmField\application\ui.cpp">
+      <Filter>Source Files\application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\WyrmField\config.h">
@@ -78,6 +84,12 @@
       <Filter>Source Files\application</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\WyrmField\application\serialization.h">
+      <Filter>Source Files\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\WyrmField\application\game_mode.h">
+      <Filter>Source Files\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\WyrmField\application\ui.h">
       <Filter>Source Files\application</Filter>
     </ClInclude>
   </ItemGroup>

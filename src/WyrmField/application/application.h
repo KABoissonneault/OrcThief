@@ -1,9 +1,9 @@
 #pragma once
 
+#include "core/uptr.h"
 #include "math/unit/time.h"
-
+#include "egfx/imgui/texture.h"
 #include "m3/character.h"
-
 #include "scene/scene.h"
 
 #include <vector>
@@ -22,6 +22,15 @@ namespace ot
 	namespace wf
 	{
 		class config;
+		class game_mode;
+
+		struct mp_portrait
+		{
+			std::string name;
+			egfx::imgui::texture tex_a;
+			egfx::imgui::texture tex_b;
+			egfx::imgui::texture tex_shadow;
+		};
 
 		class application
 		{
@@ -36,17 +45,22 @@ namespace ot
 			bool wants_quit = false;
 			bool draw_debug = false;
 
-			int hud_state = 0;
-			int hud_param = 0;
+			uptr<game_mode> game;
+
+			std::vector<mp_portrait> portraits;
+			egfx::imgui::texture combat_background;
 
 			application(SDL_Window& window, egfx::module& gfx_module, config const& program_config);
-		
+			~application();
+
 		public:
 			static constexpr math::seconds fixed_step{ 0.02f };
 
 			static application& create_instance(SDL_Window& window, egfx::module& gfx_module, config const& program_config);
 			static void destroy_instance() noexcept;
 			[[nodiscard]] static application& get_instance();
+
+			SDL_Window& get_main_window() const noexcept { return *window; }
 
 			void run();
 
@@ -58,14 +72,15 @@ namespace ot
 
 			std::span<m3::player_character_data> get_player_data() noexcept;
 
+			void change_game_mode(uptr<game_mode> new_game_mode);
+
+			std::span<mp_portrait const> get_portraits() const noexcept { return portraits; }
+			egfx::imgui::texture const& get_combat_background() const noexcept { return combat_background; }
+
 		private:
+			void load_monster_pack();
+
 			void process_events();
-
-			bool handle_hud_input(SDL_Event const& e);
-
-			void draw_hud();
-			void draw_player_vitals();
-			void draw_player_sheet();
 		};
 	}
 }
