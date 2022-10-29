@@ -41,6 +41,7 @@ namespace ot::wf
 
 		enum class combat_action
 		{
+			none,
 			attack,
 			block,
 			cast,
@@ -80,6 +81,8 @@ namespace ot::wf
 			case SDLK_c: return combat_action::cast;
 			case SDLK_x: return combat_action::examine;
 			}
+
+			return std::nullopt;
 		}
 
 		class combat_mode : public game_mode
@@ -91,6 +94,7 @@ namespace ot::wf
 			std::vector<m3::enemy_character_data> enemies;
 
 			int unit_turn;
+			combat_action player_actions[6] = { combat_action::none };
 			std::vector<std::string> combat_log;
 
 		public:
@@ -111,6 +115,8 @@ namespace ot::wf
 				test_enemy3.base_template = app->get_enemy_templates()[0];
 				test_enemy3.vitals = m3::generate_initial_vitals(test_enemy3.base_template.attributes);
 				test_enemy3.count = 1;
+
+				combat_log.push_back("Vermin has appeared!");
 
 				unit_turn = 0;
 			}
@@ -200,6 +206,22 @@ namespace ot::wf
 					}
 					return true;
 				}
+				else if (std::optional<combat_action> action = get_action(e.key.keysym.sym))
+				{
+					if (e.key.repeat == 0)
+					{
+						if (unit_turn >= 0)
+						{
+							player_actions[unit_turn] = *action;
+							++unit_turn;
+							if (unit_turn >= app->get_player_data().size())
+							{
+								unit_turn = -1;
+							}
+						}
+						return true;
+					}
+				}
 			}
 			else if (e.type == SDL_KEYUP)
 			{
@@ -224,83 +246,79 @@ namespace ot::wf
 		void combat_mode::draw()
 		{
 			auto const player_data = app->get_player_data();
-			if (open_player_sheet != -1)
+
+			int window_width, window_height;
+			SDL_GetWindowSize(&app->get_main_window(), &window_width, &window_height);
+
+			ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
+			ImGui::SetNextWindowSize(ImVec2(window_width, window_height));
+			ImGui::SetNextWindowBgAlpha(1.0f);
+			if (ImGui::Begin("##CombatScreen", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
 			{
-				ui::draw_player_sheet(app->get_main_window(), player_data[open_player_sheet]);
-				ui::draw_player_vitals(app->get_main_window(), player_data);
-			}
-			else
-			{
-				int window_width, window_height;
-				SDL_GetWindowSize(&app->get_main_window(), &window_width, &window_height);
+				egfx::imgui::texture const& background = app->get_combat_background();
+				float const background_upscale = 4.f;
 
-				ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
-				ImGui::SetNextWindowSize(ImVec2(window_width, window_height));
-				ImGui::SetNextWindowBgAlpha(1.0f);
-				if (ImGui::Begin("##CombatScreen", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
-				{
-					egfx::imgui::texture const& background = app->get_combat_background();
-					float const background_upscale = 4.f;
+				ImVec2 const initial_available_content = ImGui::GetContentRegionAvail();
+				ImVec2 const viewport_size(background.get_width() * background_upscale, background.get_height() * background_upscale);
+				if (ImGui::BeginChild("##CombatViewport", viewport_size, true /*border*/, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration))
+				{						
+					ImVec2 const space = ImGui::GetContentRegionAvail();
 
-					ImVec2 const initial_available_content = ImGui::GetContentRegionAvail();
-					ImVec2 const viewport_size(background.get_width() * background_upscale, background.get_height() * background_upscale);
-					if (ImGui::BeginChild("##CombatViewport", viewport_size, true /*border*/, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration))
-					{						
-						ImVec2 const space = ImGui::GetContentRegionAvail();
+					ImGui::Image(background.get_texture_id(), space);
 
-						ImGui::Image(background.get_texture_id(), space);
-
-						auto const portraits = app->get_portraits();
+					auto const portraits = app->get_portraits();
 						
-						float const denominator = (int)enemies.size() + 1;
+					float const denominator = (int)enemies.size() + 1;
 
-						for (size_t i = 0; i < enemies.size(); ++i)
+					for (size_t i = 0; i < enemies.size(); ++i)
+					{
+						m3::enemy_character_data const& e = enemies[i];
+						auto const it_found = std::ranges::find(portraits, e.base_template.portrait, &mp_portrait::name);
+						if (it_found == portraits.end())
+							continue;
+
+						mp_portrait const& portrait = *it_found;
+						float const portrait_width = portrait.tex_a.get_width();
+						float const portrait_height = portrait.tex_a.get_height();
+
+						float const horizontal_dist = (i + 1.f) / denominator;
+						ImVec2 const enemy_pos = ImVec2(space.x * horizontal_dist - portrait_width * 0.5f, space.y * 0.75f - portrait_height * 0.5f);
+
+						auto draw_at_pos = [enemy_pos, &portrait](float local_pos_x, float local_pos_y)
 						{
-							m3::enemy_character_data const& e = enemies[i];
-							auto const it_found = std::ranges::find(portraits, e.base_template.portrait, &mp_portrait::name);
-							if (it_found == portraits.end())
-								continue;
+							ImVec2 const draw_pos = ImVec2(enemy_pos.x + local_pos_x, enemy_pos.y + local_pos_y);
+							ImGui::SetCursorPos(draw_pos);
+							ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.75f);
+							ImGui::Image(portrait.tex_shadow.get_texture_id(), ImVec2(portrait.tex_shadow.get_width() * 2.f, portrait.tex_shadow.get_height() * 2.f));
+							ImGui::PopStyleVar();
+							ImGui::SetCursorPos(draw_pos);
+							ImGui::Image(portrait.tex_a.get_texture_id(), ImVec2(portrait.tex_a.get_width() * 2.f, portrait.tex_a.get_height() * 2.f));
+						};							
 
-							mp_portrait const& portrait = *it_found;
-							float const portrait_width = portrait.tex_a.get_width();
-							float const portrait_height = portrait.tex_a.get_height();
-
-							float const horizontal_dist = (i + 1.f) / denominator;
-							ImVec2 const enemy_pos = ImVec2(space.x * horizontal_dist - portrait_width * 0.5f, space.y * 0.75f - portrait_height * 0.5f);
-
-							auto draw_at_pos = [enemy_pos, &portrait](float local_pos_x, float local_pos_y)
-							{
-								ImVec2 const draw_pos = ImVec2(enemy_pos.x + local_pos_x, enemy_pos.y + local_pos_y);
-								ImGui::SetCursorPos(draw_pos);
-								ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.75f);
-								ImGui::Image(portrait.tex_shadow.get_texture_id(), ImVec2(portrait.tex_shadow.get_width() * 2.f, portrait.tex_shadow.get_height() * 2.f));
-								ImGui::PopStyleVar();
-								ImGui::SetCursorPos(draw_pos);
-								ImGui::Image(portrait.tex_a.get_texture_id(), ImVec2(portrait.tex_a.get_width() * 2.f, portrait.tex_a.get_height() * 2.f));
-							};							
-
-							if (e.count > 2)
-							{
-								draw_at_pos(-portrait_width * 0.75f, -portrait_height * 0.5f);
-								draw_at_pos(portrait_width * 0.75f, -portrait_height * 0.5f);
-								draw_at_pos(0.f, 0.f);
-							}
-							else if (e.count == 2)
-							{
-								draw_at_pos(-portrait_width * 0.75f, 0.f);
-								draw_at_pos(portrait_width * 0.75f, 0.f);
-							}
-							else
-							{
-								draw_at_pos(0.f, 0.f);
-							}							
+						if (e.count > 2)
+						{
+							draw_at_pos(-portrait_width * 0.75f, -portrait_height * 0.5f);
+							draw_at_pos(portrait_width * 0.75f, -portrait_height * 0.5f);
+							draw_at_pos(0.f, 0.f);
 						}
+						else if (e.count == 2)
+						{
+							draw_at_pos(-portrait_width * 0.75f, 0.f);
+							draw_at_pos(portrait_width * 0.75f, 0.f);
+						}
+						else
+						{
+							draw_at_pos(0.f, 0.f);
+						}							
 					}
-					ImGui::EndChild();
+				}
+				ImGui::EndChild();
 
-					ImGui::SameLine();
-					ImVec2 const enemy_list_size(0, viewport_size.y);
-					if (ImGui::BeginChild("##EnemyList", enemy_list_size, true /*border*/))
+				ImGui::SameLine();
+				ImVec2 const topright_size(0, viewport_size.y);
+				if (open_player_sheet < 0)
+				{						
+					if (ImGui::BeginChild("##EnemyList", topright_size, true /*border*/))
 					{
 						for (size_t i = 0; i < enemies.size(); ++i)
 						{
@@ -320,45 +338,78 @@ namespace ot::wf
 						}
 					}
 					ImGui::EndChild();
-
-					ImVec2 const log_size(viewport_size.x, 0.f);
-					if (ImGui::BeginChild("##Log", log_size, true /*border*/))
+				}
+				else
+				{
+					if (ImGui::BeginChild("##CharacterSheet", topright_size, true /*border*/))
 					{
-						if (unit_turn >= 0 && unit_turn < player_data.size())
+						m3::player_character_data const& sheet_player = player_data[open_player_sheet];
+						ui::draw_player_sheet_content(sheet_player);
+					}
+					ImGui::EndChild();
+				}
+
+				ImVec2 const log_size(viewport_size.x, 0.f);
+				if (ImGui::BeginChild("##Log", log_size, true /*border*/))
+				{
+					for (std::string const& line : combat_log)
+					{
+						ImGui::Text("%s", line.c_str());
+					}
+				}
+				ImGui::EndChild();
+
+				ImGui::SameLine();
+				ImVec2 const player_info_size(0.f, 0.f);
+				if (ImGui::BeginChild("##PlayerInfo", player_info_size, true /*border*/))
+				{
+					float const column_size = ImGui::GetContentRegionAvail().x / (player_data.size() + 1);
+					ui::draw_player_vitals_content(player_data, column_size);
+
+					ImGui::NewLine();
+					ImGui::Text("Action");
+
+					size_t const player_count = math::min_value(player_data.size(), 6);
+					for (int i = 0; i < player_count; ++i)
+					{
+						if (player_actions[i] != combat_action::none)
 						{
-							m3::player_character_data const& player = player_data[unit_turn];
-
-							ImGui::Text("Turn: %s", player.name.c_str());
-
-							std::vector<combat_action> available_actions{ combat_action::attack, combat_action::block };
-							if (player.skills.astrology > 0 || player.skills.medecine > 0 || player.skills.rhetoric > 0)
-							{
-								available_actions.push_back(combat_action::cast);
-							}
-							available_actions.push_back(combat_action::examine);
-
-							size_t const line_count = math::min_value(available_actions.size(), 4);
-							for (size_t i = 0; i < line_count; ++i)
-							{
-								auto const first_action = available_actions[i];
-								ImGui::Text("'%c' %s", get_action_hotkey(first_action), to_string(first_action));
-							}
+							ImGui::SameLine(column_size * (i + 1.f));
+							ImGui::Text("%s", to_string(player_actions[i]));
 						}
 					}
-					ImGui::EndChild();
 
-					ImGui::SameLine();
-					ImVec2 const player_vitals(0.f, 0.f);
-					if (ImGui::BeginChild("##PlayerVitals", player_vitals, true /*border*/))
+					ImGui::NewLine();
+					ImGui::Separator();
+					ImGui::NewLine();
+
+					if (unit_turn >= 0 && unit_turn < player_data.size())
 					{
-						float const column_size = ImGui::GetContentRegionAvail().x / (player_data.size() + 1);
-						ui::draw_player_vitals_content(player_data, column_size);
-					}
-					ImGui::EndChild();
+						m3::player_character_data const& player = player_data[unit_turn];
 
+						ImGui::Text("Turn: %s", player.name.c_str());
+
+						ImGui::NewLine();
+
+						std::vector<combat_action> available_actions{ combat_action::attack, combat_action::block };
+						if (player.skills.astrology > 0 || player.skills.medecine > 0 || player.skills.rhetoric > 0)
+						{
+							available_actions.push_back(combat_action::cast);
+						}
+						available_actions.push_back(combat_action::examine);
+
+						size_t const line_count = math::min_value(available_actions.size(), 4);
+						for (size_t i = 0; i < line_count; ++i)
+						{
+							auto const first_action = available_actions[i];
+							ImGui::Text("'%c' %s", get_action_hotkey(first_action), to_string(first_action));
+						}
+					}
 				}
-				ImGui::End();
+				ImGui::EndChild();
+
 			}
+			ImGui::End();
 		}
 	}
 

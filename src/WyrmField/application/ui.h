@@ -17,5 +17,6 @@ namespace ot::wf
 		void draw_player_vitals(SDL_Window& window, std::span<m3::player_character_data const> player_data);
 		void draw_player_vitals_content(std::span<m3::player_character_data const> player_data, float column_size);
 		void draw_player_sheet(SDL_Window& window, m3::player_character_data const& player);
+		void draw_player_sheet_content(m3::player_character_data const& player);
 	}
 }

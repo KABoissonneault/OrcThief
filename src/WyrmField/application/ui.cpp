@@ -145,47 +145,52 @@ namespace ot::wf::ui
 		ImGui::SetNextWindowPos(ImVec2(window_width / 2, window_height * 0.25f), ImGuiCond_None, ImVec2(0.5f, 0));
 		if (ImGui::Begin("##CharacterSheet", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
 		{
-			ImGui::Text("%s", player.name.c_str());
-
-			ImGui::NewLine();
-			ImGui::Text("Cleverness: %d", player.attributes.cleverness);
-			ImGui::Text("Hardiness: %d", player.attributes.hardiness);
-			ImGui::Text("Focus: %d", player.attributes.focus);
-			ImGui::Text("Charisma: %d", player.attributes.charisma);
-			ImGui::Text("Will: %d", player.attributes.will);
-			ImGui::Text("Wisdom: %d", player.attributes.wisdom);
-			ImGui::Text("Strength: %d", player.attributes.strength);
-			ImGui::Text("Constitution: %d", player.attributes.constitution);
-			ImGui::Text("Agility: %d", player.attributes.agility);
-
-			ImGui::NewLine();
-			if (player.skills.military > 0)
-				ImGui::Text("Military: %d", player.skills.military);
-			if (player.skills.hunt > 0)
-				ImGui::Text("Hunt: %d", player.skills.hunt);
-			if (player.skills.brawl > 0)
-				ImGui::Text("Brawl: %d", player.skills.brawl);
-			if (player.skills.dueling > 0)
-				ImGui::Text("Dueling: %d", player.skills.dueling);
-
-			if (player.skills.foresting > 0)
-				ImGui::Text("Foresting: %d", player.skills.foresting);
-			if (player.skills.mountaineering > 0)
-				ImGui::Text("Mountaineering: %d", player.skills.mountaineering);
-			if (player.skills.sailoring > 0)
-				ImGui::Text("Sailoring: %d", player.skills.sailoring);
-			if (player.skills.urbanism > 0)
-				ImGui::Text("Urbanism: %d", player.skills.urbanism);
-
-			if (player.skills.rhetoric > 0)
-				ImGui::Text("Rhetoric: %d", player.skills.rhetoric);
-			if (player.skills.astrology > 0)
-				ImGui::Text("Astrology: %d", player.skills.astrology);
-			if (player.skills.medecine > 0)
-				ImGui::Text("Medicine: %d", player.skills.medecine);
-			if (player.skills.alchemy > 0)
-				ImGui::Text("Alchemy: %d", player.skills.alchemy);
+			draw_player_sheet_content(player);
 		}
 		ImGui::End();
+	}
+
+	void draw_player_sheet_content(m3::player_character_data const& player)
+	{
+		ImGui::Text("%s", player.name.c_str());
+
+		ImGui::NewLine();
+		ImGui::Text("Cleverness: %d", player.attributes.cleverness);
+		ImGui::Text("Hardiness: %d", player.attributes.hardiness);
+		ImGui::Text("Focus: %d", player.attributes.focus);
+		ImGui::Text("Charisma: %d", player.attributes.charisma);
+		ImGui::Text("Will: %d", player.attributes.will);
+		ImGui::Text("Wisdom: %d", player.attributes.wisdom);
+		ImGui::Text("Strength: %d", player.attributes.strength);
+		ImGui::Text("Constitution: %d", player.attributes.constitution);
+		ImGui::Text("Agility: %d", player.attributes.agility);
+
+		ImGui::NewLine();
+		if (player.skills.military > 0)
+			ImGui::Text("Military: %d", player.skills.military);
+		if (player.skills.hunt > 0)
+			ImGui::Text("Hunt: %d", player.skills.hunt);
+		if (player.skills.brawl > 0)
+			ImGui::Text("Brawl: %d", player.skills.brawl);
+		if (player.skills.dueling > 0)
+			ImGui::Text("Dueling: %d", player.skills.dueling);
+
+		if (player.skills.foresting > 0)
+			ImGui::Text("Foresting: %d", player.skills.foresting);
+		if (player.skills.mountaineering > 0)
+			ImGui::Text("Mountaineering: %d", player.skills.mountaineering);
+		if (player.skills.sailoring > 0)
+			ImGui::Text("Sailoring: %d", player.skills.sailoring);
+		if (player.skills.urbanism > 0)
+			ImGui::Text("Urbanism: %d", player.skills.urbanism);
+
+		if (player.skills.rhetoric > 0)
+			ImGui::Text("Rhetoric: %d", player.skills.rhetoric);
+		if (player.skills.astrology > 0)
+			ImGui::Text("Astrology: %d", player.skills.astrology);
+		if (player.skills.medecine > 0)
+			ImGui::Text("Medicine: %d", player.skills.medecine);
+		if (player.skills.alchemy > 0)
+			ImGui::Text("Alchemy: %d", player.skills.alchemy);
 	}
 }
