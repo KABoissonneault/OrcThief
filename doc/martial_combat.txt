@@ -1,0 +1,70 @@
+- Attacks rolls attack value relative to their target (value around 50-150)
+- Higher attack roll is, more damage. Below a certain threshold, the attack misses. Between a miss and a direct hit, attacks are grazing hit. At the peak, certain attacks have critical hits
+
+Armor profiles:
+No armor        |      Dodged      |  Grazing   |    Direct   |  Critical
+Leather armor   |   Dodged       |  Grazing   |    Direct   |  Critical
+Chainmail       |  Dodged      |   Grazing  |  Direct     |  Critical
+Plate           | Dodged |       Grazing           |  Direct  |  Critical      
+                -------------------------------------------------------
+                0    10    20    30    40    50    60    70    80    90
+- Note that better armor still reduces the damage of the attack. Even if leather armor slightly helps the opponent make a better hit, part of the hit is absorbed, ultimately reducing damage, potentially reducing it to 0
+- Only plate offers a deflection bonus, turning good hits into scratches
+
+Agility profiles:
+Immobile        |  Grazing   |    Direct   |  Critical
+Minimal movement| Dodged |  Grazing   |    Direct   |  Critical
+Good movement   |   Dodged   |   Grazing  |  Direct     |  Critical
+High end agility|           Dodged              |   Grazing    |  Direct  |  Critical      
+                -------------------------------------------------------
+                0    10    20    30    40    50    60    70    80    90
+- Highly-skilled dodgers can focus on reducing direct hits, taking more grazing hits (which might be harmless)
+- While high dodge may seem most valuable at first, such agility can only be fully realized in light to no armor. One bad hit can end it all.
+- Dodging should be seen as a compensation for the loss of armor. Stealthy characters need low encumbrance to operate, and low strength characters may prefer to adventure with light equipment. They should still prefer to not risk getting hit
+
+Damage type:
+- Bodies are damaged in one of three ways: flesh loss, blunt trauma, or point failure
+- "Slash" attacks rip a surface, either flesh, clothing, or armor. A metal slash goes through most clothes, and often through leather armor. But chainmail will take some time to tear apart, and plate will easily deflect the hit entirely. When it hits the body, flesh loss occurs. It causes great pain, and massive slash damage causes energy loss due to blood loss.
+- "Blunt" attacks apply great force on a surface. Narrow blunt surface (like a hammer) damages through armor, while wide blunt surface cause more damage to the surface. Blunt damage breaks bones and numbs muscles. It causes moderate pain, and reduces the strength of the target
+- "Piercing" attacks do minimal surface damage, instead going deep to reach a critical point. Piercing attacks need enough momentum to break the surface, though high momentum piercing attacks can cause blunt damage. It causes massive pain. Critical hits are deadly. Short blades have low momentum, and can only pierce flesh, but can be manipulated more easily, and thus are harder to parry. High momentum projectiles or hilted piercers can pierce armor, or at least cause blunt damage, but require extensive effort to execute
+
+Damage Profiles
+
+Blunt
+100|                   
+   |                         
+ 80|                                /¯¯¯¯¯¯¯¯¯¯¯¯¯
+   |                              /
+ 60|                            /
+   |                          /
+ 40|                        /
+   |                      /
+ 20|           _________/
+   |          /
+   ------------------------------------------------------
+  0  10  20  30  40  50  60  70  80  90
+- Damage scales linearly on direct hits, and peak at critical
+- Grazing hits do minor damage
+
+Attack type:
+
+Hack:
+- Attack aimed at the sides of the upper body
+- Grazing hits for moderate slash damage and minor blunt (depending on the specific weapon)
+- Direct hits cause moderate blunt and slash damage
+- Critical hits cripple appendage or deal massive blunt and slash damage - the higher, the better.
+- Straight swords and axes are best suited for hack attacks. Hilted weapons with a long blade, such as glaives or halberds, can also hack well from a short distance
+
+Slash:
+- Attacks are aimed at the middle of the body
+- All hits are "grazing". Slash damage relative to quality of hit
+- Used effectively by any sword, whether straight or curved, long or short, though curved long swords do it best
+
+Strike:
+- Attack aimed directly on target
+- A "critical strike" means a peak efficiency of the hit. Higher attack values no longer benefit past the critical point
+
+Swing:
+- Attack aimed in front of attacker
+
+Stab:
