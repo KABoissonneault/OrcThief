@@ -60,6 +60,9 @@
     <ClCompile Include="..\..\src\WyrmField\application\ui.cpp">
       <Filter>Source Files\application</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\WyrmField\m3\formula.cpp">
+      <Filter>Source Files\m3</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\WyrmField\config.h">
@@ -91,6 +94,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\WyrmField\application\ui.h">
       <Filter>Source Files\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\WyrmField\m3\formula.h">
+      <Filter>Source Files\m3</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
