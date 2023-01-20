@@ -57,13 +57,6 @@ namespace ot::wf::m3
 		float health_buffer;
 	};
 
-	struct enemy_character_data
-	{
-		enemy_template base_template;
-		character_vitals vitals;
-		int count; // If above 1, the enemy is a swarm
-	};
-
 	struct character_skills
 	{
 		int military;
@@ -82,7 +75,7 @@ namespace ot::wf::m3
 		int alchemy;
 	};
 
-	struct player_character_data
+	struct character_data
 	{
 		std::string name;
 		character_attributes attributes;
@@ -91,4 +84,6 @@ namespace ot::wf::m3
 	};
 
 	character_vitals generate_initial_vitals(character_attributes const& attributes);
+
+	inline constexpr size_t player_character_max = 6;
 }

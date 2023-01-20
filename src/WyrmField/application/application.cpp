@@ -99,9 +99,9 @@ namespace ot::wf
 
 		char const* const enemy_template_filename = "enemy_templates.json";
 
-		void generate_player_characters(std::vector<m3::player_character_data>& player_characters)
+		void generate_player_characters(std::vector<m3::character_data>& player_characters)
 		{
-			m3::player_character_data& pc1 = player_characters.emplace_back();
+			m3::character_data& pc1 = player_characters.emplace_back();
 			pc1.name = "Karsa";
 			pc1.attributes.strength = 80;
 			pc1.attributes.constitution = 70;
@@ -117,7 +117,7 @@ namespace ot::wf
 			pc1.skills.brawl = 3;
 			pc1.skills.mountaineering = 5;
 
-			m3::player_character_data& pc2 = player_characters.emplace_back();
+			m3::character_data& pc2 = player_characters.emplace_back();
 			pc2.name = "Caladan";
 			pc2.attributes.strength = 50;
 			pc2.attributes.constitution = 80;
@@ -133,7 +133,7 @@ namespace ot::wf
 			pc2.skills.dueling = 3;
 			pc2.skills.brawl = 3;
 
-			m3::player_character_data& pc3 = player_characters.emplace_back();
+			m3::character_data& pc3 = player_characters.emplace_back();
 			pc3.name = "Squint";
 			pc3.attributes.strength = 70;
 			pc3.attributes.constitution = 30;
@@ -149,7 +149,7 @@ namespace ot::wf
 			pc3.skills.military = 3;
 			pc3.skills.urbanism = 3;
 
-			m3::player_character_data& pc4 = player_characters.emplace_back();
+			m3::character_data& pc4 = player_characters.emplace_back();
 			pc4.name = "Heboric";
 			pc4.attributes.strength = 40;
 			pc4.attributes.constitution = 70;
@@ -164,7 +164,7 @@ namespace ot::wf
 			pc4.skills.astrology = 5;
 			pc4.skills.rhetoric = 5;
 
-			m3::player_character_data& pc5 = player_characters.emplace_back();
+			m3::character_data& pc5 = player_characters.emplace_back();
 			pc5.name = "Crokus";
 			pc5.attributes.strength = 40;
 			pc5.attributes.constitution = 30;
@@ -180,7 +180,7 @@ namespace ot::wf
 			pc5.skills.hunt = 3;
 			pc5.skills.sailoring = 3;
 
-			m3::player_character_data& pc6 = player_characters.emplace_back();
+			m3::character_data& pc6 = player_characters.emplace_back();
 			pc6.name = "Kruppe";
 			pc6.attributes.strength = 30;
 			pc6.attributes.constitution = 30;
@@ -203,8 +203,9 @@ namespace ot::wf
 		, program_config(&program_config)
 		, main_scene(gfx_module, program_config)
 		, game(get_play_mode(*this))
+		, app_generator(std::random_device{}())
 	{
-
+		
 	}
 
 	application::~application() = default;
@@ -390,7 +391,7 @@ namespace ot::wf
 		enemy_templates.push_back(t);
 	}
 
-	std::span<m3::player_character_data> application::get_player_data() noexcept
+	std::span<m3::character_data> application::get_player_data() noexcept
 	{
 		return player_data;
 	}

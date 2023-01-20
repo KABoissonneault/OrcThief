@@ -180,7 +180,7 @@ namespace ot::wf
 			{
 				application& app = application::get_instance();
 
-				std::span<m3::player_character_data> player_data = app.get_player_data();
+				std::span<m3::character_data> player_data = app.get_player_data();
 				static int selected_template = 0;
 
 				if (player_data.size() == 0)

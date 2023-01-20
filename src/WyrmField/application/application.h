@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <span>
+#include <random>
 
 struct SDL_Window;
 union SDL_Event;
@@ -40,7 +41,7 @@ namespace ot
 			scene main_scene;
 
 			std::vector<m3::enemy_template> enemy_templates;
-			std::vector<m3::player_character_data> player_data;
+			std::vector<m3::character_data> player_data;
 
 			bool wants_quit = false;
 			bool draw_debug = false;
@@ -49,6 +50,7 @@ namespace ot
 
 			std::vector<mp_portrait> portraits;
 			egfx::imgui::texture combat_background;
+			std::minstd_rand app_generator;
 
 			application(SDL_Window& window, egfx::module& gfx_module, config const& program_config);
 			~application();
@@ -70,12 +72,14 @@ namespace ot
 			std::span<m3::enemy_template> get_enemy_templates() noexcept;
 			void add_enemy_template(m3::enemy_template const& t);
 
-			std::span<m3::player_character_data> get_player_data() noexcept;
+			std::span<m3::character_data> get_player_data() noexcept;
 
 			void change_game_mode(uptr<game_mode> new_game_mode);
 
 			std::span<mp_portrait const> get_portraits() const noexcept { return portraits; }
 			egfx::imgui::texture const& get_combat_background() const noexcept { return combat_background; }
+
+			auto& get_random_generator() { return app_generator; }
 
 		private:
 			void load_monster_pack();

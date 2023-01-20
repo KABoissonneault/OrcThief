@@ -8,7 +8,7 @@
 
 namespace ot::wf::ui
 {
-	void draw_player_vitals(SDL_Window& window, std::span<m3::player_character_data const> player_data)
+	void draw_player_vitals(SDL_Window& window, std::span<m3::character_data const> player_data)
 	{
 		int window_width, window_height;
 		SDL_GetWindowSize(&window, &window_width, &window_height);
@@ -17,7 +17,7 @@ namespace ot::wf::ui
 
 		float const column_size = 128.f;
 		ImGui::SetNextWindowSize(ImVec2((player_count + 1) * column_size, 256.f));
-		ImGui::SetNextWindowPos(ImVec2(window_width / 2, window_height * 0.75f), ImGuiCond_None, ImVec2(0.5f, 0));
+		ImGui::SetNextWindowPos(ImVec2(window_width * 0.5f, window_height * 0.75f), ImGuiCond_None, ImVec2(0.5f, 0));
 		if (ImGui::Begin("##CharacterHud", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
 		{
 			draw_player_vitals_content(player_data, column_size);
@@ -25,7 +25,7 @@ namespace ot::wf::ui
 		ImGui::End();
 	}
 
-	void draw_player_vitals_content(std::span<m3::player_character_data const> player_data, float column_size)
+	void draw_player_vitals_content(std::span<m3::character_data const> player_data, float column_size)
 	{
 		size_t const player_count = math::min_value(player_data.size(), 6);
 
@@ -136,13 +136,13 @@ namespace ot::wf::ui
 		}
 	}
 
-	void draw_player_sheet(SDL_Window& window, m3::player_character_data const& player)
+	void draw_player_sheet(SDL_Window& window, m3::character_data const& player)
 	{
 		int window_width, window_height;
 		SDL_GetWindowSize(&window, &window_width, &window_height);
 
 		ImGui::SetNextWindowSize(ImVec2(1024.f, 512.f));
-		ImGui::SetNextWindowPos(ImVec2(window_width / 2, window_height * 0.25f), ImGuiCond_None, ImVec2(0.5f, 0));
+		ImGui::SetNextWindowPos(ImVec2(window_width * 0.5f, window_height * 0.25f), ImGuiCond_None, ImVec2(0.5f, 0));
 		if (ImGui::Begin("##CharacterSheet", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
 		{
 			draw_player_sheet_content(player);
@@ -150,7 +150,7 @@ namespace ot::wf::ui
 		ImGui::End();
 	}
 
-	void draw_player_sheet_content(m3::player_character_data const& player)
+	void draw_player_sheet_content(m3::character_data const& player)
 	{
 		ImGui::Text("%s", player.name.c_str());
 
