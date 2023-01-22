@@ -19,4 +19,5 @@ namespace ot::wf
 	};
 
 	uptr<game_mode> get_play_mode(application& app);
+	uptr<game_mode> get_combat_mode(application& app);
 }

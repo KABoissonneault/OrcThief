@@ -161,6 +161,8 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\WyrmField\application\application.cpp" />
     <ClCompile Include="..\..\src\WyrmField\application\game_mode.cpp" />
+    <ClCompile Include="..\..\src\WyrmField\application\game_mode\combat_mode.cpp" />
+    <ClCompile Include="..\..\src\WyrmField\application\game_mode\play_mode.cpp" />
     <ClCompile Include="..\..\src\WyrmField\application\serialization.cpp" />
     <ClCompile Include="..\..\src\WyrmField\application\ui.cpp" />
     <ClCompile Include="..\..\src\WyrmField\config.cpp" />

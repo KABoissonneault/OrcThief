@@ -25,6 +25,9 @@
     <Filter Include="Source Files\application">
       <UniqueIdentifier>{62450609-4619-4d92-8e02-14783f68a85e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\application\game_mode">
+      <UniqueIdentifier>{54a4c7c4-19ea-4bed-b035-18469e31afda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\WyrmField\main.cpp">
@@ -62,6 +65,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\WyrmField\m3\formula.cpp">
       <Filter>Source Files\m3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\WyrmField\application\game_mode\combat_mode.cpp">
+      <Filter>Source Files\application\game_mode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\WyrmField\application\game_mode\play_mode.cpp">
+      <Filter>Source Files\application\game_mode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
