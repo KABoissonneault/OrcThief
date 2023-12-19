@@ -52,7 +52,7 @@ namespace ot::wf
 					}
 					return true;
 				}
-				else if (e.key.keysym.sym == SDLK_HASH)
+				else if (e.key.keysym.sym == SDLK_HASH || e.key.keysym.sym == SDLK_BACKQUOTE)
 				{
 					if (open_player_sheet == -1)
 					{

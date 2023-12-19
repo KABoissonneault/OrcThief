@@ -226,7 +226,7 @@ namespace ot::wf
 		}
 		catch (std::exception const& e)
 		{
-			std::fprintf(stderr, "Application ended with exception: %s", e.what());
+			std::fprintf(stderr, "Application ended with exception: %s\n", e.what());
 		}
 
 		imgui::shutdown();
