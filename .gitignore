@@ -55,3 +55,6 @@ ext/Ogre
 /res/DwarfEditor/Ogre/Hlms
 /res/WyrmField/Ogre/Hlms
 /res/WyrmField/MonsterPack
+/vs_build/*/x64/Debug
+/vs_build/*/x64/Release
+*.vcxproj.user

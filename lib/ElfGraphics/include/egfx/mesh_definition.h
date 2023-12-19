@@ -563,7 +563,7 @@ namespace ot::egfx
 		class const_half_edge_range
 		{
 			mesh_definition const* m = nullptr;
-			half_edge::id first = half_edge_id::empty;
+			half_edge::id first = half_edge::id::none;
 
 		public:
 			using value_type = half_edge::cref;
@@ -579,8 +579,8 @@ namespace ot::egfx
 			class iterator : public Iteration<iterator>
 			{
 				mesh_definition const* m = nullptr;
-				half_edge::id first = half_edge_id::none;
-				half_edge::id current = half_edge_id::none;
+				half_edge::id first = half_edge::id::none;
+				half_edge::id current = half_edge::id::none;
 
 				friend Iteration<iterator>;
 
@@ -628,7 +628,7 @@ namespace ot::egfx
 		class half_edge_range
 		{
 			mesh_definition* m = nullptr;
-			half_edge::id first = half_edge_id::empty;
+			half_edge::id first = half_edge::id::none;
 
 		public:
 			using value_type = half_edge::ref;
@@ -644,8 +644,8 @@ namespace ot::egfx
 			class iterator : public Iteration<iterator>
 			{
 				mesh_definition* m = nullptr;
-				half_edge::id first = half_edge_id::none;
-				half_edge::id current = half_edge_id::none;
+				half_edge::id first = half_edge::id::none;
+				half_edge::id current = half_edge::id::none;
 
 				friend Iteration<iterator>;
 

@@ -4,15 +4,13 @@
 
 #include "platform/file_dialog.h"
 
+#include <format>
 #include <imgui.h>
 #include <misc/freetype/imgui_freetype.h>
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_dx11.h>
 #include <imgui_markdown.h>
 #include <IconsFontAwesome5.h>
-
-#include <fmt/format.h>
-
 #include "Ogre/Root.h"
 
 namespace ot::dedit::imgui
@@ -27,14 +25,14 @@ namespace ot::dedit::imgui
 	{
 		assert(program_config != nullptr);
 		std::string_view const resource_root = program_config->get_core().get_resource_root();
-		return fmt::format("{}/Font/{}", resource_root, font_name);
+		return std::format("{}/Font/{}", resource_root, font_name);
 	}
 
 	std::string get_doc_path(std::string_view doc_name)
 	{
 		assert(program_config != nullptr);
 		std::string_view const resource_root = program_config->get_core().get_resource_root();
-		return fmt::format("{}/Doc/{}", resource_root, doc_name);
+		return std::format("{}/Doc/{}", resource_root, doc_name);
 	}
 
 	bool initialize(SDL_Window& window, config const& config)

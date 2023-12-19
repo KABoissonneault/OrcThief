@@ -18,8 +18,6 @@ namespace ot::dedit
 
 	bool action_handler::handle_keyboard_event(SDL_KeyboardEvent const& key, map& current_map)
 	{
-		auto const modifiers = input::keyboard::get_modifiers();
-
 		if (is_key_press(key, SDLK_z, input::keyboard::mod_group::ctrl))
 		{
 			if (!has_undo())

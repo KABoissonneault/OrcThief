@@ -4,11 +4,10 @@
 
 #include "egfx/immediate.h"
 
+#include <format>
 #include <numbers>
 
 #include <im3d.h>
-
-#include <fmt/format.h>
 
 namespace ot::dedit::selection
 {
@@ -129,7 +128,7 @@ namespace ot::dedit::selection
 		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav;
 		auto const id_value = static_cast<std::underlying_type_t<entity_id>>(b.get_id());
 		auto const face_value = static_cast<size_t>(selected_face);
-		if (!ImGui::Begin(fmt::format("Brush {} face {}", id_value, face_value).c_str(), nullptr, flags))
+		if (!ImGui::Begin(std::format("Brush {} face {}", id_value, face_value).c_str(), nullptr, flags))
 		{
 			ImGui::End();
 			return;

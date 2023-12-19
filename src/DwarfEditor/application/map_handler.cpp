@@ -6,7 +6,7 @@
 #include "serialize/serialize_map.h"
 #include "input.h"
 
-#include <fmt/format.h>
+#include <format>
 #include <imgui.h>
 
 namespace ot::dedit
@@ -128,7 +128,7 @@ namespace ot::dedit
 			if (ec)
 			{
 				if (ec != std::errc::operation_canceled)
-					console::error(fmt::format("Open file failed ({})", ec.message()));
+					console::error(std::format("Open file failed ({})", ec.message()));
 				return;
 			}
 
@@ -142,12 +142,12 @@ namespace ot::dedit
 			if (!serialize::fread(m, file))
 			{
 				m.clear();
-				console::error(fmt::format("Failed loading map '{}'", file_path));
+				console::error(std::format("Failed loading map '{}'", file_path));
 			} 
 			else
 			{
 				app.map_path = std::move(file_path);
-				console::log(fmt::format("Opened map '{}'", app.map_path));
+				console::log(std::format("Opened map '{}'", app.map_path));
 			}
 			std::fclose(file);
 		});
@@ -174,18 +174,18 @@ namespace ot::dedit
 			std::FILE* file = std::fopen(app.map_path.c_str(), "wb");
 			if (file == nullptr)
 			{
-				console::error(fmt::format("Could not open '{}' for writing", app.map_path));
+				console::error(std::format("Could not open '{}' for writing", app.map_path));
 				return;
 			}
 
 			if (!serialize::fwrite(m, file))
 			{
-				console::error(fmt::format("Failed to save map '{}'", app.map_path));
+				console::error(std::format("Failed to save map '{}'", app.map_path));
 				std::fclose(file);
 			} 
 			else
 			{
-				console::log(fmt::format("Saved map '{}'", app.map_path));
+				console::log(std::format("Saved map '{}'", app.map_path));
 				saved_action = acc.get_last_action();
 				std::fclose(file);
 				do_post_save_operation();
@@ -209,26 +209,26 @@ namespace ot::dedit
 			if (ec)
 			{
 				if (ec != std::errc::operation_canceled)
-					console::error(fmt::format("Save file failed ({})", ec.message()));
+					console::error(std::format("Save file failed ({})", ec.message()));
 				return;
 			}
 
 			std::FILE* file = std::fopen(file_path.c_str(), "wb");
 			if (file == nullptr)
 			{
-				console::error(fmt::format("Could not open '{}' for writing", file_path));
+				console::error(std::format("Could not open '{}' for writing", file_path));
 				return;
 			}
 
 			if (!serialize::fwrite(m, file))
 			{
-				console::error(fmt::format("Failed to save map as '{}'", file_path));
+				console::error(std::format("Failed to save map as '{}'", file_path));
 				std::fclose(file);
 			} 
 			else
 			{
 				app.map_path = std::move(file_path);
-				console::log(fmt::format("Saved map as '{}'", app.map_path));
+				console::log(std::format("Saved map as '{}'", app.map_path));
 				saved_action = acc.get_last_action();
 				std::fclose(file);
 				do_post_save_operation();

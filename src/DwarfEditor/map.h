@@ -10,10 +10,12 @@
 #include <vector>
 #include <span>
 #include <memory>
+#include <iosfwd>
 
 namespace ot::dedit
 {
 	enum class entity_id : uint64_t {};
+	[[nodiscard]] inline constexpr uint64_t as_int(entity_id i) noexcept { return static_cast<uint64_t>(i); }
 
 	struct brush
 	{

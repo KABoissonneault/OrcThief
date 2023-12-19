@@ -17,9 +17,8 @@
 #include <imgui.h>
 #include <im3d.h>
 
+#include <format>
 #include <numbers>
-
-#include <fmt/format.h>
 
 namespace ot::dedit::selection
 {
@@ -173,7 +172,7 @@ namespace ot::dedit::selection
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImGui::GetStyleColorVec4(ImGuiCol_TitleBg));
 		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav;
 		auto const id_value = static_cast<std::underlying_type_t<entity_id>>(b.get_id());
-		if (!ImGui::Begin(fmt::format("Brush {}", id_value).c_str(), nullptr, flags))
+		if (!ImGui::Begin(std::format("Brush {}", id_value).c_str(), nullptr, flags))
 		{
 			ImGui::End();
 			return false;

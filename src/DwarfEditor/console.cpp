@@ -17,7 +17,7 @@ namespace ot::dedit::console
 		access_logs().clear();
 	}
 
-	void output(level_type level, std::string s)
+	void output(level_type level, std::string&& s)
 	{
 		log_data& data = access_logs().emplace_back();
 		data.level = level;

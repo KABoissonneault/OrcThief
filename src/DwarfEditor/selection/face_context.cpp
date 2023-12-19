@@ -10,10 +10,9 @@
 #include "egfx/object/camera.h"
 #include "egfx/immediate.h"
 
+#include <format>
 #include <imgui.h>
 #include <im3d.h>
-
-#include <fmt/format.h>
 
 namespace ot::dedit::selection
 {
@@ -23,7 +22,7 @@ namespace ot::dedit::selection
 		{
 			math::plane const local_plane = face.get_plane();
 			math::plane const world_plane = transform(local_plane, t);
-			return  mouse_ray.intersects(world_plane);
+			return mouse_ray.intersects(world_plane);
 		}
 
 		egfx::half_edge::id detect_hovered_edge(math::ray const& mouse_ray, egfx::face::cref face, math::transform_matrix const& t)
@@ -156,7 +155,7 @@ namespace ot::dedit::selection
 		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav;
 		auto const id_value = static_cast<std::underlying_type_t<entity_id>>(b.get_id());
 		auto const face_value = static_cast<size_t>(selected_face);
-		if (!ImGui::Begin(fmt::format("Brush {} face {}", id_value, face_value).c_str(), nullptr, flags))
+		if (!ImGui::Begin(std::format("Brush {} face {}", id_value, face_value).c_str(), nullptr, flags))
 		{
 			ImGui::End();
 			return;

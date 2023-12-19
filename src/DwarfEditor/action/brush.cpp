@@ -3,7 +3,7 @@
 #include "console.h"
 #include "egfx/mesh_definition.h"
 
-#include <fmt/format.h>
+#include <format>
 
 namespace ot::dedit::action
 {
@@ -17,7 +17,7 @@ namespace ot::dedit::action
 	void spawn_brush::apply(map& current_map)
 	{
 		current_map.make_brush(mesh_def, id);
-		console::log("Created brush {}", id);
+		console::log(std::format("Created brush {}", as_int(id)));
 	}
 	
 	void spawn_brush::undo(map& current_map)
@@ -36,7 +36,7 @@ namespace ot::dedit::action
 		brush* b = current_map.find_brush(get_id());
 		if (b == nullptr)
 		{
-			console::error("Could not apply action: entity '{}' not found", get_id());
+			console::error(std::format("Could not apply action: entity '{}' not found", as_int(get_id())));
 			return;
 		}
 
@@ -92,7 +92,7 @@ namespace ot::dedit::action
 		if (result)
 		{
 			egfx::face::ref const new_face = *result;
-			console::log("Split brush {} face {} into new face {}", get_id(), face, new_face.get_id());
+			console::log(std::format( "Split brush {} face {} into new face {}", as_int(get_id()), static_cast<size_t>(face), static_cast<size_t>(new_face.get_id())));
 			b.reload_node(std::move(new_mesh));
 		}
 		else
@@ -101,16 +101,16 @@ namespace ot::dedit::action
 			switch (fail)
 			{
 			case egfx::face::split_fail::inside: 
-				console::error("Could not split brush {} face {}: face was entirely inside the plane", get_id(), face);
+				console::error(std::format("Could not split brush {} face {}: face was entirely inside the plane", as_int(get_id()), static_cast<size_t>(face)));
 				break;
 			case egfx::face::split_fail::outside:
-				console::error("Could not split brush {} face {}: face was entirely outside the plane", get_id(), face);
+				console::error(std::format("Could not split brush {} face {}: face was entirely outside the plane", as_int(get_id()), static_cast<size_t>(face)));
 				break;
 			case egfx::face::split_fail::aligned:
-				console::error("Could not split brush {} face {}: face was aligned to the plane", get_id(), face);
+				console::error(std::format("Could not split brush {} face {}: face was aligned to the plane", as_int(get_id()), static_cast<size_t>(face)));
 				break;
 			case egfx::face::split_fail::opposite_aligned:
-				console::error("Could not split brush {} face {}: face was opposite-aligned to the plane", get_id(), face);
+				console::error(std::format("Could not split brush {} face {}: face was opposite-aligned to the plane", as_int(get_id()), static_cast<size_t>(face)));
 				break;
 			}
 		}		

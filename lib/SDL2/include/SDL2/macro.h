@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdio>
+
 #define OT_SDL_FAILURE(str) \
     std::printf("Unhandled error at %s:%d (%s): %s", __FILE__, __LINE__, str, SDL_GetError()); \
     std::abort() 

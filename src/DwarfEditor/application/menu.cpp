@@ -12,7 +12,6 @@
 #include "action/brush.h"
 
 #include <imgui.h>
-#include <fmt/format.h>
 #include <fstream>
 #include <IconsFontAwesome5.h>
 
