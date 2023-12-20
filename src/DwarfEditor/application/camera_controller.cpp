@@ -111,9 +111,9 @@ namespace ot::dedit
 			velocity += { 0, 0, 1 };
 		if (input::keyboard::is_pressed(SDL_SCANCODE_D))
 			velocity += { 1, 0, 0 };
-		if (input::keyboard::is_pressed(SDL_SCANCODE_SPACE))
+		if (input::keyboard::is_pressed(SDL_SCANCODE_E))
 			velocity += { 0, 1, 0 };
-		if (input::keyboard::is_pressed(SDL_SCANCODE_C))
+		if (input::keyboard::is_pressed(SDL_SCANCODE_Q))
 			velocity += { 0, -1, 0 };
 
 		if (float_eq(velocity, { 0, 0, 0 }))
