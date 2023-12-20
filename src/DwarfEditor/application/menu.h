@@ -20,6 +20,8 @@ namespace ot::dedit
 
 		std::shared_ptr<egfx::mesh_definition const> cube;
 		std::shared_ptr<egfx::mesh_definition const> octagonal_prism;
+		std::shared_ptr<egfx::mesh_definition const> hex_prism;
+		std::shared_ptr<egfx::mesh_definition const> tri_prism;
 		std::shared_ptr<egfx::mesh_definition const> square_pyramid;
 
 		void draw_main_menu();
