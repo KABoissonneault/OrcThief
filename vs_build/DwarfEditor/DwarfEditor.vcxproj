@@ -136,7 +136,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2d.lib;SDL2maind.lib;freetype.lib;OgreMain_d.lib;OgreHlmsUnlit_d.lib;OgreHlmsPbs_d.lib;RenderSystem_Direct3D11_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2d.lib;SDL2maind.lib;freetyped.lib;OgreMain_d.lib;OgreHlmsUnlit_d.lib;OgreHlmsPbs_d.lib;RenderSystem_Direct3D11_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\ext\FreeType\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
