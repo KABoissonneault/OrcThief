@@ -82,7 +82,7 @@ namespace ot::dedit::selection
 		, selected_brush(selected_brush)
 		, object_matrix(to_imgui(current_map.find_brush(selected_brush)->get_world_transform(current_map.get_brush_root_world_transform())))
 	{
-		
+
 	}
 
 	void brush_context::update(action::accumulator& acc, input::frame_input& input)
@@ -126,7 +126,7 @@ namespace ot::dedit::selection
 					is_editing = true;
 				}
 				// If we just stopped using the gizmo, then we need to commit the edit if any
-				else if(is_editing)
+				else if (is_editing)
 				{
 					if (!float_eq(object_matrix, t))
 					{
@@ -146,7 +146,7 @@ namespace ot::dedit::selection
 					is_editing = false;
 				}
 			}
-		}	
+		}
 
 		draw_immediate_scene(mesh_def, t, hovered_face);
 
@@ -159,7 +159,7 @@ namespace ot::dedit::selection
 				next_context.reset(new face_context(*current_map, main_camera, *main_window, selected_brush, hovered_face));
 			}
 		}
-		else if(input.consume_right_click())
+		else if (input.consume_right_click())
 		{
 			next_context.reset();
 		}
@@ -176,7 +176,7 @@ namespace ot::dedit::selection
 		{
 			ImGui::End();
 			return false;
-		}			
+		}
 
 		if (!(operation == operation_type::translate || operation == operation_type::rotation))
 		{
@@ -227,12 +227,12 @@ namespace ot::dedit::selection
 		rotation[1] *= std::numbers::pi_v<float> / 180.f;
 		rotation[2] *= std::numbers::pi_v<float> / 180.f;
 		object_matrix.recompose(translation, rotation, scale);
-				
-		if(has_translated) 
+
+		if (has_translated)
 			acc.emplace_action<action::set_brush_position>(b, math::point3f{ translation[0], translation[1], translation[2] });
-		if(has_rotated) 
+		if (has_rotated)
 			acc.emplace_action<action::set_brush_rotation>(b, object_matrix.get_rotation());
-		if(has_scaled) 
+		if (has_scaled)
 			acc.emplace_action<action::set_brush_scale>(b, math::scales{ scale[0], scale[1], scale[2] });
 
 		return translate_active || rotation_active || scale_active;
@@ -244,7 +244,7 @@ namespace ot::dedit::selection
 		assert(operation != operation_type::face_selection);
 		switch (operation)
 		{
-		case operation_type::translate: 
+		case operation_type::translate:
 			im3d.m_gizmoMode = Im3d::GizmoMode_Translation;
 			im3d.m_gizmoLocal = !use_world_manipulation;
 			break;
@@ -269,11 +269,13 @@ namespace ot::dedit::selection
 		if (composite_context::handle_keyboard_event(key, acc))
 			return true;
 
+		brush const& b = get_brush();
+
 		if (key.state == SDL_PRESSED && key.repeat == 0)
 		{
 			switch (key.keysym.sym)
 			{
-			case SDLK_w: 
+			case SDLK_w:
 				if (operation == operation_type::translate || operation == operation_type::rotation)
 				{
 					use_world_manipulation = !use_world_manipulation;
@@ -283,7 +285,13 @@ namespace ot::dedit::selection
 			case SDLK_r: operation = operation_type::rotation; return true;
 			case SDLK_s: operation = operation_type::scale; return true;
 			case SDLK_f: operation = operation_type::face_selection; return true;
+
+			case SDLK_DELETE:
+			{
+				acc.emplace_action<action::delete_brush>(b);
+				return true;
 			}
+			}			
 		}
 
 		return false;

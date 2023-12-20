@@ -169,4 +169,33 @@ namespace ot::dedit::action
 	{
 		b.node.set_scale(previous_state);
 	}
+
+	delete_brush::delete_brush(brush const& b)
+		: id(b.get_id())
+		, previous_transform(b.get_local_transform())
+		, previous_mesh_def(b.mesh_def)
+	{
+
+	}
+
+	void delete_brush::apply(map& current_map)
+	{
+		brush* const b = current_map.find_brush(id);
+		if (b == nullptr)
+		{
+			console::error(std::format("Could not apply 'delete_brush' action: entity '{}' not found", as_int(id)));
+			return;
+		}
+
+		current_map.delete_brush(id);
+		console::log(std::format("Deleted brush {}", as_int(id)));
+	}
+
+	void delete_brush::undo(map& current_map)
+	{
+		brush& b = current_map.make_brush(previous_mesh_def, id);
+		b.node.set_position(math::point3f{ 0,0,0 } + previous_transform.get_displacement());
+		b.node.set_rotation(previous_transform.get_rotation().to_quaternion());
+		b.node.set_scale(previous_transform.get_scale());
+	}
 }

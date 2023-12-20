@@ -109,4 +109,18 @@ namespace ot::dedit::action
 	public:
 		set_brush_scale(brush const& b, math::scales s);
 	};
+
+	class delete_brush : public base
+	{
+		entity_id id;
+		math::transform_matrix previous_transform;
+		std::shared_ptr<egfx::mesh_definition const> previous_mesh_def;
+
+	protected:
+		virtual void apply(map& current_map) override;
+		virtual void undo(map& current_map) override;
+
+	public:
+		delete_brush(brush const& b);
+	};
 }
