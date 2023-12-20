@@ -16,7 +16,7 @@
 #include "SDL2/macro.h"
 #include <SDL_video.h>
 
-#include <imgui_impl_sdl.h>
+#include <imgui_impl_sdl2.h>
 #include <im3d.h>
 
 #include <iterator>
@@ -194,6 +194,8 @@ namespace ot::dedit
 
 				if (mouse.handle_mouse_motion_event(e.motion))
 					break;
+
+				ImGui_ImplSDL2_ProcessEvent(&e);
 
 				break;
 

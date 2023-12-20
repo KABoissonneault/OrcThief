@@ -1,8 +1,5 @@
 #include "imgui.h"
 
-#ifndef IMGUI_DEFINE_MATH_OPERATORS
-#define IMGUI_DEFINE_MATH_OPERATORS
-#endif
 #include "imgui_internal.h"
 
 namespace ImGui
@@ -26,24 +23,28 @@ namespace ImGui
 	bool BeginMainStatusBar()
 	{
 		ImGuiContext& g = *GImGui;
-		ImGuiViewport* viewport = g.Viewports[0];
-		float height = g.NextWindowData.MenuBarOffsetMinVal.y + g.FontSize + g.Style.FramePadding.y * 2;
+		ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)GetMainViewport();
+
+		// Notify of viewport change so GetFrameHeight() can be accurate in case of DPI change
+		SetCurrentViewport(NULL, viewport);
+
+		// For the main menu bar, which cannot be moved, we honor g.Style.DisplaySafeAreaPadding to ensure text can be visible on a TV set.
+		// FIXME: This could be generalized as an opt-in way to clamp window->DC.CursorStartPos to avoid SafeArea?
+		// FIXME: Consider removing support for safe area down the line... it's messy. Nowadays consoles have support for TV calibration in OS settings.
 		g.NextWindowData.MenuBarOffsetMinVal = ImVec2(g.Style.DisplaySafeAreaPadding.x, ImMax(g.Style.DisplaySafeAreaPadding.y - g.Style.FramePadding.y, 0.0f));
+				
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
+		float height = GetFrameHeight();
 		SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + viewport->Size.y - height));
 		SetNextWindowSize(ImVec2(viewport->Size.x, height));
-		SetNextWindowViewport(viewport->ID); // Enforce viewport so we don't create our onw viewport when ImGuiConfigFlags_ViewportsNoMerge is set.
-		PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-		PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(0, 0));
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
-		bool is_open = Begin("##MainStatusBar", NULL, window_flags) && BeginMenuBar();
-		PopStyleVar(2);
+		bool is_open = BeginViewportSideBar("##MainStatusBar", viewport, ImGuiDir_Down, height, window_flags);
 		g.NextWindowData.MenuBarOffsetMinVal = ImVec2(0.0f, 0.0f);
-		if (!is_open)
-		{
+
+		if (is_open)
+			BeginMenuBar();
+		else
 			End();
-			return false;
-		}
-		return true;
+		return is_open;
 	}
 
 	void EndMainStatusBar()
@@ -54,7 +55,7 @@ namespace ImGui
 		// FIXME: With this strategy we won't be able to restore a NULL focus.
 		ImGuiContext& g = *GImGui;
 		if (g.CurrentWindow == g.NavWindow && g.NavLayer == ImGuiNavLayer_Main && !g.NavAnyRequest)
-			FocusTopMostWindowUnderOne(g.NavWindow, NULL);
+			FocusTopMostWindowUnderOne(g.NavWindow, NULL, NULL, ImGuiFocusRequestFlags_UnlessBelowModal | ImGuiFocusRequestFlags_RestoreFocusedChild);
 
 		End();
 	}
