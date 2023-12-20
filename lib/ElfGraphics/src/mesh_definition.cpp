@@ -1,6 +1,7 @@
 #include "mesh_definition.h"
 
 #include <numeric>
+#include <system_error>
 
 namespace ot::egfx
 {	
@@ -470,7 +471,6 @@ namespace ot::egfx
 		for (point_intersection const& intersection : intersections)
 		{
 			auto const& edges = intersection.edges;
-			auto const vertex_id = intersection.vertex;
 
 			for (size_t i = 0; i < edges.size() - 1; ++i)
 			{
@@ -538,11 +538,17 @@ namespace ot::egfx
 
 	mesh_definition::mesh_definition(std::span<const math::plane> planes)
 	{
+		if (planes.empty())
+			return;
+
 		faces.resize(planes.size());
 		for (size_t i = 0; i < planes.size(); ++i)
 			faces[i].normal = planes[i].normal;
 
 		std::vector<point_intersection> const intersections = find_intersections(planes, vertices, half_edges);
+		if (intersections.empty())
+			throw std::invalid_argument("Input faces had no intersections");
+
 		resolve_edge_directions(planes, intersections, half_edges, faces);
 		update_bounds(bounds, vertices);
 	}
