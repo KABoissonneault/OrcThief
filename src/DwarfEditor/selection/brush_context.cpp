@@ -90,7 +90,7 @@ namespace ot::dedit::selection
 		hovered_face = egfx::face::id::none;
 
 		brush const& b = get_brush();
-		egfx::mesh_definition const& mesh_def = *b.mesh_def;
+		egfx::mesh_definition const& mesh_def = b.get_mesh_def();
 		math::transform_matrix const t = b.get_world_transform(current_map->get_brush_root_world_transform());
 
 		if (next_context == nullptr)
@@ -171,8 +171,7 @@ namespace ot::dedit::selection
 
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImGui::GetStyleColorVec4(ImGuiCol_TitleBg));
 		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav;
-		auto const id_value = static_cast<std::underlying_type_t<entity_id>>(b.get_id());
-		if (!ImGui::Begin(std::format("Brush {}", id_value).c_str(), nullptr, flags))
+		if (!ImGui::Begin(std::format("Brush {}", b.get_name()).c_str(), nullptr, flags))
 		{
 			ImGui::End();
 			return false;

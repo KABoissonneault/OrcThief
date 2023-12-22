@@ -52,7 +52,7 @@ namespace ot::dedit::action
 
 	brush_definition_base::brush_definition_base(brush const& b)
 		: single_brush(b)
-		, previous_state(b.mesh_def)
+		, previous_state(b.get_shared_mesh_def())
 	{
 
 	}
@@ -72,7 +72,7 @@ namespace ot::dedit::action
 
 	void split_brush_edge::do_apply(brush& b)
 	{
-		auto new_mesh = std::make_shared<egfx::mesh_definition>(*b.mesh_def);
+		auto new_mesh = std::make_shared<egfx::mesh_definition>(b.get_mesh_def());
 		new_mesh->get_half_edge(edge).split_at(point);
 		b.reload_node(std::move(new_mesh));
 	}
@@ -87,7 +87,7 @@ namespace ot::dedit::action
 
 	void split_brush_face::do_apply(brush& b)
 	{
-		auto new_mesh = std::make_shared<egfx::mesh_definition>(*b.mesh_def);
+		auto new_mesh = std::make_shared<egfx::mesh_definition>(b.get_mesh_def());
 		auto result = new_mesh->get_face(face).split(plane);
 		if (result)
 		{
@@ -118,7 +118,7 @@ namespace ot::dedit::action
 
 	set_brush_position::set_brush_position(brush const& b, math::point3f point)
 		: single_brush(b)
-		, previous_state(b.node.get_position())
+		, previous_state(b.get_node().get_position())
 		, new_pos(point)
 	{
 
@@ -126,17 +126,17 @@ namespace ot::dedit::action
 
 	void set_brush_position::do_apply(brush& b)
 	{
-		b.node.set_position(new_pos);
+		b.get_node().set_position(new_pos);
 	}
 
 	void set_brush_position::do_undo(brush& b)
 	{
-		b.node.set_position(previous_state);
+		b.get_node().set_position(previous_state);
 	}
 
 	set_brush_rotation::set_brush_rotation(brush const& b, math::quaternion rot)
 		: single_brush(b)
-		, previous_state(b.node.get_rotation())
+		, previous_state(b.get_node().get_rotation())
 		, new_rot(rot)
 	{
 
@@ -144,17 +144,17 @@ namespace ot::dedit::action
 
 	void set_brush_rotation::do_apply(brush& b)
 	{
-		b.node.set_rotation(new_rot);
+		b.get_node().set_rotation(new_rot);
 	}
 
 	void set_brush_rotation::do_undo(brush& b)
 	{
-		b.node.set_rotation(previous_state);
+		b.get_node().set_rotation(previous_state);
 	}
 
 	set_brush_scale::set_brush_scale(brush const& b, math::scales s)
 		: single_brush(b)
-		, previous_state(b.node.get_scale())
+		, previous_state(b.get_node().get_scale())
 		, new_s(s)
 	{
 
@@ -162,18 +162,18 @@ namespace ot::dedit::action
 
 	void set_brush_scale::do_apply(brush& b)
 	{
-		b.node.set_scale(new_s);
+		b.get_node().set_scale(new_s);
 	}
 
 	void set_brush_scale::do_undo(brush& b)
 	{
-		b.node.set_scale(previous_state);
+		b.get_node().set_scale(previous_state);
 	}
 
 	delete_brush::delete_brush(brush const& b)
 		: id(b.get_id())
 		, previous_transform(b.get_local_transform())
-		, previous_mesh_def(b.mesh_def)
+		, previous_mesh_def(b.get_shared_mesh_def())
 	{
 
 	}
@@ -194,8 +194,8 @@ namespace ot::dedit::action
 	void delete_brush::undo(map& current_map)
 	{
 		brush& b = current_map.make_brush(previous_mesh_def, id);
-		b.node.set_position(math::point3f{ 0,0,0 } + previous_transform.get_displacement());
-		b.node.set_rotation(previous_transform.get_rotation().to_quaternion());
-		b.node.set_scale(previous_transform.get_scale());
+		b.get_node().set_position(math::point3f{ 0,0,0 } + previous_transform.get_displacement());
+		b.get_node().set_rotation(previous_transform.get_rotation().to_quaternion());
+		b.get_node().set_scale(previous_transform.get_scale());
 	}
 }

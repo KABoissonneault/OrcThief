@@ -137,6 +137,9 @@ namespace ot::dedit
 	template<typename Application>
 	void menu<Application>::update()
 	{
+		draw_main_menu();
+		draw_main_status();
+
 		if (draw_console_window)
 		{
 			console_window::draw(&draw_console_window);
@@ -147,8 +150,10 @@ namespace ot::dedit
 			about_window::draw(&draw_about_window);
 		}
 
-		draw_main_menu();
-		draw_main_status();
+		if(draw_imgui_demo)
+		{
+			ImGui::ShowDemoWindow(&draw_imgui_demo);
+		}
 	}
 
 	template<typename Application>
@@ -254,6 +259,7 @@ namespace ot::dedit
 		if (ImGui::BeginMenu("Help"))
 		{
 			ImGui::MenuItem("About", "", &draw_about_window, about_window::has_content());
+			ImGui::MenuItem("ImGui Demo", "", &draw_imgui_demo, /*enabled*/ true);
 
 			ImGui::EndMenu();
 		}		

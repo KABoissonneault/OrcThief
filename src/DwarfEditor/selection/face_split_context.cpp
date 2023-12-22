@@ -40,7 +40,7 @@ namespace ot::dedit::selection
 
 		math::transform_matrix get_current_plane_math_transform(math::transform_matrix const& brush_transform, brush const& b, egfx::face::id selected_face)
 		{
-			egfx::face::cref const f = b.mesh_def->get_face(selected_face);
+			egfx::face::cref const f = b.get_mesh_def().get_face(selected_face);
 			math::plane const p = f.get_plane();
 
 			return math::transform_matrix::from_components(
@@ -51,7 +51,7 @@ namespace ot::dedit::selection
 
 		imgui::matrix get_current_plane_imgui_transform(math::transform_matrix const& brush_transform, brush const& b, egfx::face::id selected_face)
 		{
-			egfx::face::cref const f = b.mesh_def->get_face(selected_face);
+			egfx::face::cref const f = b.get_mesh_def().get_face(selected_face);
 			math::plane const p = f.get_plane();
 
 			return imgui::matrix::from_components(

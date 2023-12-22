@@ -24,9 +24,11 @@ namespace ot::dedit
 		std::shared_ptr<egfx::mesh_definition const> tri_prism;
 		std::shared_ptr<egfx::mesh_definition const> square_pyramid;
 
+		bool draw_imgui_demo = false;
+
 		void draw_main_menu();
 		void draw_main_status();
-
+		
 	public:
 		menu();
 

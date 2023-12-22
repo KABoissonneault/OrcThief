@@ -80,7 +80,7 @@ namespace ot::dedit::selection
 
 		brush const& b = get_brush();
 		math::transform_matrix const t = b.get_world_transform(current_map->get_brush_root_world_transform());
-		egfx::face::cref const current_face = b.mesh_def->get_face(selected_face);
+		egfx::face::cref const current_face = b.get_mesh_def().get_face(selected_face);
 
 		// Transparent overlay
 		egfx::im::draw_face(current_face, t, egfx::color{ 1.0f, 1.0f, 1.0f, 0.6f });
@@ -108,7 +108,7 @@ namespace ot::dedit::selection
 					}
 					else
 					{
-						math::line const local_line = b.mesh_def->get_half_edge(hovered_edge).get_line();
+						math::line const local_line = b.get_mesh_def().get_half_edge(hovered_edge).get_line();
 						math::line const world_line = transform(local_line, t);
 						Im3d::DrawLine(world_line.a, world_line.b, 5.f, Im3d::Color_Red);
 					}
@@ -153,9 +153,8 @@ namespace ot::dedit::selection
 
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImGui::GetStyleColorVec4(ImGuiCol_TitleBg));
 		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav;
-		auto const id_value = static_cast<std::underlying_type_t<entity_id>>(b.get_id());
 		auto const face_value = static_cast<size_t>(selected_face);
-		if (!ImGui::Begin(std::format("Brush {} face {}", id_value, face_value).c_str(), nullptr, flags))
+		if (!ImGui::Begin(std::format("Brush {} face {}", b.get_name(), face_value).c_str(), nullptr, flags))
 		{
 			ImGui::End();
 			return;

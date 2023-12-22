@@ -3,11 +3,27 @@
 #include "egfx/node/object.h"
 #include "egfx/node/mesh.h"
 
+#include <format>
+
 namespace ot::dedit
 {
+	namespace
+	{
+		std::string make_brush_name(entity_id id)
+		{
+			return std::format("Brush {}", as_int(id));
+		}
+	}
+
+	map_entity::map_entity(entity_id id)
+		: id(id)
+	{
+
+	}
+
 	math::transform_matrix brush::get_local_transform() const noexcept
 	{
-		return math::transform_matrix::from_components(vector_from_origin(node.get_position()), node.get_rotation(), node.get_scale());
+		return math::transform_matrix::from_components(vector_from_origin(mesh.get_position()), mesh.get_rotation(), mesh.get_scale());
 	}
 
 	math::transform_matrix brush::get_world_transform(math::transform_matrix const& parent) const noexcept
@@ -15,15 +31,18 @@ namespace ot::dedit
 		return parent * get_local_transform();
 	}
 
-	void brush::reload_node()
+	brush::brush(entity_id id, std::shared_ptr<egfx::mesh_definition const> mesh_def, egfx::node::object_ref parent)
+		: map_entity(id)
+		, mesh_def(mesh_def)
+		, mesh(egfx::node::create_mesh(parent, make_brush_name(id), *mesh_def))
 	{
-		node.reload_mesh(*mesh_def);
+		
 	}
 
 	void brush::reload_node(std::shared_ptr<egfx::mesh_definition const> new_def)
 	{
 		mesh_def = std::move(new_def);
-		reload_node();
+		mesh.reload_mesh(*mesh_def);
 	}
 
 	map::map(egfx::node::object_ref root_node)
@@ -39,12 +58,7 @@ namespace ot::dedit
 
 	brush& map::make_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id)
 	{
-		brush& b = brushes.emplace_back();
-		b.id = id;
-		b.mesh_def = std::move(mesh_def);
-		std::string const mesh_name = "Brush" + std::to_string(static_cast<std::underlying_type_t<entity_id>>(b.id));
-		b.node = egfx::node::create_mesh(root_node, mesh_name, *b.mesh_def);
-		return b;
+		return brushes.emplace_back(id, mesh_def, root_node);
 	}
 
 	void map::delete_brush(entity_id id)

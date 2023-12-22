@@ -5,6 +5,9 @@
 
 #include "egfx/object/camera.h"
 
+#include <imgui.h>
+#include <format>
+
 namespace ot::dedit::selection
 {
 	namespace
@@ -43,7 +46,7 @@ namespace ot::dedit::selection
 			std::span<brush const> const brushes = current_map->get_brushes();
 			auto const found_brush = std::find_if(brushes.begin(), brushes.end(), [hit_object](brush const& b)
 			{
-				return b.node.contains(hit_object);
+				return b.get_node().contains(hit_object);
 			});
 
 			if (found_brush == brushes.end())
@@ -55,7 +58,7 @@ namespace ot::dedit::selection
 			
 			brush const& b = *found_brush;
 
-			if (hits_brush(r, b.get_world_transform(current_map->get_brush_root_world_transform()), *b.mesh_def))
+			if (hits_brush(r, b.get_world_transform(current_map->get_brush_root_world_transform()), b.get_mesh_def()))
 			{
 				select_brush(hit_brush_id);
 				break;
@@ -106,6 +109,31 @@ namespace ot::dedit::selection
 		else if (next_context != nullptr && input.consume_right_click())
 		{
 			deselect_brush();
+		}
+
+		if (!current_map->get_brushes().empty())
+		{
+			ImGuiViewport* const main_viewport = ImGui::GetMainViewport();
+			ImVec2 const initial_pos(main_viewport->Pos.x + main_viewport->Size.x - 200, main_viewport->Pos.y + main_viewport->Size.y * 0.2f);
+			ImVec2 const size_min(192, ImGui::GetTextLineHeightWithSpacing() * 4);
+			ImVec2 const size_max(192, ImGui::GetTextLineHeightWithSpacing() * 16);
+			ImGui::SetNextWindowPos(initial_pos, ImGuiCond_FirstUseEver);
+			ImGui::SetNextWindowSizeConstraints(size_min, size_max);
+			if (ImGui::Begin("Brushes", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				for (brush const& b : current_map->get_brushes())
+				{
+					ImGui::Selectable(std::format("{}##{}", b.get_name(), as_int(b.get_id())).c_str());
+
+					if (ImGui::IsItemActivated())
+					{
+						if (selected_brush != b.get_id())
+							select_brush(b.get_id());
+					}
+				}
+			}
+
+			ImGui::End();
 		}
 	}
 

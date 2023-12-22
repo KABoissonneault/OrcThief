@@ -2,6 +2,6 @@
 
 namespace ot::dedit
 {
-	struct brush;
+	class brush;
 	class map;
 }

@@ -17,10 +17,10 @@ namespace ot::dedit::serialize
 
 		for (brush const& b : brushes)
 		{
-			if (!fwrite(*b.mesh_def, f))
+			if (!fwrite(b.get_mesh_def(), f))
 				return false;
 
-			egfx::node::object_cref const node = b.node;
+			egfx::node::object_cref const node = b.get_node();
 			if (
 				!fwrite(node.get_position(), f)
 				|| !fwrite(node.get_rotation(), f)
@@ -51,7 +51,7 @@ namespace ot::dedit::serialize
 				return false;
 
 			brush& b = m.make_brush(std::move(mesh_def), m.allocate_entity_id());
-			egfx::node::object_ref const node = b.node;
+			egfx::node::object_ref const node = b.get_node();
 			node.set_position(position);
 			node.set_rotation(rotation);
 			node.set_scale(scales);

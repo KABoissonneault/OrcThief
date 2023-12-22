@@ -39,7 +39,7 @@ namespace ot::dedit::selection
 			return;
 
 		brush const& b = *current_map->find_brush(selected_brush);
-		egfx::mesh_definition const& mesh_def = *b.mesh_def;
+		egfx::mesh_definition const& mesh_def = b.get_mesh_def();
 		math::transform_matrix const t = b.get_world_transform(current_map->get_brush_root_world_transform());
 		
 		egfx::half_edge::cref const edge = mesh_def.get_half_edge(selected_edge);
