@@ -23,7 +23,7 @@
 #include <SDL_syswm.h>
 #include "SDL2/macro.h"
 
-#include <imgui_impl_sdl.h>
+#include <imgui_impl_sdl2.h>
 
 namespace ot::wf
 {

@@ -12,7 +12,7 @@
 #include "egfx/object/camera.h"
 
 #include <SDL_events.h>
-#include <imgui_impl_sdl.h>
+#include <imgui_impl_sdl2.h>
 #include <im3d.h>
 #include <imgui.h>
 

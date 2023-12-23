@@ -665,7 +665,7 @@ namespace ot::wf
 			SDL_GetWindowSize(&app->get_main_window(), &window_width, &window_height);
 
 			ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
-			ImGui::SetNextWindowSize(ImVec2(window_width, window_height));
+			ImGui::SetNextWindowSize(ImVec2(static_cast<float>(window_width), static_cast<float>(window_height)));
 			ImGui::SetNextWindowBgAlpha(1.0f);
 			if (ImGui::Begin("##CombatScreen", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
 			{
@@ -682,7 +682,7 @@ namespace ot::wf
 
 					auto const portraits = app->get_portraits();
 
-					float const denominator = (int)enemies.size() + 1;
+					float const denominator = static_cast<float>(enemies.size()) + 1.f;
 
 					for (size_t i = 0; i < enemies.size(); ++i)
 					{
@@ -692,8 +692,8 @@ namespace ot::wf
 							continue;
 
 						mp_portrait const& portrait = *it_found;
-						float const portrait_width = portrait.tex_a.get_width();
-						float const portrait_height = portrait.tex_a.get_height();
+						float const portrait_width = static_cast<float>(portrait.tex_a.get_width());
+						float const portrait_height = static_cast<float>(portrait.tex_a.get_height());
 
 						float const horizontal_dist = (i + 1.f) / denominator;
 						ImVec2 const enemy_pos = ImVec2(space.x * horizontal_dist - portrait_width * 0.5f, space.y * 0.75f - portrait_height * 0.5f);
@@ -883,7 +883,7 @@ namespace ot::wf
 			if (it_found != portraits.end())
 			{
 				ImGui::SameLine();
-				ImVec2 const image_size(it_found->tex_a.get_width(), it_found->tex_a.get_height());
+				ImVec2 const image_size(static_cast<float>(it_found->tex_a.get_width()), static_cast<float>(it_found->tex_a.get_height()));
 				ImGui::Image(it_found->tex_a.get_texture_id(), image_size);
 			}
 
