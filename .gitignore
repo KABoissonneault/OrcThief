@@ -58,3 +58,5 @@ ext/Ogre
 /vs_build/*/x64/Debug
 /vs_build/*/x64/Release
 *.vcxproj.user
+/test/vs_build/OrcThiefTest/x64
+/test/vs_build/x64
