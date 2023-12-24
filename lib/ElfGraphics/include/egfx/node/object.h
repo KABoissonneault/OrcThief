@@ -2,9 +2,14 @@
 
 #include "egfx/node/object.fwd.h"
 
+#include "core/size_t.h"
+#include "core/iterator/arrow_proxy.h"
+
 #include "math/vector3.h"
 #include "math/quaternion.h"
 #include "math/transform_matrix.h"
+
+#include <optional>
 
 namespace ot::egfx::node
 {
@@ -37,8 +42,94 @@ namespace ot::egfx::node
 
 			// Gets the local scale of the node
 			[[nodiscard]] math::scales get_scale() const noexcept;
+
+			// Gets the user pointer of the node
+			[[nodiscard]] void* get_user_ptr() const noexcept;
+
+			// Gets the number of children to this object
+			[[nodiscard]] size_t get_child_count() const noexcept;
 		};
 	}
+
+	class object_iterator
+	{
+		void* scene_node = nullptr; 
+
+		object_iterator(void* node) noexcept;
+
+		friend class object_ref;
+		friend class object;
+		friend class object_const_iterator;
+
+	public:
+		object_iterator() = default;
+
+		using different_type = ptrdiff_t;
+		using element_type = object_ref;
+		using pointer = arrow_proxy<element_type>;
+		using reference = element_type;
+
+		object_iterator& operator++();
+		[[nodiscard]] object_iterator operator++(int);
+		[[nodiscard]] reference operator*() const;
+		[[nodiscard]] pointer operator->() const;
+
+		[[nodiscard]] bool operator==(object_iterator const& rhs) const noexcept;
+	};
+
+	class object_range
+	{
+		object_iterator it;
+		object_iterator sent;
+
+	public:
+		object_range() = default;
+		object_range(object_iterator beg, object_iterator end) noexcept;
+
+		[[nodiscard]] object_iterator begin() const noexcept { return it; }
+		[[nodiscard]] object_iterator end() const noexcept { return sent; }
+	};
+
+	class object_const_iterator
+	{
+		void const* scene_node = nullptr;
+
+		object_const_iterator(void const* node) noexcept;
+
+		friend class object_cref;
+		friend class object_ref;
+		friend class object;
+
+	public:
+		object_const_iterator() = default;
+		object_const_iterator(object_iterator it) noexcept;
+
+		using different_type = ptrdiff_t;
+		using element_type = object_cref;
+		using pointer = arrow_proxy<element_type const>;
+		using reference = element_type;
+
+		object_const_iterator& operator++();
+		[[nodiscard]] object_const_iterator operator++(int);
+		[[nodiscard]] element_type operator*() const;
+		[[nodiscard]] pointer operator->() const;
+
+		[[nodiscard]] bool operator==(object_const_iterator const& rhs) const noexcept;
+	};
+
+	class object_const_range
+	{
+		object_const_iterator it;
+		object_const_iterator sent;
+
+	public:
+		object_const_range() = default;
+		object_const_range(object_const_iterator beg, object_const_iterator end) noexcept;
+		object_const_range(object_range range) noexcept;
+
+		[[nodiscard]] object_const_iterator begin() const noexcept { return it; }
+		[[nodiscard]] object_const_iterator end() const noexcept { return sent; }
+	};
 
 	class object_cref : public detail::object_const_impl<object_cref>
 	{
@@ -50,8 +141,14 @@ namespace ot::egfx::node
 		friend class detail::object_const_impl<object_cref>;
 
 	public:
-		// Get the node of the parent
-		object_cref get_parent() const noexcept;
+		// Gets the node of the parent
+		std::optional<object_cref> get_parent() const noexcept;
+
+		// Gets the specified child, if any
+		std::optional<object_cref> get_child(size_t i) const;
+
+		// Gets the range of children
+		object_const_range get_children() const noexcept;
 	};
 	
 	class object_ref : public detail::object_const_impl<object_ref>
@@ -81,8 +178,17 @@ namespace ot::egfx::node
 		// Sets the input node as a child of this node.
 		void attach_child(object_ref child) const noexcept;
 
-		// Get the node of the parent
-		object_ref get_parent() const noexcept;
+		// Gets the node of the parent
+		[[nodiscard]] std::optional<object_ref> get_parent() const noexcept;
+
+		// Gets the node of the specified child
+		[[nodiscard]] std::optional<object_ref> get_child(size_t i) const;
+
+		// Gets the range of children
+		[[nodiscard]] object_range get_children() const noexcept;
+
+		// Sets a user pointer (ie: application wrapper) in the node
+		void set_user_ptr(void* user_ptr) const;
 	};
 
 	class object : public detail::object_const_impl<object>
@@ -121,10 +227,20 @@ namespace ot::egfx::node
 		// Sets the input node as a child of this node.
 		void attach_child(object_ref child) noexcept;
 
-		// Get the node of the parent
-		object_cref get_parent() const noexcept;
-		// Get the node of the parent
-		object_ref get_parent() noexcept;
+		// Gets the node of the parent
+		[[nodiscard]] std::optional<object_cref> get_parent() const noexcept;
+		[[nodiscard]] std::optional<object_ref> get_parent() noexcept;
+
+		// Gets the node of the specified child
+		[[nodiscard]] std::optional<object_cref> get_child(size_t i) const;
+		[[nodiscard]] std::optional<object_ref> get_child(size_t i);
+
+		// Gets the range of children
+		[[nodiscard]] object_const_range get_children() const noexcept;
+		[[nodiscard]] object_range get_children() noexcept;
+
+		// Sets a user pointer (ie: application wrapper) in the node
+		void set_user_ptr(void* user_ptr);
 	};
 
 	extern template class detail::object_const_impl<object_cref>;

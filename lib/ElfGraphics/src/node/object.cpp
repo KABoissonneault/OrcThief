@@ -6,6 +6,7 @@
 #include "ogre_conversion.h"
 
 #include <utility>
+#include <memory>
 
 namespace ot::egfx::node
 {
@@ -74,6 +75,21 @@ namespace ot::egfx::node
 			return to_math_scales(get_scene_node(static_cast<derived const&>(*this)).getScale());
 		}
 
+		template<typename Derived>
+		void* object_const_impl<Derived>::get_user_ptr() const noexcept
+		{
+			Ogre::SceneNode const& scene_node = get_scene_node(static_cast<derived const&>(*this));
+			Ogre::UserObjectBindings const& user_object_bindings = scene_node.getUserObjectBindings();
+			Ogre::Any const any = user_object_bindings.getUserAny();
+			return any.has_value() ? any.get<void*>() : nullptr;
+		}
+
+		template<typename Derived>
+		size_t object_const_impl<Derived>::get_child_count() const noexcept
+		{
+			return get_scene_node(static_cast<derived const&>(*this)).numChildren();
+		}
+
 		template class object_const_impl<object_cref>;
 		template class object_const_impl<object_ref>;
 		template class object_const_impl<object>;
@@ -99,14 +115,149 @@ namespace ot::egfx::node
 		return *static_cast<Ogre::SceneNode*>(detail::get_object_impl(r));
 	}
 
-	object_cref object_cref::get_parent() const noexcept
+	object_iterator::object_iterator(void* node) noexcept
+		: scene_node(node)
 	{
-		return make_object_cref(*get_scene_node(*this).getParentSceneNode());
+
 	}
 
-	object_ref object_ref::get_parent() const noexcept
+	object_iterator& object_iterator::operator++()
 	{
-		return make_object_ref(*get_scene_node(*this).getParentSceneNode());
+		scene_node = static_cast<Ogre::Node**>(scene_node) + 1;
+		return *this;
+	}
+
+	object_iterator object_iterator::operator++(int)
+	{
+		object_iterator old = *this;
+		++(*this);
+		return old;
+	}
+
+	auto object_iterator::operator*() const -> element_type
+	{
+		return make_object_ref(*static_cast<Ogre::SceneNode*>(*static_cast<Ogre::Node**>(scene_node)));
+	}
+
+	auto object_iterator::operator->() const -> pointer
+	{
+		return pointer{ *(*this) };
+	}
+
+	bool object_iterator::operator==(object_iterator const& rhs) const noexcept
+	{
+		return scene_node == rhs.scene_node;
+	}
+
+	object_range::object_range(object_iterator it, object_iterator sent) noexcept
+		: it(it)
+		, sent(sent)
+	{
+
+	}
+
+	object_const_iterator::object_const_iterator(void const* node) noexcept
+		: scene_node(node)
+	{
+
+	}
+
+	object_const_iterator::object_const_iterator(object_iterator it) noexcept
+		: scene_node(it.scene_node)
+	{
+
+	}
+
+	object_const_iterator& object_const_iterator::operator++()
+	{
+		scene_node = static_cast<Ogre::Node const* const*>(scene_node) + 1;
+		return *this;
+	}
+
+	object_const_iterator object_const_iterator::operator++(int)
+	{
+		object_const_iterator old = *this;
+		++(*this);
+		return old;
+	}
+
+	auto object_const_iterator::operator*() const -> element_type
+	{
+		return make_object_cref(*static_cast<Ogre::SceneNode const*>(*static_cast<Ogre::Node const* const*>(scene_node)));
+	}
+
+	auto object_const_iterator::operator->() const -> pointer
+	{
+		return pointer{ *(*this) };
+	}
+
+	bool object_const_iterator::operator==(object_const_iterator const& rhs) const noexcept
+	{
+		return scene_node == rhs.scene_node;
+	}
+
+	object_const_range::object_const_range(object_const_iterator it, object_const_iterator sent) noexcept
+		: it(it)
+		, sent(sent)
+	{
+
+	}
+
+	object_const_range::object_const_range(object_range range) noexcept
+		: it(range.begin())
+		, sent(range.end())
+	{
+
+	}
+
+	std::optional<object_cref> object_cref::get_parent() const noexcept
+	{
+		Ogre::SceneNode const* parent = get_scene_node(*this).getParentSceneNode();
+		if (parent == nullptr)
+			return std::nullopt;
+		return make_object_cref(*parent);
+	}
+
+	std::optional<object_cref> object_cref::get_child(size_t i) const
+	{
+		// All Ogre::Node seem to be SceneNode
+		Ogre::SceneNode const* child = static_cast<Ogre::SceneNode const*>(get_scene_node(*this).getChild(i));
+		if (child == nullptr)
+			return std::nullopt;
+		return make_object_cref(*child);
+	}
+
+	object_const_range object_cref::get_children() const noexcept
+	{
+		Ogre::Node::ConstNodeVecIterator it = get_scene_node(*this).getChildIterator();
+		return { std::to_address(it.begin()), std::to_address(it.end()) };
+	}
+
+	std::optional<object_ref> object_ref::get_parent() const noexcept
+	{
+		Ogre::SceneNode* const parent = get_scene_node(*this).getParentSceneNode();
+		if (parent == nullptr)
+			return std::nullopt;
+		return make_object_ref(*parent);
+	}
+
+	std::optional<object_ref> object_ref::get_child(size_t i) const
+	{
+		Ogre::SceneNode* const child = static_cast<Ogre::SceneNode*>(get_scene_node(*this).getChild(i));
+		if (child == nullptr)
+			return std::nullopt;
+		return make_object_ref(*child);
+	}
+
+	object_range object_ref::get_children() const noexcept
+	{
+		Ogre::Node::NodeVecIterator it = get_scene_node(*this).getChildIterator();
+		return { std::to_address(it.begin()), std::to_address(it.end()) };
+	}
+
+	void object_ref::set_user_ptr(void* user_ptr) const
+	{
+		get_scene_node(*this).getUserObjectBindings().setUserAny(Ogre::Any(user_ptr));
 	}
 
 	object::object() noexcept
@@ -240,13 +391,38 @@ namespace ot::egfx::node
 		static_cast<object_ref>(*this).attach_child(child);
 	}
 
-	object_cref object::get_parent() const noexcept
+	std::optional<object_cref> object::get_parent() const noexcept
 	{
 		return static_cast<object_cref>(*this).get_parent();
 	}
 
-	object_ref object::get_parent() noexcept
+	std::optional<object_ref> object::get_parent() noexcept
 	{
 		return static_cast<object_ref>(*this).get_parent();
+	}
+
+	std::optional<object_cref> object::get_child(size_t i) const
+	{
+		return static_cast<object_cref>(*this).get_child(i);
+	}
+
+	std::optional<object_ref> object::get_child(size_t i)
+	{
+		return static_cast<object_ref>(*this).get_child(i);
+	}
+
+	object_const_range object::get_children() const noexcept
+	{
+		return static_cast<object_cref>(*this).get_children();
+	}
+
+	object_range object::get_children() noexcept
+	{
+		return static_cast<object_ref>(*this).get_children();
+	}
+
+	void object::set_user_ptr(void* user_ptr)
+	{
+		get_scene_node(*this).getUserObjectBindings().setUserAny(Ogre::Any(user_ptr));
 	}
 }
