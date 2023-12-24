@@ -12,9 +12,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\lib\Core\include\Core\compiler.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\lib\Core\include\Core\size_t.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -34,6 +31,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\lib\Core\include\core\directive.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Core\include\core\compiler.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
