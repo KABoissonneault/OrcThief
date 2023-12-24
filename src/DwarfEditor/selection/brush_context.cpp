@@ -80,7 +80,7 @@ namespace ot::dedit::selection
 		, main_camera(main_camera)
 		, main_window(&main_window)
 		, selected_brush(selected_brush)
-		, object_matrix(to_imgui(current_map.find_brush(selected_brush)->get_world_transform(current_map.get_brush_root_world_transform())))
+		, object_matrix(to_imgui(current_map.find_brush(selected_brush)->get_world_transform()))
 	{
 
 	}
@@ -91,7 +91,7 @@ namespace ot::dedit::selection
 
 		brush const& b = get_brush();
 		egfx::mesh_definition const& mesh_def = b.get_mesh_def();
-		math::transform_matrix const t = b.get_world_transform(current_map->get_brush_root_world_transform());
+		math::transform_matrix const t = b.get_world_transform();
 
 		if (next_context == nullptr)
 		{
@@ -170,7 +170,7 @@ namespace ot::dedit::selection
 		brush const& b = get_brush();
 
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImGui::GetStyleColorVec4(ImGuiCol_TitleBg));
-		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav;
+		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoFocusOnAppearing;
 		if (!ImGui::Begin(std::format("Brush {}", b.get_name()).c_str(), nullptr, flags))
 		{
 			ImGui::End();

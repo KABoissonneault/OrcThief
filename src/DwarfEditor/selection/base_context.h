@@ -16,12 +16,14 @@ namespace ot::dedit::selection
 		map const* current_map;
 		egfx::scene const* current_scene;
 		egfx::window const* main_window;
-		std::optional<entity_id> selected_brush;
+		std::optional<entity_id> selected_entity;
 
 		void do_selection();
 
-		void select_brush(entity_id brush);
-		void deselect_brush();
+		void select_entity(entity_id brush);
+		void deselect_entity();
+
+		void hierarchy_window(action::accumulator& acc);
 
 	public:
 		base_context(map const& current_map, egfx::scene const& current_scene, egfx::window const& main_window) noexcept

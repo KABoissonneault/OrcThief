@@ -79,7 +79,7 @@ namespace ot::dedit::selection
 		hovered_edge = egfx::half_edge::id::none;
 
 		brush const& b = get_brush();
-		math::transform_matrix const t = b.get_world_transform(current_map->get_brush_root_world_transform());
+		math::transform_matrix const t = b.get_world_transform();
 		egfx::face::cref const current_face = b.get_mesh_def().get_face(selected_face);
 
 		// Transparent overlay

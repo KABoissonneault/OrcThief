@@ -63,7 +63,7 @@ namespace ot::dedit::selection
 		imgui::matrix get_current_plane_imgui_transform(map const& current_map, entity_id selected_brush, egfx::face::id selected_face)
 		{
 			brush const& b = *current_map.find_brush(selected_brush);
-			math::transform_matrix const t = b.get_world_transform(current_map.get_brush_root_world_transform());
+			math::transform_matrix const t = b.get_world_transform();
 			return get_current_plane_imgui_transform(t, b, selected_face);
 		}
 	}
@@ -162,7 +162,7 @@ namespace ot::dedit::selection
 	void face_split_context::do_split(action::accumulator& acc)
 	{
 		brush const& b = get_brush();
-		math::transform_matrix const t = b.get_world_transform(current_map->get_brush_root_world_transform());
+		math::transform_matrix const t = b.get_world_transform();
 
 		math::transform_matrix const face_world_transform = get_current_plane_math_transform(t, b, selected_face);
 		math::transform_matrix const plane_world_transform = to_math_matrix(plane_transform) * face_world_transform;
