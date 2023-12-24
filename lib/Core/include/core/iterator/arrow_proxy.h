@@ -13,7 +13,7 @@ namespace ot
 
 		}
 
-		ValueType* operator->() const
+		ValueType* operator->()
 		{
 			return &value;
 		}

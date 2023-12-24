@@ -164,7 +164,7 @@ namespace ot
 	template<typename T, typename... Args>
 	uptr<T> make_unique(Args&&... args)
 	{
-		return uptr(new T(forward<Args>(args)...));
+		return uptr(new T(ot::forward<Args>(args)...));
 	}
 
 	template<typename T>
