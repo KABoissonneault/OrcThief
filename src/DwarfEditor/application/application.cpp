@@ -181,6 +181,9 @@ namespace ot::dedit
 				break;
 
 			case SDL_MOUSEWHEEL:
+				if (camera_controller::handle_mouse_wheel_event(e.wheel))
+					break;
+
 				ImGui_ImplSDL2_ProcessEvent(&e);
 				
 				if (imgui::has_mouse())

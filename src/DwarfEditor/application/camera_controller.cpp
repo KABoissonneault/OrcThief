@@ -99,6 +99,27 @@ namespace ot::dedit
 	}
 
 	template<typename Application>
+	bool camera_controller<Application>::handle_mouse_wheel_event(SDL_MouseWheelEvent const& e)
+	{
+		if (!controlling_camera)
+			return false;
+
+		int y = e.y;
+		while (y > 0)
+		{
+			camera_velocity *= 1.1f;
+			--y;
+		}
+		while (y < 0 && camera_velocity > 1.0f)
+		{
+			camera_velocity *= 0.909090909f;
+			++y;
+		}
+
+		return true;
+	}
+
+	template<typename Application>
 	void camera_controller<Application>::translate(math::seconds dt)
 	{
 		math::vector3f velocity = { 0, 0, 0 };
@@ -120,7 +141,7 @@ namespace ot::dedit
 			return;
 
 		velocity = normalized(velocity);
-		velocity *= 3.0f; // TODO: parameterize
+		velocity *= camera_velocity;
 
 		get_camera().move(velocity * dt.count());
 	}

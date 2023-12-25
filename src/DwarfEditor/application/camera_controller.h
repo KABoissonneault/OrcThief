@@ -18,6 +18,7 @@ namespace ot::dedit
 
 		float yaw = 0.0f;
 		float pitch = 0.0f;
+		float camera_velocity = 3.0f;
 		bool controlling_camera = false;
 
 		void start_control();
@@ -32,6 +33,7 @@ namespace ot::dedit
 		bool handle_keyboard_event(SDL_KeyboardEvent const& key);
 		bool handle_mouse_button_event(SDL_MouseButtonEvent const& e);
 		bool handle_mouse_motion_event(SDL_MouseMotionEvent const& e);
+		bool handle_mouse_wheel_event(SDL_MouseWheelEvent const& e);
 		void update(math::seconds dt);
 	};
 
