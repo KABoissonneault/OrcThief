@@ -140,6 +140,14 @@ namespace ot::dedit
 		draw_main_menu();
 		draw_main_status();
 
+		if (!draw_console_window)
+		{
+			size_t const error_count = std::ranges::count(console::get_logs(), console::level_type::error, &console::log_data::level);
+			if (error_count > last_error_count)
+				draw_console_window = true;
+			last_error_count = error_count;
+		}
+
 		if (draw_console_window)
 		{
 			console_window::draw(&draw_console_window);
@@ -284,6 +292,29 @@ namespace ot::dedit
 		else
 		{
 			ImGui::Text("Unsaved map%s", map_handler.is_map_dirty() ? " (*)" : "");
+		}
+
+		std::span<console::log_data const> const logs = console::get_logs();
+		if (!logs.empty())
+		{
+			console::log_data const& last_log = logs.back();
+
+			ImGui::SameLine();
+			ImGui::Separator();
+			ImGui::SameLine();
+
+			std::optional<ImVec4> color;
+
+			if (color)
+				ImGui::PushStyleColor(ImGuiCol_Text, *color);
+
+			ImGui::TextUnformatted(last_log.message.c_str());
+
+			if (ImGui::IsItemClicked())
+				draw_console_window = true;
+
+			if (color)
+				ImGui::PopStyleColor();
 		}
 
 		ImGui::EndMainStatusBar();

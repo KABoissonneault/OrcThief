@@ -4,28 +4,38 @@
 
 namespace ot::dedit::console
 {
-	alignas(std::vector<log_data>) char log_storage[sizeof(std::vector<log_data>)];
-	static std::vector<log_data>& access_logs() { return *reinterpret_cast<std::vector<log_data>*>(log_storage); }
+	namespace
+	{
+		struct console_data
+		{
+			std::vector<log_data> logs;
+		};
+
+		alignas(console_data) char log_storage[sizeof(console_data)];
+		static console_data& access_console_data() { return *reinterpret_cast<console_data*>(log_storage); }
+	}
+	
 
 	void initialize()
 	{
-		new(log_storage) std::vector<log_data>;
+		new(log_storage) console_data;
 	}
 
 	void clear()
 	{
-		access_logs().clear();
+		console_data& data = access_console_data();
+		data.logs.clear();
 	}
 
 	void output(level_type level, std::string&& s)
 	{
-		log_data& data = access_logs().emplace_back();
+		log_data& data = access_console_data().logs.emplace_back();
 		data.level = level;
 		data.message = std::move(s);
 	}
 
 	std::span<log_data const> get_logs()
 	{
-		return access_logs();
+		return access_console_data().logs;
 	}
 }

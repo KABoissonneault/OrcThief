@@ -26,6 +26,8 @@ namespace ot::dedit
 
 		bool draw_imgui_demo = false;
 
+		size_t last_error_count = 0;
+
 		void draw_main_menu();
 		void draw_main_status();
 		
