@@ -5,6 +5,7 @@
 #include "application/action_handler.h"
 #include "application/menu.h"
 #include "application/map_handler.h"
+#include "application/basic_mesh_repo.h"
 
 #include "config.h"
 #include "map.h"
@@ -46,6 +47,8 @@ namespace ot::dedit
 		action_handler selection_actions;
 		mouse_controller mouse;
 
+		basic_mesh_repo mesh_repo;
+
 		bool wants_quit = false;
 
 		void start_frame();
@@ -78,5 +81,7 @@ namespace ot::dedit
 
 		[[nodiscard]] egfx::scene& get_scene() noexcept { return main_scene; }
 		[[nodiscard]] egfx::window const& get_render_window() const noexcept { return graphics.get_window(egfx::window_id{ SDL_GetWindowID(main_window.get()) }); }
+
+		[[nodiscard]] basic_mesh_repo const& get_mesh_repo() const noexcept { return mesh_repo; }
 	};
 }

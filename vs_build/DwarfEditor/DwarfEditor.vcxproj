@@ -179,6 +179,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(Ou
     <ClCompile Include="..\..\src\DwarfEditor\action\brush.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\application\action_handler.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\application\application.cpp" />
+    <ClCompile Include="..\..\src\DwarfEditor\application\basic_mesh_repo.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\application\camera_controller.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\application\map_handler.cpp" />
     <ClCompile Include="..\..\src\DwarfEditor\application\menu.cpp" />
@@ -238,6 +239,7 @@ powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(Ou
     <ClInclude Include="..\..\src\DwarfEditor\action\brush.h" />
     <ClInclude Include="..\..\src\DwarfEditor\application\action_handler.h" />
     <ClInclude Include="..\..\src\DwarfEditor\application\application.h" />
+    <ClInclude Include="..\..\src\DwarfEditor\application\basic_mesh_repo.h" />
     <ClInclude Include="..\..\src\DwarfEditor\application\camera_controller.h" />
     <ClInclude Include="..\..\src\DwarfEditor\application\map_handler.h" />
     <ClInclude Include="..\..\src\DwarfEditor\application\menu.h" />

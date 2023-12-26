@@ -7,22 +7,49 @@
 
 namespace ot::dedit::action
 {
-	spawn_brush::spawn_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id)
+	spawn_brush::spawn_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def)
 		: mesh_def(std::move(mesh_def))
-		, id(id)
+		, id()
 	{
 
+	}
+
+	spawn_brush::spawn_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id parent_id)
+		: mesh_def(mesh_def)
+		, id()
+		, parent_id(parent_id)
+	{
+		
 	}
 
 	void spawn_brush::apply(map& current_map)
 	{
-		current_map.make_brush(mesh_def, id);
-		console::log(std::format("Created brush {}", as_int(id)));
+		id = current_map.allocate_entity_id();
+		if (parent_id)
+		{
+			map_entity* parent = current_map.find_entity(*parent_id);
+			if (parent == nullptr)
+			{
+				console::error(std::format("Failed to spawn brush: parent id '{}' not found", as_int(*parent_id)));
+			}
+			else
+			{
+				current_map.make_brush(mesh_def, *id, *parent);
+				console::log(std::format("Created brush {} under {}", as_int(*id), parent->get_name()));
+			}
+		}
+		else
+		{
+			current_map.make_brush(mesh_def, *id);
+			console::log(std::format("Created brush {}", as_int(*id)));
+		}		
 	}
 	
 	void spawn_brush::undo(map& current_map)
 	{
-		current_map.delete_brush(id);
+		if (!id)
+			throw std::logic_error("spawn_brush::undo called before apply");
+		current_map.delete_brush(*id);
 	}
 
 	single_brush::single_brush(brush const& b)

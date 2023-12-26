@@ -17,13 +17,6 @@ namespace ot::dedit
 
 		bool draw_console_window = false;
 		bool draw_about_window = false;
-
-		std::shared_ptr<egfx::mesh_definition const> cube;
-		std::shared_ptr<egfx::mesh_definition const> octagonal_prism;
-		std::shared_ptr<egfx::mesh_definition const> hex_prism;
-		std::shared_ptr<egfx::mesh_definition const> tri_prism;
-		std::shared_ptr<egfx::mesh_definition const> square_pyramid;
-
 		bool draw_imgui_demo = false;
 
 		size_t last_error_count = 0;

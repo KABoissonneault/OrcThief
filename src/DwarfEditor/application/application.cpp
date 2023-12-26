@@ -70,7 +70,7 @@ namespace ot::dedit
 		}
 
 		auto const& render_window = graphics.get_window(egfx::window_id{ SDL_GetWindowID(main_window.get()) });
-		selection_context.reset(new selection::base_context(current_map, main_scene, render_window));
+		selection_context.reset(new selection::base_context(mesh_repo, current_map, main_scene, render_window));
 
 		egfx::object::camera_ref const camera = main_scene.get_camera();
 		camera.set_position({ 0.0f, 2.0f, 5.5f });

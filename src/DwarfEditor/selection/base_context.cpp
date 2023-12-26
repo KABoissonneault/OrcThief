@@ -5,6 +5,8 @@
 
 #include "egfx/object/camera.h"
 
+#include "action/brush.h"
+
 #include "console.h"
 
 #include <imgui.h>
@@ -45,24 +47,49 @@ namespace ot::dedit::selection
 
 		for (egfx::node::object_id const hit_object : result)
 		{
-			std::span<brush const> const brushes = current_map->get_brushes();
-			auto const found_brush = std::find_if(brushes.begin(), brushes.end(), [hit_object](brush const& b)
+			auto const root_entities = current_map->get_root_entities();
+			map_entity const* found_entity = nullptr;
+			for (map_entity const& root_entity : root_entities)
 			{
-				return b.get_node().contains(hit_object);
-			});
+				bool const found = root_entity.for_each_recursive([hit_object, &found_entity](map_entity const& e)
+				{
+					if (e.get_node().contains(hit_object))
+					{
+						found_entity = &e;
+						return true;
+					}
 
-			if (found_brush == brushes.end())
-				continue;		
+					return false;
+				});
 
-			entity_id const hit_brush_id = found_brush->get_id();
-			if (hit_brush_id == selected_entity)
+				if(found)
+					break;
+			}
+
+			if (found_entity == nullptr)
+				continue;
+
+			map_entity const& hit_entity = *found_entity;
+
+			entity_id const hit_entity_id = hit_entity.get_id();
+			if (hit_entity_id == selected_entity)
 				continue;
 			
-			brush const& b = *found_brush;
-
-			if (hits_brush(r, b.get_world_transform(), b.get_mesh_def()))
+			switch (hit_entity.get_type())
 			{
-				select_entity(hit_brush_id);
+			case entity_type_t::brush:
+			{
+				brush const& b = static_cast<brush const&>(hit_entity);
+
+				if (hits_brush(r, b.get_world_transform(), b.get_mesh_def()))
+				{
+					select_entity(hit_entity_id);
+					return;
+				}
+
+				break;
+			}
+			default:
 				break;
 			}
 		}
@@ -134,8 +161,6 @@ namespace ot::dedit::selection
 
 	void base_context::hierarchy_window(action::accumulator& acc)
 	{
-		(void)acc;
-
 		map_entity_const_range const root_entities = current_map->get_root_entities();
 		if (!root_entities.empty())
 		{
@@ -149,7 +174,7 @@ namespace ot::dedit::selection
 			{
 				for (map_entity const& e : root_entities)
 				{
-					e.for_each_recursive([depth = 0, this](map_entity const& e) mutable
+					e.for_each_recursive([depth = 0, this, &acc](map_entity const& e) mutable
 					{
 						std::string fmt;
 						for (int i = 0; i < depth; ++i)
@@ -168,6 +193,41 @@ namespace ot::dedit::selection
 							{
 								select_entity(e.get_id());
 							}
+						}
+
+						if (ImGui::BeginPopupContextItem())
+						{
+							if (ImGui::BeginMenu("Create Child Brush"))
+							{
+								if (ImGui::MenuItem("Cube"))
+								{
+									acc.emplace_action<action::spawn_brush>(mesh_repo->get_cube(), e.get_id());
+								}
+
+								if (ImGui::MenuItem("Octagonal Prism"))
+								{
+									acc.emplace_action<action::spawn_brush>(mesh_repo->get_octagonal_prism(), e.get_id());
+								}
+
+								if (ImGui::MenuItem("Hex Prism"))
+								{
+									acc.emplace_action<action::spawn_brush>(mesh_repo->get_hex_prism(), e.get_id());
+								}
+
+								if (ImGui::MenuItem("Tri Prism"))
+								{
+									acc.emplace_action<action::spawn_brush>(mesh_repo->get_tri_prism(), e.get_id());
+								}
+
+								if (ImGui::MenuItem("Square Pyramid"))
+								{
+									acc.emplace_action<action::spawn_brush>(mesh_repo->get_square_pyramid(), e.get_id());
+								}
+
+								ImGui::End();
+							}
+
+							ImGui::EndPopup();
 						}
 
 						++depth;

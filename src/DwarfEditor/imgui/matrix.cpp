@@ -66,27 +66,10 @@ namespace ot::dedit::imgui
 		scales[2] = s.z;
 
 		math::rotation_matrix const r = math::ops::get_rotation(*this, s);
-		// https://www.geometrictools.com/Documentation/EulerAngles.pdf
-		// A20 is equal to -sin(y)
-		// Therefore, if A20 == 1.f, then sin(y) == -1.f, or y = -pi/2
-		if (float_eq(A20(r), 1.f))
-		{
-			euler_rotation[0] = std::atan2(-A12(r), A11(r));
-			euler_rotation[1] = -std::numbers::pi_v<float> / 2.f;
-			euler_rotation[2] = 0.f;
-		}
-		else if (float_eq(A20(r), -1.f))
-		{
-			euler_rotation[0] = std::atan2(-A12(r), A11(r));
-			euler_rotation[1] = std::numbers::pi_v<float> / 2.f;
-			euler_rotation[2] = 0.f;
-		}
-		else
-		{
-			euler_rotation[0] = std::atan2(A21(r), A22(r));
-			euler_rotation[1] = std::asin(-A20(r));
-			euler_rotation[2] = std::atan2(A10(r), A00(r));
-		}
+		math::euler_rotation const er = r.get_euler_angles_zyx();
+		euler_rotation[0] = er.x;
+		euler_rotation[1] = er.y;
+		euler_rotation[2] = er.z;
 
 		math::vector3f const d = get_displacement();
 		displacement[0] = d.x;
@@ -132,6 +115,16 @@ namespace ot::dedit::imgui
 	}
 
 	matrix operator*(matrix const& lhs, matrix const& rhs)
+	{
+		return boost::qvm::operator*(lhs, rhs);
+	}
+
+	matrix operator*(math::transform_matrix const& lhs, matrix const& rhs)
+	{
+		return boost::qvm::operator*(lhs, rhs);
+	}
+
+	matrix operator*(matrix const& lhs, math::transform_matrix const& rhs)
 	{
 		return boost::qvm::operator*(lhs, rhs);
 	}

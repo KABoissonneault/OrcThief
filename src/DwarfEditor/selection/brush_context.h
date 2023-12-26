@@ -19,8 +19,10 @@ namespace ot::dedit::selection
 
 		entity_id selected_brush;
 		egfx::face::id hovered_face = egfx::face::id::none;
-		imgui::matrix object_matrix;
-		bool is_editing = false;
+		imgui::matrix object_local_matrix;
+		bool was_editing = false;
+		bool was_text_editing = false;
+		bool was_gizmo_editing = false;
 
 		enum class operation_type
 		{
@@ -34,8 +36,9 @@ namespace ot::dedit::selection
 		bool use_world_manipulation = false;
 
 		// Returns whether any manipulation input is active
-		bool operation_window(action::accumulator& acc);
-		bool draw_gizmo();
+		bool operation_window(action::accumulator& acc, math::transform_matrix const& original_local_transform);
+		bool draw_gizmo(imgui::matrix& object_world_matrix);
+
 		brush const& get_brush() const;
 
 	public:

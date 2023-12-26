@@ -154,7 +154,7 @@ namespace ot::dedit::selection
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImGui::GetStyleColorVec4(ImGuiCol_TitleBg));
 		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav;
 		auto const face_value = static_cast<size_t>(selected_face);
-		if (!ImGui::Begin(std::format("Brush {} face {}", b.get_name(), face_value).c_str(), nullptr, flags))
+		if (!ImGui::Begin(std::format("Brush {} face {}###BrushFace", b.get_name(), face_value).c_str(), nullptr, flags))
 		{
 			ImGui::End();
 			return;

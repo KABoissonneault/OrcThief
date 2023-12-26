@@ -80,7 +80,7 @@ namespace ot::dedit::selection
 		, main_camera(main_camera)
 		, main_window(&main_window)
 		, selected_brush(selected_brush)
-		, object_matrix(to_imgui(current_map.find_brush(selected_brush)->get_world_transform()))
+		, object_local_matrix(to_imgui(current_map.find_brush(selected_brush)->get_local_transform()))
 	{
 
 	}
@@ -91,64 +91,78 @@ namespace ot::dedit::selection
 
 		brush const& b = get_brush();
 		egfx::mesh_definition const& mesh_def = b.get_mesh_def();
-		math::transform_matrix const t = b.get_world_transform();
+		map_entity const* const parent_entity = b.get_parent();
+		math::transform_matrix const parent_world_transform = parent_entity != nullptr ? parent_entity->get_world_transform() : math::transform_matrix::identity();
+		math::transform_matrix const local_transform = b.get_local_transform();
+		math::transform_matrix const world_transform = parent_world_transform * local_transform;
 
 		if (next_context == nullptr)
 		{
 			// Ensure the base transform stays up-to-date
-			if (!is_editing)
-				object_matrix = to_imgui(t);
-
-			bool const text_editing = operation_window(acc);
+			if (!was_editing)
+				object_local_matrix = to_imgui(local_transform);
+						
+			bool const text_editing = operation_window(acc, local_transform);
+			imgui::matrix object_world_matrix = parent_world_transform * object_local_matrix;
 
 			if (operation == operation_type::face_selection)
 			{
 				if (has_focus(*main_window) && !imgui::has_mouse())
 				{
-					hovered_face = get_closest_face(main_camera.get_position(), get_mouse_ray(*main_window, main_camera), t, mesh_def);
+					hovered_face = get_closest_face(main_camera.get_position(), get_mouse_ray(*main_window, main_camera), world_transform, mesh_def);
 				}
 
 				if (text_editing)
 				{
-					draw_operation_preview(mesh_def, object_matrix);
+					draw_operation_preview(mesh_def, object_world_matrix);
 				}
+								
+				was_editing = text_editing;
 			}
 			else
 			{
-				bool const gizmo_editing = draw_gizmo();
+				bool const gizmo_editing = draw_gizmo(object_world_matrix);
 				if (gizmo_editing || text_editing)
 				{
-					draw_operation_preview(mesh_def, object_matrix);
+					draw_operation_preview(mesh_def, object_world_matrix);
 				}
 
 				if (gizmo_editing)
 				{
-					is_editing = true;
+					object_local_matrix = object_world_matrix * invert(parent_world_transform);
+					was_gizmo_editing = true;
 				}
 				// If we just stopped using the gizmo, then we need to commit the edit if any
-				else if (is_editing)
+				else if (was_gizmo_editing)
 				{
-					if (!float_eq(object_matrix, t))
+					if (!float_eq(object_local_matrix, local_transform))
 					{
+						math::transform_matrix const new_local_transform = to_math_matrix(object_local_matrix);
+
 						switch (operation)
 						{
 						case operation_type::translate:
-							acc.emplace_action<action::set_brush_position>(b, destination_from_origin(object_matrix.get_displacement()));
+							math::point3f const new_position = destination_from_origin(new_local_transform.get_displacement());
+							acc.emplace_action<action::set_brush_position>(b, new_position);
 							break;
 						case operation_type::rotation:
-							acc.emplace_action<action::set_brush_rotation>(b, object_matrix.get_rotation());
+							acc.emplace_action<action::set_brush_rotation>(b, new_local_transform.get_rotation().to_quaternion());
 							break;
 						case operation_type::scale:
-							acc.emplace_action<action::set_brush_scale>(b, object_matrix.get_scale());
+							acc.emplace_action<action::set_brush_scale>(b, new_local_transform.get_scale());
 							break;
 						}
 					}
-					is_editing = false;
+					was_gizmo_editing = false;
 				}
+
+				was_editing = text_editing || gizmo_editing;
 			}
+
+			was_text_editing = text_editing;
 		}
 
-		draw_immediate_scene(mesh_def, t, hovered_face);
+		draw_immediate_scene(mesh_def, world_transform, hovered_face);
 
 		composite_context::update(acc, input);
 
@@ -165,13 +179,13 @@ namespace ot::dedit::selection
 		}
 	}
 
-	bool brush_context::operation_window(action::accumulator& acc)
+	bool brush_context::operation_window(action::accumulator& acc, math::transform_matrix const& original_local_transform)
 	{
 		brush const& b = get_brush();
 
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImGui::GetStyleColorVec4(ImGuiCol_TitleBg));
 		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoFocusOnAppearing;
-		if (!ImGui::Begin(std::format("Brush {}", b.get_name()).c_str(), nullptr, flags))
+		if (!ImGui::Begin(std::format("Brush {}###Brush", b.get_name()).c_str(), nullptr, flags))
 		{
 			ImGui::End();
 			return false;
@@ -190,32 +204,35 @@ namespace ot::dedit::selection
 		}
 
 		float translation[3], rotation[3], scale[3];
-		object_matrix.decompose(translation, rotation, scale);
+		object_local_matrix.decompose(translation, rotation, scale);
 		rotation[0] *= 180.f / std::numbers::pi_v<float>;
 		rotation[1] *= 180.f / std::numbers::pi_v<float>;
 		rotation[2] *= 180.f / std::numbers::pi_v<float>;
 
-		math::vector3f const original_translation{ translation[0], translation[1], translation[2] };
-		math::vector3f const original_rotation{ rotation[0], rotation[1], rotation[2] };
-		math::vector3f const original_scale{ scale[0], scale[1], scale[2] };
+		rotation[0] += 0.0f;
+		rotation[1] += 0.0f;
+		rotation[2] += 0.0f;
 
+		math::euler_rotation const original_euler_rotation = original_local_transform.get_rotation().get_euler_angles_zyx();
+		math::scales const original_scale = original_local_transform.get_scale();
+		
 		if (ImGui::RadioButton("(T)ranslate", operation == operation_type::translate)) operation = operation_type::translate;
 		ImGui::SameLine();
 		ImGui::InputFloat3("##BrushTranslate", translation);
 		bool const translate_active = ImGui::IsItemActive();
-		bool const has_translated = !translate_active && !float_eq(math::vector3f{ translation[0], translation[1], translation[2] }, original_translation);
+		bool const has_translated = !translate_active && !float_eq(math::vector3f{ translation[0], translation[1], translation[2] }, original_local_transform.get_displacement());
 
 		if (ImGui::RadioButton("(R)otate   ", operation == operation_type::rotation)) operation = operation_type::rotation;
 		ImGui::SameLine();
 		ImGui::InputFloat3("##BrushRotation", rotation);
 		bool const rotation_active = ImGui::IsItemActive();
-		bool const has_rotated = !rotation_active && !float_eq(math::vector3f{ rotation[0], rotation[1], rotation[2] }, original_rotation);
+		bool const has_rotated = !rotation_active && !float_eq(math::vector3f{ rotation[0], rotation[1], rotation[2] }, math::vector3f{ original_euler_rotation.x, original_euler_rotation.y, original_euler_rotation.z });
 
 		if (ImGui::RadioButton("(S)cale    ", operation == operation_type::scale)) operation = operation_type::scale;
 		ImGui::SameLine();
 		ImGui::InputFloat3("##BrushScale", scale);
 		bool const scale_active = ImGui::IsItemActive();
-		bool const has_scaled = !scale_active && !float_eq(math::vector3f{ scale[0], scale[1], scale[2] }, original_scale);
+		bool const has_scaled = !scale_active && !float_eq(math::vector3f{ scale[0], scale[1], scale[2] }, math::vector3f{ original_scale.x, original_scale.y, original_scale.z });
 
 		if (ImGui::RadioButton("(F)ace Selection", operation == operation_type::face_selection)) operation = operation_type::face_selection;
 
@@ -225,19 +242,45 @@ namespace ot::dedit::selection
 		rotation[0] *= std::numbers::pi_v<float> / 180.f;
 		rotation[1] *= std::numbers::pi_v<float> / 180.f;
 		rotation[2] *= std::numbers::pi_v<float> / 180.f;
-		object_matrix.recompose(translation, rotation, scale);
+		
+		object_local_matrix.recompose(translation, rotation, scale);
+				
+		if (was_text_editing)
+		{
+			if (has_translated)
+			{
+				acc.emplace_action<action::set_brush_position>(b, math::point3f{ translation[0], translation[1], translation[2] });
+			}
 
-		if (has_translated)
-			acc.emplace_action<action::set_brush_position>(b, math::point3f{ translation[0], translation[1], translation[2] });
-		if (has_rotated)
-			acc.emplace_action<action::set_brush_rotation>(b, object_matrix.get_rotation());
-		if (has_scaled)
-			acc.emplace_action<action::set_brush_scale>(b, math::scales{ scale[0], scale[1], scale[2] });
+			if (has_rotated)
+			{
+				auto clamp = [](float f)
+				{
+					return std::fmod(f + std::numbers::pi_v<float>, std::numbers::pi_v<float> *2.f) - std::numbers::pi_v<float>;
+				};
+
+				math::euler_rotation const euler_angles
+				{
+					clamp(rotation[0] * std::numbers::pi_v<float> / 180.f)
+					, clamp(rotation[1] * std::numbers::pi_v<float> / 180.f)
+					, clamp(rotation[2] * std::numbers::pi_v<float> / 180.f)
+				};
+
+				math::rotation_matrix const new_rotation = math::rotation_matrix::rot_zyx(euler_angles);
+
+				acc.emplace_action<action::set_brush_rotation>(b, new_rotation.to_quaternion());
+			}
+
+			if (has_scaled)
+			{
+				acc.emplace_action<action::set_brush_scale>(b, math::scales{ scale[0], scale[1], scale[2] });
+			}
+		}
 
 		return translate_active || rotation_active || scale_active;
 	}
 
-	bool brush_context::draw_gizmo()
+	bool brush_context::draw_gizmo(imgui::matrix& object_world_matrix)
 	{
 		Im3d::Context& im3d = Im3d::GetContext();
 		assert(operation != operation_type::face_selection);
@@ -255,7 +298,8 @@ namespace ot::dedit::selection
 			im3d.m_gizmoMode = Im3d::GizmoMode_Scale;
 			break;
 		}
-		return Im3d::Gizmo("BrushGizmo", object_matrix.elements);
+
+		return Im3d::Gizmo("BrushGizmo", object_world_matrix.elements);
 	}
 
 	brush const& brush_context::get_brush() const

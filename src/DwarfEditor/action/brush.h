@@ -5,16 +5,19 @@
 #include "map.h"
 
 #include <memory>
+#include <optional>
 
 namespace ot::dedit::action
 {
 	class spawn_brush : public base
 	{
 		std::shared_ptr<egfx::mesh_definition const> mesh_def;
-		entity_id id;
+		std::optional<entity_id> id;
+		std::optional<entity_id> parent_id;
 
 	public:
-		spawn_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id);
+		spawn_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def);
+		spawn_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id parent_id);
 
 		virtual void apply(map& current_map) override;
 		virtual void undo(map& current_map) override;

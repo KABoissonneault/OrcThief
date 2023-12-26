@@ -3,6 +3,9 @@
 #include "egfx/node/object.h"
 #include "egfx/node/mesh.h"
 
+#include "serialize/serialize_mesh_definition.h"
+#include "serialize/serialize_math.h"
+
 #include <format>
 
 namespace ot::dedit
@@ -24,9 +27,19 @@ namespace ot::dedit
 
 	map_entity_iterator& map_entity_iterator::operator++()
 	{
-		++node_iterator;
+		do
+		{
+			++node_iterator;
+		} while (node_iterator != node_end && node_iterator->get_user_ptr() == nullptr);
 
 		return *this;
+	}
+
+	map_entity_iterator map_entity_iterator::operator++(int)
+	{
+		map_entity_iterator prev = *this;
+		++(*this);
+		return prev;
 	}
 
 	auto map_entity_iterator::operator*() const -> reference
@@ -39,6 +52,11 @@ namespace ot::dedit
 	{
 		egfx::node::object_ref node = *node_iterator;
 		return static_cast<map_entity*>(node.get_user_ptr());
+	}
+
+	bool map_entity_iterator::operator==(map_entity_iterator const& rhs) const noexcept
+	{
+		return node_iterator == rhs.node_iterator && node_end == rhs.node_end;
 	}
 
 	bool map_entity_iterator::operator==(map_entity_end_sentinel const&) const noexcept
@@ -82,6 +100,13 @@ namespace ot::dedit
 		return *this;
 	}
 
+	map_entity_const_iterator map_entity_const_iterator::operator++(int)
+	{
+		map_entity_const_iterator prev = *this;
+		++(*this);
+		return prev;
+	}
+
 	auto map_entity_const_iterator::operator*() const -> reference
 	{
 		egfx::node::object_cref node = *node_iterator;
@@ -92,6 +117,11 @@ namespace ot::dedit
 	{
 		egfx::node::object_cref node = *node_iterator;
 		return static_cast<map_entity const*>(node.get_user_ptr());
+	}
+
+	bool map_entity_const_iterator::operator==(map_entity_const_iterator const& rhs) const noexcept
+	{
+		return node_iterator == rhs.node_iterator && node_end == rhs.node_end;
 	}
 
 	bool map_entity_const_iterator::operator==(map_entity_end_sentinel const&) const noexcept
@@ -155,7 +185,12 @@ namespace ot::dedit
 	map_entity_range map_entity::get_children() noexcept
 	{
 		egfx::node::object_ref const node = get_node();
-		return map_entity_range(node.get_children());
+		egfx::node::object_range const child_objects = node.get_children();
+		egfx::node::object_iterator it = child_objects.begin();
+		egfx::node::object_iterator const end = child_objects.end();
+		while (it != end && it->get_user_ptr() == nullptr)
+			++it;
+		return map_entity_range(egfx::node::object_range(it, end));
 	}
 
 	map_entity* map_entity::find_recursive(entity_id search_id)
@@ -203,6 +238,30 @@ namespace ot::dedit
 		return get_local_transform();
 	}
 
+	void map_entity::set_world_transform(math::transform_matrix const& m) noexcept
+	{
+		egfx::node::object_ref const node = get_node();
+
+		math::transform_matrix new_local;
+		if (map_entity const* parent = get_parent())
+		{
+			math::transform_matrix const parent_world = parent->get_world_transform();
+			math::transform_matrix const parent_inverse = invert(parent_world);
+			new_local = m * parent_inverse;
+		}
+		else
+		{
+			new_local = m;
+		}
+
+		math::point3f const new_position = math::point3f() + new_local.get_displacement();
+		math::rotation_matrix const new_rotation = new_local.get_rotation();
+		math::scales const new_scale = new_local.get_scale();
+		node.set_position(new_position);
+		node.set_rotation(new_rotation.to_quaternion());
+		node.set_scale(new_scale);
+	}
+
 	root_entity::root_entity(entity_id id, egfx::node::object_ref node)
 		: map_entity(id)
 		, node(node)
@@ -210,26 +269,11 @@ namespace ot::dedit
 		node.set_user_ptr(this);
 	}
 
-	root_entity::root_entity(root_entity&& rhs) noexcept
-		: map_entity(rhs.get_id())
-		, node(rhs.node)
+	brush::brush(entity_id id)
+		: map_entity(id)
 	{
-		node.set_user_ptr(this);
+
 	}
-
-	root_entity& root_entity::operator=(root_entity&& rhs) noexcept
-	{
-		if (this != &rhs)
-		{
-			static_cast<map_entity&>(*this) = std::move(rhs);
-			node = rhs.node;
-
-			node.set_user_ptr(this);
-		}
-
-		return *this;
-	}
-
 
 	brush::brush(entity_id id, map_entity& parent, std::shared_ptr<egfx::mesh_definition const> mesh_def)
 		: map_entity(id)
@@ -239,26 +283,41 @@ namespace ot::dedit
 		mesh.set_user_ptr(this);
 	}
 
-	brush::brush(brush&& rhs) noexcept
-		: map_entity(rhs.get_id())
-		, mesh_def(std::move(rhs.mesh_def))
-		, mesh(std::move(rhs.mesh))
+	bool brush::fwrite(std::FILE* f) const
 	{
-		mesh.set_user_ptr(this);
+		if (!serialize::fwrite(*mesh_def, f))
+			return false;
+
+		if (!serialize::fwrite(mesh.get_position(), f)
+			|| !serialize::fwrite(mesh.get_rotation(), f)
+			|| !serialize::fwrite(mesh.get_scale(), f))
+			return false;
+
+		return true;
 	}
 
-	brush& brush::operator=(brush&& rhs) noexcept
+	bool brush::fread(map_entity& parent, std::FILE* f)
 	{
-		if (this != &rhs)
-		{
-			static_cast<map_entity&>(*this) = std::move(rhs);
-			mesh_def = std::move(rhs.mesh_def);
-			mesh = std::move(rhs.mesh);
+		auto read_mesh_def = std::make_shared<egfx::mesh_definition>();
+		if (!serialize::fread(*read_mesh_def, f))
+			return false;
+				
+		math::point3f position;
+		math::quaternion rotation;
+		math::scales scales;
+		if (!serialize::fread(position, f) || !serialize::fread(rotation, f) || !serialize::fread(scales, f))
+			return false;
 
-			mesh.set_user_ptr(this);
-		}
+		mesh_def = std::move(read_mesh_def);
+		mesh = egfx::node::create_mesh(parent.get_node(), make_brush_name(get_id()), *mesh_def);
 
-		return *this;
+		mesh.set_position(position);
+		mesh.set_rotation(rotation);
+		mesh.set_scale(scales);
+
+		mesh.set_user_ptr(this);
+
+		return true;
 	}
 
 	void brush::reload_node(std::shared_ptr<egfx::mesh_definition const> new_def)
@@ -278,14 +337,27 @@ namespace ot::dedit
 		return static_cast<entity_id>(next_entity_id++);
 	}
 
+	brush& map::make_default_brush(entity_id id)
+	{
+		brushes.push_back(ot::make_unique<brush>(id));
+		return *brushes.back();
+	}
+
 	brush& map::make_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id)
 	{
-		return brushes.emplace_back(id, root, mesh_def);
+		brushes.push_back(ot::make_unique<brush>(id, root, mesh_def));
+		return *brushes.back();
+	}
+
+	brush& map::make_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id, map_entity& parent)
+	{
+		brushes.push_back(ot::make_unique<brush>(id, parent, mesh_def));
+		return *brushes.back();
 	}
 
 	void map::delete_brush(entity_id id)
 	{
-		auto const it_found = std::find_if(brushes.begin(), brushes.end(), [id](brush const& b) { return b.get_id() == id; });
+		auto const it_found = std::find_if(brushes.begin(), brushes.end(), [id](uptr<brush> const& b) { return b->get_id() == id; });
 		if (it_found != brushes.end())
 		{
 			brushes.erase(it_found);
@@ -295,13 +367,13 @@ namespace ot::dedit
 	void map::clear()
 	{
 		brushes.clear();
-		next_entity_id = 0;
+		next_entity_id = 1; // Root always has id 0
 	}
 
 	brush const* map::find_brush(entity_id id) const noexcept
 	{
-		auto const it_found = std::find_if(brushes.begin(), brushes.end(), [id](brush const& b) { return b.get_id() == id; });
-		return it_found != brushes.end() ? std::to_address(it_found) : nullptr;
+		auto const it_found = std::find_if(brushes.begin(), brushes.end(), [id](uptr<brush> const& b) { return b->get_id() == id; });
+		return it_found != brushes.end() ? it_found->get() : nullptr;
 	}
 
 	brush* map::find_brush(entity_id id) noexcept

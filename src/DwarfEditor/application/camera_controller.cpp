@@ -52,20 +52,23 @@ namespace ot::dedit
 		if (controlling_camera)
 			return true;
 
-		switch (key.keysym.scancode)
+		if (input::mouse::get_buttons() == input::mouse::button_type::right)
 		{
-		case SDL_SCANCODE_Q:
-		case SDL_SCANCODE_W:
-		case SDL_SCANCODE_E:
-		case SDL_SCANCODE_A:
-		case SDL_SCANCODE_S:
-		case SDL_SCANCODE_D:
-			if (key.state == SDL_PRESSED
-				&& key.repeat == 0
-				&& (key.keysym.mod & (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT)) == 0)
+			switch (key.keysym.scancode)
 			{
-				start_control();
-				return true;
+			case SDL_SCANCODE_Q:
+			case SDL_SCANCODE_W:
+			case SDL_SCANCODE_E:
+			case SDL_SCANCODE_A:
+			case SDL_SCANCODE_S:
+			case SDL_SCANCODE_D:
+				if (key.state == SDL_PRESSED
+					&& key.repeat == 0
+					&& (key.keysym.mod & (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT)) == 0)
+				{
+					start_control();
+					return true;
+				}
 			}
 		}
 

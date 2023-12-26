@@ -31,6 +31,8 @@ namespace ot::dedit::imgui
 
 	[[nodiscard]] matrix invert(matrix const& t);
 	[[nodiscard]] matrix operator*(matrix const& lhs, matrix const& rhs);
+	[[nodiscard]] matrix operator*(math::transform_matrix const& lhs, matrix const& rhs);
+	[[nodiscard]] matrix operator*(matrix const& lhs, math::transform_matrix const& rhs);
 
 	using ot::float_eq;
 	[[nodiscard]] bool float_eq(matrix const& lhs, matrix const& rhs);
