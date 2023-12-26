@@ -52,6 +52,33 @@ namespace ot::dedit
 		if (controlling_camera)
 			return true;
 
+		switch (key.keysym.scancode)
+		{
+		case SDL_SCANCODE_Q:
+		case SDL_SCANCODE_W:
+		case SDL_SCANCODE_E:
+		case SDL_SCANCODE_A:
+		case SDL_SCANCODE_S:
+		case SDL_SCANCODE_D:
+			if (key.state == SDL_PRESSED
+				&& key.repeat == 0
+				&& (key.keysym.mod & (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT)) == 0)
+			{
+				start_control();
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	template<typename Application>
+	bool camera_controller<Application>::handle_text_event(SDL_TextInputEvent const& e)
+	{
+		// Just swallow keyboard input events while controlling the camera
+		if (controlling_camera)
+			return true;
+
 		return false;
 	}
 
@@ -59,17 +86,8 @@ namespace ot::dedit
 	bool camera_controller<Application>::handle_mouse_button_event(SDL_MouseButtonEvent const& e)
 	{
 		auto const button = input::mouse::button_type_from_sdl(e.button);
-		if (button == input::mouse::button_type::right)
+		if (controlling_camera && button == input::mouse::button_type::right && e.state != SDL_PRESSED)
 		{
-			if (e.state == SDL_PRESSED)
-			{
-				start_control();
-			}
-			else
-			{
-				clear_control();
-			}
-
 			return true;
 		}
 
@@ -80,10 +98,14 @@ namespace ot::dedit
 	bool camera_controller<Application>::handle_mouse_motion_event(SDL_MouseMotionEvent const& e)
 	{
 		if (!controlling_camera)
-			return false;
-
+		{
+			if (input::mouse::get_buttons() == input::mouse::button_type::right)
+				start_control();
+			else
+				return false;
+		}
 		// Only move the camera while the right-click is pressed
-		if (input::mouse::get_buttons() != input::mouse::button_type::right)
+		else if (input::mouse::get_buttons() != input::mouse::button_type::right)
 		{
 			clear_control();
 			return false;
@@ -102,7 +124,12 @@ namespace ot::dedit
 	bool camera_controller<Application>::handle_mouse_wheel_event(SDL_MouseWheelEvent const& e)
 	{
 		if (!controlling_camera)
-			return false;
+		{
+			if (input::mouse::get_buttons() == input::mouse::button_type::right)
+				start_control();
+			else
+				return false;
+		}
 
 		int y = e.y;
 		while (y > 0)

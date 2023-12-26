@@ -135,34 +135,35 @@ namespace ot::dedit
 			case SDL_KEYUP:
 			case SDL_KEYDOWN:
 			{
-				SDL_KeyboardEvent const& key = e.key;
+				if (camera_controller::handle_keyboard_event(e.key))
+					break;
 
 				ImGui_ImplSDL2_ProcessEvent(&e);
 
 				// Handle alt+f4 pressed on a window other than the main one
 				if (imgui_io.WantCaptureKeyboard)
 				{
-					if (is_key_press(key, SDLK_F4, input::keyboard::mod::lalt))
+					if (is_key_press(e.key, SDLK_F4, input::keyboard::mod::lalt))
 						quit();
 
 					break;
 				}
-
-				if (camera_controller::handle_keyboard_event(e.key))
-					break;
-
+				
 				if (selection_actions.handle_keyboard_event(e.key, current_map))
 					break;
 
 				if (menu::handle_keyboard_event(e.key))
 					break;
 
-				if (selection_context != nullptr && selection_context->handle_keyboard_event(key, selection_actions))
+				if (selection_context != nullptr && selection_context->handle_keyboard_event(e.key, selection_actions))
 					break;
 
 				break;
 			}
 			case SDL_TEXTINPUT:
+				if (camera_controller::handle_text_event(e.text))
+					break;
+
 				ImGui_ImplSDL2_ProcessEvent(&e);
 				break;
 
@@ -173,7 +174,8 @@ namespace ot::dedit
 				if (imgui::has_mouse())	
 					break;
 				
-				camera_controller::handle_mouse_button_event(e.button);
+				if (camera_controller::handle_mouse_button_event(e.button))
+					break;
 
 				if (mouse.handle_mouse_button_event(e.button))
 					break;

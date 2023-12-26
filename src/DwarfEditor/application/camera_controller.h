@@ -31,6 +31,7 @@ namespace ot::dedit
 		void rotate(math::seconds dt);
 	public:
 		bool handle_keyboard_event(SDL_KeyboardEvent const& key);
+		bool handle_text_event(SDL_TextInputEvent const& e);
 		bool handle_mouse_button_event(SDL_MouseButtonEvent const& e);
 		bool handle_mouse_motion_event(SDL_MouseMotionEvent const& e);
 		bool handle_mouse_wheel_event(SDL_MouseWheelEvent const& e);
