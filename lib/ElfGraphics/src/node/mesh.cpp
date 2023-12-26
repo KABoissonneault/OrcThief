@@ -269,13 +269,13 @@ namespace ot::egfx::node
 
 	mesh create_mesh(object_ref parent, std::string const& name, mesh_definition const& mesh_def)
 	{
-		Ogre::SceneManager& scene_manager = *get_scene_node(parent).getCreator();
+		Ogre::SceneNode& parent_node = get_scene_node(parent);
+		Ogre::SceneManager& scene_manager = *parent_node.getCreator();
 		
 		Ogre::MeshPtr render_mesh = make_mesh(name, mesh_def);
 
-		Ogre::SceneNode* const root_node = scene_manager.getRootSceneNode(Ogre::SCENE_DYNAMIC);
 		Ogre::Item* const item = scene_manager.createItem(render_mesh, Ogre::SCENE_DYNAMIC);
-		Ogre::SceneNode* const mesh_node = root_node->createChildSceneNode(Ogre::SCENE_DYNAMIC);
+		Ogre::SceneNode* const mesh_node = parent_node.createChildSceneNode(Ogre::SCENE_DYNAMIC);
 		mesh_node->attachObject(item);
 
 		mesh m;
