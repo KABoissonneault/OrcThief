@@ -22,13 +22,44 @@ OT_MATH_DETAIL_BOOST_INCLUDE_BEGIN
 #include <boost/qvm/quat_access.hpp>
 OT_MATH_DETAIL_BOOST_INCLUDE_END
 
-#include <cassert>
+#include <numbers>
 
 namespace ot::math
 {
 	float rotation_matrix::determinant() const noexcept
 	{
 		return boost::qvm::determinant(*this);
+	}
+
+	euler_rotation rotation_matrix::get_euler_angles_zyx() const noexcept
+	{
+		using namespace boost::qvm;
+
+		euler_rotation e;
+
+		// https://www.geometrictools.com/Documentation/EulerAngles.pdf
+		// A20 is equal to -sin(y)
+		// Therefore, if A20 == 1.f, then sin(y) == -1.f, or y = -pi/2
+		if (float_eq(A20(*this), 1.f))
+		{
+			e.x = std::atan2(-A12(*this), A11(*this));
+			e.y = -std::numbers::pi_v<float> / 2.f;
+			e.z = 0.f;
+		}
+		else if (float_eq(A20(*this), -1.f))
+		{
+			e.x = std::atan2(-A12(*this), A11(*this));
+			e.y = std::numbers::pi_v<float> / 2.f;
+			e.z = 0.f;
+		}
+		else
+		{
+			e.x = std::atan2(A21(*this), A22(*this));
+			e.y = std::asin(-A20(*this));
+			e.z = std::atan2(A10(*this), A00(*this));
+		}
+
+		return e;
 	}
 
 	rotation_matrix rotation_matrix::rotx(float radiant) noexcept
@@ -46,9 +77,19 @@ namespace ot::math
 		return boost::qvm::rotz_mat<3>(radiant);
 	}
 
+	rotation_matrix rotation_matrix::rot_zyx(euler_rotation const& e) noexcept
+	{
+		return boost::qvm::rot_mat_zyx<3>(e.z, e.y, e.x);
+	}
+
 	rotation_matrix rotation_matrix::identity() noexcept
 	{
 		return boost::qvm::identity_mat<float, 3>();
+	}
+
+	rotation_matrix rotation_matrix::from_quaternion(quaternion q) noexcept
+	{
+		return boost::qvm::convert_to<rotation_matrix>(q);
 	}
 
 	quaternion rotation_matrix::to_quaternion() const noexcept

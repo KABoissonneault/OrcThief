@@ -8,16 +8,27 @@ namespace ot::math
 {
 	using ot::float_eq;
 
+	// Rotation in radians
+	struct euler_rotation
+	{
+		float x;
+		float y;
+		float z;
+	};
+
 	struct rotation_matrix
 	{
 		float elements[9];
 
 		[[nodiscard]] float determinant() const noexcept;
+		[[nodiscard]] euler_rotation get_euler_angles_zyx() const noexcept;
 
 		[[nodiscard]] static rotation_matrix identity() noexcept;
+		[[nodiscard]] static rotation_matrix from_quaternion(quaternion q) noexcept;
 		[[nodiscard]] static rotation_matrix rotx(float radiant) noexcept;
 		[[nodiscard]] static rotation_matrix roty(float radiant) noexcept;
 		[[nodiscard]] static rotation_matrix rotz(float radiant) noexcept;
+		[[nodiscard]] static rotation_matrix rot_zyx(euler_rotation const& e) noexcept;
 
 		[[nodiscard]] quaternion to_quaternion() const noexcept;
 	};
