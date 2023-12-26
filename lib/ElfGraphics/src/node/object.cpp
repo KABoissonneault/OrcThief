@@ -134,7 +134,56 @@ namespace ot::egfx::node
 		return old;
 	}
 
-	auto object_iterator::operator*() const -> element_type
+	object_iterator& object_iterator::operator+=(difference_type n)
+	{
+		scene_node = static_cast<Ogre::Node**>(scene_node) + n;
+		return *this;
+	}
+
+	object_iterator operator+(object_iterator it, object_iterator::difference_type n)
+	{
+		it += n;
+		return it;
+	}
+
+	object_iterator operator+(object_iterator::difference_type n, object_iterator it)
+	{
+		it += n;
+		return it;
+	}
+
+	object_iterator& object_iterator::operator--()
+	{
+		scene_node = static_cast<Ogre::Node**>(scene_node) - 1;
+		return *this;
+	}
+
+	object_iterator object_iterator::operator--(int)
+	{
+		object_iterator old = *this;
+		--(*this);
+		return old;
+	}
+
+	object_iterator& object_iterator::operator-=(difference_type n)
+	{
+		scene_node = static_cast<Ogre::Node**>(scene_node) - n;
+		return *this;
+	}
+
+	object_iterator object_iterator::operator-(difference_type n) const
+	{
+		object_iterator it = *this;
+		it -= n;
+		return it;
+	}
+
+	auto object_iterator::operator-(object_iterator const& rhs) const noexcept -> difference_type
+	{
+		return static_cast<Ogre::Node**>(scene_node) - static_cast<Ogre::Node**>(rhs.scene_node);
+	}
+
+	auto object_iterator::operator*() const -> reference
 	{
 		return make_object_ref(*static_cast<Ogre::SceneNode*>(*static_cast<Ogre::Node**>(scene_node)));
 	}
@@ -144,9 +193,9 @@ namespace ot::egfx::node
 		return pointer{ *(*this) };
 	}
 
-	bool object_iterator::operator==(object_iterator const& rhs) const noexcept
+	auto object_iterator::operator[](difference_type n) const -> reference
 	{
-		return scene_node == rhs.scene_node;
+		return make_object_ref(*static_cast<Ogre::SceneNode*>(static_cast<Ogre::Node**>(scene_node)[n]));
 	}
 
 	object_range::object_range(object_iterator it, object_iterator sent) noexcept
@@ -181,6 +230,56 @@ namespace ot::egfx::node
 		return old;
 	}
 
+	object_const_iterator& object_const_iterator::operator+=(difference_type n)
+	{
+		scene_node = static_cast<Ogre::Node const* const*>(scene_node) + n;
+		return *this;
+	}
+
+	object_const_iterator operator+(object_const_iterator it, object_const_iterator::difference_type n)
+	{
+		it += n;
+		return it;
+	}
+
+	object_const_iterator operator+(object_const_iterator::difference_type n, object_const_iterator it)
+	{
+		it += n;
+		return it;
+	}
+
+
+	object_const_iterator& object_const_iterator::operator--()
+	{
+		scene_node = static_cast<Ogre::Node const* const*>(scene_node) - 1;
+		return *this;
+	}
+
+	object_const_iterator object_const_iterator::operator--(int)
+	{
+		object_const_iterator old = *this;
+		--(*this);
+		return old;
+	}
+
+	object_const_iterator& object_const_iterator::operator-=(difference_type n)
+	{
+		scene_node = static_cast<Ogre::Node const* const*>(scene_node) - n;
+		return *this;
+	}
+
+	object_const_iterator object_const_iterator::operator-(difference_type n) const
+	{
+		object_const_iterator it = *this;
+		it -= n;
+		return it;
+	}
+
+	auto object_const_iterator::operator-(object_const_iterator const& rhs) const noexcept -> difference_type
+	{
+		return static_cast<Ogre::Node const* const*>(scene_node) - static_cast<Ogre::Node const* const*>(rhs.scene_node);
+	}
+
 	auto object_const_iterator::operator*() const -> element_type
 	{
 		return make_object_cref(*static_cast<Ogre::SceneNode const*>(*static_cast<Ogre::Node const* const*>(scene_node)));
@@ -191,9 +290,9 @@ namespace ot::egfx::node
 		return pointer{ *(*this) };
 	}
 
-	bool object_const_iterator::operator==(object_const_iterator const& rhs) const noexcept
+	auto object_const_iterator::operator[](difference_type n) const -> reference
 	{
-		return scene_node == rhs.scene_node;
+		return make_object_cref(*static_cast<Ogre::SceneNode const*>(static_cast<Ogre::Node const* const*>(scene_node)[n]));
 	}
 
 	object_const_range::object_const_range(object_const_iterator it, object_const_iterator sent) noexcept

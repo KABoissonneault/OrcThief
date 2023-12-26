@@ -50,86 +50,9 @@ namespace ot::egfx::node
 			[[nodiscard]] size_t get_child_count() const noexcept;
 		};
 	}
-
-	class object_iterator
-	{
-		void* scene_node = nullptr; 
-
-		object_iterator(void* node) noexcept;
-
-		friend class object_ref;
-		friend class object;
-		friend class object_const_iterator;
-
-	public:
-		object_iterator() = default;
-
-		using different_type = ptrdiff_t;
-		using element_type = object_ref;
-		using pointer = arrow_proxy<element_type>;
-		using reference = element_type;
-
-		object_iterator& operator++();
-		[[nodiscard]] object_iterator operator++(int);
-		[[nodiscard]] reference operator*() const;
-		[[nodiscard]] pointer operator->() const;
-
-		[[nodiscard]] bool operator==(object_iterator const& rhs) const noexcept;
-	};
-
-	class object_range
-	{
-		object_iterator it;
-		object_iterator sent;
-
-	public:
-		object_range() = default;
-		object_range(object_iterator beg, object_iterator end) noexcept;
-
-		[[nodiscard]] object_iterator begin() const noexcept { return it; }
-		[[nodiscard]] object_iterator end() const noexcept { return sent; }
-	};
-
-	class object_const_iterator
-	{
-		void const* scene_node = nullptr;
-
-		object_const_iterator(void const* node) noexcept;
-
-		friend class object_cref;
-		friend class object_ref;
-		friend class object;
-
-	public:
-		object_const_iterator() = default;
-		object_const_iterator(object_iterator it) noexcept;
-
-		using different_type = ptrdiff_t;
-		using element_type = object_cref;
-		using pointer = arrow_proxy<element_type const>;
-		using reference = element_type;
-
-		object_const_iterator& operator++();
-		[[nodiscard]] object_const_iterator operator++(int);
-		[[nodiscard]] element_type operator*() const;
-		[[nodiscard]] pointer operator->() const;
-
-		[[nodiscard]] bool operator==(object_const_iterator const& rhs) const noexcept;
-	};
-
-	class object_const_range
-	{
-		object_const_iterator it;
-		object_const_iterator sent;
-
-	public:
-		object_const_range() = default;
-		object_const_range(object_const_iterator beg, object_const_iterator end) noexcept;
-		object_const_range(object_range range) noexcept;
-
-		[[nodiscard]] object_const_iterator begin() const noexcept { return it; }
-		[[nodiscard]] object_const_iterator end() const noexcept { return sent; }
-	};
+	
+	class object_range;
+	class object_const_range;
 
 	class object_cref : public detail::object_const_impl<object_cref>
 	{
@@ -246,4 +169,119 @@ namespace ot::egfx::node
 	extern template class detail::object_const_impl<object_cref>;
 	extern template class detail::object_const_impl<object_ref>;
 	extern template class detail::object_const_impl<object>;
+
+	class object_iterator
+	{
+		void* scene_node = nullptr;
+
+		object_iterator(void* node) noexcept;
+
+		friend class object_ref;
+		friend class object;
+		friend class object_const_iterator;
+
+	public:
+		object_iterator() = default;
+
+		using difference_type = ptrdiff_t;
+		using element_type = object_ref;
+		using pointer = arrow_proxy<element_type>;
+		using reference = element_type;
+
+		object_iterator& operator++();
+		[[nodiscard]] object_iterator operator++(int);
+		object_iterator& operator+=(difference_type n);
+		
+		object_iterator& operator--();
+		[[nodiscard]] object_iterator operator--(int);
+		object_iterator& operator-=(difference_type n);
+		[[nodiscard]] object_iterator operator-(difference_type n) const;
+		[[nodiscard]] difference_type operator-(object_iterator const& rhs) const noexcept;
+		
+		[[nodiscard]] reference operator*() const;
+		[[nodiscard]] pointer operator->() const;
+		[[nodiscard]] reference operator[](difference_type n) const;
+
+		[[nodiscard]] std::strong_ordering operator<=>(object_iterator const& rhs) const noexcept = default;
+	};
+
+	[[nodiscard]] object_iterator operator+(object_iterator it, object_iterator::difference_type n);
+	[[nodiscard]] object_iterator operator+(object_iterator::difference_type n, object_iterator it);
+
+	static_assert(std::random_access_iterator<object_iterator>);
+
+	class object_range
+	{
+		object_iterator it;
+		object_iterator sent;
+
+	public:
+		object_range() = default;
+		object_range(object_iterator beg, object_iterator end) noexcept;
+
+		[[nodiscard]] object_iterator begin() const noexcept { return it; }
+		[[nodiscard]] object_iterator end() const noexcept { return sent; }
+
+		[[nodiscard]] bool empty() const noexcept { return it == sent; }
+		[[nodiscard]] size_t size() const { return sent - it; }
+	};
+
+	class object_const_iterator
+	{
+		void const* scene_node = nullptr;
+
+		object_const_iterator(void const* node) noexcept;
+
+		friend class object_cref;
+		friend class object_ref;
+		friend class object;
+
+	public:
+		object_const_iterator() = default;
+		object_const_iterator(object_iterator it) noexcept;
+
+		using difference_type = ptrdiff_t;
+		using element_type = object_cref;
+		using pointer = arrow_proxy<element_type const>;
+		using reference = element_type;
+
+		object_const_iterator& operator++();
+		[[nodiscard]] object_const_iterator operator++(int);
+		object_const_iterator& operator+=(difference_type n);
+
+		object_const_iterator& operator--();
+		[[nodiscard]] object_const_iterator operator--(int);
+		object_const_iterator& operator-=(difference_type n);
+		[[nodiscard]] object_const_iterator operator-(difference_type n) const;
+		[[nodiscard]] difference_type operator-(object_const_iterator const& rhs) const noexcept;
+
+		[[nodiscard]] element_type operator*() const;
+		[[nodiscard]] pointer operator->() const;
+		[[nodiscard]] reference operator[](difference_type n) const;
+
+		[[nodiscard]] std::strong_ordering operator<=>(object_const_iterator const& rhs) const noexcept = default;
+	};
+	
+	[[nodiscard]] object_const_iterator operator+(object_const_iterator it, object_const_iterator::difference_type n);
+	[[nodiscard]] object_const_iterator operator+(object_const_iterator::difference_type n, object_const_iterator it);
+
+	static_assert(std::random_access_iterator<object_const_iterator>);
+
+	class object_const_range
+	{
+		object_const_iterator it;
+		object_const_iterator sent;
+
+	public:
+		object_const_range() = default;
+		object_const_range(object_const_iterator beg, object_const_iterator end) noexcept;
+		object_const_range(object_range range) noexcept;
+
+		[[nodiscard]] object_const_iterator begin() const noexcept { return it; }
+		[[nodiscard]] object_const_iterator end() const noexcept { return sent; }
+
+		[[nodiscard]] bool empty() const noexcept { return it == sent; }
+		[[nodiscard]] size_t size() const { return sent - it; }
+	};
+
 }
