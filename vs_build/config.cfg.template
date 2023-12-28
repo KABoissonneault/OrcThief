@@ -18,6 +18,11 @@
 
 [Core]
 # !Required
+# Format: String
+# Name of the project
+Name=Template
+
+# !Required
 # Format: Directory
 # The path to the root containing all the game resources
 ResourceRoot=..\..\..\res

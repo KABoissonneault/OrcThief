@@ -21,14 +21,14 @@ namespace ot::dedit::imgui
 	static std::string get_font(std::string_view font_name)
 	{
 		assert(program_config != nullptr);
-		std::string_view const resource_root = program_config->get_core().get_resource_root();
+		std::string_view const resource_root = program_config->get_core().get_editor_resource_root();
 		return std::format("{}/Font/{}", resource_root, font_name);
 	}
 
 	std::string get_doc_path(std::string_view doc_name)
 	{
 		assert(program_config != nullptr);
-		std::string_view const resource_root = program_config->get_core().get_resource_root();
+		std::string_view const resource_root = program_config->get_core().get_editor_resource_root();
 		return std::format("{}/Doc/{}", resource_root, doc_name);
 	}
 

@@ -37,7 +37,7 @@ extern "C" int SDL_main(int argc, char** argv)
 {
 	using namespace ot::dedit;
 
-	if (!main::initialize())
+	if (!main::initialize(argc, argv))
 		return -1;
 
 	ot::sdl::unique_window window = ot::dedit::create_window(k_window_title);

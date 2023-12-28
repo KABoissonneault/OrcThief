@@ -1,19 +1,20 @@
 #pragma once
 
-#include "egfx/mesh_definition.fwd.h"
-
 #include <SDL_events.h>
 
-#include <memory>
+#include <string>
 
 namespace ot::dedit
 {
 	class application;
+	class config;
 
 	template<typename Application>
 	class menu
 	{
 		using derived = Application;
+
+		std::string game_name;
 
 		bool draw_console_window = false;
 		bool draw_about_window = false;
@@ -25,7 +26,7 @@ namespace ot::dedit
 		void draw_main_status();
 		
 	public:
-		menu();
+		menu(config const& editor_config);
 
 		bool handle_keyboard_event(SDL_KeyboardEvent const& e);
 

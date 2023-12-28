@@ -20,13 +20,19 @@ namespace ot::dedit
 		public:
 			[[nodiscard]] bool load(Ogre::ConfigFile const& config);
 
-			[[nodiscard]] std::string_view get_resource_root() const noexcept
+			[[nodiscard]] std::string_view get_name() const noexcept
 			{
-				return resource_root;
+				return name;
+			}
+
+			[[nodiscard]] std::string_view get_editor_resource_root() const noexcept
+			{
+				return editor_resource_root;
 			}
 
 		private:
-			std::string resource_root;
+			std::string name;
+			std::string editor_resource_root;
 		};
 
 		class scene_config
@@ -54,13 +60,49 @@ namespace ot::dedit
 			std::optional<ambiant_light> light;
 		};
 
+		class game_config
+		{
+		public:
+			class core_config
+			{
+			public:
+				[[nodiscard]] bool load(Ogre::ConfigFile const& config);
+
+				[[nodiscard]] std::string_view get_name() const noexcept
+				{
+					return name;
+				}
+
+				[[nodiscard]] std::string_view get_game_resource_root() const noexcept
+				{
+					return game_resource_root;
+				}
+
+			private:
+				std::string name;
+				std::string game_resource_root;
+			};
+
+			core_config const& get_core() const noexcept { return core; }
+
+			[[nodiscard]] bool load(Ogre::ConfigFile const& config);
+
+		private:
+			core_config core;
+		};
+
 		[[nodiscard]] core_config const& get_core() const noexcept { return core; }
 		[[nodiscard]] scene_config const& get_scene() const noexcept { return scene; }
+		[[nodiscard]] bool has_game_config() const noexcept { return has_game; }
+		[[nodiscard]] game_config const& get_game() const noexcept { return game; }
 
-		[[nodiscard]] bool load(Ogre::ConfigFile const& config);
+		[[nodiscard]] bool load(Ogre::ConfigFile const& editor_config, Ogre::ConfigFile const* game_config);
 
 	private:
 		core_config core;
 		scene_config scene;
+		game_config game;
+
+		bool has_game = false;
 	};
 }

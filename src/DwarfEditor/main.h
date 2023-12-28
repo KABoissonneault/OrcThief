@@ -7,7 +7,7 @@
 
 namespace ot::dedit::main
 {
-	[[nodiscard]] bool initialize();
+	[[nodiscard]] bool initialize(int argc, char** argv);
 	[[nodiscard]] int run(int argc, char** argv, sdl::unique_window window);
 	void shutdown();
 }

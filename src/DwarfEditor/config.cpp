@@ -108,23 +108,44 @@ namespace ot::dedit
 		}
 	}
 
-	bool config::load(Ogre::ConfigFile const& config)
+	bool config::load(Ogre::ConfigFile const& editor_config, Ogre::ConfigFile const* game_config)
 	{
-		return core.load(config) && scene.load(config);
+		if (!core.load(editor_config) || !scene.load(editor_config))
+			return false;
+
+		if (game_config != nullptr)
+		{
+			if (!game.load(*game_config))
+				return false;
+
+			has_game = true;
+		}
+
+		return true;
 	}
 
 	bool config::core_config::load(Ogre::ConfigFile const& config)
 	{
-		resource_root = config.getSetting("ResourceRoot", "Core");
-		if (resource_root.empty())
+		name = config.getSetting("Name", "Core");
+		if (name.empty())
 		{
-			std::printf("error [DwarfEditor]: Required config key ResourceRoot under [Core] has no value");
+			std::printf("error [DwarfEditor]: Required Editor [Core] config key Name has no value");
 			return false;
 		}
 
-		std::filesystem::path const resource_path(resource_root);
-		if (!exists(resource_path) || !is_directory(resource_path))
+		editor_resource_root = config.getSetting("ResourceRoot", "Core");
+		if (editor_resource_root.empty())
+		{
+			std::printf("error [DwarfEditor]: Required Editor [Core] config key ResourceRoot has no value");
 			return false;
+		}
+
+		std::filesystem::path const resource_path(editor_resource_root);
+		if (!exists(resource_path) || !is_directory(resource_path))
+		{
+			std::printf("error [DwarfEditor]: Editor [Core] field ResourceRoot value '%s' does not refer to a valid directory", editor_resource_root.c_str());
+			return false;
+		}
 
 		return true;
 	}
@@ -155,6 +176,37 @@ namespace ot::dedit
 		if (error)
 		{
 			std::printf("warning [DwarfEditor]: Config key AmbiantLight under [Scene] has invalid value: %.*s", static_cast<int>(original_line.size()), original_line.data());
+			return false;
+		}
+
+		return true;
+	}
+
+	bool config::game_config::load(Ogre::ConfigFile const& config)
+	{
+		return core.load(config);
+	}
+
+	bool config::game_config::core_config::load(Ogre::ConfigFile const& config)
+	{
+		name = config.getSetting("Name", "Core");
+		if (name.empty())
+		{
+			std::printf("error [DwarfEditor]: Required Game config key Name under [Core] has no value");
+			return false;
+		}
+
+		game_resource_root = config.getSetting("ResourceRoot", "Core");
+		if (game_resource_root.empty())
+		{
+			std::printf("error [DwarfEditor]: Required Game config key ResourceRoot under [Core] has no value");
+			return false;
+		}
+
+		std::filesystem::path const resource_path(game_resource_root);
+		if (!exists(resource_path) || !is_directory(resource_path))
+		{
+			std::printf("error [DwarfEditor]: Game [Core] field ResourceRoot value '%s' does not refer to a valid directory", game_resource_root.c_str());
 			return false;
 		}
 

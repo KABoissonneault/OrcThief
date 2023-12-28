@@ -58,7 +58,8 @@ namespace ot::dedit
 	}
 
 	application::application(sdl::unique_window window, egfx::module& graphics, config const& program_config)
-		: main_window(std::move(window))
+		: menu(program_config)
+		, main_window(std::move(window))
 		, graphics(graphics)
 		, main_scene(graphics.create_scene(std::string(program_config.get_scene().get_workspace()), get_number_threads() - 1))
 		, current_map(main_scene.get_root_node())

@@ -4,6 +4,7 @@
 #include "application/action_handler.h"
 
 #include "input.h"
+#include "config.h"
 #include "console.h"
 
 #include "menu/console_window.h"
@@ -18,8 +19,17 @@
 namespace ot::dedit
 {
 	template<typename Application>
-	menu<Application>::menu()
+	menu<Application>::menu(config const& editor_config)
 	{
+		if (!editor_config.has_game_config())
+		{
+			game_name = "Standalone";
+		}
+		else
+		{
+			game_name = editor_config.get_game().get_core().get_name();
+		}
+
 		about_window::load_content();
 	}
 
@@ -221,6 +231,12 @@ namespace ot::dedit
 		derived& app = static_cast<derived&>(*this);
 		auto& map_handler = app.get_map_handler();
 		
+		ImGui::Text("%s", game_name.c_str());
+
+		ImGui::Separator();
+		ImGui::SameLine();
+		ImGui::SameLine();
+
 		if (map_handler.has_map_file())
 		{
 			std::string_view const map_file = map_handler.get_map_file();
