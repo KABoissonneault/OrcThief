@@ -6,12 +6,9 @@
 
 #include <format>
 #include <imgui.h>
-#include <misc/freetype/imgui_freetype.h>
 #include <imgui_impl_sdl2.h>
-#include <imgui_impl_dx11.h>
 #include <imgui_markdown.h>
 #include <IconsFontAwesome5.h>
-#include "Ogre/Root.h"
 
 namespace ot::dedit::imgui
 {

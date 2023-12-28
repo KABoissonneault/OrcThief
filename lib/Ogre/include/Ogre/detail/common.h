@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/compiler.h"
+#include "core/compiler.h"
 
 #if OT_COMPILER_MSVC
 #  define OT_DETAIL_OGRE_EXTERNAL_INCLUDE_BEGIN \

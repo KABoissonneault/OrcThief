@@ -6,7 +6,6 @@
 
 #include "Ogre/RenderSystem.h"
 #include "Ogre/Compositor/Manager2.h"
-#include "Ogre/Components/Overlay/Manager.h"
 #include "Ogre/Window.h"
 
 namespace ot::egfx

@@ -4,7 +4,6 @@
 #include "selection/face_split_context.h"
 #include "selection/brush_common.h"
 
-#include "datablock.h"
 #include "input.h"
 
 #include "egfx/object/camera.h"
