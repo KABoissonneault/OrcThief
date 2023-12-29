@@ -160,6 +160,7 @@
     <ClInclude Include="..\..\lib\math\include\math\ray.h" />
     <ClInclude Include="..\..\lib\Math\include\math\transform_matrix.h" />
     <ClInclude Include="..\..\lib\Math\include\math\unit\time.h" />
+    <ClInclude Include="..\..\lib\Math\include\math\vector2.h" />
     <ClInclude Include="..\..\lib\Math\include\Math\vector3.h" />
   </ItemGroup>
   <ItemGroup>

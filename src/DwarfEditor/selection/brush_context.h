@@ -32,14 +32,23 @@ namespace ot::dedit::selection
 			face_selection,
 		};
 
-		operation_type operation = operation_type::translate;
-		bool use_world_manipulation = false;
+		enum class vertex_debug_type
+		{
+			none,
+			uv,
+		};
 
+		operation_type operation = operation_type::translate;
+		vertex_debug_type vertex_debug = vertex_debug_type::none;
+		bool use_world_manipulation = false;
+		
 		// Returns whether any manipulation input is active
 		bool operation_window(action::accumulator& acc, math::transform_matrix const& original_local_transform);
 		bool draw_gizmo(imgui::matrix& object_world_matrix);
 
 		brush const& get_brush() const;
+
+		void draw_immediate_scene(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t, egfx::face::id hovered_face);
 
 	public:
 		brush_context(map const& current_map, egfx::object::camera_cref main_camera, egfx::window const& main_window, entity_id selected_brush) noexcept;

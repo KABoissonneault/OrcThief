@@ -60,6 +60,9 @@
     <ClInclude Include="..\..\lib\Math\include\math\ops.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Math\include\math\vector2.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\math\src\ray.cpp">

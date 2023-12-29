@@ -3,9 +3,9 @@
 #include "mesh_definition.fwd.h"
 
 #include "math/vector3.h"
+#include "math/vector2.h"
 #include "math/plane.h"
 #include "math/aabb.h"
-#include "math/ray.h"
 #include "math/line.h"
 #include "core/size_t.h"
 #include "core/iterator/arrow_proxy.h"
@@ -13,8 +13,7 @@
 
 #include <vector>
 #include <span>
-#include <cassert>
-#include <optional>
+#include <numbers>
 
 namespace ot::egfx
 {	
@@ -84,7 +83,7 @@ namespace ot::egfx
 		class cref
 		{
 			mesh_definition const* m;
-			id v;
+			id vertex_id;
 
 		public:
 			using id_type = id;
@@ -93,22 +92,26 @@ namespace ot::egfx
 			cref() = default;
 			cref(mesh_definition const& m, id v) noexcept
 				: m(&m)
-				, v(v)
+				, vertex_id(v)
 			{
 
 			}
 
-			[[nodiscard]] id get_id() const noexcept { return v; }
+			[[nodiscard]] id get_id() const noexcept { return vertex_id; }
 
 			// Get the position in the mesh's local space of the vertex
 			[[nodiscard]] math::point3f get_position() const;
+
+			// Get the UV coordinates of the vertex
+			// TODO: need a UV per face, using a Cubic projection
+			[[nodiscard]] math::point2f get_uv() const;
 
 			// Returns a range of the half-edges around the given vertex
 			[[nodiscard]] auto get_half_edges() const -> detail::const_half_edge_range<detail::vertex_half_edge_iteration>;
 
 			[[nodiscard]] friend bool operator==(cref lhs, cref rhs) noexcept
 			{
-				return lhs.m == rhs.m && lhs.v == rhs.v;
+				return lhs.m == rhs.m && lhs.vertex_id == rhs.vertex_id;
 			}
 
 			[[nodiscard]] friend bool operator!=(cref lhs, cref rhs) noexcept
@@ -974,12 +977,12 @@ namespace ot::egfx
 	{
 		inline math::point3f cref::get_position() const
 		{
-			return m->get_vertex_data(v).position;
+			return m->get_vertex_data(vertex_id).position;
 		}
 
 		inline auto cref::get_half_edges() const -> detail::const_half_edge_range<detail::vertex_half_edge_iteration>
 		{
-			return { *m, m->get_vertex_data(v).first_edge };
+			return { *m, m->get_vertex_data(vertex_id).first_edge };
 		}
 
 		inline math::point3f ref::get_position() const

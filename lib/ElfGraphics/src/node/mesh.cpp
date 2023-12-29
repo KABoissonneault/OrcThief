@@ -103,12 +103,14 @@ namespace ot::egfx::node
 		{
 			math::point3f position;
 			math::vector3f normal;
+			math::point2f uv;
 
 			[[nodiscard]] static Ogre::VertexElement2Vec get_vertex_buffer_elements()
 			{
 				return {
 					Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_POSITION)
 					, Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_NORMAL)
+					, Ogre::VertexElement2(Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES)
 				};
 			}
 		};
@@ -193,7 +195,7 @@ namespace ot::egfx::node
 				// push vertices
 				for (auto const vertex : vertices)
 				{
-					new(vertex_it++) render_vertex{ vertex.get_position(), normal };
+					new(vertex_it++) render_vertex{ vertex.get_position(), normal, vertex.get_uv() };
 				}
 
 				// push indices

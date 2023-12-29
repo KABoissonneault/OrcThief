@@ -3,6 +3,7 @@
 #include "console.h"
 #include "egfx/mesh_definition.h"
 
+#include <cassert>
 #include <format>
 
 namespace ot::dedit::action

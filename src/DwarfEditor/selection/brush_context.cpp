@@ -57,22 +57,6 @@ namespace ot::dedit::selection
 		{
 			egfx::im::draw_mesh(mesh_def, to_math_matrix(m), egfx::color{ 1.f, 1.f, 1.f, 0.2f });
 		}
-
-		void draw_immediate_scene(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t, egfx::face::id hovered_face)
-		{
-			egfx::im::draw_wiremesh(mesh_def, t, 2.f);
-
-			if (hovered_face != egfx::face::id::none)
-			{
-				egfx::im::draw_face(mesh_def.get_face(hovered_face), t, egfx::color{ 1.f, 1.f, 1.f, 0.2f });
-			}
-
-			for (egfx::vertex::cref const vertex : mesh_def.get_vertices())
-			{
-				math::point3f const vertex_pos = transform(vertex.get_position(), t);
-				Im3d::DrawPoint(vertex_pos, 10.f, Im3d::Color_Blue);
-			}
-		}
 	}
 
 	brush_context::brush_context(map const& current_map, egfx::object::camera_cref main_camera, egfx::window const& main_window, entity_id selected_brush) noexcept
@@ -236,6 +220,16 @@ namespace ot::dedit::selection
 
 		if (ImGui::RadioButton("(F)ace Selection", operation == operation_type::face_selection)) operation = operation_type::face_selection;
 
+		if (ImGui::BeginMenu("Vertex Debug"))
+		{
+			if (ImGui::MenuItem("None", nullptr, vertex_debug == vertex_debug_type::none))
+				vertex_debug = vertex_debug_type::none;
+			if (ImGui::MenuItem("UV", nullptr, vertex_debug == vertex_debug_type::uv))
+				vertex_debug = vertex_debug_type::uv;
+
+			ImGui::EndMenu();
+		}
+
 		ImGui::End();
 		ImGui::PopStyleColor();
 
@@ -338,5 +332,29 @@ namespace ot::dedit::selection
 		}
 
 		return false;
+	}
+
+	void brush_context::draw_immediate_scene(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t, egfx::face::id hovered_face)
+	{
+		egfx::im::draw_wiremesh(mesh_def, t, 2.f);
+
+		if (hovered_face != egfx::face::id::none)
+		{
+			egfx::im::draw_face(mesh_def.get_face(hovered_face), t, egfx::color{ 1.f, 1.f, 1.f, 0.2f });
+		}
+
+		for (egfx::vertex::cref const vertex : mesh_def.get_vertices())
+		{
+			math::point3f const vertex_pos = transform(vertex.get_position(), t);
+			Im3d::DrawPoint(vertex_pos, 10.f, Im3d::Color_Blue);
+
+			switch(vertex_debug)
+			{
+			case vertex_debug_type::uv:
+				math::point2f const uv = vertex.get_uv();
+				Im3d::Text(vertex_pos, 2.f, Im3d::Color_White, Im3d::TextFlags_Default, "%.3f, %.3f", uv.x, uv.y);
+				break;
+			}
+		}
 	}
 }

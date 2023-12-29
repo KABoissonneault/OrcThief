@@ -199,9 +199,7 @@ namespace ot::math
 	{
 		return ot::float_eq(v.norm(), 1.0);
 	}
-
-	using ot::float_eq;
-
+		
 	[[nodiscard]] inline bool float_eq(point3f lhs, point3f rhs) noexcept
 	{
 		return ot::float_eq(lhs.x, rhs.x) && ot::float_eq(lhs.y, rhs.y) && ot::float_eq(lhs.z, rhs.z);

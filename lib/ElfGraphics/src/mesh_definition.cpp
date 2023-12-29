@@ -2,9 +2,38 @@
 
 #include <numeric>
 #include <system_error>
+#include <cassert>
 
 namespace ot::egfx
 {	
+	namespace vertex
+	{
+		math::point2f cref::get_uv() const
+		{
+			// Do "spherical" mapping
+			// Imagine the texture as a sphere
+			// u is the theta coordinate on the XZ plane, mapped between 0 and 1 (0 and 1 touch at -X, Z=0)
+			// v is the phi coordinate, again between 0 (top) and 1 (bottom) 
+
+			// TODO: need a UV per face, using a Cubic projection
+
+			math::point3f const pos = get_position();
+
+			if (float_eq(pos, math::point3f(0.f, 0.f, 0.f)))
+				return { 0.f, 0.f };
+
+			float u = std::atan2(pos.z, pos.x); // -pi to pi
+			u *= std::numbers::inv_pi_v<float> *0.5f; // -0.5 to 0.5
+			u += 0.5f; // 0 to 1
+
+			float const xz_norm = std::sqrt(pos.x * pos.x + pos.z * pos.z);
+			float v = std::atan2(xz_norm, pos.y); // xz_norm >= 0, [0 to pi]. If xz_norm = 0, +Y = 0, -Y = Pi
+			v *= std::numbers::inv_pi_v<float>; // 0 to 1
+
+			return { u, v };
+		}
+	}
+
 	namespace half_edge
 	{
 		//   Before:                                  After:
