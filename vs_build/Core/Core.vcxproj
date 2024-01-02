@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\lib\Core\include\core\build_config.h" />
     <ClInclude Include="..\..\lib\Core\include\core\compiler.h" />
     <ClInclude Include="..\..\lib\Core\include\core\float.h" />
     <ClInclude Include="..\..\lib\core\include\core\fwd_delete.fwd.h" />
