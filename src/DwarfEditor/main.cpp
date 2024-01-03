@@ -8,7 +8,6 @@
 #include "Ogre/Root.h"
 #include "Ogre/ConfigFile.h"
 #include "Ogre/ResourceGroupManager.h"
-#include "Ogre/ArchiveType.h"
 
 #include "egfx/window_type.h"
 #include "egfx/module.h"
@@ -22,37 +21,23 @@
 #include "SDL2/macro.h"
 
 #include <filesystem>
+#include <OgreAbiUtils.h>
 
 namespace ot::dedit::main
 {
 	namespace
 	{
-		[[nodiscard]] void load_always_resources(Ogre::ConfigFile& program_config, std::filesystem::path const& resource_folder_path)
+		[[nodiscard]] void load_always_resources(config const& program_config, std::filesystem::path const& resource_folder_path)
 		{
-			// Load the resources under [AlwaysLoad]
-			auto load_it = program_config.getSettingsIterator("AlwaysLoad");
-			for (auto const& kv : load_it)
+			for (config::resource_load_item const& always_load_item : program_config.get_always_load_resources())
 			{
-				auto const type_name = kv.first;
-				if (type_name != ot::ogre::archive_type::filesystem && type_name != ot::ogre::archive_type::zip && type_name != ot::ogre::archive_type::embedded_zip)
-				{
-					std::printf("warning: AlwaysLoad resource of type '%s' is not supported\n", type_name.c_str());
-					continue;
-				}
-
-				auto const resource_path = kv.second;
-				auto const full_path = resource_folder_path / resource_path;
-
-				if (!std::filesystem::exists(full_path))
-				{
-					std::printf("warning: AlwaysLoad resource '%s' was requested but could not be found", full_path.string().c_str());
-					continue;
-				}
+				std::string const& type_name = always_load_item.type;
+				std::filesystem::path const full_path = resource_folder_path / always_load_item.path;
 				Ogre::ResourceGroupManager::getSingleton().addResourceLocation(full_path.string(), type_name);
 			}
 		}
 
-		[[nodiscard]] bool load_program_config(ot::dedit::config& config, char const* game_config_path)
+		[[nodiscard]] bool load_program_config(config& config, char const* game_config_path)
 		{
 			if (!std::filesystem::exists("config_de.cfg"))
 			{
@@ -78,12 +63,7 @@ namespace ot::dedit::main
 
 			if (!config.load(editor_config, game_config_path != nullptr ? &game_config : nullptr))
 				return false;
-
-			std::string_view const resource_root = config.get_core().get_editor_resource_root();
-			std::filesystem::path const resource_folder_path(resource_root);
-
-			load_always_resources(editor_config, resource_folder_path);
-
+			
 			return true;
 		}
 
@@ -123,19 +103,12 @@ namespace ot::dedit::main
 			return g.initialize(window_params);
 		}
 
-		struct state
-		{
-			Ogre::Root root;
-			config program_config;
-		};
-
-		state* g_state;
+		config program_config;
+		Ogre::Root* ogre_root;
 	}
 
 	bool initialize(int argc, char** argv)
 	{
-		g_state = new state{ {"DwarfEditor/Ogre/plugins" OGRE_BUILD_SUFFIX ".cfg", "DwarfEditor/Ogre/ogre.cfg", "DwarfEditor/Ogre/ogre.log"} };
-
 		char const* game_config_path = nullptr;
 		while (*argv)
 		{
@@ -150,13 +123,27 @@ namespace ot::dedit::main
 
 				game_config_path = *argv;
 			}
-			++argv; 
+			++argv;
 		}
 
-		if (!load_program_config(g_state->program_config, game_config_path))
+		if (!load_program_config(program_config, game_config_path))
 			return false;
 
-		auto& root = g_state->root;
+		Ogre::AbiCookie abi_cookie = Ogre::generateAbiCookie();
+		ogre_root = new Ogre::Root( 
+			&abi_cookie
+			, "DwarfEditor/Ogre/plugins" OGRE_BUILD_SUFFIX ".cfg"
+			, "DwarfEditor/Ogre/ogre.cfg"
+			, "DwarfEditor/Ogre/ogre.log"
+			, std::string(program_config.get_core().get_name())
+		);
+		
+		std::string_view const resource_root = program_config.get_core().get_editor_resource_root();
+		std::filesystem::path const resource_folder_path(resource_root);
+
+		load_always_resources(program_config, resource_folder_path);
+
+		auto& root = *ogre_root;
 
 		if (!root.restoreConfig())
 		{
@@ -181,8 +168,6 @@ namespace ot::dedit::main
 
 	int run(int argc, char** argv, sdl::unique_window main_window)
 	{
-		auto& program_config = g_state->program_config;
-
 		std::string_view const editor_resource_root = program_config.get_core().get_editor_resource_root();
 		std::filesystem::path const editor_resource_folder_path(editor_resource_root);
 
@@ -217,6 +202,7 @@ namespace ot::dedit::main
 	void shutdown()
 	{
 		SDL_Quit();
-		delete g_state;
+		delete ogre_root;
+		ogre_root = nullptr;
 	}
 }

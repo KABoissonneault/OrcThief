@@ -1,5 +1,7 @@
 #include "config.h"
 
+#include "Ogre/ArchiveType.h"
+
 #include <charconv>
 #include <filesystem>
 
@@ -119,6 +121,31 @@ namespace ot::dedit
 				return false;
 
 			has_game = true;
+		}
+
+		std::filesystem::path const resource_folder_path(core.get_editor_resource_root());
+
+		// Load the resources under [AlwaysLoad]
+		auto load_it = const_cast<Ogre::ConfigFile&>(editor_config).getSettingsIterator("AlwaysLoad");
+		for (auto const& kv : load_it)
+		{
+			auto const type_name = kv.first;
+			if (type_name != ot::ogre::archive_type::filesystem && type_name != ot::ogre::archive_type::zip && type_name != ot::ogre::archive_type::embedded_zip)
+			{
+				std::printf("warning [DwarfEditor]: AlwaysLoad resource of type '%s' is not supported\n", type_name.c_str());
+				continue;
+			}
+
+			auto const resource_path = kv.second;
+			auto const full_path = resource_folder_path / resource_path;
+
+			if (!std::filesystem::exists(full_path))
+			{
+				std::printf("warning [DwarfEditor]: AlwaysLoad resource '%s' was requested but could not be found", full_path.string().c_str());
+				continue;
+			}
+
+			always_load.emplace_back(type_name, resource_path);
 		}
 
 		return true;

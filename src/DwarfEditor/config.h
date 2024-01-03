@@ -9,6 +9,7 @@
 #include "math/vector3.h"
 
 #include <string_view>
+#include <span>
 
 namespace ot::dedit
 {
@@ -91,6 +92,12 @@ namespace ot::dedit
 			core_config core;
 		};
 
+		struct resource_load_item
+		{
+			std::string type;
+			std::string path;
+		};
+
 		[[nodiscard]] core_config const& get_core() const noexcept { return core; }
 		[[nodiscard]] scene_config const& get_scene() const noexcept { return scene; }
 		[[nodiscard]] bool has_game_config() const noexcept { return has_game; }
@@ -98,11 +105,16 @@ namespace ot::dedit
 
 		[[nodiscard]] bool load(Ogre::ConfigFile const& editor_config, Ogre::ConfigFile const* game_config);
 
+		[[nodiscard]] std::span<resource_load_item const> get_always_load_resources() const { return always_load; }
+
+
 	private:
 		core_config core;
 		scene_config scene;
 		game_config game;
 
+		std::vector<resource_load_item> always_load;
+		
 		bool has_game = false;
 	};
 }

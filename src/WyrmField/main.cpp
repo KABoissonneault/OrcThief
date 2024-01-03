@@ -24,6 +24,7 @@
 #include "SDL2/macro.h"
 
 #include <imgui_impl_sdl2.h>
+#include <OgreAbiUtils.h>
 
 namespace ot::wf
 {
@@ -237,7 +238,8 @@ namespace ot::wf
 
 int main(int argc, char** argv)
 {
-	Ogre::Root root{ "WyrmField/Ogre/plugins" OGRE_BUILD_SUFFIX ".cfg", "WyrmField/Ogre/ogre.cfg", "WyrmField/Ogre/ogre.log", "WyrmField" };
+	Ogre::AbiCookie abi_cookie = Ogre::generateAbiCookie();
+	Ogre::Root root{ &abi_cookie, "WyrmField/Ogre/plugins" OGRE_BUILD_SUFFIX ".cfg", "WyrmField/Ogre/ogre.cfg", "WyrmField/Ogre/ogre.log", "WyrmField" };
 	
 	ot::wf::config program_config;
 	if (!ot::wf::load_program_config(/*out*/ program_config))
