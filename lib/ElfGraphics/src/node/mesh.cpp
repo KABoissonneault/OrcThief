@@ -4,6 +4,7 @@
 #include "ogre_conversion.h"
 #include "node/object.h"
 #include "egfx/mesh_definition.h"
+#include "material.h"
 
 #include "Ogre/Root.h"
 #include "Ogre/MemoryAllocatorConfig.h"
@@ -267,6 +268,44 @@ namespace ot::egfx::node
 		destroy_mesh();
 
 		ptr = make_mesh(name, mesh_def);
+	}
+
+	material_handle_t mesh::get_material() const
+	{
+		Ogre::SceneNode const& scene_node = get_scene_node(*this);
+		assert(scene_node.numAttachedObjects() == 1); // Only expect the one Item
+		auto const item = static_cast<Ogre::Item const*>(*scene_node.getAttachedObjectIterator().begin());
+		Ogre::SubItem const* sub_item = item->getSubItem(0);
+		Ogre::HlmsDatablock* datablock = sub_item->getDatablock();
+		return to_material_handle(datablock->getName());
+	}
+
+	void mesh::set_material(material_handle_t const& mat)
+	{
+		Ogre::SceneNode& scene_node = get_scene_node(*this);
+		assert(scene_node.numAttachedObjects() == 1); // Only expect the one Item
+		auto const item = static_cast<Ogre::Item*>(scene_node.getAttachedObject(0));
+		Ogre::SubItem* sub_item = item->getSubItem(0);
+
+		auto& root = Ogre::Root::getSingleton();
+		Ogre::HlmsManager* const hlms_manager = root.getHlmsManager();
+
+
+		Ogre::IdString const id_string = to_id_string(mat);
+		if (id_string == Ogre::IdString())
+		{
+			sub_item->setDatablock(hlms_manager->getDefaultDatablock());
+		}
+		else
+		{
+			Ogre::HlmsDatablock* datablock = hlms_manager->getDatablockNoDefault(id_string);
+			if (datablock == nullptr)
+			{
+				throw std::invalid_argument(std::format("Invalid material '{}'", mat.to_debug_string()));
+			}
+
+			sub_item->setDatablock(datablock);
+		}
 	}
 
 	mesh create_mesh(object_ref parent, std::string const& name, mesh_definition const& mesh_def)

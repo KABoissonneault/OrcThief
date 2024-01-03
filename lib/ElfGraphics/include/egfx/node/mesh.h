@@ -3,6 +3,7 @@
 #include "egfx/mesh_definition.fwd.h"
 #include "egfx/node/mesh.fwd.h"
 #include "egfx/node/object.h"
+#include "egfx/material.h"
 
 #include <string>
 
@@ -32,6 +33,9 @@ namespace ot::egfx::node
 
 		std::string const& get_mesh_name() const noexcept;
 		void reload_mesh(mesh_definition const& mesh);
+
+		material_handle_t get_material() const;
+		void set_material(material_handle_t const& mat);
 	};
 
 	[[nodiscard]] mesh create_mesh(object_ref parent, std::string const& name, mesh_definition const& mesh);

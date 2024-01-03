@@ -159,6 +159,7 @@
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\color.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\imgui\texture.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\immediate.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\material.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\mesh_definition.fwd.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\mesh_definition.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\module.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\scene.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\window.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\window_type.h" />
+    <ClInclude Include="..\..\lib\ElfGraphics\src\material.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\object\camera.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\compositor.h" />
     <ClInclude Include="..\..\lib\ElfGraphics\src\imgui\d3d11_renderer.h" />
@@ -192,6 +194,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\texture.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\immediate.cpp" />
+    <ClCompile Include="..\..\lib\ElfGraphics\src\material.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\object\camera.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\compositor.cpp" />
     <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\d3d11_renderer.cpp" />

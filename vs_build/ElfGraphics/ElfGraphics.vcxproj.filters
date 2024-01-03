@@ -123,6 +123,12 @@
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\imgui\texture.h">
       <Filter>include\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\material.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\src\material.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\ElfGraphics\src\module.cpp">
@@ -166,6 +172,9 @@
     </ClCompile>
     <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\texture.cpp">
       <Filter>src\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\ElfGraphics\src\material.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
