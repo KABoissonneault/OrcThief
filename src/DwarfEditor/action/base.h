@@ -12,6 +12,7 @@ namespace ot::dedit::action
 		virtual ~base();
 
 		virtual void apply(map& current_map) = 0;
+		virtual void redo(map& current_map) { apply(current_map); }
 		virtual void undo(map& current_map) = 0;
 	};
 }

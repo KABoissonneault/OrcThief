@@ -207,6 +207,7 @@ namespace ot::dedit
 
 		[[nodiscard]] egfx::mesh_definition const& get_mesh_def() const noexcept { return *mesh_def; }
 		[[nodiscard]] std::shared_ptr<egfx::mesh_definition const> get_shared_mesh_def() const noexcept { return mesh_def; }
+
 		[[nodiscard]] egfx::node::mesh& get_mesh_node() noexcept { return mesh; }
 		[[nodiscard]] egfx::node::mesh const& get_mesh_node() const noexcept { return mesh; }
 
@@ -214,8 +215,8 @@ namespace ot::dedit
 		[[nodiscard]] virtual egfx::node::object_cref get_node() const noexcept override { return mesh; }		
 		[[nodiscard]] virtual std::string_view get_name() const noexcept override { return mesh.get_mesh_name(); }
 		[[nodiscard]] virtual entity_type_t get_type() const noexcept override { return entity_type_t::brush; }
-		[[nodiscard]] virtual bool fwrite(std::FILE*) const override;
-		[[nodiscard]] virtual bool fread(map_entity& parent, std::FILE*) override;
+		[[nodiscard]] virtual bool fwrite(std::FILE* file) const override;
+		[[nodiscard]] virtual bool fread(map_entity& parent, std::FILE* file) override;
 
 		void reload_node(std::shared_ptr<egfx::mesh_definition const> new_def);
 	};
@@ -248,8 +249,8 @@ namespace ot::dedit
 
 		[[nodiscard]] map_entity* find_entity(entity_id id);
 		[[nodiscard]] map_entity const* find_entity(entity_id id) const;
-		bool has_entity(entity_id id) const { return find_entity(id) != nullptr; }
+		[[nodiscard]] bool has_entity(entity_id id) const { return find_entity(id) != nullptr; }
 
-		std::expected<entity_type_t, std::error_code> get_entity_type(entity_id id) const;
+		[[nodiscard]] std::expected<entity_type_t, std::error_code> get_entity_type(entity_id id) const;
 	};
 }

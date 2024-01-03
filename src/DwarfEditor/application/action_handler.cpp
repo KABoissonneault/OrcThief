@@ -20,18 +20,14 @@ namespace ot::dedit
 	{
 		if (is_key_press(key, SDLK_z, input::keyboard::mod_group::ctrl))
 		{
-			if (!has_undo())
-				console::error("Could not undo: no actions in stack");
-			else
+			if (has_undo())
 				undo_latest(current_map);
 			return true;
 		}
 
 		if (is_key_press(key, SDLK_y, input::keyboard::mod_group::ctrl))
 		{
-			if (!has_redo())
-				console::error("Could not redo: no actions in stack");
-			else
+			if (has_redo())
 				redo_latest(current_map);
 
 			return true;
@@ -67,7 +63,7 @@ namespace ot::dedit
 		assert(has_redo());
 
 		auto& data = undone_actions.back();
-		data.action->apply(current_map);
+		data.action->redo(current_map);
 		applied_actions.push_back(std::move(data));
 		undone_actions.pop_back();
 	}

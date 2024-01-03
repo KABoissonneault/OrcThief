@@ -7,6 +7,7 @@
 #include "serialize/serialize_math.h"
 
 #include <format>
+#include <cassert>
 
 namespace ot::dedit
 {
@@ -345,23 +346,34 @@ namespace ot::dedit
 
 	brush& map::make_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id)
 	{
+		assert(find_entity(id) == nullptr);
+		if (next_entity_id <= as_int(id))
+			next_entity_id = as_int(id) + 1;
 		brushes.push_back(ot::make_unique<brush>(id, root, mesh_def));
 		return *brushes.back();
 	}
 
 	brush& map::make_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id, map_entity& parent)
 	{
+		assert(find_entity(id) == nullptr);
+		if (next_entity_id <= as_int(id))
+			next_entity_id = as_int(id) + 1;
 		brushes.push_back(ot::make_unique<brush>(id, parent, mesh_def));
 		return *brushes.back();
 	}
 
 	void map::delete_brush(entity_id id)
 	{
-		auto const it_found = std::find_if(brushes.begin(), brushes.end(), [id](uptr<brush> const& b) { return b->get_id() == id; });
-		if (it_found != brushes.end())
+		brush const* deleted_parent = find_brush(id);
+		if (deleted_parent == nullptr)
+			return;
+
+		auto const [removed_it, removed_sent] = std::ranges::remove_if(brushes, [deleted_parent](uptr<brush> const& b) -> bool
 		{
-			brushes.erase(it_found);
-		}
+			return deleted_parent->find_recursive(b->get_id()) != nullptr;
+		});
+
+		brushes.erase(removed_it, removed_sent);
 	}
 
 	void map::clear()

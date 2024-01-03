@@ -1,13 +1,15 @@
 #include "serialize_map.h"
 
-#include "core/directive.h"
-
 #include <cstdio>
 
 namespace ot::dedit::serialize
 {
 	bool fwrite(map_entity const& e, std::FILE* f)
 	{
+		entity_id const id = e.get_id();
+		if (!::fwrite(&id, sizeof(id), 1, f))
+			return false;
+
 		entity_type_t const type = e.get_type();
 		if (!::fwrite(&type, sizeof(type), 1, f))
 			return false;
@@ -49,28 +51,13 @@ namespace ot::dedit::serialize
 
 		return true;
 	}
-
-	bool do_entity_fread(map& m, root_entity& root_entity, map_entity& parent, std::FILE* f);
-
-	bool fread(map& m, map_entity& e, root_entity& root, std::FILE* f)
+	
+	bool fread(map& m, map_entity& parent, std::FILE* f, map_entity** new_entity)
 	{
-		root_entity& child_root = e.get_type() == entity_type_t::root ? static_cast<root_entity&>(e) : root;
-
-		size_t child_count;
-		if (!::fread(&child_count, sizeof(child_count), 1, f))
+		entity_id id;
+		if (!::fread(&id, sizeof(id), 1, f))
 			return false;
 
-		for (size_t n = 0; n < child_count; ++n)
-		{
-			if (!do_entity_fread(m, child_root, e, f))
-				return false;
-		}
-
-		return true;
-	}
-	
-	bool do_entity_fread(map& m, root_entity& root_entity, map_entity& parent, std::FILE* f)
-	{
 		entity_type_t type;
 		if (!::fread(&type, sizeof(type), 1, f))
 			return false;
@@ -79,12 +66,12 @@ namespace ot::dedit::serialize
 		switch (type)
 		{
 		case entity_type_t::root:
-			current_entity = &root_entity;
+			current_entity = &m.get_root();
 			break;
 
 		case entity_type_t::brush:
 		{
-			brush& b = m.make_default_brush(m.allocate_entity_id());
+			brush& b = m.make_default_brush(id);
 			if (!b.fread(parent, f))
 				return false;
 
@@ -99,8 +86,18 @@ namespace ot::dedit::serialize
 		if (current_entity == nullptr)
 			return false;
 
-		if (!fread(m, *current_entity, root_entity, f))
+		if (new_entity != nullptr)
+			*new_entity = current_entity;
+
+		size_t child_count;
+		if (!::fread(&child_count, sizeof(child_count), 1, f))
 			return false;
+
+		for (size_t n = 0; n < child_count; ++n)
+		{
+			if (!fread(m, *current_entity, f))
+				return false;
+		}
 
 		return true;
 	}
@@ -121,7 +118,7 @@ namespace ot::dedit::serialize
 		root_entity& root = m.get_root();
 		for (size_t n = 0; n < entity_count; ++n)
 		{
-			if (!do_entity_fread(m, root, root, f))
+			if (!fread(m, root, f))
 				return false;
 		}
 
