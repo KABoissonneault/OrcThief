@@ -129,9 +129,15 @@ namespace ot::dedit
 		if (!controlling_camera)
 		{
 			if (input::mouse::get_buttons() == input::mouse::button_type::right)
+			{
 				start_control();
-			else
-				return false;
+			}
+			else if(input::mouse::get_buttons() == input::mouse::button_type::none)
+			{
+				math::vector3f const velocity = { 0, 0, -e.y * camera_velocity * 0.25f };
+				get_camera().move(velocity);
+				return true;
+			}
 		}
 
 		int y = e.y;
