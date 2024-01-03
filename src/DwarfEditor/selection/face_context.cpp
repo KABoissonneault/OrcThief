@@ -171,7 +171,7 @@ namespace ot::dedit::selection
 		if (composite_context::handle_keyboard_event(key, acc))
 			return true;
 
-		if (key.state == SDL_PRESSED && key.repeat == 0)
+		if (key.state == SDL_PRESSED && key.repeat == 0 && !ImGui::GetIO().WantTextInput)
 		{
 			switch (key.keysym.sym)
 			{

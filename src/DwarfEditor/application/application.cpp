@@ -142,13 +142,13 @@ namespace ot::dedit
 				ImGui_ImplSDL2_ProcessEvent(&e);
 
 				// Handle alt+f4 pressed on a window other than the main one
-				if (imgui_io.WantCaptureKeyboard)
+				if (imgui_io.WantCaptureKeyboard && is_key_press(e.key, SDLK_F4, input::keyboard::mod::lalt))
 				{
-					if (is_key_press(e.key, SDLK_F4, input::keyboard::mod::lalt))
-						quit();
-
+					quit();
 					break;
 				}
+
+				// All these contexts are expected to check ImGui::GetIO().WantCaptureKeyboard/WantTextInput
 				
 				if (selection_actions.handle_keyboard_event(e.key, current_map))
 					break;

@@ -146,7 +146,7 @@ namespace ot::dedit::selection
 	{
 		(void)acc;
 
-		if (key.state == SDL_PRESSED && key.repeat == 0)
+		if (key.state == SDL_PRESSED && key.repeat == 0 && !ImGui::GetIO().WantTextInput)
 		{
 			switch (key.keysym.sym)
 			{
