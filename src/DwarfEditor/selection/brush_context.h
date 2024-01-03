@@ -6,6 +6,7 @@
 
 #include "egfx/object/camera.h"
 #include "egfx/window.h"
+#include "egfx/material.h"
 
 #include <optional>
 
@@ -19,6 +20,8 @@ namespace ot::dedit::selection
 
 		entity_id selected_brush;
 		egfx::face::id hovered_face = egfx::face::id::none;
+
+		std::vector<egfx::material_handle_t> cached_materials;
 		imgui::matrix object_local_matrix;
 		bool was_editing = false;
 		bool was_text_editing = false;
@@ -46,9 +49,11 @@ namespace ot::dedit::selection
 		bool operation_window(action::accumulator& acc, math::transform_matrix const& original_local_transform);
 		bool draw_gizmo(imgui::matrix& object_world_matrix);
 
+		void properties_window(action::accumulator& acc);
+
 		brush const& get_brush() const;
 
-		void draw_immediate_scene(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t, egfx::face::id hovered_face);
+		void draw_immediate_scene(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t);
 
 	public:
 		brush_context(map const& current_map, egfx::object::camera_cref main_camera, egfx::window const& main_window, entity_id selected_brush) noexcept;

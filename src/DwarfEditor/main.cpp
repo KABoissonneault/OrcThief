@@ -186,6 +186,8 @@ namespace ot::dedit::main
 			ot::dedit::datablock::load_hlms(editor_resource_folder_path / "Ogre");
 			Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups(true);
 
+			ot::dedit::datablock::create_default_materials();
+
 			console::initialize();
 
 			// Application

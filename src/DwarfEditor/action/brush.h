@@ -133,4 +133,16 @@ namespace ot::dedit::action
 	public:
 		delete_brush(brush const& b);
 	};
+
+	class set_brush_material : public single_brush
+	{
+		egfx::material_handle_t previous_material;
+		egfx::material_handle_t new_material;
+	protected:
+		virtual void do_apply(brush& b, bool is_redo) override;
+		virtual void do_undo(brush& b) override;
+
+	public:
+		set_brush_material(brush const& b, egfx::material_handle_t const& mat);
+	};
 }

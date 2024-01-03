@@ -144,9 +144,11 @@ namespace ot::dedit::selection
 			}
 
 			was_text_editing = text_editing;
+
+			properties_window(acc);
 		}
 
-		draw_immediate_scene(mesh_def, world_transform, hovered_face);
+		draw_immediate_scene(mesh_def, world_transform);
 
 		composite_context::update(acc, input);
 
@@ -169,9 +171,10 @@ namespace ot::dedit::selection
 
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImGui::GetStyleColorVec4(ImGuiCol_TitleBg));
 		ImGuiWindowFlags const flags = ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoFocusOnAppearing;
-		if (!ImGui::Begin(std::format("Brush {}###Brush", b.get_name()).c_str(), nullptr, flags))
+		if (!ImGui::Begin(std::format("Operations", b.get_name()).c_str(), nullptr, flags))
 		{
 			ImGui::End();
+			ImGui::PopStyleColor();
 			return false;
 		}
 
@@ -220,16 +223,6 @@ namespace ot::dedit::selection
 
 		if (ImGui::RadioButton("(F)ace Selection", operation == operation_type::face_selection)) operation = operation_type::face_selection;
 
-		if (ImGui::BeginMenu("Vertex Debug"))
-		{
-			if (ImGui::MenuItem("None", nullptr, vertex_debug == vertex_debug_type::none))
-				vertex_debug = vertex_debug_type::none;
-			if (ImGui::MenuItem("UV", nullptr, vertex_debug == vertex_debug_type::uv))
-				vertex_debug = vertex_debug_type::uv;
-
-			ImGui::EndMenu();
-		}
-
 		ImGui::End();
 		ImGui::PopStyleColor();
 
@@ -272,6 +265,55 @@ namespace ot::dedit::selection
 		}
 
 		return translate_active || rotation_active || scale_active;
+	}
+
+	void brush_context::properties_window(action::accumulator& acc)
+	{
+		brush const& b = get_brush();
+
+		if (ImGui::Begin("Properties"))
+		{
+			if (ImGui::BeginMenu("Vertex Debug"))
+			{
+				if (ImGui::MenuItem("None", nullptr, vertex_debug == vertex_debug_type::none))
+					vertex_debug = vertex_debug_type::none;
+				if (ImGui::MenuItem("UV", nullptr, vertex_debug == vertex_debug_type::uv))
+					vertex_debug = vertex_debug_type::uv;
+
+				ImGui::EndMenu();
+			}
+
+			egfx::material_handle_t const mesh_material = b.get_mesh_node().get_material();
+			std::string const current_material_name = mesh_material.is_null() ? "" : egfx::get_material_name(mesh_material);
+			if (ImGui::BeginCombo("Material", current_material_name.c_str()))
+			{
+				if (cached_materials.empty())
+				{
+					cached_materials = egfx::get_registered_materials();
+				}
+
+				for (egfx::material_handle_t const& mat : cached_materials)
+				{
+					std::string const mat_name = egfx::get_material_name(mat);
+
+					bool const selected = mat == mesh_material;
+					if (ImGui::Selectable(mat_name.c_str(), selected))
+					{
+						acc.emplace_action<action::set_brush_material>(b, mat);
+					}
+
+					if (selected)
+						ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
+			}
+			else
+			{
+				cached_materials.clear();
+			}
+		}
+		ImGui::End();
 	}
 
 	bool brush_context::draw_gizmo(imgui::matrix& object_world_matrix)
@@ -334,7 +376,7 @@ namespace ot::dedit::selection
 		return false;
 	}
 
-	void brush_context::draw_immediate_scene(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t, egfx::face::id hovered_face)
+	void brush_context::draw_immediate_scene(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t)
 	{
 		egfx::im::draw_wiremesh(mesh_def, t, 2.f);
 

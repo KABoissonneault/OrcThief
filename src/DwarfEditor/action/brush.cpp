@@ -298,4 +298,23 @@ namespace ot::dedit::action
 		if(!is_redo)
 			console::log(std::format("Deleted brush {}", as_int(id)));
 	}
+
+	set_brush_material::set_brush_material(brush const& b, egfx::material_handle_t const& mat)
+		: single_brush(b)
+		, new_material(mat)
+		, previous_material(b.get_mesh_node().get_material())
+	{
+
+	}
+
+	void set_brush_material::do_apply(brush& b, bool is_redo)
+	{
+		(void)is_redo;
+		b.get_mesh_node().set_material(new_material);
+	}
+
+	void set_brush_material::do_undo(brush& b)
+	{
+		b.get_mesh_node().set_material(previous_material);
+	}
 }
