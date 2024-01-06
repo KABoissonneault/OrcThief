@@ -269,13 +269,13 @@ namespace ot::dedit
 		node.set_user_ptr(this);
 	}
 
-	brush::brush(entity_id id)
+	brush_entity::brush_entity(entity_id id)
 		: map_entity(id)
 	{
 
 	}
 
-	brush::brush(entity_id id, map_entity& parent, std::shared_ptr<egfx::mesh_definition const> mesh_def)
+	brush_entity::brush_entity(entity_id id, map_entity& parent, std::shared_ptr<egfx::mesh_definition const> mesh_def)
 		: map_entity(id)
 		, mesh_def(mesh_def)
 		, mesh(egfx::create_mesh(make_brush_name(id), *mesh_def))
@@ -342,57 +342,45 @@ namespace ot::dedit
 		return static_cast<entity_id>(next_entity_id++);
 	}
 
-	brush& map::make_default_brush(entity_id id)
-	{
-		brushes.push_back(ot::make_unique<brush>(id));
-		return *brushes.back();
-	}
-
-	brush& map::make_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id)
+	void map::on_new_entity(entity_id id)
 	{
 		assert(find_entity(id) == nullptr);
 		if (next_entity_id <= as_int(id))
 			next_entity_id = as_int(id) + 1;
-		brushes.push_back(ot::make_unique<brush>(id, root, mesh_def));
-		return *brushes.back();
 	}
 
-	brush& map::make_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id, map_entity& parent)
-	{
-		assert(find_entity(id) == nullptr);
-		if (next_entity_id <= as_int(id))
-			next_entity_id = as_int(id) + 1;
-		brushes.push_back(ot::make_unique<brush>(id, parent, mesh_def));
-		return *brushes.back();
-	}
-
-	void map::delete_brush(entity_id id)
+	void map::delete_entity(entity_id id)
 	{
 		brush const* deleted_parent = find_brush(id);
 		if (deleted_parent == nullptr)
 			return;
 
-		auto const [removed_it, removed_sent] = std::ranges::remove_if(brushes, [deleted_parent](uptr<brush> const& b) -> bool
+		auto const [removed_it, removed_sent] = std::ranges::remove_if(entities, [deleted_parent](uptr<map_entity> const& e) -> bool
 		{
-			return deleted_parent->find_recursive(b->get_id()) != nullptr;
+			return deleted_parent->find_recursive(e->get_id()) != nullptr;
 		});
 
-		brushes.erase(removed_it, removed_sent);
+		entities.erase(removed_it, removed_sent);
 	}
 
 	void map::clear()
 	{
-		brushes.clear();
+		entities.clear();
 		next_entity_id = 1; // Root always has id 0
 	}
 
-	brush const* map::find_brush(entity_id id) const noexcept
+	brush_entity const* map::find_brush(entity_id id) const noexcept
 	{
-		auto const it_found = std::find_if(brushes.begin(), brushes.end(), [id](uptr<brush> const& b) { return b->get_id() == id; });
-		return it_found != brushes.end() ? it_found->get() : nullptr;
+		map_entity const* found_entity = find_entity(id);
+		if (found_entity == nullptr)
+			return nullptr;
+
+		assert(found_entity->get_type() == entity_type::brush);
+
+		return static_cast<brush_entity const*>(found_entity);
 	}
 
-	brush* map::find_brush(entity_id id) noexcept
+	brush_entity* map::find_brush(entity_id id) noexcept
 	{
 		return const_cast<brush*>(static_cast<map const*>(this)->find_brush(id));
 	}
@@ -404,15 +392,29 @@ namespace ot::dedit
 
 	map_entity* map::find_entity(entity_id id)
 	{
-		return root.find_recursive(id);
+		if (id == entity_id::root)
+			return &root;
+
+		auto const it_found = std::find_if(entities.begin(), entities.end(), [id](uptr<map_entity> const& b) { return b->get_id() == id; });
+		if (it_found == entities.end())
+			return nullptr;
+
+		return (*it_found).get();
 	}
 
 	map_entity const* map::find_entity(entity_id id) const
 	{
-		return root.find_recursive(id);
+		if (id == entity_id::root)
+			return &root;
+
+		auto const it_found = std::find_if(entities.begin(), entities.end(), [id](uptr<map_entity> const& b) { return b->get_id() == id; });
+		if (it_found == entities.end())
+			return nullptr;
+
+		return (*it_found).get();
 	}
 
-	std::expected<entity_type_t, std::error_code> map::get_entity_type(entity_id id) const
+	std::expected<entity_type, std::error_code> map::get_entity_type(entity_id id) const
 	{		
 		map_entity const* e = find_entity(id);
 		if (e != nullptr)

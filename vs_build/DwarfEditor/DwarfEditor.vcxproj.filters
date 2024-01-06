@@ -133,6 +133,9 @@
     <ClCompile Include="..\..\src\DwarfEditor\application\basic_mesh_repo.cpp">
       <Filter>src\application</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\action\map_entity.cpp">
+      <Filter>src\action</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\DwarfEditor\selection\context.h">
@@ -248,6 +251,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\application\basic_mesh_repo.h">
       <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\action\map_entity.h">
+      <Filter>src\action</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

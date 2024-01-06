@@ -77,7 +77,7 @@ namespace ot::dedit::selection
 			
 			switch (hit_entity.get_type())
 			{
-			case entity_type_t::brush:
+			case entity_type::brush:
 			{
 				brush const& b = static_cast<brush const&>(hit_entity);
 
@@ -101,7 +101,7 @@ namespace ot::dedit::selection
 		{
 			switch (*entity_type_result)
 			{
-			case entity_type_t::brush:
+			case entity_type::brush:
 				next_context.reset(new brush_context(*current_map, current_scene->get_camera(), *main_window, entity));
 				break;
 
@@ -201,27 +201,27 @@ namespace ot::dedit::selection
 							{
 								if (ImGui::MenuItem("Cube"))
 								{
-									acc.emplace_action<action::spawn_brush>(mesh_repo->get_cube(), e.get_id());
+									acc.emplace_action<action::spawn_brush>(e.get_id(), mesh_repo->get_cube());
 								}
 
 								if (ImGui::MenuItem("Octagonal Prism"))
 								{
-									acc.emplace_action<action::spawn_brush>(mesh_repo->get_octagonal_prism(), e.get_id());
+									acc.emplace_action<action::spawn_brush>(e.get_id(), mesh_repo->get_octagonal_prism());
 								}
 
 								if (ImGui::MenuItem("Hex Prism"))
 								{
-									acc.emplace_action<action::spawn_brush>(mesh_repo->get_hex_prism(), e.get_id());
+									acc.emplace_action<action::spawn_brush>(e.get_id(), mesh_repo->get_hex_prism());
 								}
 
 								if (ImGui::MenuItem("Tri Prism"))
 								{
-									acc.emplace_action<action::spawn_brush>(mesh_repo->get_tri_prism(), e.get_id());
+									acc.emplace_action<action::spawn_brush>(e.get_id(), mesh_repo->get_tri_prism());
 								}
 
 								if (ImGui::MenuItem("Square Pyramid"))
 								{
-									acc.emplace_action<action::spawn_brush>(mesh_repo->get_square_pyramid(), e.get_id());
+									acc.emplace_action<action::spawn_brush>(e.get_id(), mesh_repo->get_square_pyramid());
 								}
 
 								ImGui::End();

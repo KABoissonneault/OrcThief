@@ -3,6 +3,7 @@
 #include "map.fwd.h"
 
 #include "core/uptr.h"
+#include "core/directive.h"
 
 #include "egfx/mesh_definition.h"
 #include "egfx/object/mesh.h"
@@ -10,23 +11,25 @@
 
 #include "math/transform_matrix.h"
 
+#include <cassert>
 #include <vector>
 #include <memory>
 #include <expected>
 #include <system_error>
 
 namespace ot::dedit
-{
-	enum class entity_id : uint64_t {};
+{	
 	[[nodiscard]] inline constexpr uint64_t as_int(entity_id i) noexcept { return static_cast<uint64_t>(i); }
-
-	enum class entity_type_t
+	[[nodiscard]] constexpr std::string_view as_string(entity_type t) noexcept
 	{
-		root,
-		brush,
-	};
+		switch (t)
+		{
+		case entity_type::root: return "Root";
+		case entity_type::brush: return "Brush";
+		default: assert(false); OT_UNREACHABLE();
+		}
+	}
 
-	class map_entity;
 
 	struct map_entity_end_sentinel
 	{
@@ -129,14 +132,15 @@ namespace ot::dedit
 		map_entity(entity_id id);
 		map_entity(map_entity&&) = delete;
 		map_entity& operator=(map_entity&&) = delete;
-
-	public:
 		
+	public:
+		virtual ~map_entity() = default;
+
 		[[nodiscard]] entity_id get_id() const noexcept { return id; }
 		[[nodiscard]] virtual egfx::node_ref get_node() noexcept = 0;
 		[[nodiscard]] virtual egfx::node_cref get_node() const noexcept = 0;
 		[[nodiscard]] virtual std::string_view get_name() const noexcept = 0;
-		[[nodiscard]] virtual entity_type_t get_type() const noexcept = 0;
+		[[nodiscard]] virtual entity_type get_type() const noexcept = 0;
 		[[nodiscard]] virtual bool fwrite(std::FILE* f) const = 0;
 		[[nodiscard]] virtual bool fread(map_entity& parent, std::FILE* f) = 0;
 		
@@ -186,25 +190,29 @@ namespace ot::dedit
 		egfx::node_ref node;
 
 	public:
+		static constexpr entity_type type = entity_type::root;
+
 		root_entity(entity_id id, egfx::node_ref node);
 
 		[[nodiscard]] virtual egfx::node_ref get_node() noexcept override { return node; }
 		[[nodiscard]] virtual egfx::node_cref get_node() const noexcept override { return node; }
 		[[nodiscard]] virtual std::string_view get_name() const noexcept override { return "Root"; }
-		[[nodiscard]] virtual entity_type_t get_type() const noexcept override { return entity_type_t::root; }
+		[[nodiscard]] virtual entity_type get_type() const noexcept override { return type; }
 		virtual bool fwrite(std::FILE*) const override { return true; }
 		virtual bool fread(map_entity&, std::FILE*) override { return true; }
 	};
 
-	class brush final : public map_entity
+	class brush_entity final : public map_entity
 	{
 		std::shared_ptr<egfx::mesh_definition const> mesh_def;
 		egfx::mesh mesh;
 		egfx::node node;
 
 	public:
-		brush(entity_id id);
-		brush(entity_id id, map_entity& parent, std::shared_ptr<egfx::mesh_definition const> mesh_def);
+		static constexpr entity_type type = entity_type::brush;
+
+		brush_entity(entity_id id);
+		brush_entity(entity_id id, map_entity& parent, std::shared_ptr<egfx::mesh_definition const> mesh_def);
 
 		[[nodiscard]] egfx::mesh_definition const& get_mesh_def() const noexcept { return *mesh_def; }
 		[[nodiscard]] std::shared_ptr<egfx::mesh_definition const> get_shared_mesh_def() const noexcept { return mesh_def; }
@@ -215,18 +223,22 @@ namespace ot::dedit
 		[[nodiscard]] virtual egfx::node_ref get_node() noexcept override { return node; }
 		[[nodiscard]] virtual egfx::node_cref get_node() const noexcept override { return node; }
 		[[nodiscard]] virtual std::string_view get_name() const noexcept override { return mesh.get_mesh_name(); }
-		[[nodiscard]] virtual entity_type_t get_type() const noexcept override { return entity_type_t::brush; }
+		[[nodiscard]] virtual entity_type get_type() const noexcept override { return type; }
 		[[nodiscard]] virtual bool fwrite(std::FILE* file) const override;
 		[[nodiscard]] virtual bool fread(map_entity& parent, std::FILE* file) override;
 
 		void reload_node(std::shared_ptr<egfx::mesh_definition const> new_def);
 	};
 
+	using brush = brush_entity; // not renaming everything for now
+
 	class map
 	{
 		uint64_t next_entity_id = 0;
-		std::vector<uptr<brush>> brushes;
+		std::vector<uptr<map_entity>> entities;
 		root_entity root;
+
+		void on_new_entity(entity_id id);
 
 	public:
 		map(egfx::node_ref root_node);
@@ -235,10 +247,32 @@ namespace ot::dedit
 
 		[[nodiscard]] entity_id allocate_entity_id();
 
-		brush& make_default_brush(entity_id id);
-		brush& make_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id);
-		brush& make_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id id, map_entity& parent);
-		void delete_brush(entity_id id);
+		template<typename... Args>
+		map_entity& make_entity(entity_type type, entity_id id, Args&&... args)
+		{
+			switch (type)
+			{
+			case entity_type::root:
+				throw std::invalid_argument("Cannot create root entities");
+
+			case entity_type::brush:
+				return make_entity<brush_entity>(id, ot::forward<Args>(args)...);
+
+			default:
+				assert(false);
+				OT_UNREACHABLE();
+			}
+		}
+
+		template<typename EntityType, typename... Args>
+		EntityType& make_entity(entity_id id, Args&&... args)
+		{
+			on_new_entity(id);
+			entities.push_back(ot::make_unique<EntityType>(id, ot::forward<Args>(args)...));
+			return static_cast<EntityType&>(*entities.back());
+		}
+
+		void delete_entity(entity_id id);
 
 		void clear();
 
@@ -252,6 +286,6 @@ namespace ot::dedit
 		[[nodiscard]] map_entity const* find_entity(entity_id id) const;
 		[[nodiscard]] bool has_entity(entity_id id) const { return find_entity(id) != nullptr; }
 
-		[[nodiscard]] std::expected<entity_type_t, std::error_code> get_entity_type(entity_id id) const;
+		[[nodiscard]] std::expected<entity_type, std::error_code> get_entity_type(entity_id id) const;
 	};
 }

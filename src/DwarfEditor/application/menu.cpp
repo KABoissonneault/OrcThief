@@ -10,7 +10,7 @@
 #include "menu/console_window.h"
 #include "menu/about_window.h"
 
-#include "action/brush.h"
+#include "action/map_entity.h"
 
 #include <imgui.h>
 #include <fstream>
@@ -73,7 +73,7 @@ namespace ot::dedit
 
 		if (is_key_press(e, SDLK_b, input::keyboard::mod_combo::ctrl_alt))
 		{
-			acc.emplace_action<action::spawn_brush>(mesh_repo.get_cube());
+			acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_cube());
 			return true;
 		}
 
@@ -182,27 +182,27 @@ namespace ot::dedit
 			{
 				if (ImGui::MenuItem("Cube", "CTRL+Alt+B"))
 				{
-					acc.emplace_action<action::spawn_brush>(mesh_repo.get_cube());
+					acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_cube());
 				}
 
 				if (ImGui::MenuItem("Octagonal Prism"))
 				{
-					acc.emplace_action<action::spawn_brush>(mesh_repo.get_octagonal_prism());
+					acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_octagonal_prism());
 				}
 
 				if (ImGui::MenuItem("Hex Prism"))
 				{
-					acc.emplace_action<action::spawn_brush>(mesh_repo.get_hex_prism());
+					acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_hex_prism());
 				}
 
 				if (ImGui::MenuItem("Tri Prism"))
 				{
-					acc.emplace_action<action::spawn_brush>(mesh_repo.get_tri_prism());
+					acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_tri_prism());
 				}
 
 				if (ImGui::MenuItem("Square Pyramid"))
 				{
-					acc.emplace_action<action::spawn_brush>(mesh_repo.get_square_pyramid());
+					acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_square_pyramid());
 				}
 
 				ImGui::EndMenu();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "action/base.h"
+#include "action/map_entity.h"
 #include "egfx/mesh_definition.fwd.h"
 #include "map.h"
 
@@ -9,23 +10,6 @@
 
 namespace ot::dedit::action
 {
-	class spawn_brush : public base
-	{
-		std::shared_ptr<egfx::mesh_definition const> mesh_def;
-		std::optional<entity_id> id;
-		std::optional<entity_id> parent_id;
-
-		void do_spawn(map& current_map, bool is_redo);
-
-	public:
-		spawn_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def);
-		spawn_brush(std::shared_ptr<egfx::mesh_definition const> mesh_def, entity_id parent_id);
-
-		virtual void apply(map& current_map) override;
-		virtual void redo(map& current_map) override;
-		virtual void undo(map& current_map) override;
-	};
-
 	class single_brush : public base
 	{
 		entity_id id;
@@ -77,63 +61,7 @@ namespace ot::dedit::action
 	public:
 		split_brush_face(brush const& b, egfx::face::id face, math::plane plane);
 	};
-
-	class set_brush_position : public single_brush
-	{
-		math::point3f previous_state;
-		math::point3f new_pos;
-
-	protected:
-		virtual void do_apply(brush& b, bool is_redo) override;
-		virtual void do_undo(brush& b) override;
-
-	public:
-		set_brush_position(brush const& b, math::point3f point);
-	};
-
-	class set_brush_rotation : public single_brush
-	{
-		math::quaternion previous_state;
-		math::quaternion new_rot;
-	
-	protected:
-		virtual void do_apply(brush& b, bool is_redo) override;
-		virtual void do_undo(brush& b) override;
-
-	public:
-		set_brush_rotation(brush const& b, math::quaternion rot);
-	};
-
-	class set_brush_scale : public single_brush
-	{
-		math::scales previous_state;
-		math::scales new_s;
-
-	protected:
-		virtual void do_apply(brush& b, bool is_redo) override;
-		virtual void do_undo(brush& b) override;
-
-	public:
-		set_brush_scale(brush const& b, math::scales s);
-	};
-
-	class delete_brush : public base
-	{
-		entity_id id;
-		entity_id previous_parent;
-		std::unique_ptr<std::FILE, int(*)(std::FILE*)> serialized_state;
-
-		void do_delete(map& current_map, bool is_redo);
-
-	protected:
-		virtual void apply(map& current_map) override;
-		virtual void redo(map& current_map) override;
-		virtual void undo(map& current_map) override;
-
-	public:
-		delete_brush(brush const& b);
-	};
-
+		
 	class set_brush_material : public single_brush
 	{
 		egfx::material_handle_t previous_material;

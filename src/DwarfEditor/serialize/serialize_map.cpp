@@ -10,7 +10,7 @@ namespace ot::dedit::serialize
 		if (!::fwrite(&id, sizeof(id), 1, f))
 			return false;
 
-		entity_type_t const type = e.get_type();
+		entity_type const type = e.get_type();
 		if (!::fwrite(&type, sizeof(type), 1, f))
 			return false;
 
@@ -58,29 +58,24 @@ namespace ot::dedit::serialize
 		if (!::fread(&id, sizeof(id), 1, f))
 			return false;
 
-		entity_type_t type;
+		entity_type type;
 		if (!::fread(&type, sizeof(type), 1, f))
 			return false;
 
 		map_entity* current_entity = nullptr;
 		switch (type)
 		{
-		case entity_type_t::root:
+		case entity_type::root:
 			current_entity = &m.get_root();
 			break;
 
-		case entity_type_t::brush:
-		{
-			brush& b = m.make_default_brush(id);
-			if (!b.fread(parent, f))
+		default:
+			map_entity& e = m.make_entity(type, id);
+			if (!e.fread(parent, f))
 				return false;
 
-			current_entity = &b;
+			current_entity = &e;
 			break;
-		}
-
-		default:
-			return false;
 		}
 
 		if (current_entity == nullptr)

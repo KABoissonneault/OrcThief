@@ -127,13 +127,13 @@ namespace ot::dedit::selection
 						{
 						case operation_type::translate:
 							math::point3f const new_position = destination_from_origin(new_local_transform.get_displacement());
-							acc.emplace_action<action::set_brush_position>(b, new_position);
+							acc.emplace_action<action::set_entity_position>(b, new_position);
 							break;
 						case operation_type::rotation:
-							acc.emplace_action<action::set_brush_rotation>(b, new_local_transform.get_rotation().to_quaternion());
+							acc.emplace_action<action::set_entity_rotation>(b, new_local_transform.get_rotation().to_quaternion());
 							break;
 						case operation_type::scale:
-							acc.emplace_action<action::set_brush_scale>(b, new_local_transform.get_scale());
+							acc.emplace_action<action::set_entity_scale>(b, new_local_transform.get_scale());
 							break;
 						}
 					}
@@ -236,7 +236,7 @@ namespace ot::dedit::selection
 		{
 			if (has_translated)
 			{
-				acc.emplace_action<action::set_brush_position>(b, math::point3f{ translation[0], translation[1], translation[2] });
+				acc.emplace_action<action::set_entity_position>(b, math::point3f{ translation[0], translation[1], translation[2] });
 			}
 
 			if (has_rotated)
@@ -255,12 +255,12 @@ namespace ot::dedit::selection
 
 				math::rotation_matrix const new_rotation = math::rotation_matrix::rot_zyx(euler_angles);
 
-				acc.emplace_action<action::set_brush_rotation>(b, new_rotation.to_quaternion());
+				acc.emplace_action<action::set_entity_rotation>(b, new_rotation.to_quaternion());
 			}
 
 			if (has_scaled)
 			{
-				acc.emplace_action<action::set_brush_scale>(b, math::scales{ scale[0], scale[1], scale[2] });
+				acc.emplace_action<action::set_entity_scale>(b, math::scales{ scale[0], scale[1], scale[2] });
 			}
 		}
 
@@ -367,7 +367,7 @@ namespace ot::dedit::selection
 
 			case SDLK_DELETE:
 			{
-				acc.emplace_action<action::delete_brush>(b);
+				acc.emplace_action<action::delete_entity>(b);
 				return true;
 			}
 			}			
