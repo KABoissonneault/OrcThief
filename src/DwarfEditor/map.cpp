@@ -269,26 +269,27 @@ namespace ot::dedit
 		node.set_user_ptr(this);
 	}
 
-	brush_entity::brush_entity(entity_id id)
+	node_entity::node_entity(entity_id id)
 		: map_entity(id)
 	{
 
 	}
 
-	brush_entity::brush_entity(entity_id id, map_entity& parent, std::shared_ptr<egfx::mesh_definition const> mesh_def)
+	node_entity::node_entity(entity_id id, map_entity& parent, std::string_view name)
 		: map_entity(id)
-		, mesh_def(mesh_def)
-		, mesh(egfx::create_mesh(make_brush_name(id), *mesh_def))
 		, node(egfx::create_child_node(parent.get_node()))
 	{
-		egfx::add_item(node, mesh);
-
-		node.set_user_ptr(this);
+		node.set_name(name);
 	}
 
-	bool brush::fwrite(std::FILE* f) const
+	bool node_entity::fwrite(std::FILE* f) const
 	{
-		if (!serialize::fwrite(*mesh_def, f))
+		std::string_view const name = node.get_name();
+		size_t const name_size = name.size();
+		if(!::fwrite(&name_size, sizeof(name_size), 1, f))
+			return false;
+
+		if (!::fwrite(name.data(), 1, name.size(), f))
 			return false;
 
 		if (!serialize::fwrite(node.get_position(), f)
@@ -299,29 +300,81 @@ namespace ot::dedit
 		return true;
 	}
 
-	bool brush::fread(map_entity& parent, std::FILE* f)
+	bool node_entity::fread(map_entity& parent, std::FILE* f)
 	{
-		auto read_mesh_def = std::make_shared<egfx::mesh_definition>();
-		if (!serialize::fread(*read_mesh_def, f))
+		size_t name_size;
+		if (!::fread(&name_size, sizeof(name_size), 1, f))
 			return false;
-				
+
+		std::string name;
+		name.resize(name_size);
+		if (!::fread(name.data(), 1, name_size, f))
+			return false;
+
 		math::point3f position;
 		math::quaternion rotation;
 		math::scales scales;
 		if (!serialize::fread(position, f) || !serialize::fread(rotation, f) || !serialize::fread(scales, f))
 			return false;
-
-		mesh_def = std::move(read_mesh_def);
-		mesh = egfx::create_mesh(make_brush_name(get_id()), *mesh_def);
-
+		
 		node = egfx::create_child_node(parent.get_node());
 
+		node.set_name(name);
 		node.set_position(position);
 		node.set_rotation(rotation);
 		node.set_scale(scales);
 
 		node.set_user_ptr(this);
 
+		return true;
+	}
+
+	brush_entity::brush_entity(entity_id id)
+		: node_entity(id)
+	{
+
+	}
+
+	brush_entity::brush_entity(entity_id id, map_entity& parent, std::shared_ptr<egfx::mesh_definition const> mesh_def)
+		: node_entity(id, parent, make_brush_name(id))
+		, mesh_def(mesh_def)
+		, mesh(egfx::create_mesh(make_brush_name(id), *mesh_def))
+	{
+		egfx::node_ref const node = get_node();
+		egfx::add_item(node, mesh);
+
+		node.set_user_ptr(this);
+	}
+
+	bool brush::fwrite(std::FILE* f) const
+	{
+		if (!node_entity::fwrite(f))
+			return false;
+
+		if (!serialize::fwrite(*mesh_def, f))
+			return false;
+
+		// TODO: material
+
+		return true;
+	}
+
+	bool brush::fread(map_entity& parent, std::FILE* f)
+	{
+		if (!node_entity::fread(parent, f))
+			return false;
+
+		auto read_mesh_def = std::make_shared<egfx::mesh_definition>();
+		if (!serialize::fread(*read_mesh_def, f))
+			return false;
+		
+		mesh_def = std::move(read_mesh_def);
+		mesh = egfx::create_mesh(make_brush_name(get_id()), *mesh_def);
+
+		egfx::add_item(get_node(), mesh);
+
+		// TODO: material
+		
 		return true;
 	}
 

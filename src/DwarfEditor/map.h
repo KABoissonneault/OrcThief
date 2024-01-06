@@ -202,11 +202,27 @@ namespace ot::dedit
 		virtual bool fread(map_entity&, std::FILE*) override { return true; }
 	};
 
-	class brush_entity final : public map_entity
+	// Entities which own their own scene node
+	class node_entity : public map_entity
+	{
+		egfx::node node;
+
+	protected:
+		node_entity(entity_id id);
+		node_entity(entity_id id, map_entity& parent, std::string_view name);
+
+	public:
+		[[nodiscard]] virtual egfx::node_ref get_node() noexcept override final { return node; }
+		[[nodiscard]] virtual egfx::node_cref get_node() const noexcept override final { return node; }
+		[[nodiscard]] virtual std::string_view get_name() const noexcept override final { return node.get_name(); }
+		[[nodiscard]] virtual bool fwrite(std::FILE* file) const override;
+		[[nodiscard]] virtual bool fread(map_entity& parent, std::FILE* file) override;
+	};
+
+	class brush_entity final : public node_entity
 	{
 		std::shared_ptr<egfx::mesh_definition const> mesh_def;
 		egfx::mesh mesh;
-		egfx::node node;
 
 	public:
 		static constexpr entity_type type = entity_type::brush;
@@ -217,12 +233,9 @@ namespace ot::dedit
 		[[nodiscard]] egfx::mesh_definition const& get_mesh_def() const noexcept { return *mesh_def; }
 		[[nodiscard]] std::shared_ptr<egfx::mesh_definition const> get_shared_mesh_def() const noexcept { return mesh_def; }
 
-		[[nodiscard]] egfx::item_ref get_item() noexcept { return node.get_object(0).as<egfx::item_ref>(); }
-		[[nodiscard]] egfx::item_cref get_item() const noexcept { return node.get_object(0).as<egfx::item_cref>(); }
-
-		[[nodiscard]] virtual egfx::node_ref get_node() noexcept override { return node; }
-		[[nodiscard]] virtual egfx::node_cref get_node() const noexcept override { return node; }
-		[[nodiscard]] virtual std::string_view get_name() const noexcept override { return mesh.get_mesh_name(); }
+		[[nodiscard]] egfx::item_ref get_item() noexcept { return get_node().get_object(0).as<egfx::item_ref>(); }
+		[[nodiscard]] egfx::item_cref get_item() const noexcept { return get_node().get_object(0).as<egfx::item_cref>(); }
+				
 		[[nodiscard]] virtual entity_type get_type() const noexcept override { return type; }
 		[[nodiscard]] virtual bool fwrite(std::FILE* file) const override;
 		[[nodiscard]] virtual bool fread(map_entity& parent, std::FILE* file) override;
