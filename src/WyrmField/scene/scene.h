@@ -34,7 +34,7 @@ namespace ot
 			void update(math::seconds dt);
 			void render();
 
-			egfx::object::camera_cref get_camera() const noexcept;
+			egfx::camera_cref get_camera() const noexcept;
 		};
 	}
 }

@@ -58,7 +58,7 @@ namespace ot::wf
 			}
 		}
 
-		Im3d::Vec3 get_cursor_ray(egfx::object::camera_cref const camera, math::transform_matrix const& camera_projection)
+		Im3d::Vec3 get_cursor_ray(egfx::camera_cref const camera, math::transform_matrix const& camera_projection)
 		{
 			Im3d::AppData& ad = Im3d::GetAppData();
 
@@ -80,7 +80,7 @@ namespace ot::wf
 			return normalized(transform(ray_direction, camera_transform));
 		}
 
-		void im3d_preupdate(egfx::object::camera_cref const camera)
+		void im3d_preupdate(egfx::camera_cref const camera)
 		{
 			Im3d::AppData& ad = Im3d::GetAppData();
 			math::transform_matrix const camera_projection = camera.get_projection();

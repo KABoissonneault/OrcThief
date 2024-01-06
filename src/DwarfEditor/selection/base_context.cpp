@@ -45,7 +45,7 @@ namespace ot::dedit::selection
 
 		auto const result = current_scene->raycast_objects(r);
 
-		for (egfx::node::object_id const hit_object : result)
+		for (egfx::object_id const hit_object : result)
 		{
 			auto const root_entities = current_map->get_root_entities();
 			map_entity const* found_entity = nullptr;

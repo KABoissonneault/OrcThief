@@ -18,7 +18,6 @@
 
 #include "egfx/module.h"
 #include "egfx/scene.h"
-#include "egfx/node/light.h"
 
 #include <span>
 #include <optional>
@@ -37,8 +36,6 @@ namespace ot::dedit
 		sdl::unique_window main_window;
 		egfx::module& graphics;
 		egfx::scene main_scene;
-
-		egfx::node::directional_light light;
 
 		map current_map;
 

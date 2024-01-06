@@ -15,7 +15,7 @@ namespace ot::dedit::selection
 	class brush_context : public composite_context
 	{
 		map const* current_map;
-		egfx::object::camera_cref main_camera;
+		egfx::camera_cref main_camera;
 		egfx::window const* main_window;
 
 		entity_id selected_brush;
@@ -56,7 +56,7 @@ namespace ot::dedit::selection
 		void draw_immediate_scene(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t);
 
 	public:
-		brush_context(map const& current_map, egfx::object::camera_cref main_camera, egfx::window const& main_window, entity_id selected_brush) noexcept;
+		brush_context(map const& current_map, egfx::camera_cref main_camera, egfx::window const& main_window, entity_id selected_brush) noexcept;
 
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) override;
 

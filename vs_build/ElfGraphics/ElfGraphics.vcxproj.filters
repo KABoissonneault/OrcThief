@@ -7,12 +7,6 @@
     <Filter Include="src">
       <UniqueIdentifier>{8fe394e2-f46a-49ab-8455-fd07458dd1bf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\node">
-      <UniqueIdentifier>{32c4a126-8bd5-4554-b7ab-3401ccf274c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\node">
-      <UniqueIdentifier>{57896196-5bfb-410f-8703-77280e0f68ae}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\imgui">
       <UniqueIdentifier>{aec4c0fc-0fdd-4b63-a597-527ed9d7d976}</UniqueIdentifier>
     </Filter>
@@ -48,24 +42,6 @@
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\scene.fwd.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\light.h">
-      <Filter>include\node</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\light.fwd.h">
-      <Filter>include\node</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\src\node\light.h">
-      <Filter>src\node</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\object.fwd.h">
-      <Filter>include\node</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\object.h">
-      <Filter>include\node</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\src\node\object.h">
-      <Filter>src\node</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\window.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -83,15 +59,6 @@
     </ClInclude>
     <ClInclude Include="..\..\lib\ElfGraphics\src\mesh_definition.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\mesh.h">
-      <Filter>include\node</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node\mesh.fwd.h">
-      <Filter>include\node</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lib\ElfGraphics\src\node\mesh.h">
-      <Filter>src\node</Filter>
     </ClInclude>
     <ClInclude Include="..\..\lib\ElfGraphics\src\imgui\renderer.h">
       <Filter>src\imgui</Filter>
@@ -129,6 +96,42 @@
     <ClInclude Include="..\..\lib\ElfGraphics\src\material.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\node.fwd.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\src\node.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\object\light.fwd.h">
+      <Filter>include\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\object\light.h">
+      <Filter>include\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\object\mesh.fwd.h">
+      <Filter>include\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\object\mesh.h">
+      <Filter>include\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\object\object.fwd.h">
+      <Filter>include\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\include\egfx\object\object.h">
+      <Filter>include\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\src\object\light.h">
+      <Filter>src\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\src\object\mesh.h">
+      <Filter>src\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\ElfGraphics\src\object\object.h">
+      <Filter>src\object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\ElfGraphics\src\module.cpp">
@@ -137,17 +140,8 @@
     <ClCompile Include="..\..\lib\ElfGraphics\src\mesh_definition.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lib\ElfGraphics\src\node\light.cpp">
-      <Filter>src\node</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lib\ElfGraphics\src\node\object.cpp">
-      <Filter>src\node</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\lib\ElfGraphics\src\window.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lib\ElfGraphics\src\node\mesh.cpp">
-      <Filter>src\node</Filter>
     </ClCompile>
     <ClCompile Include="..\..\lib\ElfGraphics\src\imgui\d3d11_renderer.cpp">
       <Filter>src\imgui</Filter>
@@ -175,6 +169,18 @@
     </ClCompile>
     <ClCompile Include="..\..\lib\ElfGraphics\src\material.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\ElfGraphics\src\node.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\ElfGraphics\src\object\light.cpp">
+      <Filter>src\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\ElfGraphics\src\object\mesh.cpp">
+      <Filter>src\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\ElfGraphics\src\object\object.cpp">
+      <Filter>src\object</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

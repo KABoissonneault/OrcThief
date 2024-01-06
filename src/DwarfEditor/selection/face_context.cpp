@@ -55,7 +55,7 @@ namespace ot::dedit::selection
 	}
 
 	face_context::face_context(map const& current_map
-		, egfx::object::camera_cref main_camera
+		, egfx::camera_cref main_camera
 		, egfx::window const& main_window
 		, entity_id selected_brush
 		, egfx::face::id selected_face)

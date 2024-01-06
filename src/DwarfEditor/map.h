@@ -5,8 +5,8 @@
 #include "core/uptr.h"
 
 #include "egfx/mesh_definition.h"
-#include "egfx/node/mesh.h"
-#include "egfx/node/object.h"
+#include "egfx/object/mesh.h"
+#include "egfx/node.h"
 
 #include "math/transform_matrix.h"
 
@@ -37,14 +37,14 @@ namespace ot::dedit
 
 	class map_entity_iterator
 	{
-		egfx::node::object_iterator node_iterator;
-		egfx::node::object_iterator node_end;
+		egfx::node_iterator node_iterator;
+		egfx::node_iterator node_end;
 
 		friend class map_entity_const_iterator;
 
 	public:
 		map_entity_iterator() = default;
-		map_entity_iterator(egfx::node::object_iterator it, egfx::node::object_iterator end) noexcept;
+		map_entity_iterator(egfx::node_iterator it, egfx::node_iterator end) noexcept;
 
 		using difference_type = ptrdiff_t;
 		using element_type = map_entity;
@@ -69,7 +69,7 @@ namespace ot::dedit
 	public:
 		map_entity_range() = default;
 		map_entity_range(map_entity_iterator beg) noexcept;
-		map_entity_range(egfx::node::object_range node_range) noexcept;
+		map_entity_range(egfx::node_range node_range) noexcept;
 
 		[[nodiscard]] map_entity_iterator begin() const noexcept { return it; }
 		[[nodiscard]] map_entity_end_sentinel end() const noexcept { return map_entity_end; }
@@ -80,12 +80,12 @@ namespace ot::dedit
 
 	class map_entity_const_iterator
 	{
-		egfx::node::object_const_iterator node_iterator;
-		egfx::node::object_const_iterator node_end;
+		egfx::node_const_iterator node_iterator;
+		egfx::node_const_iterator node_end;
 
 	public:
 		map_entity_const_iterator() = default;
-		map_entity_const_iterator(egfx::node::object_const_iterator it, egfx::node::object_const_iterator end) noexcept;
+		map_entity_const_iterator(egfx::node_const_iterator it, egfx::node_const_iterator end) noexcept;
 		map_entity_const_iterator(map_entity_iterator it) noexcept;
 
 		using difference_type = ptrdiff_t;
@@ -112,7 +112,7 @@ namespace ot::dedit
 		map_entity_const_range() = default;
 		map_entity_const_range(map_entity_const_iterator beg) noexcept;
 		map_entity_const_range(map_entity_range range) noexcept;
-		map_entity_const_range(egfx::node::object_const_range range) noexcept;
+		map_entity_const_range(egfx::node_const_range range) noexcept;
 
 		[[nodiscard]] map_entity_const_iterator begin() const noexcept { return it; }
 		[[nodiscard]] map_entity_end_sentinel end() const noexcept { return map_entity_end; }
@@ -133,8 +133,8 @@ namespace ot::dedit
 	public:
 		
 		[[nodiscard]] entity_id get_id() const noexcept { return id; }
-		[[nodiscard]] virtual egfx::node::object_ref get_node() noexcept = 0;
-		[[nodiscard]] virtual egfx::node::object_cref get_node() const noexcept = 0;
+		[[nodiscard]] virtual egfx::node_ref get_node() noexcept = 0;
+		[[nodiscard]] virtual egfx::node_cref get_node() const noexcept = 0;
 		[[nodiscard]] virtual std::string_view get_name() const noexcept = 0;
 		[[nodiscard]] virtual entity_type_t get_type() const noexcept = 0;
 		[[nodiscard]] virtual bool fwrite(std::FILE* f) const = 0;
@@ -183,13 +183,13 @@ namespace ot::dedit
 
 	class root_entity final : public map_entity
 	{
-		egfx::node::object_ref node;
+		egfx::node_ref node;
 
 	public:
-		root_entity(entity_id id, egfx::node::object_ref node);
+		root_entity(entity_id id, egfx::node_ref node);
 
-		[[nodiscard]] virtual egfx::node::object_ref get_node() noexcept override { return node; }
-		[[nodiscard]] virtual egfx::node::object_cref get_node() const noexcept override { return node; }
+		[[nodiscard]] virtual egfx::node_ref get_node() noexcept override { return node; }
+		[[nodiscard]] virtual egfx::node_cref get_node() const noexcept override { return node; }
 		[[nodiscard]] virtual std::string_view get_name() const noexcept override { return "Root"; }
 		[[nodiscard]] virtual entity_type_t get_type() const noexcept override { return entity_type_t::root; }
 		virtual bool fwrite(std::FILE*) const override { return true; }
@@ -199,7 +199,8 @@ namespace ot::dedit
 	class brush final : public map_entity
 	{
 		std::shared_ptr<egfx::mesh_definition const> mesh_def;
-		egfx::node::mesh mesh;
+		egfx::mesh mesh;
+		egfx::node node;
 
 	public:
 		brush(entity_id id);
@@ -208,11 +209,11 @@ namespace ot::dedit
 		[[nodiscard]] egfx::mesh_definition const& get_mesh_def() const noexcept { return *mesh_def; }
 		[[nodiscard]] std::shared_ptr<egfx::mesh_definition const> get_shared_mesh_def() const noexcept { return mesh_def; }
 
-		[[nodiscard]] egfx::node::mesh& get_mesh_node() noexcept { return mesh; }
-		[[nodiscard]] egfx::node::mesh const& get_mesh_node() const noexcept { return mesh; }
+		[[nodiscard]] egfx::item_ref get_item() noexcept { return node.get_object(0).as<egfx::item_ref>(); }
+		[[nodiscard]] egfx::item_cref get_item() const noexcept { return node.get_object(0).as<egfx::item_cref>(); }
 
-		[[nodiscard]] virtual egfx::node::object_ref get_node() noexcept override { return mesh; }
-		[[nodiscard]] virtual egfx::node::object_cref get_node() const noexcept override { return mesh; }		
+		[[nodiscard]] virtual egfx::node_ref get_node() noexcept override { return node; }
+		[[nodiscard]] virtual egfx::node_cref get_node() const noexcept override { return node; }
 		[[nodiscard]] virtual std::string_view get_name() const noexcept override { return mesh.get_mesh_name(); }
 		[[nodiscard]] virtual entity_type_t get_type() const noexcept override { return entity_type_t::brush; }
 		[[nodiscard]] virtual bool fwrite(std::FILE* file) const override;
@@ -228,7 +229,7 @@ namespace ot::dedit
 		root_entity root;
 
 	public:
-		map(egfx::node::object_ref root_node);
+		map(egfx::node_ref root_node);
 				
 		root_entity& get_root() noexcept { return root; }
 

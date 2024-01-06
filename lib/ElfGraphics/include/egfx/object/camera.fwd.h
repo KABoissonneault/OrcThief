@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ot::egfx::object
+namespace ot::egfx
 {
 	class camera_cref;
 	class camera_ref;

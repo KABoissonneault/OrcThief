@@ -6,5 +6,5 @@
 
 namespace ot::dedit::selection
 {
-	math::ray get_mouse_ray(egfx::window const& window, egfx::object::camera_cref camera);
+	math::ray get_mouse_ray(egfx::window const& window, egfx::camera_cref camera);
 }

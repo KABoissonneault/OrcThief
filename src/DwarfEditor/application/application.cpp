@@ -6,7 +6,6 @@
 
 #include "egfx/scene.h"
 #include "egfx/object/camera.h"
-#include "egfx/node/light.h"
 
 #include "Ogre/ConfigOptionMap.h"
 #include "Ogre/PlatformInformation.h"
@@ -73,13 +72,9 @@ namespace ot::dedit
 		auto const& render_window = graphics.get_window(egfx::window_id{ SDL_GetWindowID(main_window.get()) });
 		selection_context.reset(new selection::base_context(mesh_repo, current_map, main_scene, render_window));
 
-		egfx::object::camera_ref const camera = main_scene.get_camera();
+		egfx::camera_ref const camera = main_scene.get_camera();
 		camera.set_position({ 0.0f, 2.0f, 5.5f });
 		camera.look_at({ 0.0f, 0.0f, 0.0f });
-
-		light = egfx::node::create_directional_light(main_scene.get_root_node());
-		light.set_position({ 10.0f, 10.0f, 10.0f });
-		light.set_direction(normalized(math::vector3f{ -1.0f, -1.0f, -1.0f }));
 	}
 
 	void application::run()
@@ -250,7 +245,7 @@ namespace ot::dedit
 
 	namespace
 	{
-		Im3d::Vec3 get_cursor_ray(egfx::object::camera_cref const camera, math::transform_matrix const& camera_projection)
+		Im3d::Vec3 get_cursor_ray(egfx::camera_cref const camera, math::transform_matrix const& camera_projection)
 		{
 			Im3d::AppData& ad = Im3d::GetAppData();
 
@@ -276,7 +271,7 @@ namespace ot::dedit
 	void application::update_im3d()
 	{
 		Im3d::AppData& ad = Im3d::GetAppData();
-		egfx::object::camera_cref const camera = main_scene.get_camera();
+		egfx::camera_cref const camera = main_scene.get_camera();
 		math::transform_matrix const camera_projection = camera.get_projection();
 		
 		ad.m_cursorRayOrigin = ad.m_viewOrigin;

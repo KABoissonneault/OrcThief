@@ -1,7 +1,6 @@
 #pragma once
 
 #include "map.h"
-#include "egfx/node/object.h"
 
 namespace ot::dedit
 {

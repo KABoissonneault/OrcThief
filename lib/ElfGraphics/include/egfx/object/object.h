@@ -1,6 +1,7 @@
 #pragma once
 
-#include "egfx/node/object.fwd.h"
+#include "egfx/object/object.fwd.h"
+#include "egfx/node.fwd.h"
 
 #include "core/size_t.h"
 #include "core/iterator/arrow_proxy.h"
@@ -11,13 +12,15 @@
 
 #include <optional>
 
-namespace ot::egfx::node
+namespace ot::egfx
 {
 	class object_cref;
 	class object_ref;
 
 	namespace detail
 	{
+		void init_object_cref(object_cref&, void const*) noexcept;
+		void init_object_ref(object_ref&, void*) noexcept;
 		object_cref make_object_cref(void const*) noexcept;
 		object_ref make_object_ref(void*) noexcept;
 		void const* get_object_impl(object_cref) noexcept;
@@ -28,156 +31,77 @@ namespace ot::egfx::node
 		{
 			using derived = Derived;
 		public:
-			// Id of the node itself
-			[[nodiscard]] node_id get_node_id() const noexcept;
+			// Id of the object itself
+			[[nodiscard]] object_id get_object_id() const noexcept;
 
-			// Returns true if the node contains a sub-object with the given id
-			[[nodiscard]] bool contains(object_id id) const noexcept;
+			// Object type
+			[[nodiscard]] object_type get_object_type() const noexcept;
 
-			// Gets the local position of the node relative to its parent
-			[[nodiscard]] math::point3f get_position() const noexcept;
-
-			// Gets the local rotation of the node
-			[[nodiscard]] math::quaternion get_rotation() const noexcept;
-
-			// Gets the local scale of the node
-			[[nodiscard]] math::scales get_scale() const noexcept;
-
-			// Gets the user pointer of the node
-			[[nodiscard]] void* get_user_ptr() const noexcept;
-
-			// Gets the number of children to this object
-			[[nodiscard]] size_t get_child_count() const noexcept;
+			[[nodiscard]] bool is_a(object_type t) const noexcept;
 		};
 	}
 	
 	class object_range;
 	class object_const_range;
 
+	template<typename Derived>
+	Derived ref_cast(object_cref ref);
+
 	class object_cref : public detail::object_const_impl<object_cref>
 	{
 		void const* pimpl;
-
+		
+		friend void detail::init_object_cref(object_cref&, void const*) noexcept;
 		friend object_cref detail::make_object_cref(void const*) noexcept;
 		friend void const* detail::get_object_impl(object_cref) noexcept;
 
 		friend class detail::object_const_impl<object_cref>;
 
+	protected:
+		object_cref() = default;
+
 	public:
-		// Gets the node of the parent
-		std::optional<object_cref> get_parent() const noexcept;
+		template<typename Derived>
+		Derived as() { return ref_cast<Derived>(*this); }
 
-		// Gets the specified child, if any
-		std::optional<object_cref> get_child(size_t i) const;
-
-		// Gets the range of children
-		object_const_range get_children() const noexcept;
+		// Gets the owning node
+		[[nodiscard]] std::optional<node_cref> get_owner() const noexcept;
 	};
 	
+	template<typename Derived>
+	Derived ref_cast(object_ref ref);
+
 	class object_ref : public detail::object_const_impl<object_ref>
 	{
 		void* pimpl;
 
+		friend void detail::init_object_ref(object_ref&, void*) noexcept;
 		friend object_ref detail::make_object_ref(void*) noexcept;
 		friend void* detail::get_object_impl(object_ref) noexcept;
 
-	public:
-		operator object_cref() const noexcept { return detail::make_object_cref(pimpl); }
-
-		// Sets the local position of the node relative to its parent
-		void set_position(math::point3f position) const noexcept;
-
-		// Sets the rotation of the node
-		void set_rotation(math::quaternion rot) const noexcept;
-		// Sets the rotation of the node so that it faces in the direction of the vector
-		void set_direction(math::vector3f direction) const noexcept;
-		// Changes the rotation of the node by 'rad' radians around the given vector
-		void rotate_around(math::vector3f axis, float rad) const noexcept;
-
-		// Set the scale of the node
-		void set_scale(float s) const noexcept;
-		void set_scale(math::scales s) const noexcept;
-
-		// Sets the input node as a child of this node.
-		void attach_child(object_ref child) const noexcept;
-
-		// Gets the node of the parent
-		[[nodiscard]] std::optional<object_ref> get_parent() const noexcept;
-
-		// Gets the node of the specified child
-		[[nodiscard]] std::optional<object_ref> get_child(size_t i) const;
-
-		// Gets the range of children
-		[[nodiscard]] object_range get_children() const noexcept;
-
-		// Sets a user pointer (ie: application wrapper) in the node
-		void set_user_ptr(void* user_ptr) const;
-	};
-
-	class object : public detail::object_const_impl<object>
-	{
-		void* pimpl;
-		void destroy_node() noexcept;
-		
 	protected:
-		void set_impl(object_ref r) noexcept;
+		object_ref() = default;
 
 	public:
-		object() noexcept;
-		object(object const&) = delete;
-		object(object&&) noexcept;
-		object& operator=(object const&) = delete;
-		object& operator=(object&&) noexcept;
-		~object();
-
 		operator object_cref() const noexcept { return detail::make_object_cref(pimpl); }
-		operator object_ref() noexcept { return detail::make_object_ref(pimpl); }
 
-		// Sets the local position of the node relative to its parent
-		void set_position(math::point3f position) noexcept;
+		template<typename Derived>
+		Derived as() { return ref_cast<Derived>(*this); }
 
-		// Sets the rotation of the node
-		void set_rotation(math::quaternion rot) noexcept;
-		// Sets the rotation of the node so that it faces in the direction of the vector
-		void set_direction(math::vector3f direction) noexcept;
-		// Changes the rotation of the node by 'rad' radians around the given vector
-		void rotate_around(math::vector3f axis, float rad) noexcept;
-
-		// Set the scale of the node
-		void set_scale(float s) noexcept;
-		void set_scale(math::scales s) noexcept;
-
-		// Sets the input node as a child of this node.
-		void attach_child(object_ref child) noexcept;
-
-		// Gets the node of the parent
-		[[nodiscard]] std::optional<object_cref> get_parent() const noexcept;
-		[[nodiscard]] std::optional<object_ref> get_parent() noexcept;
-
-		// Gets the node of the specified child
-		[[nodiscard]] std::optional<object_cref> get_child(size_t i) const;
-		[[nodiscard]] std::optional<object_ref> get_child(size_t i);
-
-		// Gets the range of children
-		[[nodiscard]] object_const_range get_children() const noexcept;
-		[[nodiscard]] object_range get_children() noexcept;
-
-		// Sets a user pointer (ie: application wrapper) in the node
-		void set_user_ptr(void* user_ptr);
+		// Gets the owning node
+		[[nodiscard]] std::optional<node_ref> get_owner() const noexcept;
 	};
 
 	extern template class detail::object_const_impl<object_cref>;
 	extern template class detail::object_const_impl<object_ref>;
-	extern template class detail::object_const_impl<object>;
 
 	class object_iterator
 	{
-		void* scene_node = nullptr;
+		void* object_ptr_it = nullptr;
 
-		object_iterator(void* node) noexcept;
+		object_iterator(void* object_ptr_it) noexcept;
 
-		friend class object_ref;
-		friend class object;
+		friend class node_ref;
 		friend class object_const_iterator;
 
 	public:
@@ -228,13 +152,12 @@ namespace ot::egfx::node
 
 	class object_const_iterator
 	{
-		void const* scene_node = nullptr;
+		void const* object_ptr_it = nullptr;
 
 		object_const_iterator(void const* node) noexcept;
 
-		friend class object_cref;
-		friend class object_ref;
-		friend class object;
+		friend class node_cref;
+		friend class node_ref;
 
 	public:
 		object_const_iterator() = default;

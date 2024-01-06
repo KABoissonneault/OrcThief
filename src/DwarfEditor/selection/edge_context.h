@@ -11,7 +11,7 @@ namespace ot::dedit::selection
 	class edge_context : public context
 	{
 		map const* current_map;
-		egfx::object::camera_cref main_camera;
+		egfx::camera_cref main_camera;
 		egfx::window const* main_window;
 
 		entity_id selected_brush;
@@ -22,7 +22,7 @@ namespace ot::dedit::selection
 
 	public:
 		edge_context(map const& current_map
-			, egfx::object::camera_cref main_camera
+			, egfx::camera_cref main_camera
 			, egfx::window const& main_window
 			, entity_id selected_brush
 			, egfx::face::id selected_face

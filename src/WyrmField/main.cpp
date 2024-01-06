@@ -15,7 +15,6 @@
 #include "math/unit/time.h"
 
 #include "egfx/module.h"
-#include "egfx/node/light.h"
 
 #include <filesystem>
 #include <SDL.h>

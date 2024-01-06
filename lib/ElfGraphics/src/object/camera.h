@@ -4,7 +4,7 @@
 
 #include "Ogre/Prerequisites.h"
 
-namespace ot::egfx::object
+namespace ot::egfx
 {
 	[[nodiscard]] camera_cref make_camera_cref(Ogre::Camera const&) noexcept;
 	[[nodiscard]] camera_ref make_camera_ref(Ogre::Camera&) noexcept;

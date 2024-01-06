@@ -100,7 +100,7 @@ namespace ot::egfx
 
 	void module::impl::pre_update()
 	{
-		object::camera_cref const impl = main_scene->get_camera();
+		camera_cref const impl = main_scene->get_camera();
 		imgui->pre_update(get_camera(impl));
 	}
 

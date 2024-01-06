@@ -302,7 +302,7 @@ namespace ot::dedit::action
 	set_brush_material::set_brush_material(brush const& b, egfx::material_handle_t const& mat)
 		: single_brush(b)
 		, new_material(mat)
-		, previous_material(b.get_mesh_node().get_material())
+		, previous_material(b.get_item().get_material())
 	{
 
 	}
@@ -310,11 +310,11 @@ namespace ot::dedit::action
 	void set_brush_material::do_apply(brush& b, bool is_redo)
 	{
 		(void)is_redo;
-		b.get_mesh_node().set_material(new_material);
+		b.get_item().set_material(new_material);
 	}
 
 	void set_brush_material::do_undo(brush& b)
 	{
-		b.get_mesh_node().set_material(previous_material);
+		b.get_item().set_material(previous_material);
 	}
 }

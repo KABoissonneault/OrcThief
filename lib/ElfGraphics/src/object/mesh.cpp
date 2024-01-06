@@ -1,8 +1,8 @@
-#include "node/mesh.h"
+#include "mesh.h"
 
 #include "scene.h"
 #include "ogre_conversion.h"
-#include "node/object.h"
+#include "node.h"
 #include "egfx/mesh_definition.h"
 #include "material.h"
 
@@ -13,16 +13,14 @@
 #include "Ogre/SubMesh2.h"
 #include "Ogre/Item.h"
 
-namespace ot::egfx::node
+namespace ot::egfx
 {
 	namespace detail
 	{
-		void init_mesh_impl(mesh& smesh, void* snode_data, void* mesh_ptr) noexcept
+		void init_mesh_impl(mesh& smesh, void* mesh_ptr) noexcept
 		{
-			auto const snode = static_cast<Ogre::SceneNode*>(snode_data);
 			auto& mesh = *static_cast<Ogre::MeshPtr*>(mesh_ptr);
 
-			smesh.set_impl(make_object_ref(snode));
 			get_mesh_ptr(smesh) = std::move(mesh);
 		}
 
@@ -30,11 +28,25 @@ namespace ot::egfx::node
 		{
 			return &smesh.storage_mesh;
 		}
+
+		item_ref make_item_ref(void* pimpl) noexcept
+		{
+			item_ref ref;
+			init_object_ref(ref, pimpl);
+			return ref;
+		}
+
+		item_cref make_item_cref(void const* pimpl) noexcept
+		{
+			item_cref ref;
+			init_object_cref(ref, pimpl);
+			return ref;
+		}
 	}
 
-	void init_mesh(mesh& smesh, Ogre::SceneNode* snode, Ogre::MeshPtr mptr) noexcept
+	void init_mesh(mesh& smesh, Ogre::MeshPtr mptr) noexcept
 	{
-		detail::init_mesh_impl(smesh, snode, &mptr);
+		detail::init_mesh_impl(smesh, &mptr);
 	}
 
 	Ogre::MeshPtr const& get_mesh_ptr(mesh const& smesh) noexcept
@@ -52,16 +64,34 @@ namespace ot::egfx::node
 		return const_cast<Ogre::MeshPtr&&>(get_mesh_ptr(static_cast<mesh const&>(smesh)));
 	}
 
+	item_ref make_item_ref(Ogre::Item& item) noexcept
+	{
+		return detail::make_item_ref(&item);
+	}
+
+	item_cref make_item_cref(Ogre::Item const& item) noexcept
+	{
+		return detail::make_item_cref(&item);
+	}
+
+	Ogre::Item& get_item(item_ref i) noexcept
+	{
+		return static_cast<Ogre::Item&>(get_object(i));
+	}
+
+	Ogre::Item const& get_item(item_cref i) noexcept
+	{
+		return static_cast<Ogre::Item const&>(get_object(i));
+	}
+
 	mesh::mesh() noexcept
 	{
-		static_assert(offsetof(mesh, storage_mesh) == sizeof(object) && alignof(mesh) == alignof(Ogre::MeshPtr));
-		static_assert(sizeof(mesh::storage_mesh) == sizeof(Ogre::MeshPtr));
+		static_assert(sizeof(mesh::storage_mesh) == sizeof(Ogre::MeshPtr) && alignof(mesh) == alignof(Ogre::MeshPtr));
 
 		new(storage_mesh) Ogre::MeshPtr;
 	}
 
 	mesh::mesh(mesh&& other) noexcept
-		: object(std::move(other))
 	{
 		new(storage_mesh) Ogre::MeshPtr(get_mesh_ptr(std::move(other)));
 	}
@@ -71,7 +101,6 @@ namespace ot::egfx::node
 		if (this != &other)
 		{
 			destroy_mesh();
-			static_cast<object&>(*this) = std::move(other);
 			get_mesh_ptr(*this) = get_mesh_ptr(std::move(other));
 		}
 		return *this;
@@ -270,26 +299,21 @@ namespace ot::egfx::node
 		ptr = make_mesh(name, mesh_def);
 	}
 
-	material_handle_t mesh::get_material() const
+	material_handle_t item_ref::get_material() const
 	{
-		Ogre::SceneNode const& scene_node = get_scene_node(*this);
-		assert(scene_node.numAttachedObjects() == 1); // Only expect the one Item
-		auto const item = static_cast<Ogre::Item const*>(*scene_node.getAttachedObjectIterator().begin());
-		Ogre::SubItem const* sub_item = item->getSubItem(0);
+		Ogre::Item& item = get_item(*this);
+		Ogre::SubItem const* sub_item = item.getSubItem(0);
 		Ogre::HlmsDatablock* datablock = sub_item->getDatablock();
 		return to_material_handle(datablock->getName());
 	}
 
-	void mesh::set_material(material_handle_t const& mat)
+	void item_ref::set_material(material_handle_t const& mat)
 	{
-		Ogre::SceneNode& scene_node = get_scene_node(*this);
-		assert(scene_node.numAttachedObjects() == 1); // Only expect the one Item
-		auto const item = static_cast<Ogre::Item*>(scene_node.getAttachedObject(0));
-		Ogre::SubItem* sub_item = item->getSubItem(0);
+		Ogre::Item& item = get_item(*this);
+		Ogre::SubItem* sub_item = item.getSubItem(0);
 
 		auto& root = Ogre::Root::getSingleton();
 		Ogre::HlmsManager* const hlms_manager = root.getHlmsManager();
-
 
 		Ogre::IdString const id_string = to_id_string(mat);
 		if (id_string == Ogre::IdString())
@@ -308,19 +332,45 @@ namespace ot::egfx::node
 		}
 	}
 
-	mesh create_mesh(object_ref parent, std::string const& name, mesh_definition const& mesh_def)
+	template<>
+	item_ref ref_cast<item_ref>(object_ref ref)
 	{
-		Ogre::SceneNode& parent_node = get_scene_node(parent);
-		Ogre::SceneManager& scene_manager = *parent_node.getCreator();
-		
+		return make_item_ref(static_cast<Ogre::Item&>(get_object(ref)));
+	}
+
+	item_cref::item_cref(item_ref rhs) noexcept
+	{
+		init_object_cref(*this, get_object(rhs));
+	}
+
+	material_handle_t item_cref::get_material() const
+	{
+		Ogre::Item const& item = get_item(*this);
+		Ogre::SubItem const& sub_item = *item.getSubItem(0);
+		Ogre::HlmsDatablock const& datablock = *sub_item.getDatablock();
+		return to_material_handle(datablock.getName());
+	}
+
+	template<>
+	item_cref ref_cast<item_cref>(object_cref ref)
+	{
+		return make_item_cref(static_cast<Ogre::Item const&>(get_object(ref)));
+	}
+
+	mesh create_mesh(std::string const& name, mesh_definition const& mesh_def)
+	{		
 		Ogre::MeshPtr render_mesh = make_mesh(name, mesh_def);
-
-		Ogre::Item* const item = scene_manager.createItem(render_mesh, Ogre::SCENE_DYNAMIC);
-		Ogre::SceneNode* const mesh_node = parent_node.createChildSceneNode(Ogre::SCENE_DYNAMIC);
-		mesh_node->attachObject(item);
-
+		
 		mesh m;
-		init_mesh(m, mesh_node, std::move(render_mesh));
+		init_mesh(m, std::move(render_mesh));
 		return m;
+	}
+
+	void add_item(node_ref owner, mesh const& m)
+	{
+		Ogre::SceneNode& owner_node = get_scene_node(owner);
+		Ogre::SceneManager& scene_manager = *owner_node.getCreator();
+		Ogre::Item* const item = scene_manager.createItem(get_mesh_ptr(m), Ogre::SCENE_DYNAMIC);
+		owner_node.attachObject(item);
 	}
 }

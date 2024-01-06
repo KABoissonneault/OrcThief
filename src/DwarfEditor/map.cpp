@@ -1,10 +1,9 @@
 #include "map.h"
 
-#include "egfx/node/object.h"
-#include "egfx/node/mesh.h"
-
 #include "serialize/serialize_mesh_definition.h"
 #include "serialize/serialize_math.h"
+
+#include "egfx/object/light.h"
 
 #include <format>
 #include <cassert>
@@ -19,7 +18,7 @@ namespace ot::dedit
 		}
 	}
 
-	map_entity_iterator::map_entity_iterator(egfx::node::object_iterator it, egfx::node::object_iterator end) noexcept
+	map_entity_iterator::map_entity_iterator(egfx::node_iterator it, egfx::node_iterator end) noexcept
 		: node_iterator(it)
 		, node_end(end)
 	{
@@ -45,13 +44,13 @@ namespace ot::dedit
 
 	auto map_entity_iterator::operator*() const -> reference
 	{
-		egfx::node::object_ref node = *node_iterator;
+		egfx::node_ref node = *node_iterator;
 		return *static_cast<map_entity*>(node.get_user_ptr());
 	}
 
 	auto map_entity_iterator::operator->() const -> pointer
 	{
-		egfx::node::object_ref node = *node_iterator;
+		egfx::node_ref node = *node_iterator;
 		return static_cast<map_entity*>(node.get_user_ptr());
 	}
 
@@ -71,13 +70,13 @@ namespace ot::dedit
 
 	}
 
-	map_entity_range::map_entity_range(egfx::node::object_range node_range) noexcept
+	map_entity_range::map_entity_range(egfx::node_range node_range) noexcept
 		: it(node_range.begin(), node_range.end())
 	{
 
 	}
 
-	map_entity_const_iterator::map_entity_const_iterator(egfx::node::object_const_iterator it, egfx::node::object_const_iterator end) noexcept
+	map_entity_const_iterator::map_entity_const_iterator(egfx::node_const_iterator it, egfx::node_const_iterator end) noexcept
 		: node_iterator(it)
 		, node_end(end)
 	{
@@ -110,13 +109,13 @@ namespace ot::dedit
 
 	auto map_entity_const_iterator::operator*() const -> reference
 	{
-		egfx::node::object_cref node = *node_iterator;
+		egfx::node_cref node = *node_iterator;
 		return *static_cast<map_entity const*>(node.get_user_ptr());
 	}
 
 	auto map_entity_const_iterator::operator->() const -> pointer
 	{
-		egfx::node::object_cref node = *node_iterator;
+		egfx::node_cref node = *node_iterator;
 		return static_cast<map_entity const*>(node.get_user_ptr());
 	}
 
@@ -142,7 +141,7 @@ namespace ot::dedit
 
 	}
 
-	map_entity_const_range::map_entity_const_range(egfx::node::object_const_range range) noexcept
+	map_entity_const_range::map_entity_const_range(egfx::node_const_range range) noexcept
 		: it(range.begin(), range.end())
 	{
 
@@ -156,7 +155,7 @@ namespace ot::dedit
 
 	map_entity const* map_entity::get_parent() const noexcept
 	{
-		egfx::node::object_cref const node = get_node();
+		egfx::node_cref const node = get_node();
 		auto const parent = node.get_parent();
 		if (!parent)
 			return nullptr;
@@ -165,7 +164,7 @@ namespace ot::dedit
 
 	map_entity* map_entity::get_parent() noexcept
 	{
-		egfx::node::object_ref const node = get_node();
+		egfx::node_ref const node = get_node();
 		auto const parent = node.get_parent();
 		if (!parent)
 			return nullptr;
@@ -174,24 +173,24 @@ namespace ot::dedit
 
 	map_entity_const_range map_entity::get_children() const noexcept
 	{
-		egfx::node::object_cref const node = get_node();
-		egfx::node::object_const_range const child_objects = node.get_children();
-		egfx::node::object_const_iterator it = child_objects.begin();
-		egfx::node::object_const_iterator const end = child_objects.end();
+		egfx::node_cref const node = get_node();
+		egfx::node_const_range const child_objects = node.get_children();
+		egfx::node_const_iterator it = child_objects.begin();
+		egfx::node_const_iterator const end = child_objects.end();
 		while (it != end && it->get_user_ptr() == nullptr)
 			++it;
-		return map_entity_const_range(egfx::node::object_const_range(it, end));
+		return map_entity_const_range(egfx::node_const_range(it, end));
 	}
 
 	map_entity_range map_entity::get_children() noexcept
 	{
-		egfx::node::object_ref const node = get_node();
-		egfx::node::object_range const child_objects = node.get_children();
-		egfx::node::object_iterator it = child_objects.begin();
-		egfx::node::object_iterator const end = child_objects.end();
+		egfx::node_ref const node = get_node();
+		egfx::node_range const child_objects = node.get_children();
+		egfx::node_iterator it = child_objects.begin();
+		egfx::node_iterator const end = child_objects.end();
 		while (it != end && it->get_user_ptr() == nullptr)
 			++it;
-		return map_entity_range(egfx::node::object_range(it, end));
+		return map_entity_range(egfx::node_range(it, end));
 	}
 
 	map_entity* map_entity::find_recursive(entity_id search_id)
@@ -228,7 +227,7 @@ namespace ot::dedit
 
 	math::transform_matrix map_entity::get_local_transform() const noexcept
 	{
-		egfx::node::object_cref const node = get_node();
+		egfx::node_cref const node = get_node();
 		return math::transform_matrix::from_components(vector_from_origin(node.get_position()), node.get_rotation(), node.get_scale());
 	}
 
@@ -241,7 +240,7 @@ namespace ot::dedit
 
 	void map_entity::set_world_transform(math::transform_matrix const& m) noexcept
 	{
-		egfx::node::object_ref const node = get_node();
+		egfx::node_ref const node = get_node();
 
 		math::transform_matrix new_local;
 		if (map_entity const* parent = get_parent())
@@ -263,7 +262,7 @@ namespace ot::dedit
 		node.set_scale(new_scale);
 	}
 
-	root_entity::root_entity(entity_id id, egfx::node::object_ref node)
+	root_entity::root_entity(entity_id id, egfx::node_ref node)
 		: map_entity(id)
 		, node(node)
 	{
@@ -279,9 +278,12 @@ namespace ot::dedit
 	brush::brush(entity_id id, map_entity& parent, std::shared_ptr<egfx::mesh_definition const> mesh_def)
 		: map_entity(id)
 		, mesh_def(mesh_def)
-		, mesh(egfx::node::create_mesh(parent.get_node(), make_brush_name(id), *mesh_def))
+		, mesh(egfx::create_mesh(make_brush_name(id), *mesh_def))
+		, node(egfx::create_child_node(parent.get_node()))
 	{
-		mesh.set_user_ptr(this);
+		egfx::add_item(node, mesh);
+
+		node.set_user_ptr(this);
 	}
 
 	bool brush::fwrite(std::FILE* f) const
@@ -289,9 +291,9 @@ namespace ot::dedit
 		if (!serialize::fwrite(*mesh_def, f))
 			return false;
 
-		if (!serialize::fwrite(mesh.get_position(), f)
-			|| !serialize::fwrite(mesh.get_rotation(), f)
-			|| !serialize::fwrite(mesh.get_scale(), f))
+		if (!serialize::fwrite(node.get_position(), f)
+			|| !serialize::fwrite(node.get_rotation(), f)
+			|| !serialize::fwrite(node.get_scale(), f))
 			return false;
 
 		return true;
@@ -310,13 +312,15 @@ namespace ot::dedit
 			return false;
 
 		mesh_def = std::move(read_mesh_def);
-		mesh = egfx::node::create_mesh(parent.get_node(), make_brush_name(get_id()), *mesh_def);
+		mesh = egfx::create_mesh(make_brush_name(get_id()), *mesh_def);
 
-		mesh.set_position(position);
-		mesh.set_rotation(rotation);
-		mesh.set_scale(scales);
+		node = egfx::create_child_node(parent.get_node());
 
-		mesh.set_user_ptr(this);
+		node.set_position(position);
+		node.set_rotation(rotation);
+		node.set_scale(scales);
+
+		node.set_user_ptr(this);
 
 		return true;
 	}
@@ -327,7 +331,7 @@ namespace ot::dedit
 		mesh.reload_mesh(*mesh_def);
 	}
 
-	map::map(egfx::node::object_ref root_node)
+	map::map(egfx::node_ref root_node)
 		: root(allocate_entity_id(), root_node)
 	{
 

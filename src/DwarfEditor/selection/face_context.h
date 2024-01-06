@@ -11,7 +11,7 @@ namespace ot::dedit::selection
 	class face_context : public composite_context
 	{
 		map const* current_map;
-		egfx::object::camera_cref main_camera;
+		egfx::camera_cref main_camera;
 		egfx::window const* main_window;
 
 		entity_id selected_brush;
@@ -31,7 +31,7 @@ namespace ot::dedit::selection
 		brush const& get_brush() const;
 
 	public:
-		face_context(map const& current_map, egfx::object::camera_cref main_camera, egfx::window const& main_window, entity_id selected_brush, egfx::face::id selected_face);
+		face_context(map const& current_map, egfx::camera_cref main_camera, egfx::window const& main_window, entity_id selected_brush, egfx::face::id selected_face);
 
 		virtual void update(action::accumulator& acc, input::frame_input& input) override;
 

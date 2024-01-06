@@ -7,7 +7,7 @@
 
 namespace ot::dedit
 {
-	[[nodiscard]] egfx::object::camera_ref get_camera_impl(application& app)
+	[[nodiscard]] egfx::camera_ref get_camera_impl(application& app)
 	{
 		return app.get_scene().get_camera();
 	}
@@ -18,7 +18,7 @@ namespace ot::dedit
 	}
 
 	template<typename Application>
-	egfx::object::camera_ref camera_controller<Application>::get_camera() noexcept
+	egfx::camera_ref camera_controller<Application>::get_camera() noexcept
 	{
 		return get_camera_impl(static_cast<derived&>(*this));
 	}
@@ -114,7 +114,7 @@ namespace ot::dedit
 			return false;
 		}
 
-		egfx::object::camera_ref const camera = get_camera();
+		egfx::camera_cref const camera = get_camera();
 		egfx::window const& window = get_window();
 
 		yaw += -static_cast<float>(e.xrel) / static_cast<float>(get_width(window)) * camera.get_rad_fov_x();
@@ -188,7 +188,7 @@ namespace ot::dedit
 		if (float_eq(pitch, 0.0f) && float_eq(yaw, 0.0f))
 			return;
 
-		egfx::object::camera_ref const c = get_camera();
+		egfx::camera_ref const c = get_camera();
 		c.local_pitch(pitch);
 		c.world_yaw(yaw);
 

@@ -1,5 +1,7 @@
 #include "camera.h"
 
+#include "object.h"
+
 #include "Ogre/Ray.h"
 #include "Ogre/Camera.h"
 #include "Ogre/SceneManager.h"
@@ -9,21 +11,21 @@
 
 #include <utility>
 
-namespace ot::egfx::object
+namespace ot::egfx
 {
 	namespace detail
 	{
 		camera_cref make_camera_cref(void const* pimpl) noexcept
 		{
 			camera_cref o;
-			o.pimpl = pimpl;
+			init_object_cref(o, pimpl);
 			return o;
 		}
 
 		camera_ref make_camera_ref(void* pimpl) noexcept
 		{
 			camera_ref o;
-			o.pimpl = pimpl;
+			init_object_ref(o, pimpl);
 			return o;
 		}
 
@@ -32,16 +34,6 @@ namespace ot::egfx::object
 			camera o;
 			o.pimpl = pimpl;
 			return o;
-		}
-
-		void const* get_camera_impl(camera_cref r) noexcept
-		{
-			return r.pimpl;
-		}
-
-		void* get_camera_impl(camera_ref r) noexcept
-		{
-			return r.pimpl;
 		}
 
 		template<typename Derived>
@@ -149,12 +141,23 @@ namespace ot::egfx::object
 
 	Ogre::Camera const& get_camera(camera_cref r) noexcept
 	{
-		return *static_cast<Ogre::Camera const*>(detail::get_camera_impl(r));
+		return static_cast<Ogre::Camera const&>(get_object(r));
 	}
 
 	Ogre::Camera& get_camera(camera_ref r) noexcept
 	{
-		return *static_cast<Ogre::Camera*>(detail::get_camera_impl(r));
+		return static_cast<Ogre::Camera&>(get_object(r));
+	}
+
+	camera_cref::camera_cref(camera_ref rhs) noexcept
+	{
+		init_object_cref(*this, get_object(rhs));
+	}
+
+	template<>
+	camera_cref ref_cast<camera_cref>(object_cref ref)
+	{
+		return make_camera_cref(static_cast<Ogre::Camera const&>(get_object(ref)));
 	}
 
 	void camera_ref::set_position(math::point3f position) const
@@ -186,6 +189,12 @@ namespace ot::egfx::object
 	void camera_ref::look_at(math::point3f position) const
 	{
 		get_camera(*this).lookAt(to_ogre_vector(position));
+	}
+
+	template<>
+	camera_ref ref_cast<camera_ref>(object_ref ref)
+	{
+		return make_camera_ref(static_cast<Ogre::Camera&>(get_object(ref)));
 	}
 
 	camera::camera() noexcept
@@ -220,10 +229,15 @@ namespace ot::egfx::object
 
 		Ogre::Camera& c = get_camera(*this);
 		Ogre::SceneNode* const node = c.getParentSceneNode();
-		Ogre::SceneManager* const scene_manager = node->getCreator();
+		if (node != nullptr)
+		{
+			node->detachObject(&c);
+		}
 
-		node->detachObject(&c);
+		Ogre::SceneManager* const scene_manager = c.getSceneManager();		
 		scene_manager->destroyCamera(&c);
+
+		pimpl = nullptr;
 	}
 
 	void camera::set_position(math::point3f position)

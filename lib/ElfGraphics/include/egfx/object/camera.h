@@ -1,21 +1,20 @@
 #pragma once
 
 #include "egfx/object/camera.fwd.h"
+#include "egfx/object/object.h"
 
 #include "math/vector3.h"
 #include "math/transform_matrix.h"
 
 #include "math/ray.h"
 
-namespace ot::egfx::object
+namespace ot::egfx
 {
 	namespace detail
 	{
 		camera_cref make_camera_cref(void const*) noexcept;
 		camera_ref make_camera_ref(void*) noexcept;
 		camera make_camera(void*) noexcept;
-		void const* get_camera_impl(camera_cref) noexcept;
-		void* get_camera_impl(camera_ref) noexcept;
 
 		template<typename Derived>
 		class camera_const_impl
@@ -61,31 +60,27 @@ namespace ot::egfx::object
 		};
 	}
 
-	class camera_cref : public detail::camera_const_impl<camera_cref>
+	class camera_cref : public object_cref, public detail::camera_const_impl<camera_cref>
 	{
-		void const* pimpl;
+		camera_cref() = default;
 
 		friend camera_cref detail::make_camera_cref(void const*) noexcept;
-		friend void const* detail::get_camera_impl(camera_cref) noexcept;
 
 		friend class detail::camera_const_impl<camera_cref>;
 
 	public:
-
+		camera_cref(camera_ref) noexcept;
 	};
 
-	class camera_ref : public detail::camera_const_impl<camera_ref>
-	{
-		void* pimpl;
+	extern template camera_cref ref_cast<camera_cref>(object_cref);
 
+	class camera_ref : public object_ref, public detail::camera_const_impl<camera_ref>
+	{
 		friend camera_ref detail::make_camera_ref(void*) noexcept;
-		friend void* detail::get_camera_impl(camera_ref) noexcept;
 
 		friend class detail::camera_const_impl<camera_cref>;
 
 	public:
-		operator camera_cref() const noexcept { return detail::make_camera_cref(pimpl); }
-
 		// Sets the local position of the camera
 		void set_position(math::point3f position) const;
 		// Displaces the local position of the camera
@@ -99,6 +94,8 @@ namespace ot::egfx::object
 		// Sets the orientation of the camera so that the center of the viewport faces the position
 		void look_at(math::point3f position) const;
 	};
+
+	extern template camera_ref ref_cast<camera_ref>(object_ref);
 
 	class camera : public detail::camera_const_impl<camera>
 	{

@@ -5,7 +5,7 @@
 
 namespace ot::dedit::selection
 {
-	math::ray get_mouse_ray(egfx::window const& window, egfx::object::camera_cref camera)
+	math::ray get_mouse_ray(egfx::window const& window, egfx::camera_cref camera)
 	{
 		int mouse_x, mouse_y;
 		input::mouse::get_position(mouse_x, mouse_y);

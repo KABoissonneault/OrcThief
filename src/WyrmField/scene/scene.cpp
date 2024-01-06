@@ -5,8 +5,9 @@
 #include "egfx/module.h"
 #include "egfx/mesh_definition.h"
 #include "egfx/immediate.h"
+#include "egfx/node.h"
 #include "egfx/object/camera.h"
-#include "egfx/node/light.h"
+#include "egfx/object/light.h"
 
 #include "config.h"
 
@@ -41,7 +42,13 @@ namespace ot::wf
 
 		struct directional_light
 		{
-			egfx::node::directional_light node;
+			directional_light(egfx::node_ref parent)
+				: node(egfx::create_child_node(parent))
+			{
+				egfx::add_directional_light(node);
+			}
+
+			egfx::node node;
 		};
 
 		struct im_mesh
@@ -72,12 +79,12 @@ namespace ot::wf
 			gfx_scene.set_ambiant_light(ambiant_light.upper_hemisphere, ambiant_light.upper_hemisphere, ambiant_light.hemisphere_direction);
 		}
 
-		egfx::object::camera_ref const camera = gfx_scene.get_camera();
+		egfx::camera_ref const camera = gfx_scene.get_camera();
 		camera.set_position({ 0.0f, 2.0f, 5.5f });
 		camera.look_at({ 0.0f, 0.0f, 0.0f });
 
 		entt::entity const main_light = scene_entities.emplace_back(scene_registry.create());
-		directional_light& light_component = scene_registry.emplace<directional_light>(main_light, egfx::node::create_directional_light(gfx_scene.get_root_node()));
+		directional_light& light_component = scene_registry.emplace<directional_light>(main_light, gfx_scene.get_root_node());
 		light_component.node.set_position({ 10.0f, 10.0f, 10.0f });
 		light_component.node.set_direction(normalized(math::vector3f{ -1.0f, -1.0f, -1.0f }));
 
@@ -131,7 +138,7 @@ namespace ot::wf
 		
 	}
 
-	egfx::object::camera_cref scene::get_camera() const noexcept
+	egfx::camera_cref scene::get_camera() const noexcept
 	{
 		return gfx_scene.get_camera();
 	}

@@ -1,16 +1,14 @@
 #include "scene.h"
 
+#include "node.h"
 #include "ogre_conversion.h"
-#include "node/object.h"
 #include "object/camera.h"
 
 #include "core/fwd_delete.h"
 
 #include "Ogre/Root.h"
-
 #include "Ogre/Camera.h"
 #include "Ogre/Compositor/Manager2.h"
-#include "Ogre/Components/Overlay/Manager.h"
 
 namespace ot::egfx
 {
@@ -35,8 +33,8 @@ namespace ot::egfx
 
 		scene_manager = root.createSceneManager(Ogre::ST_GENERIC, number_threads);
 
-		main_camera = object::make_camera(*scene_manager->createCamera("Main Camera"));
-		Ogre::Camera& camera = object::get_camera(main_camera);
+		main_camera = make_camera(*scene_manager->createCamera("Main Camera"));
+		Ogre::Camera& camera = egfx::get_camera(main_camera);
 		camera.setNearClipDistance(0.2f);
 		camera.setFarClipDistance(1000.0f);
 		camera.setAutoAspectRatio(true);
@@ -58,9 +56,9 @@ namespace ot::egfx
 		}
 	}
 
-	node::object_ref scene_impl::get_root_node() noexcept
+	node_ref scene_impl::get_root_node() noexcept
 	{
-		return node::make_object_ref(*scene_manager->getRootSceneNode(Ogre::SCENE_DYNAMIC));
+		return make_node_ref(*scene_manager->getRootSceneNode(Ogre::SCENE_DYNAMIC));
 	}
 
 	void scene_impl::update(math::seconds dt)
@@ -73,39 +71,39 @@ namespace ot::egfx
 		scene_manager->setAmbientLight(to_ogre_colour(upper_hemisphere), to_ogre_colour(lower_hemisphere), to_ogre_vector(direction));
 	}
 
-	std::vector<node::object_id> scene_impl::raycast_objects(math::ray r) const
+	std::vector<object_id> scene_impl::raycast_objects(math::ray r) const
 	{
 		Ogre::RaySceneQuery* const sceneQuery = scene_manager->createRayQuery(to_ogre_ray(r), Ogre::SceneManager::QUERY_ENTITY_DEFAULT_MASK);
 		sceneQuery->setSortByDistance(true);
 
 		Ogre::RaySceneQueryResult& result = sceneQuery->execute();
 		
-		std::vector<node::object_id> object_ids;
+		std::vector<object_id> object_ids;
 		object_ids.reserve(result.size());
 		std::transform(result.begin(), result.end(), std::back_inserter(object_ids), [](Ogre::RaySceneQueryResultEntry const& r)
 		{
-			return static_cast<node::object_id>(r.movable->getId());
+			return static_cast<object_id>(r.movable->getId());
 		});
 
 		return object_ids;
 	}
 	
-	object::camera_ref scene::get_camera() noexcept
+	camera_ref scene::get_camera() noexcept
 	{
 		return get_impl(*this).get_camera();
 	}
 
-	object::camera_cref scene::get_camera() const noexcept
+	camera_cref scene::get_camera() const noexcept
 	{
 		return get_impl(*this).get_camera();
 	}
 
-	node::object_ref scene::get_root_node() noexcept
+	node_ref scene::get_root_node() noexcept
 	{
 		return get_impl(*this).get_root_node();
 	}
 
-	std::vector<node::object_id> scene::raycast_objects(math::ray r) const
+	std::vector<object_id> scene::raycast_objects(math::ray r) const
 	{
 		return get_impl(*this).raycast_objects(r);
 	}

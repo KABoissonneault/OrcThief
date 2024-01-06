@@ -24,7 +24,7 @@ namespace ot::dedit
 		void start_control();
 		void clear_control();
 
-		[[nodiscard]] egfx::object::camera_ref get_camera() noexcept;
+		[[nodiscard]] egfx::camera_ref get_camera() noexcept;
 		[[nodiscard]] egfx::window const& get_window() const noexcept;
 
 		void translate(math::seconds dt);

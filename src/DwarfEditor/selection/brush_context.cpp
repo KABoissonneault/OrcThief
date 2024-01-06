@@ -59,7 +59,7 @@ namespace ot::dedit::selection
 		}
 	}
 
-	brush_context::brush_context(map const& current_map, egfx::object::camera_cref main_camera, egfx::window const& main_window, entity_id selected_brush) noexcept
+	brush_context::brush_context(map const& current_map, egfx::camera_cref main_camera, egfx::window const& main_window, entity_id selected_brush) noexcept
 		: current_map(&current_map)
 		, main_camera(main_camera)
 		, main_window(&main_window)
@@ -283,7 +283,7 @@ namespace ot::dedit::selection
 				ImGui::EndMenu();
 			}
 
-			egfx::material_handle_t const mesh_material = b.get_mesh_node().get_material();
+			egfx::material_handle_t const mesh_material = b.get_item().get_material();
 			std::string const current_material_name = mesh_material.is_null() ? "" : egfx::get_material_name(mesh_material);
 			if (ImGui::BeginCombo("Material", current_material_name.c_str()))
 			{
