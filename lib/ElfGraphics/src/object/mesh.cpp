@@ -59,11 +59,6 @@ namespace ot::egfx
 		return const_cast<Ogre::MeshPtr&>(get_mesh_ptr(static_cast<mesh const&>(smesh)));
 	}
 
-	Ogre::MeshPtr&& get_mesh_ptr(mesh&& smesh) noexcept
-	{
-		return const_cast<Ogre::MeshPtr&&>(get_mesh_ptr(static_cast<mesh const&>(smesh)));
-	}
-
 	item_ref make_item_ref(Ogre::Item& item) noexcept
 	{
 		return detail::make_item_ref(&item);
@@ -93,7 +88,9 @@ namespace ot::egfx
 
 	mesh::mesh(mesh&& other) noexcept
 	{
-		new(storage_mesh) Ogre::MeshPtr(get_mesh_ptr(std::move(other)));
+		Ogre::MeshPtr& other_ptr = get_mesh_ptr(other);
+		new(storage_mesh) Ogre::MeshPtr(other_ptr);
+		other_ptr = nullptr;
 	}
 
 	mesh& mesh::operator=(mesh&& other) noexcept
@@ -101,7 +98,10 @@ namespace ot::egfx
 		if (this != &other)
 		{
 			destroy_mesh();
-			get_mesh_ptr(*this) = get_mesh_ptr(std::move(other));
+			// Ogre::SharedPtr is not movable
+			Ogre::MeshPtr& other_ptr = get_mesh_ptr(other);
+			get_mesh_ptr(*this) = other_ptr;
+			other_ptr = nullptr;
 		}
 		return *this;
 	}
