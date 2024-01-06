@@ -39,6 +39,9 @@
     <ClInclude Include="..\..\lib\Core\include\core\build_config.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Core\include\core\stdint.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\core\src\float.cpp">

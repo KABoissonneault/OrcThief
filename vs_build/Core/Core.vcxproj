@@ -149,6 +149,7 @@
     <ClInclude Include="..\..\lib\Core\include\core\iterator\arrow_proxy.h" />
     <ClInclude Include="..\..\lib\Core\include\core\directive.h" />
     <ClInclude Include="..\..\lib\Core\include\Core\size_t.h" />
+    <ClInclude Include="..\..\lib\Core\include\core\stdint.h" />
     <ClInclude Include="..\..\lib\Core\include\core\uptr.h" />
   </ItemGroup>
   <ItemGroup>
