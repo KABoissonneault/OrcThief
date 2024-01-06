@@ -8,7 +8,7 @@ namespace ot
 	using nullptr_t = decltype(nullptr);
 	
 	template<typename T>
-	constexpr std::remove_reference_t<T>&& as_moveable(T&& t) noexcept
+	constexpr std::remove_reference_t<T>&& as_movable(T&& t) noexcept
 	{
 		return static_cast<std::remove_reference_t<T>&&>(t);
 	}
@@ -74,14 +74,14 @@ namespace ot
 		uptr(T* ptr, Deleter deleter) noexcept : Deleter(deleter), ptr(ptr) {}
 		uptr(uptr const&) = delete;
 		uptr(uptr&& other) noexcept 
-			: Deleter(as_moveable(other).access_deleter())
+			: Deleter(as_movable(other).access_deleter())
 			, ptr(other.ptr) 
 		{ 
 			other.ptr = nullptr; 
 		}
 		template<typename U, typename E>
 		uptr(uptr<U, E>&& other) noexcept
-			: Deleter(as_moveable(other).access_deleter())
+			: Deleter(as_movable(other).access_deleter())
 			, ptr(other.ptr)
 		{
 			other.ptr = nullptr;
@@ -92,7 +92,7 @@ namespace ot
 		{
 			access_deleter()(ptr);
 
-			access_deleter() = as_moveable(other).access_deleter();
+			access_deleter() = as_movable(other).access_deleter();
 			ptr = other.ptr;
 			other.ptr = nullptr;
 			
@@ -170,7 +170,7 @@ namespace ot
 		template<typename U, typename E>
 		uptr(uptr<U, E>&& other) noexcept
 			: ptr(other.ptr)
-			, deleter(as_moveable(other).access_deleter())
+			, deleter(as_movable(other).access_deleter())
 		{
 			other.ptr = nullptr;
 		}
@@ -180,7 +180,7 @@ namespace ot
 		{
 			access_deleter()(ptr);
 
-			access_deleter() = as_moveable(other).access_deleter();
+			access_deleter() = as_movable(other).access_deleter();
 			ptr = other.ptr;
 			other.ptr = nullptr;
 

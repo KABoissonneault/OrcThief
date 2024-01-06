@@ -517,7 +517,7 @@ namespace ot::wf
 
 		void combat_mode::push_combat_log(std::string&& message)
 		{
-			log_buffer.push_back(as_moveable(message));
+			log_buffer.push_back(as_movable(message));
 		}
 
 		void combat_mode::advance_message_print()
@@ -530,7 +530,7 @@ namespace ot::wf
 			}
 			else
 			{
-				combat_log.push_back(as_moveable(log_buffer.back()));
+				combat_log.push_back(as_movable(log_buffer.back()));
 				log_buffer.pop_back();
 
 				if (log_buffer.empty())

@@ -398,7 +398,7 @@ namespace ot::wf
 
 	void application::change_game_mode(uptr<game_mode> new_game_mode)
 	{
-		game = as_moveable(new_game_mode);
+		game = as_movable(new_game_mode);
 	}
 
 	void application::load_monster_pack()
