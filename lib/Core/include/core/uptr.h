@@ -90,7 +90,8 @@ namespace ot
 		uptr& operator=(uptr const&) = delete;
 		uptr& operator=(uptr&& other) noexcept
 		{
-			access_deleter()(ptr);
+			if (ptr != nullptr)
+				access_deleter()(ptr);
 
 			access_deleter() = as_movable(other).access_deleter();
 			ptr = other.ptr;
@@ -100,18 +101,21 @@ namespace ot
 		}
 		~uptr()
 		{
-			access_deleter()(ptr);
+			if (ptr != nullptr)
+				access_deleter()(ptr);
 		}
 
 		void reset() noexcept
 		{
-			access_deleter()(ptr);
+			if (ptr != nullptr)
+				access_deleter()(ptr);
 			ptr = nullptr;
 		}
 
 		void reset(T* value) noexcept
 		{
-			access_deleter()(ptr);
+			if(ptr != nullptr)
+				access_deleter()(ptr);
 			ptr = value;
 		}
 
@@ -178,7 +182,8 @@ namespace ot
 		uptr& operator=(uptr const&) = delete;
 		uptr& operator=(uptr&& other) noexcept
 		{
-			access_deleter()(ptr);
+			if (ptr != nullptr)
+				access_deleter()(ptr);
 
 			access_deleter() = as_movable(other).access_deleter();
 			ptr = other.ptr;
@@ -188,18 +193,21 @@ namespace ot
 		}
 		~uptr()
 		{
-			access_deleter()(ptr);
+			if (ptr != nullptr)
+				access_deleter()(ptr);
 		}
 
 		void reset() noexcept
 		{
-			access_deleter()(ptr);
+			if (ptr != nullptr)
+				access_deleter()(ptr);
 			ptr = nullptr;
 		}
 
 		void reset(T* value) noexcept
 		{
-			access_deleter()(ptr);
+			if(ptr != nullptr)
+				access_deleter()(ptr);
 			ptr = value;
 		}
 
