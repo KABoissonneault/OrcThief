@@ -46,6 +46,13 @@ namespace ot::egfx
 		}
 
 		template<typename Derived>
+		std::string_view node_const_impl<Derived>::get_name() const noexcept
+		{
+			Ogre::SceneNode const& scene_node = get_scene_node(static_cast<derived const&>(*this));
+			return scene_node.getName();
+		}
+
+		template<typename Derived>
 		bool node_const_impl<Derived>::contains(object_id id) const noexcept
 		{
 			Ogre::SceneNode const& scene_node = get_scene_node(static_cast<derived const&>(*this));
@@ -392,7 +399,50 @@ namespace ot::egfx
 	{
 		get_scene_node(*this).getUserObjectBindings().setUserAny(Ogre::Any(user_ptr));
 	}
+	
+	void node_ref::set_name(std::string_view s) const noexcept
+	{
+		get_scene_node(*this).setName(std::string(s));
+	}
 
+	void node_ref::set_position(math::point3f p) const noexcept
+	{
+		get_scene_node(*this).setPosition(to_ogre_vector(p));
+	}
+	
+	void node_ref::set_rotation(math::quaternion rot) const noexcept
+	{
+		get_scene_node(*this).setOrientation(to_ogre_quaternion(rot));
+	}
+	
+	void node_ref::set_direction(math::vector3f direction) const noexcept
+	{
+		get_scene_node(*this).setDirection(to_ogre_vector(direction));
+	}
+
+	void node_ref::rotate_around(math::vector3f axis, float rad) const noexcept
+	{
+		get_scene_node(*this).rotate(
+			Ogre::Vector3(static_cast<Ogre::Real>(axis.x), static_cast<Ogre::Real>(axis.y), static_cast<Ogre::Real>(axis.z)),
+			Ogre::Radian(static_cast<Ogre::Real>(rad))
+		);
+	}
+		
+	void node_ref::set_scale(float s) const noexcept
+	{
+		get_scene_node(*this).setScale(s, s, s);
+	}
+	
+	void node_ref::set_scale(math::scales s) const noexcept
+	{
+		get_scene_node(*this).setScale(s.x, s.y, s.z);
+	}	
+
+	void node_ref::attach_child(node_ref child) const noexcept
+	{
+		get_scene_node(*this).addChild(&get_scene_node(child));
+	}
+	
 	node::node() noexcept
 		: pimpl(nullptr)
 	{
@@ -451,9 +501,9 @@ namespace ot::egfx
 		pimpl = detail::get_node_impl(r);
 	}
 
-	void node_ref::set_position(math::point3f p) const noexcept
+	void node::set_name(std::string_view s) noexcept
 	{
-		get_scene_node(*this).setPosition(to_ogre_vector(p));
+		static_cast<node_ref>(*this).set_name(s);
 	}
 
 	void node::set_position(math::point3f p) noexcept
@@ -461,19 +511,9 @@ namespace ot::egfx
 		static_cast<node_ref>(*this).set_position(p);
 	}
 
-	void node_ref::set_rotation(math::quaternion rot) const noexcept
-	{
-		get_scene_node(*this).setOrientation(to_ogre_quaternion(rot));
-	}
-
 	void node::set_rotation(math::quaternion rot) noexcept
 	{
 		static_cast<node_ref>(*this).set_rotation(rot);
-	}
-
-	void node_ref::set_direction(math::vector3f direction) const noexcept
-	{
-		get_scene_node(*this).setDirection(to_ogre_vector(direction));
 	}
 
 	void node::set_direction(math::vector3f direction) noexcept
@@ -481,22 +521,9 @@ namespace ot::egfx
 		static_cast<node_ref>(*this).set_direction(direction);
 	}
 
-	void node_ref::rotate_around(math::vector3f axis, float rad) const noexcept
-	{
-		get_scene_node(*this).rotate(
-			Ogre::Vector3(static_cast<Ogre::Real>(axis.x), static_cast<Ogre::Real>(axis.y), static_cast<Ogre::Real>(axis.z)),
-			Ogre::Radian(static_cast<Ogre::Real>(rad))
-		);
-	}
-
 	void node::rotate_around(math::vector3f axis, float rad) noexcept
 	{
 		static_cast<node_ref>(*this).rotate_around(axis, rad);
-	}
-
-	void node_ref::set_scale(float s) const noexcept
-	{
-		get_scene_node(*this).setScale(s, s, s);
 	}
 
 	void node::set_scale(float s) noexcept
@@ -504,19 +531,9 @@ namespace ot::egfx
 		static_cast<node_ref>(*this).set_scale(s);
 	}
 
-	void node_ref::set_scale(math::scales s) const noexcept
-	{
-		get_scene_node(*this).setScale(s.x, s.y, s.z);
-	}
-
 	void node::set_scale(math::scales s) noexcept
 	{
 		static_cast<node_ref>(*this).set_scale(s);
-	}
-
-	void node_ref::attach_child(node_ref child) const noexcept
-	{
-		get_scene_node(*this).addChild(&get_scene_node(child));
 	}
 
 	void node::attach_child(node_ref child) noexcept
@@ -572,8 +589,8 @@ namespace ot::egfx
 	object_range node::get_objects() noexcept
 	{
 		return static_cast<node_ref>(*this).get_objects();
-	}
-
+	}	
+		
 	void node::set_user_ptr(void* user_ptr)
 	{
 		get_scene_node(*this).getUserObjectBindings().setUserAny(Ogre::Any(user_ptr));

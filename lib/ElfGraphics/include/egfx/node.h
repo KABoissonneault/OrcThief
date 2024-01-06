@@ -10,6 +10,7 @@
 #include "math/transform_matrix.h"
 
 #include <optional>
+#include <string_view>
 
 namespace ot::egfx
 {
@@ -30,6 +31,9 @@ namespace ot::egfx
 		public:
 			// Id of the node itself
 			[[nodiscard]] node_id get_node_id() const noexcept;
+
+			// Name of the node
+			[[nodiscard]] std::string_view get_name() const noexcept;
 
 			// Returns true if the node contains a sub-node with the given id
 			[[nodiscard]] bool contains(object_id id) const noexcept;
@@ -93,6 +97,9 @@ namespace ot::egfx
 	public:
 		operator node_cref() const noexcept { return detail::make_node_cref(pimpl); }
 
+		// Sets a custom name for the node. Does not have to be unique
+		void set_name(std::string_view s) const noexcept;
+
 		// Sets the local position of the node relative to its parent
 		void set_position(math::point3f position) const noexcept;
 
@@ -149,6 +156,9 @@ namespace ot::egfx
 
 		operator node_cref() const noexcept { return detail::make_node_cref(pimpl); }
 		operator node_ref() noexcept { return detail::make_node_ref(pimpl); }
+
+		// Sets a custom name for the node. Does not have to be unique
+		void set_name(std::string_view s) noexcept;
 
 		// Sets the local position of the node relative to its parent
 		void set_position(math::point3f position) noexcept;
