@@ -143,14 +143,102 @@ namespace ot
 		}
 	};
 
-	template<typename T>
-	[[nodiscard]] bool operator==(uptr<T> const& lhs, nullptr_t)
+	template<typename T, typename RetT>
+	class uptr<T, RetT(*)(T*)>
+	{
+		using Deleter = RetT(*)(T*);
+
+		template<typename, typename> friend class uptr;
+
+		Deleter& access_deleter() & noexcept { return deleter; }
+		Deleter&& access_deleter() && noexcept { return static_cast<Deleter&&>(deleter); }
+
+		T* ptr = nullptr;
+		Deleter deleter = nullptr;
+
+	public:
+		uptr() = default;
+		explicit uptr(T* ptr) noexcept : ptr(ptr) {}
+		uptr(T* ptr, Deleter deleter) noexcept : ptr(ptr), deleter(deleter) {}
+		uptr(uptr const&) = delete;
+		uptr(uptr&& other) noexcept
+			: ptr(other.ptr)
+			, deleter(other.deleter)
+		{
+			other.ptr = nullptr;
+		}
+		template<typename U, typename E>
+		uptr(uptr<U, E>&& other) noexcept
+			: ptr(other.ptr)
+			, deleter(as_moveable(other).access_deleter())
+		{
+			other.ptr = nullptr;
+		}
+		constexpr uptr(nullptr_t) noexcept : ptr(nullptr) {}
+		uptr& operator=(uptr const&) = delete;
+		uptr& operator=(uptr&& other) noexcept
+		{
+			access_deleter()(ptr);
+
+			access_deleter() = as_moveable(other).access_deleter();
+			ptr = other.ptr;
+			other.ptr = nullptr;
+
+			return *this;
+		}
+		~uptr()
+		{
+			access_deleter()(ptr);
+		}
+
+		void reset() noexcept
+		{
+			access_deleter()(ptr);
+			ptr = nullptr;
+		}
+
+		void reset(T* value) noexcept
+		{
+			access_deleter()(ptr);
+			ptr = value;
+		}
+
+		[[nodiscard]] T* release() noexcept
+		{
+			auto const old_ptr = ptr;
+			ptr = nullptr;
+			return old_ptr;
+		}
+
+		[[nodiscard]] T* get() const noexcept
+		{
+			return ptr;
+		}
+
+		[[nodiscard]] Deleter get_deleter() const noexcept
+		{
+			return access_deleter();
+		}
+
+		[[nodiscard]] T& operator*() const
+		{
+			return *ptr;
+		}
+
+		[[nodiscard]] T* operator->() const noexcept
+		{
+			return ptr;
+		}
+	};
+
+	template<typename T, typename D>
+	[[nodiscard]] bool operator==(uptr<T, D> const& lhs, nullptr_t)
 	{
 		return lhs.get() == nullptr;
 	}
 
-	template<typename T>
-	[[nodiscard]] bool operator!=(uptr<T> const& lhs, nullptr_t)
+	template<typename T, typename D>
+	[[nodiscard]] bool operator!=(uptr<T, D> const& lhs, nullptr_t)
 	{
 		return lhs.get() != nullptr;
 	}
