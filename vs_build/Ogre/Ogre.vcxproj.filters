@@ -204,6 +204,12 @@
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\TextureGpu.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\MovableObject.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Light.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\Ogre\src\RenderSystem.cpp">

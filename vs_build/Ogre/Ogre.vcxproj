@@ -176,11 +176,13 @@
     <ClInclude Include="..\..\lib\Ogre\include\ogre\HlmsManager.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Image2.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Item.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\Light.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\ManualObject2.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Matrix4.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\MemoryAllocatorConfig.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Mesh2.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\MeshManager2.h" />
+    <ClInclude Include="..\..\lib\Ogre\include\Ogre\MovableObject.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\PlatformInformation.h" />
     <ClInclude Include="..\..\lib\Ogre\include\Ogre\Prerequisites.h" />
     <ClInclude Include="..\..\lib\Ogre\include\ogre\Quaternion.h" />
