@@ -70,7 +70,7 @@ namespace ot::dedit::serialize
 			break;
 
 		default:
-			map_entity& e = m.make_entity(type, id);
+			map_entity& e = m.make_default_entity(type, id);
 			if (!e.fread(parent, f))
 				return false;
 

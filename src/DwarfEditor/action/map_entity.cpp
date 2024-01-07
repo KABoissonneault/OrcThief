@@ -49,22 +49,24 @@ namespace ot::dedit::action
 		errno_t const err = tmpfile_s(&f);
 		if (err != 0)
 		{
-			console::error("Could not apply 'delete_brush' action: temporary buffer for preserving state could not be acquired");
+			console::error("Could not apply 'delete_entity' action: temporary buffer for preserving state could not be acquired");
 			return;
 		}
 
 		serialized_state.reset(f);
 
-		brush* const b = current_map.find_brush(id);
+		map_entity* const b = current_map.find_entity(id);
 		if (b == nullptr)
 		{
-			console::error(std::format("Could not apply 'delete_brush' action: entity '{}' not found", as_int(id)));
+			console::error(std::format("Could not apply 'delete_entity' action: entity '{}' not found", as_int(id)));
 			return;
 		}
 
+		std::string_view const type_name = as_string(b->get_type());
+
 		if (!serialize::fwrite(*b, serialized_state.get()))
 		{
-			console::error(std::format("Could not apply 'delete_brush' action: failed to serialize entity '{}'", as_int(id)));
+			console::error(std::format("Could not apply 'delete_entity' action: failed to serialize entity '{}'", as_int(id)));
 			return;
 		}
 
@@ -72,7 +74,7 @@ namespace ot::dedit::action
 
 		current_map.delete_entity(id);
 		if (!is_redo)
-			console::log(std::format("Deleted brush {}", as_int(id)));
+			console::log(std::format("Deleted {} {}", type_name, as_int(id)));
 	}
 		
 	template<typename EntityType, typename... Args>
@@ -114,7 +116,7 @@ namespace ot::dedit::action
 
 		[&current_map, parent, this] <size_t... Is>(std::index_sequence<Is...>)
 		{
-			current_map.make_entity<brush_entity>(*id, *parent, std::get<Is>(extra_args)...);
+			current_map.make_entity<EntityType>(*id, *parent, std::get<Is>(extra_args)...);
 		}(std::index_sequence_for<Args...>{});
 		
 		if (!is_redo)

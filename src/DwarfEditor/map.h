@@ -261,7 +261,7 @@ namespace ot::dedit
 		[[nodiscard]] entity_id allocate_entity_id();
 
 		template<typename... Args>
-		map_entity& make_entity(entity_type type, entity_id id, Args&&... args)
+		map_entity& make_default_entity(entity_type type, entity_id id, Args&&... args)
 		{
 			switch (type)
 			{
@@ -269,7 +269,7 @@ namespace ot::dedit
 				throw std::invalid_argument("Cannot create root entities");
 
 			case entity_type::brush:
-				return make_entity<brush_entity>(id, ot::forward<Args>(args)...);
+				return make_default_entity<brush_entity>(id, ot::forward<Args>(args)...);
 
 			default:
 				assert(false);
@@ -278,11 +278,25 @@ namespace ot::dedit
 		}
 
 		template<typename EntityType, typename... Args>
-		EntityType& make_entity(entity_id id, Args&&... args)
+		EntityType& make_default_entity(entity_id id, Args&&... args)
 		{
 			on_new_entity(id);
 			entities.push_back(ot::make_unique<EntityType>(id, ot::forward<Args>(args)...));
 			return static_cast<EntityType&>(*entities.back());
+		}
+
+		template<typename EntityType, typename... Args>
+		EntityType& make_entity(entity_id id, map_entity& parent, Args&&... args)
+		{
+			on_new_entity(id);
+			entities.push_back(ot::make_unique<EntityType>(id, parent, ot::forward<Args>(args)...));
+			return static_cast<EntityType&>(*entities.back());
+		}
+
+		template<typename EntityType, typename... Args>
+		EntityType& make_root_entity(entity_id id, Args&&... args)
+		{
+			return make_entity<EntityType>(id, get_root(), ot::forward(args)...);
 		}
 
 		void delete_entity(entity_id id);

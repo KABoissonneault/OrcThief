@@ -22,7 +22,8 @@ namespace ot::dedit
 		: node_iterator(it)
 		, node_end(end)
 	{
-
+		while (node_iterator != node_end && node_iterator->get_user_ptr() == nullptr)
+			++node_iterator;
 	}
 
 	map_entity_iterator& map_entity_iterator::operator++()
@@ -80,7 +81,8 @@ namespace ot::dedit
 		: node_iterator(it)
 		, node_end(end)
 	{
-
+		while (node_iterator != node_end && node_iterator->get_user_ptr() == nullptr)
+			++node_iterator;
 	}
 
 	map_entity_const_iterator::map_entity_const_iterator(map_entity_iterator it) noexcept
@@ -280,6 +282,7 @@ namespace ot::dedit
 		, node(egfx::create_child_node(parent.get_node()))
 	{
 		node.set_name(name);
+		node.set_user_ptr(this);
 	}
 
 	bool node_entity::fwrite(std::FILE* f) const
@@ -340,10 +343,8 @@ namespace ot::dedit
 		, mesh_def(mesh_def)
 		, mesh(egfx::create_mesh(make_brush_name(id), *mesh_def))
 	{
-		egfx::node_ref const node = get_node();
-		egfx::add_item(node, mesh);
-
-		node.set_user_ptr(this);
+		egfx::node_ref const node_ref = get_node();
+		egfx::add_item(node_ref, mesh);
 	}
 
 	bool brush::fwrite(std::FILE* f) const
@@ -404,7 +405,7 @@ namespace ot::dedit
 
 	void map::delete_entity(entity_id id)
 	{
-		brush const* deleted_parent = find_brush(id);
+		map_entity const* deleted_parent = find_entity(id);
 		if (deleted_parent == nullptr)
 			return;
 
