@@ -34,9 +34,9 @@ namespace ot::math
 			return x * x + y * y + z * z;
 		}
 
-		[[nodiscard]] static vector3 unit_x() noexcept { return { 1, 0, 0 }; }
-		[[nodiscard]] static vector3 unit_y() noexcept { return { 0, 1, 0 }; }
-		[[nodiscard]] static vector3 unit_z() noexcept { return { 0, 0, 1 }; }
+		[[nodiscard]] constexpr static vector3 unit_x() noexcept { return { 1, 0, 0 }; }
+		[[nodiscard]] constexpr static vector3 unit_y() noexcept { return { 0, 1, 0 }; }
+		[[nodiscard]] constexpr static vector3 unit_z() noexcept { return { 0, 0, 1 }; }
 	};
 
 	template<typename T>
@@ -180,22 +180,22 @@ namespace ot::math
 	using vector3f = vector3<float>;
 	using vector3d = vector3<double>;
 
-	inline vector3f normalized(vector3f v)
+	[[nodiscard]] inline vector3f normalized(vector3f v)
 	{
 		return v / v.norm();
 	}
 
-	inline vector3d normalized(vector3d v)
+	[[nodiscard]] inline vector3d normalized(vector3d v)
 	{
 		return v / v.norm();
 	}
 
-	inline bool is_normalized(vector3f v)
+	[[nodiscard]] inline bool is_normalized(vector3f v)
 	{
 		return ot::float_eq(v.norm(), 1.0f);
 	}
 
-	inline bool is_normalized(vector3d v)
+	[[nodiscard]] inline bool is_normalized(vector3d v)
 	{
 		return ot::float_eq(v.norm(), 1.0);
 	}
@@ -218,6 +218,26 @@ namespace ot::math
 	[[nodiscard]] inline bool float_eq(vector3d lhs, vector3d rhs) noexcept
 	{
 		return ot::float_eq(lhs.x, rhs.x) && ot::float_eq(lhs.y, rhs.y) && ot::float_eq(lhs.z, rhs.z);
+	}
+
+	[[nodiscard]] inline bool float_eq(point3f lhs, point3f rhs, int error_bits) noexcept
+	{
+		return ot::float_eq(lhs.x, rhs.x, error_bits) && ot::float_eq(lhs.y, rhs.y, error_bits) && ot::float_eq(lhs.z, rhs.z, error_bits);
+	}
+
+	[[nodiscard]] inline bool float_eq(vector3f lhs, vector3f rhs, int error_bits) noexcept
+	{
+		return ot::float_eq(lhs.x, rhs.x, error_bits) && ot::float_eq(lhs.y, rhs.y, error_bits) && ot::float_eq(lhs.z, rhs.z, error_bits);
+	}
+
+	[[nodiscard]] inline bool float_eq(point3d lhs, point3d rhs, int error_bits) noexcept
+	{
+		return ot::float_eq(lhs.x, rhs.x, error_bits) && ot::float_eq(lhs.y, rhs.y, error_bits) && ot::float_eq(lhs.z, rhs.z, error_bits);
+	}
+
+	[[nodiscard]] inline bool float_eq(vector3d lhs, vector3d rhs, int error_bits) noexcept
+	{
+		return ot::float_eq(lhs.x, rhs.x, error_bits) && ot::float_eq(lhs.y, rhs.y, error_bits) && ot::float_eq(lhs.z, rhs.z, error_bits);
 	}
 
 	// Returns the distance between the point p0 and the line represented by p1 and p2
