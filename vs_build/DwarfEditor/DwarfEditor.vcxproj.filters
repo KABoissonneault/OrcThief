@@ -40,7 +40,7 @@
     <ClCompile Include="..\..\src\DwarfEditor\map.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\DwarfEditor\selection\brush_context.cpp">
+    <ClCompile Include="..\..\src\DwarfEditor\selection\node_context.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\DwarfEditor\selection\base_context.cpp">
@@ -136,6 +136,9 @@
     <ClCompile Include="..\..\src\DwarfEditor\action\map_entity.cpp">
       <Filter>src\action</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\DwarfEditor\action\light.cpp">
+      <Filter>src\action</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\DwarfEditor\selection\context.h">
@@ -147,7 +150,7 @@
     <ClInclude Include="..\..\src\DwarfEditor\map.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\DwarfEditor\selection\brush_context.h">
+    <ClInclude Include="..\..\src\DwarfEditor\selection\node_context.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\datablock.h">
@@ -253,6 +256,9 @@
       <Filter>src\application</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\DwarfEditor\action\map_entity.h">
+      <Filter>src\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DwarfEditor\action\light.h">
       <Filter>src\action</Filter>
     </ClInclude>
   </ItemGroup>

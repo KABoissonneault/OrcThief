@@ -6,7 +6,6 @@
 #include "map.h"
 
 #include <memory>
-#include <optional>
 
 namespace ot::dedit::action
 {
@@ -15,12 +14,12 @@ namespace ot::dedit::action
 		entity_id id;
 
 	protected:
-		single_brush(brush const& b);
+		single_brush(brush_entity const& b);
 
 		entity_id get_id() const noexcept { return id; }
 
-		virtual void do_apply(brush& b, bool is_redo) = 0;
-		virtual void do_undo(brush& b) = 0;
+		virtual void do_apply(brush_entity& b, bool is_redo) = 0;
+		virtual void do_undo(brush_entity& b) = 0;
 
 	public:
 		virtual void apply(map& current_map) override final;
@@ -33,9 +32,9 @@ namespace ot::dedit::action
 	{		
 		std::shared_ptr<egfx::mesh_definition const> previous_state;
 	protected:
-		brush_definition_base(brush const& b);
+		brush_definition_base(brush_entity const& b);
 
-		virtual void do_undo(brush& b) override;
+		virtual void do_undo(brush_entity& b) override;
 	};
 
 	class split_brush_edge : public brush_definition_base
@@ -44,10 +43,10 @@ namespace ot::dedit::action
 		math::point3f point;
 
 	protected:
-		virtual void do_apply(brush& b, bool is_redo) override;
+		virtual void do_apply(brush_entity& b, bool is_redo) override;
 
 	public:
-		split_brush_edge(brush const& b, egfx::half_edge::id edge, math::point3f point);
+		split_brush_edge(brush_entity const& b, egfx::half_edge::id edge, math::point3f point);
 	};
 
 	class split_brush_face : public brush_definition_base
@@ -56,10 +55,10 @@ namespace ot::dedit::action
 		math::plane plane;
 
 	protected:
-		virtual void do_apply(brush& b, bool is_redo) override;
+		virtual void do_apply(brush_entity& b, bool is_redo) override;
 
 	public:
-		split_brush_face(brush const& b, egfx::face::id face, math::plane plane);
+		split_brush_face(brush_entity const& b, egfx::face::id face, math::plane plane);
 	};
 		
 	class set_brush_material : public single_brush
@@ -67,10 +66,10 @@ namespace ot::dedit::action
 		egfx::material_handle_t previous_material;
 		egfx::material_handle_t new_material;
 	protected:
-		virtual void do_apply(brush& b, bool is_redo) override;
-		virtual void do_undo(brush& b) override;
+		virtual void do_apply(brush_entity& b, bool is_redo) override;
+		virtual void do_undo(brush_entity& b) override;
 
 	public:
-		set_brush_material(brush const& b, egfx::material_handle_t const& mat);
+		set_brush_material(brush_entity const& b, egfx::material_handle_t const& mat);
 	};
 }

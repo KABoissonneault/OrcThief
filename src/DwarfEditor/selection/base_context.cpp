@@ -1,6 +1,6 @@
 #include "selection/base_context.h"
 
-#include "selection/brush_context.h"
+#include "selection/node_context.h"
 #include "selection/brush_common.h"
 
 #include "egfx/object/camera.h"
@@ -102,7 +102,8 @@ namespace ot::dedit::selection
 			switch (*entity_type_result)
 			{
 			case entity_type::brush:
-				next_context.reset(new brush_context(*current_map, current_scene->get_camera(), *main_window, entity));
+			case entity_type::light:
+				next_context.reset(new node_context(*current_map, current_scene->get_camera(), *main_window, entity));
 				break;
 
 			default:

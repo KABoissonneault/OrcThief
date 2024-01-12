@@ -12,13 +12,13 @@
 
 namespace ot::dedit::selection
 {
-	class brush_context : public composite_context
+	class node_context : public composite_context
 	{
 		map const* current_map;
 		egfx::camera_cref main_camera;
 		egfx::window const* main_window;
 
-		entity_id selected_brush;
+		entity_id selected_node;
 		egfx::face::id hovered_face = egfx::face::id::none;
 
 		std::vector<egfx::material_handle_t> cached_materials;
@@ -50,18 +50,21 @@ namespace ot::dedit::selection
 		bool draw_gizmo(imgui::matrix& object_world_matrix);
 
 		void properties_window(action::accumulator& acc);
+		void light_properties(light_entity const& l, action::accumulator& acc);
+		void brush_properties(brush_entity const& b, action::accumulator& acc);
 
-		brush const& get_brush() const;
 
-		void draw_immediate_scene(egfx::mesh_definition const& mesh_def, math::transform_matrix const& t);
+		map_entity const& get_entity() const;
+
+		void draw_immediate_scene(math::transform_matrix const& t);
 
 	public:
-		brush_context(map const& current_map, egfx::camera_cref main_camera, egfx::window const& main_window, entity_id selected_brush) noexcept;
+		node_context(map const& current_map, egfx::camera_cref main_camera, egfx::window const& main_window, entity_id selected_brush) noexcept;
 
 		virtual bool handle_keyboard_event(SDL_KeyboardEvent const& key, action::accumulator& acc) override;
 
 		virtual void update(action::accumulator& acc, input::frame_input& input) override;
 
-		virtual bool is_selected(entity_id id) const noexcept override { return selected_brush == id; }
+		virtual bool is_selected(entity_id id) const noexcept override { return selected_node == id; }
 	};
 }

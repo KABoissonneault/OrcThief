@@ -7,6 +7,7 @@
 #include "core/uptr.h"
 
 #include "egfx/mesh_definition.fwd.h"
+#include "egfx/object/light.fwd.h"
 
 #include "math/vector3.h"
 #include "math/quaternion.h"
@@ -66,6 +67,14 @@ namespace ot::dedit::action
 		spawn_brush(entity_id parent_id, std::shared_ptr<egfx::mesh_definition const> mesh_def);
 	};
 
+	extern template class spawn_entity<light_entity, egfx::light_type>;
+
+	class spawn_light : public spawn_entity<light_entity, egfx::light_type>
+	{
+	public:
+		spawn_light(entity_id parent_id, egfx::light_type light_type);
+	};
+
 	class single_entity : public base
 	{
 		entity_id id;
@@ -122,5 +131,38 @@ namespace ot::dedit::action
 
 	public:
 		set_entity_scale(map_entity const& e, math::scales s);
+	};
+
+	class single_object : public base
+	{
+		entity_id e_id;
+		egfx::object_id object_id;
+
+	protected:
+		single_object(egfx::object_cref object);
+
+		entity_id get_entity_id() const noexcept { return e_id; }
+		egfx::object_id get_object_id() const noexcept { return object_id; }
+
+		virtual void do_apply(egfx::object_ref o, bool is_redo) = 0;
+		virtual void do_undo(egfx::object_ref o) = 0;
+
+	public:
+		virtual void apply(map& current_map) override final;
+		virtual void redo(map& current_map) override final;
+		virtual void undo(map& current_map) override final;
+	};
+
+	class set_object_casts_shadows : public single_object
+	{
+		bool new_value;
+		bool old_value;
+
+	protected:
+		virtual void do_apply(egfx::object_ref o, bool is_redo) override;
+		virtual void do_undo(egfx::object_ref o) override;
+
+	public:
+		set_object_casts_shadows(egfx::object_cref object, bool new_value);
 	};
 }

@@ -7,6 +7,7 @@
 
 #include "egfx/mesh_definition.h"
 #include "egfx/object/mesh.h"
+#include "egfx/object/light.h"
 #include "egfx/node.h"
 
 #include "math/transform_matrix.h"
@@ -26,6 +27,7 @@ namespace ot::dedit
 		{
 		case entity_type::root: return "Root";
 		case entity_type::brush: return "Brush";
+		case entity_type::light: return "Light";
 		default: assert(false); OT_UNREACHABLE();
 		}
 	}
@@ -245,6 +247,22 @@ namespace ot::dedit
 
 	using brush = brush_entity; // not renaming everything for now
 
+	class light_entity final : public node_entity
+	{
+	public:
+		static constexpr entity_type type = entity_type::light;
+
+		light_entity(entity_id id);
+		light_entity(entity_id id, map_entity& parent, egfx::light_type type);
+
+		[[nodiscard]] virtual bool fwrite(std::FILE* file) const override;
+		[[nodiscard]] virtual bool fread(map_entity& parent, std::FILE* file) override;
+		[[nodiscard]] virtual entity_type get_type() const noexcept override { return type; }
+
+		[[nodiscard]] egfx::light_ref get_light() noexcept { return get_node().get_object(0).as<egfx::light_ref>(); }
+		[[nodiscard]] egfx::light_cref get_light() const noexcept { return get_node().get_object(0).as<egfx::light_cref>(); }
+	};
+
 	class map
 	{
 		uint64_t next_entity_id = 0;
@@ -271,6 +289,9 @@ namespace ot::dedit
 			case entity_type::brush:
 				return make_default_entity<brush_entity>(id, ot::forward<Args>(args)...);
 
+			case entity_type::light:
+				return make_default_entity<light_entity>(id, ot::forward<Args>(args)...);
+
 			default:
 				assert(false);
 				OT_UNREACHABLE();
@@ -296,7 +317,7 @@ namespace ot::dedit
 		template<typename EntityType, typename... Args>
 		EntityType& make_root_entity(entity_id id, Args&&... args)
 		{
-			return make_entity<EntityType>(id, get_root(), ot::forward(args)...);
+			return make_entity<EntityType>(id, get_root(), ot::forward<Args>(args)...);
 		}
 
 		void delete_entity(entity_id id);

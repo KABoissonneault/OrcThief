@@ -131,6 +131,14 @@ namespace ot::dedit::action
 
 	template class spawn_entity<brush_entity, std::shared_ptr<egfx::mesh_definition const>>;
 
+	spawn_light::spawn_light(entity_id parent_id, egfx::light_type light_type)
+		: spawn_entity(parent_id, light_type)
+	{
+
+	}
+
+	template class spawn_entity<light_entity, egfx::light_type>;
+
 	single_entity::single_entity(map_entity const& e)
 		: id(e.get_id())
 	{
@@ -224,4 +232,105 @@ namespace ot::dedit::action
 	{
 		e.get_node().set_scale(previous_state);
 	}
+
+	namespace
+	{
+		entity_id get_owning_entity_id(egfx::object_cref object)
+		{
+			egfx::node_cref scene_node = object.get_owner();
+			map_entity const* entity = static_cast<map_entity const*>(scene_node.get_user_ptr());
+			assert(entity);
+			return entity->get_id();
+		}
+	}
+
+	single_object::single_object(egfx::object_cref object)
+		: e_id(get_owning_entity_id(object))
+		, object_id(object.get_object_id())
+	{
+
+	}
+
+	void single_object::apply(map& current_map)
+	{
+		map_entity* const e = current_map.find_entity(e_id);
+		if (e == nullptr)
+		{
+			console::error(std::format("Could not apply action: entity '{}' not found", as_int(e_id)));
+			return;
+		}
+
+		egfx::node_ref const node = e->get_node();
+		auto const objects = node.get_objects();
+		auto const found_it = std::ranges::find(objects, object_id, &egfx::object_ref::get_object_id);
+		if (found_it == objects.end())
+		{
+			console::error(std::format("Could not apply action: object '{}' under entity '{}' not found", as_int(object_id), as_int(e_id)));
+			return;
+		}
+
+		do_apply(*found_it, false);
+	}
+
+	void single_object::redo(map& current_map)
+	{
+		map_entity* const e = current_map.find_entity(e_id);
+		if (e == nullptr)
+		{
+			console::error(std::format("Could not redo action: entity '{}' not found", as_int(e_id)));
+			return;
+		}
+
+		egfx::node_ref const node = e->get_node();
+		auto const objects = node.get_objects();
+		auto const found_it = std::ranges::find(objects, object_id, &egfx::object_ref::get_object_id);
+		if (found_it == objects.end())
+		{
+			console::error(std::format("Could not redo action: object '{}' under entity '{}' not found", as_int(object_id), as_int(e_id)));
+			return;
+		}
+
+		do_apply(*found_it, true);
+	}
+
+	void single_object::undo(map& current_map)
+	{
+		map_entity* const e = current_map.find_entity(e_id);
+		if (e == nullptr)
+		{
+			console::error(std::format("Could not undo action: entity '{}' not found", as_int(e_id)));
+			return;
+		}
+
+		egfx::node_ref const node = e->get_node();
+		auto const objects = node.get_objects();
+		auto const found_it = std::ranges::find(objects, object_id, &egfx::object_ref::get_object_id);
+		if (found_it == objects.end())
+		{
+			console::error(std::format("Could not undo action: object '{}' under entity '{}' not found", as_int(object_id), as_int(e_id)));
+			return;
+		}
+
+		do_undo(*found_it);
+	}
+
+	set_object_casts_shadows::set_object_casts_shadows(egfx::object_cref object, bool new_value)
+		: single_object(object)
+		, new_value(new_value)
+		, old_value(object.is_casting_shadows())
+	{
+
+	}
+
+	void set_object_casts_shadows::do_apply(egfx::object_ref o, bool is_redo)
+	{
+		(void)is_redo;
+		o.set_casting_shadows(new_value);
+	}
+
+	void set_object_casts_shadows::do_undo(egfx::object_ref o)
+	{
+		o.set_casting_shadows(old_value);
+	}
+
 }

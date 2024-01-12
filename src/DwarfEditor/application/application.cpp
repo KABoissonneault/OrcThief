@@ -75,6 +75,11 @@ namespace ot::dedit
 		egfx::camera_ref const camera = main_scene.get_camera();
 		camera.set_position({ 0.0f, 2.0f, 5.5f });
 		camera.look_at({ 0.0f, 0.0f, 0.0f });
+
+		light_entity& light = current_map.make_root_entity<light_entity>(current_map.allocate_entity_id(), egfx::light_type::directional);
+		egfx::node_ref light_node = light.get_node();
+		light_node.set_position({ 10.0f, 10.f, 10.f });
+		light_node.set_direction(normalized(math::vector3f(-1.f, -1.f, -1.f)));
 	}
 
 	void application::run()

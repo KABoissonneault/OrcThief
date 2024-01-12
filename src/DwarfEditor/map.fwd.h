@@ -10,10 +10,12 @@ namespace ot::dedit
 	{
 		root,
 		brush,
+		light,
 	};
 
 	class map_entity;
 	class root_entity;
 	class brush_entity;
+	class light_entity;
 	class map;
 }

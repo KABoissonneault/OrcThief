@@ -3,8 +3,6 @@
 #include "serialize/serialize_mesh_definition.h"
 #include "serialize/serialize_math.h"
 
-#include "egfx/object/light.h"
-
 #include <format>
 #include <cassert>
 
@@ -372,7 +370,7 @@ namespace ot::dedit
 		mesh_def = std::move(read_mesh_def);
 		mesh = egfx::create_mesh(make_brush_name(get_id()), *mesh_def);
 
-		egfx::add_item(get_node(), mesh);
+		egfx::item_ref const brush = egfx::add_item(get_node(), mesh);
 
 		// TODO: material
 		
@@ -383,6 +381,65 @@ namespace ot::dedit
 	{
 		mesh_def = std::move(new_def);
 		mesh.reload_mesh(*mesh_def);
+	}
+
+	light_entity::light_entity(entity_id id)
+		: node_entity(id)
+	{
+
+	}
+
+	light_entity::light_entity(entity_id id, map_entity& parent, egfx::light_type light_type)
+		: node_entity(id, parent, std::format("Light {}", as_int(id)))
+	{
+		egfx::add_light(get_node(), light_type);
+	}
+
+	bool light_entity::fwrite(std::FILE* f) const
+	{
+		if (!node_entity::fwrite(f))
+			return false;
+
+		egfx::light_cref const light = get_light();
+
+		egfx::light_type const light_type = light.get_light_type();
+		if (!::fwrite(&light_type, sizeof(light_type), 1, f))
+			return false;
+
+		float const power_scale = light.get_power_scale();
+		if (!::fwrite(&power_scale, sizeof(power_scale), 1, f))
+			return false;
+
+		egfx::color const diffuse = light.get_diffuse();
+		if (!::fwrite(&diffuse, sizeof(float), 3 /*don't write alpha*/, f))
+			return false;
+
+		return true;
+	}
+
+	bool light_entity::fread(map_entity& parent, std::FILE* f)
+	{
+		if (!node_entity::fread(parent, f))
+			return false;
+
+		egfx::light_type light_type;
+		if (!::fread(&light_type, sizeof(light_type), 1, f))
+			return false;
+
+		float power_scale;
+		if (!::fread(&power_scale, sizeof(power_scale), 1, f))
+			return false;
+
+		egfx::color diffuse;
+		if (!::fread(&diffuse, sizeof(float), 3, f))
+			return false;
+		diffuse.a = 1.0f;
+
+		egfx::light_ref light = egfx::add_light(get_node(), light_type);
+		light.set_power_scale(power_scale);
+		light.set_diffuse(diffuse);
+
+		return true;
 	}
 
 	map::map(egfx::node_ref root_node)

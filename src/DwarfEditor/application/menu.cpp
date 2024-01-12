@@ -176,33 +176,58 @@ namespace ot::dedit
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Brush"))
+		if (ImGui::BeginMenu("Entity"))
 		{
-			if (ImGui::BeginMenu("Spawn Primitive"))
+			if (ImGui::BeginMenu("Light"))
 			{
-				if (ImGui::MenuItem("Cube", "CTRL+Alt+B"))
+				if (ImGui::MenuItem("Directional", ""))
 				{
-					acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_cube());
+					acc.emplace_action<action::spawn_light>(entity_id::root, egfx::light_type::directional);
 				}
 
-				if (ImGui::MenuItem("Octagonal Prism"))
+				if (ImGui::MenuItem("Point", ""))
 				{
-					acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_octagonal_prism());
+					acc.emplace_action<action::spawn_light>(entity_id::root, egfx::light_type::point);
 				}
 
-				if (ImGui::MenuItem("Hex Prism"))
+				if (ImGui::MenuItem("Spotlight", ""))
 				{
-					acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_hex_prism());
+					acc.emplace_action<action::spawn_light>(entity_id::root, egfx::light_type::spotlight);
 				}
 
-				if (ImGui::MenuItem("Tri Prism"))
-				{
-					acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_tri_prism());
-				}
+				ImGui::EndMenu();
+			}
 
-				if (ImGui::MenuItem("Square Pyramid"))
+			if (ImGui::BeginMenu("Brush"))
+			{
+				if (ImGui::BeginMenu("Spawn Primitive"))
 				{
-					acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_square_pyramid());
+					if (ImGui::MenuItem("Cube", "CTRL+Alt+B"))
+					{
+						acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_cube());
+					}
+
+					if (ImGui::MenuItem("Octagonal Prism"))
+					{
+						acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_octagonal_prism());
+					}
+
+					if (ImGui::MenuItem("Hex Prism"))
+					{
+						acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_hex_prism());
+					}
+
+					if (ImGui::MenuItem("Tri Prism"))
+					{
+						acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_tri_prism());
+					}
+
+					if (ImGui::MenuItem("Square Pyramid"))
+					{
+						acc.emplace_action<action::spawn_brush>(entity_id::root, mesh_repo.get_square_pyramid());
+					}
+
+					ImGui::EndMenu();
 				}
 
 				ImGui::EndMenu();
