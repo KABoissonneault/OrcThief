@@ -68,6 +68,13 @@ namespace ot::egfx
 			return egfx::is_object_of_type(object, t);
 		}
 
+		template<typename Derived>
+		bool object_const_impl<Derived>::is_casting_shadows() const noexcept
+		{
+			Ogre::MovableObject const& object = get_object(static_cast<derived const&>(*this));
+			return object.getCastShadows();
+		}
+
 		template class object_const_impl<object_cref>;
 		template class object_const_impl<object_ref>;
 	}
@@ -334,19 +341,22 @@ namespace ot::egfx
 
 	}
 
-	std::optional<node_cref> object_cref::get_owner() const noexcept
+	node_cref object_cref::get_owner() const noexcept
 	{
 		Ogre::SceneNode const* owner = get_object(*this).getParentSceneNode();
-		if (owner == nullptr)
-			return std::nullopt;
+		assert(owner);
 		return make_node_cref(*owner);
 	}
 
-	std::optional<node_ref> object_ref::get_owner() const noexcept
+	node_ref object_ref::get_owner() const noexcept
 	{
 		Ogre::SceneNode* const owner = get_object(*this).getParentSceneNode();
-		if (owner == nullptr)
-			return std::nullopt;
+		assert(owner);
 		return make_node_ref(*owner);
+	}
+
+	void object_ref::set_casting_shadows(bool new_value) const noexcept
+	{
+		get_object(*this).setCastShadows(new_value);
 	}
 }

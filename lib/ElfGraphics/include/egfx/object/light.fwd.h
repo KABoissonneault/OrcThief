@@ -2,6 +2,8 @@
 
 #include "core/stdint.h"
 
+#include "object.fwd.h"
+
 namespace ot::egfx
 {
 	class light_ref;

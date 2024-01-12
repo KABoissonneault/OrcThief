@@ -46,8 +46,10 @@ namespace ot::egfx
 		friend item_ref detail::make_item_ref(void*) noexcept;
 
 	public:
+		static constexpr object_type type = object_type::item;
+
 		// Hides the base version
-		[[nodiscard]] object_type get_object_type() const noexcept { return object_type::item; }
+		[[nodiscard]] object_type get_object_type() const noexcept { return type; }
 
 		// Gets the material of the first sub-item
 		material_handle_t get_material() const;
@@ -65,10 +67,12 @@ namespace ot::egfx
 		friend item_cref detail::make_item_cref(void const*) noexcept;
 
 	public:
+		static constexpr object_type type = object_type::item;
+
 		item_cref(item_ref) noexcept;
 
 		// Hides the base version
-		[[nodiscard]] object_type get_object_type() const noexcept { return object_type::item; }
+		[[nodiscard]] object_type get_object_type() const noexcept { return type; }
 
 		// Gets the material of the first sub-item
 		material_handle_t get_material() const;
@@ -77,5 +81,5 @@ namespace ot::egfx
 	extern template item_cref ref_cast<item_cref>(object_ref);
 
 	[[nodiscard]] mesh create_mesh(std::string const& name, mesh_definition const& mesh);
-	void add_item(node_ref owner, mesh const& m);
+	item_ref add_item(node_ref owner, mesh const& m);
 }

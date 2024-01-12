@@ -69,6 +69,11 @@ namespace ot::egfx
 		friend class detail::camera_const_impl<camera_cref>;
 
 	public:
+		static constexpr object_type type = object_type::camera;
+
+		// Hides the base version
+		[[nodiscard]] object_type get_object_type() const noexcept { return type; }
+
 		camera_cref(camera_ref) noexcept;
 	};
 
@@ -81,6 +86,11 @@ namespace ot::egfx
 		friend class detail::camera_const_impl<camera_cref>;
 
 	public:
+		static constexpr object_type type = object_type::camera;
+
+		// Hides the base version
+		[[nodiscard]] object_type get_object_type() const noexcept { return type; }
+
 		// Sets the local position of the camera
 		void set_position(math::point3f position) const;
 		// Displaces the local position of the camera

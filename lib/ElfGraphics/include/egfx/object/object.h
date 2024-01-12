@@ -5,12 +5,14 @@
 
 #include "core/size_t.h"
 #include "core/iterator/arrow_proxy.h"
+#include "core/directive.h"
 
 #include "math/vector3.h"
 #include "math/quaternion.h"
 #include "math/transform_matrix.h"
 
 #include <optional>
+#include <string_view>
 
 namespace ot::egfx
 {
@@ -38,9 +40,32 @@ namespace ot::egfx
 			[[nodiscard]] object_type get_object_type() const noexcept;
 
 			[[nodiscard]] bool is_a(object_type t) const noexcept;
+
+			template<typename Derived>
+			[[nodiscard]] bool is_a() const noexcept
+			{
+				return is_a(Derived::type);
+			}
+
+			// Gets whether the object casts shadows
+			// For lights, this controls whether the light makes other objects cast shadows
+			[[nodiscard]] bool is_casting_shadows() const noexcept;
 		};
 	}
 	
+	inline constexpr uint32_t as_int(object_id id) noexcept { return static_cast<uint32_t>(id); }
+	inline constexpr std::string_view as_string(object_type t) noexcept
+	{
+		switch (t)
+		{
+		case object_type::item: return "Item";
+		case object_type::camera: return "Camera";
+		case object_type::light: return "Light";
+		}
+
+		OT_UNREACHABLE();
+	}
+
 	class object_range;
 	class object_const_range;
 
@@ -65,7 +90,7 @@ namespace ot::egfx
 		Derived as() { return ref_cast<Derived>(*this); }
 
 		// Gets the owning node
-		[[nodiscard]] std::optional<node_cref> get_owner() const noexcept;
+		[[nodiscard]] node_cref get_owner() const noexcept;
 	};
 	
 	template<typename Derived>
@@ -89,7 +114,11 @@ namespace ot::egfx
 		Derived as() { return ref_cast<Derived>(*this); }
 
 		// Gets the owning node
-		[[nodiscard]] std::optional<node_ref> get_owner() const noexcept;
+		[[nodiscard]] node_ref get_owner() const noexcept;
+
+		// Sets whether the object casts shadows
+		// For light objects, this sets whether the light causes other objects to cast shadows
+		void set_casting_shadows(bool new_value) const noexcept;
 	};
 
 	extern template class detail::object_const_impl<object_cref>;

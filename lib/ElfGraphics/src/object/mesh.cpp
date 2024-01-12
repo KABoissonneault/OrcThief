@@ -366,11 +366,12 @@ namespace ot::egfx
 		return m;
 	}
 
-	void add_item(node_ref owner, mesh const& m)
+	item_ref add_item(node_ref owner, mesh const& m)
 	{
 		Ogre::SceneNode& owner_node = get_scene_node(owner);
 		Ogre::SceneManager& scene_manager = *owner_node.getCreator();
 		Ogre::Item* const item = scene_manager.createItem(get_mesh_ptr(m), Ogre::SCENE_DYNAMIC);
 		owner_node.attachObject(item);
+		return make_item_ref(*item);
 	}
 }
